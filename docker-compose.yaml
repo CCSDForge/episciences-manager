@@ -1,6 +1,6 @@
 services:
   httpd:
-    image: httpd:2.4-bookworm
+    image: "${COMPOSE_PROJECT_NAME}-httpd:latest"
     container_name: httpd-manager
     build:
       context: .

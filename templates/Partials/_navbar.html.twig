@@ -1,0 +1,134 @@
+{% block stylesheets %}
+    <style>
+        /* Custom navbar styles */
+        .navbar-custom {
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .nav-link {
+            color: #495057 !important;
+            font-weight: 500;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: #0d6efd !important;
+            border-bottom: 2px solid #0d6efd;
+        }
+
+        .navbar-brand img {
+            transition: transform 0.3s ease;
+        }
+
+        .navbar-brand:hover img {
+            transform: scale(1.05);
+        }
+
+        .custom-btn {
+            border-radius: 20px;
+            padding: 8px 24px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .custom-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(13, 110, 253, 0.2);
+        }
+
+        @media (max-width: 991px) {
+            .navbar-nav {
+                padding: 1rem 0;
+            }
+
+            .nav-link {
+                padding: 10px 0;
+                margin: 0;
+            }
+
+            .login-btn-container {
+                margin-top: 1rem;
+                display: flex;
+                justify-content: center;
+            }
+        }
+    </style>
+{% endblock %}
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light py-3 navbar-custom">
+    <div class="container">
+        <!-- Logo à gauche -->
+        <a class="navbar-brand" href="/">
+            <img src="/assets/images/episciences.svg" alt="episciencesLogo" class="img-fluid" style="max-width: 150px; height: auto;">
+        </a>
+
+        <!-- Toggle Button for Mobile -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Navigation Links (Collapsible) -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mx-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/" id="nav-home">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/thejournal" id="nav-journal">The Journal</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/folder" id="nav-folder">Folder</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard" id="nav-dashboard">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/user" id="nav-users">Users</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/journal" id="nav-journals">Journal</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/website" id="nav-website">Website</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/statistics" id="nav-statistics">Statistics</a>
+                </li>
+            </ul>
+
+            <!-- Login Button (Will move below links on mobile) -->
+            <div class="login-btn-container">
+                <a class="btn btn-outline-primary custom-btn" href="/login">
+                    Login
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Script to add active state to the current page -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get current path
+        const path = window.location.pathname;
+
+        // Remove trailing slash if it exists
+        const cleanPath = path.endsWith('/') ? path.slice(0, -1) : path;
+
+        // Handle root path (home page)
+        if (cleanPath === '' || cleanPath === '/') {
+            document.getElementById('nav-home').classList.add('active');
+        } else {
+            // Handle other pages
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === cleanPath ||
+                    cleanPath.startsWith(link.getAttribute('href') + '/')) {
+                    link.classList.add('active');
+                }
+            });
+        }
+    });
+</script>
