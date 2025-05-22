@@ -11,8 +11,10 @@ services:
       - .:/var/www/htdocs
       - ./var/cache:/var/www/htdocs/var/cache
       - ./var/log:/var/www/htdocs/var/log
+      - ./docker/apache/ssl:/usr/local/apache2/ssl
     ports:
-      - "81:80"
+      - "443:443"
+      - "80:80"
     depends_on:
       - php-fpm-manager
     networks:

@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -9,13 +11,23 @@ use Symfony\Component\HttpFoundation\Response;
 
 class DefaultController extends AbstractController
 {
-    #[Route('/login', name:'login', methods: ['GET'])]
-    public function login(Request $request) {
-        $target = urlencode($this->getParameter('cas_login_target').'/force');
-        $url = 'https://'.$this->getParameter('cas_host') . ((($this->getParameter('cas_port')!=80) || ($this->getParameter('cas_port')!=443)) ? ":".$this->getParameter('cas_port') : "") . $this->getParameter('cas_path') . '/login?service=';
+    #[Route('/login', name: 'login', methods: ['GET'])]
+    public function login(Request $request): RedirectResponse
+    {
+        // Retrieve the base return URL from parameters (defined in .env)
+        $baseUrl = rtrim($this->getParameter('cas_service_base_url'), '/');
 
-        return $this->redirect($url . $target);
+        // Prepare the full return URL including the /force path
+        $target = urlencode($baseUrl . '/login');
+
+        // Construct the CAS login URL with the service parameter
+        $url = 'https://' . 'cas-preprod.ccsd.cnrs.fr'
+            . '/cas/login?service=' . $target;
+
+        // Redirect the user to the CAS login page
+        return $this->redirect($url);
     }
+
 
     #[Route('/logout', name:'logout', methods: ['GET'])]
     public function logout(Request $request) {
@@ -40,13 +52,12 @@ class DefaultController extends AbstractController
         return $this->redirect($this->generateUrl('index'));
     }
 
-
     #[Route('/', name:'index', methods: ['GET'])]
     public function index(Request $request) : Response
     {
-        dump($this->container->get('security.token_storage'));
-        dump($this->getUser());
+        // dump($this->container->get('security.token_storage'));
+        // dump($this->getUser());
 
-        return $this->render('base.html.twig', []);
+        return $this->render('Home/index.html.twig', []);
     }
 }
