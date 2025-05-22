@@ -18,7 +18,7 @@ class DefaultController extends AbstractController
         $baseUrl = rtrim($this->getParameter('cas_service_base_url'), '/');
 
         // Prepare the full return URL including the /force path
-        $target = urlencode($baseUrl . '/login');
+        $target = urlencode($baseUrl . '/user');
 
         // Construct the CAS login URL with the service parameter
         $url = 'https://' . 'cas-preprod.ccsd.cnrs.fr'
