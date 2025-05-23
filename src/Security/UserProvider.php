@@ -7,37 +7,36 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use \Symfony\Component\Security\Core\User\UserProviderInterface;
 
 
-class UserProvider implements UserProviderInterface {
 
+class UserProvider implements UserProviderInterface {
 
     public function refreshUser(UserInterface $user): User
     {
-        // TODO: Implement refreshUser() method.
+        // Implement refreshUser() method.
         if (!$user instanceof User) {
             throw new UnsupportedUserException(
                 sprintf('Instances of "%s" are not supported.', get_class($user))
             );
         }
-        return $this->loadUserByUsername($user->getUsername());
+        return $this->loadUserByUid($user->getUid());
     }
 
     public function supportsClass(string $class): bool
     {
-        // TODO: Implement supportsClass() method.
+        // Implement supportsClass() method.
         return $class === User::class;
     }
 
-    public function loadUserByUsername(string $username): User
+    public function loadUserByUid(int $uid): User
     {
-        // TODO: Implement loadUserByUsername() method.
+        // Implement loadUserByUid() method.
         $user = new User();
-        $user->setUsername($username);
+        $user->setUid($uid);
         return $user;
     }
     public function loadUserByIdentifier(string $identifier): UserInterface
     {
-        $user = new User();
-        $user->setUsername($identifier);
-        return $user;
+        $uid = (int)$identifier;
+        return $this->loadUserByUid($uid);
     }
 }

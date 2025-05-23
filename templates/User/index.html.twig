@@ -7,3 +7,18 @@
     <li><strong>Email</strong> : {{ user_info.EMAIL }}</li>
     <li><strong>Username</strong> : {{ user_info.username }}</li>
 </ul>
+
+<div class="user-roles">
+    <h3>Rôles et permissions</h3>
+    {% if user_roles and user_roles|length > 0 %}
+        <ul class="roles-list">
+            {% for role in user_roles %}
+                <li class="role-item">
+                    <span class="role-badge">{{ role }}</span>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="no-roles">Aucun rôle attribué</p>
+    {% endif %}
+</div>
