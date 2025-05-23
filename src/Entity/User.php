@@ -8,32 +8,32 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
+#[ORM\Table(
+    name: 'USER',
+    uniqueConstraints: [
+        new ORM\UniqueConstraint(
+            name: 'UNIQ_IDENTIFIER_EMAIL',
+            columns: ['email']
+        )
+    ]
+)]
 
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $id = null;
+    private ?int $uid = null;
 
     #[ORM\Column(length: 180)]
     private ?string $email = null;
 
-    /**
-     * @var list<string> The user roles
-     */
-    #[ORM\Column]
+
     private array $roles = [];
 
-    /**
-     * @var string The hashed password
-     */
-    #[ORM\Column]
+
     private ?string $password = null;
 
-    #[ORM\Column]
-    private ?int $uid = null;
 
     #[ORM\Column(length: 100)]
     private ?string $username = null;
@@ -44,10 +44,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 100, nullable: true)]
     private ?string $firstname = null;
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
+
+
 
     public function getEmail(): ?string
     {
@@ -68,7 +66,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->email;
+        return (string) $this->username;
     }
 
     /**
@@ -76,11 +74,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getRoles(): array
     {
-        $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
-
-        return array_unique($roles);
+        return $this->roles ?? [];
     }
 
     /**
