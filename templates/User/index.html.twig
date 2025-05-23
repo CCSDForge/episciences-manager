@@ -9,16 +9,14 @@
 </ul>
 
 <div class="user-roles">
-    <h3>Rôles et permissions</h3>
-    {% if user_roles and user_roles|length > 0 %}
-        <ul class="roles-list">
-            {% for role in user_roles %}
-                <li class="role-item">
-                    <span class="role-badge">{{ role }}</span>
-                </li>
+    <h3>Rôles et RVID</h3>
+    {% if rolesDetails is not empty %}
+        <ul>
+            {% for row in rolesDetails %}
+                <li>{{ row.ROLEID }} (RVID: {{ row.RVID }})</li>
             {% endfor %}
         </ul>
     {% else %}
-        <p class="no-roles">Aucun rôle attribué</p>
+        <p>Aucun rôle attribué</p>
     {% endif %}
 </div>

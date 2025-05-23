@@ -26,11 +26,14 @@ class UserController extends AbstractController
         //dump($roles);
 
         $logger->info('Attributs utilisateur CAS', $attributes);
+        $user = $this->getUser();
+        $rolesDetails = $user->getRolesDetails();
+        //$logger->info('Rôles utilisateur', $rolesDetails);
 
         // Passer tous les attributs au template
         return $this->render('User/index.html.twig', [
             'user_info' => $attributes,
-            'user_roles' => $roles,
+            'rolesDetails' => $rolesDetails,
         ]);
     }
 }

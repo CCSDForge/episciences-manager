@@ -47,13 +47,13 @@ class UserProvider implements UserProviderInterface
 
         // Charger les rôles depuis USER_ROLES en utilisant DBAL
         $conn = $this->em->getConnection();
-        $roles = $conn->fetchFirstColumn('SELECT ROLEID, RVID FROM USER_ROLES WHERE UID = ?', [$user->getUid()]);
-        //$rows = $conn->fetchAllAssociative('SELECT ROLEID, RVID FROM USER_ROLES WHERE UID = ?', [$user->getUid()]);
+        //$roles = $conn->fetchFirstColumn('SELECT ROLEID, RVID FROM USER_ROLES WHERE UID = ?', [$user->getUid()]);
+        $rows = $conn->fetchAllAssociative('SELECT ROLEID, RVID FROM USER_ROLES WHERE UID = ?', [$user->getUid()]);
         //dump($rows);
         //$roles = array_column($rows, 'ROLEID');
         //dump($roles);
-
         $user->setRoles($roles ?? []);
+        $user->setRolesDetails($rows ?? []);
 
         return $user;
     }

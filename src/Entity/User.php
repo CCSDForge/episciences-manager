@@ -45,6 +45,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $firstname = null;
 
 
+    private array $rolesDetails = [];
+
+    public function setRolesDetails(array $rolesDetails): static
+    {
+        $this->rolesDetails = $rolesDetails;
+        return $this;
+    }
+
+    public function getRolesDetails(): array
+    {
+        return $this->rolesDetails;
+    }
 
 
     public function getEmail(): ?string
