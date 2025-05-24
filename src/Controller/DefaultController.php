@@ -57,7 +57,7 @@ class DefaultController extends AbstractController
     {
         // dump($this->container->get('security.token_storage'));
         // dump($this->getUser());
-
+        $test = true;
         return $this->render('Home/index.html.twig', []);
     }
 }

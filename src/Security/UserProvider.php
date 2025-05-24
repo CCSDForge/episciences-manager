@@ -50,7 +50,10 @@ class UserProvider implements UserProviderInterface
         //$roles = $conn->fetchFirstColumn('SELECT ROLEID, RVID FROM USER_ROLES WHERE UID = ?', [$user->getUid()]);
         $rows = $conn->fetchAllAssociative('SELECT ROLEID, RVID FROM USER_ROLES WHERE UID = ?', [$user->getUid()]);
         //dump($rows);
-        //$roles = array_column($rows, 'ROLEID');
+        $roles = array_column($rows, 'ROLEID');
+        if (empty($roles)) {
+            $roles = ['ROLE_USER'];
+        }
         //dump($roles);
         $user->setRoles($roles ?? []);
         $user->setRolesDetails($rows ?? []);

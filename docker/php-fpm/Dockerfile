@@ -44,7 +44,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 COPY ./docker/php-fpm/xdebug.ini /usr/local/etc/php/conf.d/
 
 # disable opcache configuration
-#COPY ./docker/php-fpm/opcache.ini /usr/local/etc/php/conf.d/
+COPY ./docker/php-fpm/opcache.ini /usr/local/etc/php/conf.d/
 
 # Copy entrypoint script and set permissions
 COPY ./docker/php-fpm/entrypoint.sh /usr/local/bin/entrypoint.sh
