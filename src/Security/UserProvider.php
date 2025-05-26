@@ -13,7 +13,7 @@ class UserProvider implements UserProviderInterface
 {
     public function __construct(private EntityManagerInterface $em) {}
 
-    public function refreshUser(UserInterface $user): User
+    public function refreshUser(UserInterface $user): UserInterface
     {
         // Implement refreshUser() method.
         if (!$user instanceof User) {
