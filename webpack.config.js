@@ -22,6 +22,9 @@ Encore
      */
     .addEntry('app', './assets/app.js')
 
+    .addStyleEntry('app', './assets/styles/app.scss')
+    .addStyleEntry('navbar', './assets/styles/_navbar.scss')
+
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
     .enableStimulusBridge('./assets/controllers.json')
 
@@ -31,6 +34,8 @@ Encore
     // will require an extra script tag for runtime.js
     // but, you probably want this, unless you're building a single-page app
     .enableSingleRuntimeChunk()
+
+    .enableSassLoader()
 
     /*
      * FEATURE CONFIG
