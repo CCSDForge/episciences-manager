@@ -24,13 +24,16 @@ RUN apt-get install -y --no-install-recommends --no-install-suggests \
      poppler-utils \
     && apt-get clean
 
-RUN pecl install xdebug && \
-    docker-php-ext-enable xdebug
-
 RUN docker-php-ext-install curl dom fileinfo iconv intl pdo pdo_mysql posix simplexml xml xsl zip
 RUN docker-php-ext-enable curl dom fileinfo iconv intl pdo pdo_mysql posix simplexml xml xsl zip
 
-# Install Node.js and Yarn
+# Xdebug installation
+RUN pecl install xdebug && \
+    docker-php-ext-enable xdebug \
+    && echo "xdebug.mode=debug" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo "xdebug.client_host=host.docker.internal" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+
+    # Install Node.js and Yarn
 # Install Node.js (version 18.x) and Yarn
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
     && apt-get install -y nodejs \
@@ -41,15 +44,15 @@ RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Add Xdebug configuration
-COPY ./docker/php-fpm/xdebug.ini /usr/local/etc/php/conf.d/
+#COPY ./docker/php-fpm/xdebug.ini /usr/local/etc/php/conf.d/
 
 # disable opcache configuration
-COPY ./docker/php-fpm/opcache.ini /usr/local/etc/php/conf.d/
+#COPY ./docker/php-fpm/opcache.ini /usr/local/etc/php/conf.d/
 
 # Copy entrypoint script and set permissions
-COPY ./docker/php-fpm/entrypoint.sh /usr/local/bin/entrypoint.sh
+ADD ./docker/php-fpm/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
 # Run the default php-fpm command
-CMD ["php-fpm"]
+CMD ["/usr/local/bin/entrypoint.sh"]

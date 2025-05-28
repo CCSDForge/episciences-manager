@@ -22,6 +22,7 @@ services:
 
   php-fpm-manager:
     container_name: php-fpm-manager
+    working_dir: /var/www/htdocs
     build:
       context: .
       dockerfile: docker/php-fpm/Dockerfile
@@ -30,7 +31,7 @@ services:
       - .:/var/www/htdocs
       - ./var/cache:/var/www/htdocs/var/cache
       - ./var/log:/var/www/htdocs/var/log
-      - ./docker/php-fpm/php-fpm.conf:/usr/local/etc/php-fpm.d/zz-custom.conf
+      - ./docker/php-fpm/php.ini:/usr/local/etc/php/conf.d/z-docker.conf
     environment:
       - PHP_FPM_LISTEN_PORT=9000
       - DB_EPISCIENCES_HOST=db-episciences
