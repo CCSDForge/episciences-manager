@@ -23,7 +23,7 @@ class UserController extends AbstractController
 
         //dump($attributes);
         $roles=$this->getUser()->getRoles();
-        //dump($roles);
+        dump($roles);
 
         $logger->info('Attributs utilisateur CAS', $attributes);
         $user = $this->getUser();

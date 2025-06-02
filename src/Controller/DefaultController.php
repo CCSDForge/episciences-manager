@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Repository\ReviewRepository;
+use App\Service\ReviewManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
@@ -11,6 +13,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 class DefaultController extends AbstractController
 {
+    public function __construct(
+        private ReviewManager $reviewManager
+    ) {}
+
     #[Route('/login', name: 'login', methods: ['GET'])]
     public function login(Request $request, LoggerInterface $logger): RedirectResponse
     {
@@ -56,7 +62,12 @@ class DefaultController extends AbstractController
             session_destroy();
             $logger->info('Session destroyed due to gateway mode');
         }
+        dump('=== DEBUG FORCE ACTION ===');
+
         $user = $this->getUser();
+
+        //dd('User before CAS login:', $user);
+        dump('User:', $this->getUser());
         $logger->info('User after CAS login', ['user' => $user ? $user->getUserIdentifier() : 'null']);
 
         return $this->redirectToRoute('user_profile');
@@ -74,7 +85,15 @@ class DefaultController extends AbstractController
         }
         dump($this->container->get('security.token_storage'));
         dump($this->getUser());
-        $test = true;
-        return $this->render('Home/index.html.twig', []);
+        //$reviews = $this->reviewRepository->findAllForList();
+        //dd($reviews);
+        $reviews = $this->reviewManager->getActiveReviewsForDisplay();
+        //dd($reviews);
+
+        return $this->render('Home/index.html.twig', [
+            'reviews' => $reviews,
+            'user' => $user,
+            'isAuthenticated' => $user !== null
+        ]);
     }
 }

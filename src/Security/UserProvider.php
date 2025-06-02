@@ -32,14 +32,16 @@ class UserProvider implements UserProviderInterface
 
     public function loadUserByIdentifier(string $identifier): UserInterface
     {
+        $user = $this->em->getRepository(User::class)->findOneBy(['username' => $identifier]);
+        //dump($user);
+
+        // Cas spécial pour l'utilisateur anonyme
         if ($identifier === '__NO_USER__') {
             $user = new User();
             $user->setUsername('__NO_USER__');
             $user->setRoles(['ROLE_ANO']);
             return $user;
         }
-        $user = $this->em->getRepository(User::class)->findOneBy(['username' => $identifier]);
-        //dump($user);
 
         if (!$user) {
             throw new \Exception("Utilisateur avec username=$identifier introuvable");
@@ -49,11 +51,13 @@ class UserProvider implements UserProviderInterface
         $conn = $this->em->getConnection();
         //$roles = $conn->fetchFirstColumn('SELECT ROLEID, RVID FROM USER_ROLES WHERE UID = ?', [$user->getUid()]);
         $rows = $conn->fetchAllAssociative('SELECT ROLEID, RVID FROM USER_ROLES WHERE UID = ?', [$user->getUid()]);
-        //dump($rows);
+        dump($rows);
         $roles = array_column($rows, 'ROLEID');
+
         if (empty($roles)) {
-            $roles = ['ROLE_USER'];
+            $roles = ['ROLE_ANO'];
         }
+
         //dump($roles);
         $user->setRoles($roles ?? []);
         $user->setRolesDetails($rows ?? []);

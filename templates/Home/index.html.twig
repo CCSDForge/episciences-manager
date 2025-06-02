@@ -7,5 +7,24 @@
     <div class="container">
         <h1>{{ 'Welcome to Episciences manager'|trans }}</h1>
     </div>
-
+    <div class="container review-container">
+        <h2 class="review-title text-center">{{ 'Liste des revues'|trans }}</h2>
+        {% if reviews is not empty %}
+            <div class="list-group">
+                {% for review in reviews %}
+                    <a href="{{ review.url }}" class="list-group-item clearfix" target="_blank">
+                        <img src="{{ review.logo }}" alt="Logo {{ review.code }}" class="review-logo">
+                        <span class="review-name">{{ review.name }}</span>
+                        <i class="fa fa-external-link review-link"></i>
+                        <i class="fa fa-external-link" style="font-size:48px;color:red"></i>
+                    </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-info text-center">
+                <i class="fa fa-info-circle"></i>
+                {{ 'Aucune revue disponible pour le moment.'|trans }}
+            </div>
+        {% endif %}
+    </div>
 {% endblock %}
