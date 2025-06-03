@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Constants\ReviewConstants;
 use App\Repository\ReviewRepository;
+use Knp\Component\Pager\PaginatorInterface;
 
 class ReviewManager
 {
@@ -14,23 +15,32 @@ class ReviewManager
     }
 
     /**
-     * Récupère les reviews actives avec nouveau front pour l'affichage public
+     * Retrieves active reviews with pagination
      */
-    public function getActiveReviewsForDisplay(): array
+    public function getActiveReviewsForDisplayPaginated(PaginatorInterface $paginator, int $page, int $limit = 8 )
     {
-        // Utilise la méthode du repository
-        $reviews = $this->reviewRepository->findActiveNewFrontReviews();
+        // Récupérer le QueryBuilder
+        $query = $this->reviewRepository->findActiveNewFrontReviews();
 
-        // Ajouter la logique métier ici
-        return $this->ReviewsData($reviews);
+        // Utilise la méthode du repository
+        $paginatedReviews = $paginator->paginate($query, $page, $limit);
+
+        $reviewItems = [];
+        foreach ($paginatedReviews->getItems() as $review) {
+            $reviewItems[] = $this->SingleReview($review);
+        }
+
+        $paginatedReviews->setItems($reviewItems);
+
+        return $paginatedReviews;
     }
 
     /**
-     * Enrichit les données des reviews avec URLs et logos
+     * Enriches review data with URLs and logos
      */
-    private function ReviewsData(array $reviews): array
+    private function SingleReview(array $review): array
     {
-        return array_map(function($review) {
+
             return [
                 'rvid' => $review['rvid'],
                 'code' => $review['code'],
@@ -41,11 +51,10 @@ class ReviewManager
                 'url' => $this->generateReviewUrl($review['code']),
                 'logo' => $this->generateReviewLogo($review['code']),
             ];
-        }, $reviews);
     }
 
     /**
-     * Génère l'URL d'une review
+     * Generates the URL of a review
      * Format: https://code.episciences.org
      */
     private function generateReviewUrl(string $code): string
@@ -54,7 +63,7 @@ class ReviewManager
     }
 
     /**
-     * Génère le chemin du logo d'une review
+     * Generates the logo path of a review
      */
     private function generateReviewLogo(string $code): string
     {

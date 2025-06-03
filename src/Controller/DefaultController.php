@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Repository\ReviewRepository;
 use App\Service\ReviewManager;
+use Knp\Component\Pager\PaginatorInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
@@ -74,7 +75,7 @@ class DefaultController extends AbstractController
     }
 
     #[Route('/', name:'index', methods: ['GET'])]
-    public function index(Request $request, LoggerInterface $logger) : Response
+    public function index(Request $request, LoggerInterface $logger,PaginatorInterface $paginator) : Response
     {
         $logger->info('Home page accessed');
         $user = $this->getUser();
@@ -87,8 +88,13 @@ class DefaultController extends AbstractController
         dump($this->getUser());
         //$reviews = $this->reviewRepository->findAllForList();
         //dd($reviews);
-        $reviews = $this->reviewManager->getActiveReviewsForDisplay();
+        $reviews = $this->reviewManager->getActiveReviewsForDisplayPaginated(
+            $paginator,
+            $request->query->getInt('page', 1),
+            8
+        );
         //dd($reviews);
+
 
         return $this->render('Home/index.html.twig', [
             'reviews' => $reviews,

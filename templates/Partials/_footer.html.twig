@@ -1,10 +1,45 @@
-<footer class="bg-primary text-white mt-5 py-4">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-6">
-                <h5>Episciences Manager</h5>
-                <p>© {{ 'now'|date('Y') }} Tous droits réservés</p>
-            </div>
+
+<footer class="footer">
+    <div class="footer-columns">
+        <div class="footer-column">
+            <h3>À propos d'Episciences</h3>
+            <ul>
+                <li><a href="#">Blog</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-column">
+            <h3>Support</h3>
+            <ul>
+                <li><i class="fas fa-book"></i> <a href="#">Documentation</a></li>
+                <li><i class="fas fa-balance-scale"></i> <a href="#">Mentions légales</a></li>
+                <li><i class="fas fa-user-shield"></i> <a href="#">Vie privée</a></li>
+                <li><i class="fas fa-comment-dots"></i> <a href="#">Retours utilisateurs</a></li>
+                <li><i class="fas fa-file-contract"></i> <a href="#">Conditions Générales d’Utilisation</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-column">
+            <h3>Code/Dev</h3>
+            <ul>
+                <li><i class="fas fa-code-branch"></i> <a href="#">Code</a></li>
+                <li><i class="fas fa-sitemap"></i> <a href="#">OAI-PMH</a></li>
+                <li><i class="fas fa-map"></i> <a href="#">Feuille de route</a></li>
+            </ul>
         </div>
     </div>
+
+    <div class="footer-credit">
+        <p>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/b/b7/Flag_of_Europe.svg" alt="EU Flag" width="20">
+            Episciences has received support from
+            <a href="https://www.openaire.eu">OpenAIRE</a> and its services, notably for the integration of its service in the OpenAIRE Nexus project: funding from the
+            <a href="https://cordis.europa.eu/project/id/101017452">European Commission grant 101017452</a>
+            “OpenAIRE Nexus - OpenAIRE-Nexus Scholarly Communication Services for EOSC users”.
+        </p>
+    </div>
 </footer>
+{% block stylesheets %}
+    {{ encore_entry_link_tags('footer') }}
+{% endblock %}

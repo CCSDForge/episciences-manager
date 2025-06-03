@@ -1,12 +1,4 @@
-// Variables SCSS
-$primary-color: #0d6efd;
-$text-color: #495057;
-$shadow-light: rgba(0, 0, 0, 0.1);
-$shadow-primary: rgba(13, 110, 253, 0.2);
-$transition-smooth: all 0.3s ease;
-$border-radius-pill: 20px;
-$font-weight-medium: 500;
-$font-weight-bold: bold;
+@import 'variables';
 
 // Mixins
 @mixin button-hover-effect {
@@ -46,14 +38,42 @@ $font-weight-bold: bold;
   }
 }
 
+// ✅ BOUTON LOGIN : État normal et hover parfaits
 .custom-btn {
   border-radius: $border-radius-pill;
   padding: 8px 24px;
   font-weight: $font-weight-bold;
   @include smooth-transition();
 
-  &:hover {
+  // ✅ État NORMAL : Background blanc, texte #337ab7
+  &.btn-outline-primary {
+    background-color: white !important;
+    border-color: $primary-color !important;
+    color: $primary-color !important;
+  }
+
+  // ✅ État HOVER : Background #337ab7, texte blanc
+  &.btn-outline-primary:hover {
+    background-color: $primary-color !important;
+    border-color: $primary-color !important;
+    color: white !important;
     @include button-hover-effect;
+  }
+
+  // États focus et active (optionnels)
+  &.btn-outline-primary:focus,
+  &.btn-outline-primary.focus {
+    background-color: $primary-color !important;
+    border-color: $primary-color !important;
+    color: white !important;
+    box-shadow: 0 0 0 0.2rem rgba(51, 122, 183, 0.5) !important;
+  }
+
+  &.btn-outline-primary:active,
+  &.btn-outline-primary.active {
+    background-color: darken($primary-color, 10%) !important;
+    border-color: darken($primary-color, 10%) !important;
+    color: white !important;
   }
 }
 

@@ -140,9 +140,12 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/apereo/phpcas" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/l3/cas-guard-bundle" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfonycasts/tailwind-bundle" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/knplabs/knp-components" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/knplabs/knp-paginator-bundle" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="bootstrap" level="application" />
+    <orderEntry type="library" name="font-awesome" level="application" />
   </component>
 </module>

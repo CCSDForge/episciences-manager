@@ -5,6 +5,8 @@ namespace App\Repository;
 use App\Entity\Review;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\QueryBuilder;
+
 
 /**
  * @extends ServiceEntityRepository<Review>
@@ -24,12 +26,13 @@ class ReviewRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+
     /**
-     * Find all reviews that are active and have the new front switched on and not the default rvid (0).
+     * Create a QueryBuilder for active reviews with new front switched on.
      *
-     * @return array
+     * @return QueryBuilder
      */
-    public function findActiveNewFrontReviews(): array
+    public function findActiveNewFrontReviewsQuery(): QueryBuilder
     {
         return $this->createQueryBuilder('r')
             ->select('r.rvid', 'r.code', 'r.status', 'r.name', 'r.is_new_front_switched')
@@ -37,7 +40,17 @@ class ReviewRepository extends ServiceEntityRepository
             ->andWhere('r.is_new_front_switched = :isNewFront')
             ->setParameter('zero', 0)
             ->setParameter('isNewFront', true)
-            ->orderBy('r.name', 'ASC')
+            ->orderBy('r.name', 'ASC');
+    }
+
+    /**
+     * Find all reviews that are active and have the new front switched on and not the default rvid (0).
+     *
+     * @return array
+     */
+    public function findActiveNewFrontReviews(): array
+    {
+        return $this->findActiveNewFrontReviewsQuery()
             ->getQuery()
             ->getResult();
     }

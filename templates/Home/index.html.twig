@@ -3,23 +3,34 @@
 {% block title %}Accueil - Episciences Manager{% endblock %}
 
 {% block body %}
-
-    <div class="container">
-        <h1>{{ 'Welcome to Episciences manager'|trans }}</h1>
-    </div>
     <div class="container review-container">
+        <h1>{{ 'Welcome to Episciences manager'|trans }}</h1>
         <h2 class="review-title text-center">{{ 'Liste des revues'|trans }}</h2>
-        {% if reviews is not empty %}
+
+        {% if reviews is defined and reviews.items is not empty %}
+            {# Affichage du total #}
+            <div class="text-center mb-3">
+                <span class="badge bg-primary">
+                    {{ reviews.totalItemCount }} {{ 'revues au total'|trans }}
+                </span>
+            </div>
+
+            {# Liste des revues #}
             <div class="list-group">
                 {% for review in reviews %}
                     <a href="{{ review.url }}" class="list-group-item clearfix" target="_blank">
                         <img src="{{ review.logo }}" alt="Logo {{ review.code }}" class="review-logo">
                         <span class="review-name">{{ review.name }}</span>
                         <i class="fa fa-external-link review-link"></i>
-                        <i class="fa fa-external-link" style="font-size:48px;color:red"></i>
                     </a>
                 {% endfor %}
             </div>
+
+            {# Pagination #}
+            <div class="d-flex justify-content-center mt-4">
+                {{ knp_pagination_render(reviews, '@KnpPaginator/Pagination/bootstrap_v5_pagination.html.twig') }}
+            </div>
+
         {% else %}
             <div class="alert alert-info text-center">
                 <i class="fa fa-info-circle"></i>
@@ -28,3 +39,7 @@
         {% endif %}
     </div>
 {% endblock %}
+ {% block stylesheets %}
+    {{ parent() }}
+     {{ encore_entry_link_tags('index') }}
+ {% endblock %}

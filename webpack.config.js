@@ -21,9 +21,12 @@ Encore
      * and one CSS file (e.g. app.css) if your JavaScript imports CSS.
      */
     .addEntry('app', './assets/app.js')
+    .addEntry('nav', './assets/scripts/_navbar.js')
 
     .addStyleEntry('main', './assets/styles/app.scss')
     .addStyleEntry('navbar', './assets/styles/_navbar.scss')
+    .addStyleEntry('footer', './assets/styles/_footer.scss')
+    .addStyleEntry('index', './assets/styles/index.scss')
 
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
     .enableStimulusBridge('./assets/controllers.json')
@@ -73,7 +76,7 @@ Encore
     // uncomment if you use React
     //.enableReactPreset()
 
-    // uncomment to get integrity="..." attributes on your script & link tags
+    // uncomment to get integrity attributes on your script & link tags
     // requires WebpackEncoreBundle 1.4 or higher
     //.enableIntegrityHashes(Encore.isProduction())
 
