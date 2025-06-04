@@ -24,15 +24,17 @@ class DefaultController extends AbstractController
         $logger->info('Login action triggered');
         // Retrieve the base return URL from parameters (defined in .env)
         $baseUrl = rtrim($this->getParameter('cas_service_base_url'), '/');
+        $secureBaseUrl = $this->loadHttpsOrHttp($baseUrl);
 
         // Prepare the full return URL including the /force path
-        $target = urlencode($baseUrl . '/force');
+        $target = urlencode($secureBaseUrl . '/force');
 
         // Construct the CAS login URL with the service parameter
         $url = 'https://' . 'cas-preprod.ccsd.cnrs.fr'
             . '/cas/login?service=' . $target;
 
-        $logger->info('Redirecting to CAS login URL', ['url' => $url]);
+        $secureCasUrl = $this->loadHttpsOrHttp($url);
+        $logger->info('Redirecting to CAS login URL', ['url' => $secureCasUrl]);
         // Redirect the user to the CAS login page
         return $this->redirect($url);
     }
@@ -94,6 +96,31 @@ class DefaultController extends AbstractController
 
         //return $this->redirectToRoute('user_profile');
         return $this->redirectToRoute('index');
+    }
+
+    /**
+     * @param string $url
+     * @return string
+     */
+    private function loadHttpsOrHttp(string $url): string
+    {
+        try {
+            $forceHttps = $this->getParameter('force_https');
+        } catch (\Exception $e) {
+            // Valeur par défaut : forcer HTTPS en production
+            $forceHttps = $this->getParameter('kernel.environment') === 'prod';
+        }
+
+        if ($forceHttps === true) {
+            if (preg_match("/^(http:\/\/)/", $url)) {
+                return str_replace('http', 'https', $url);
+            }
+
+            if (preg_match("/^(https:\/\/)/", $url)) {
+                return $url;
+            }
+        }
+        return $url;
     }
 
     #[Route('/', name:'index', methods: ['GET'])]

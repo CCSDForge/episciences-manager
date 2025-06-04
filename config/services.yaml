@@ -11,6 +11,7 @@ parameters:
     cas_path: '%env(string:CAS_PATH)%'
     cas_gateway: '%env(bool:CAS_GATEWAY)%'
     cas_service_base_url: '%env(string:CAS_SERVICE_BASE_URL)%'
+    force_https: '%env(bool:FORCE_HTTPS)%'
 
 l3_cas_guard:
     host: '%env(string:CAS_HOST)%'
