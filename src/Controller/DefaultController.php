@@ -11,6 +11,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class DefaultController extends AbstractController
 {
@@ -39,16 +40,6 @@ class DefaultController extends AbstractController
         return $this->redirect($url);
     }
 
-    #[Route('/logout-confirm', name:'logout_confirm', methods: ['GET'])]
-    public function logoutConfirm(Request $request, LoggerInterface $logger): Response
-    {
-        $logger->info('Logout confirmation page accessed');
-
-        return $this->render('Security/logout_confirm.html.twig', [
-            'cas_logout_url' => 'https://cas-preprod.ccsd.cnrs.fr/cas/logout'
-        ]);
-    }
-
     #[Route('/logout', name:'logout', methods: ['GET'])]
     public function logout(Request $request, LoggerInterface $logger) {
         $logger->info('Logout action triggered');
@@ -62,14 +53,22 @@ class DefaultController extends AbstractController
         }
 
         // Nettoyer le token de sécurité
-        $this->container->get('security.token_storage')->setToken(null);
+        if ($this->container->has('security.token_storage')) {
+            $this->container->get('security.token_storage')->setToken(null);
+        }
 
-        // Toujours rediriger vers la page de confirmation
-        $confirmUrl = $this->generateUrl('logout_confirm', [], true);
+        // Créer l'URL de retour vers la page d'accueil avec le paramètre logout
+        $homeUrl = $this->generateUrl('app_home', ['logout' => 'success'], UrlGeneratorInterface::ABSOLUTE_URL);
 
-        // Utiliser logoutWithRedirectService dans tous les cas
-        $logger->info('Logging out with redirect to confirmation page', ['target' => $confirmUrl]);
-        \phpCAS::logoutWithRedirectService($confirmUrl);
+        // Construire l'URL de déconnexion CAS avec le paramètre service
+        $casLogoutUrl = 'https://cas-preprod.ccsd.cnrs.fr/cas/logout?service=' . urlencode($homeUrl);
+
+        $logger->info('Redirecting to CAS logout', [
+            'cas_url' => $casLogoutUrl,
+            'service_url' => $homeUrl
+        ]);
+        // Redirection vers CAS avec service parameter
+        return $this->redirect($casLogoutUrl);
     }
 
     #[Route('/force', name:'force', methods: ['GET'])]
@@ -95,7 +94,8 @@ class DefaultController extends AbstractController
         $logger->info('User after CAS login', ['user' => $user ? $user->getUserIdentifier() : 'null']);
 
         //return $this->redirectToRoute('user_profile');
-        return $this->redirectToRoute('index');
+        return $this->redirectToRoute('app_home');
+
     }
 
     /**
@@ -123,7 +123,7 @@ class DefaultController extends AbstractController
         return $url;
     }
 
-    #[Route('/', name:'index', methods: ['GET'])]
+    #[Route('/', name:'app_home', methods: ['GET'])]
     public function index(Request $request, LoggerInterface $logger,PaginatorInterface $paginator) : Response
     {
         $logger->info('Home page accessed');
@@ -144,8 +144,10 @@ class DefaultController extends AbstractController
         );
         //dd($reviews);
 
+        $showLogoutMessage = $request->query->get('logout') === 'success';
 
         return $this->render('Home/index.html.twig', [
+            'logout_success' => $showLogoutMessage,
             'reviews' => $reviews,
             'user' => $user,
             'isAuthenticated' => $user !== null

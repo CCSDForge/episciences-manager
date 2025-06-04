@@ -7,6 +7,24 @@
         <h1>{{ 'Welcome to Episciences manager'|trans }}</h1>
         <h2 class="review-title text-center">{{ 'Liste des revues'|trans }}</h2>
 
+        {# Message de déconnexion avec auto-dismiss #}
+        {% if logout_success %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fa fa-check-circle me-2"></i>
+                <strong>Déconnexion réussie !</strong> Vous êtes maintenant déconnecté(e) du système.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endif %}
+
+        {# Messages flash (si vous utilisez la solution alternative) #}
+        {% for message in app.flashes('logout_success') %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fa fa-check-circle me-2"></i>
+                <strong>{{ message }}</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+
         {% if reviews is defined and reviews.items is not empty %}
             {# Affichage du total #}
             <div class="text-center mb-3">
@@ -43,3 +61,8 @@
     {{ parent() }}
      {{ encore_entry_link_tags('index') }}
  {% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('home') }}
+{% endblock %}

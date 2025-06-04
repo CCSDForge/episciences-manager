@@ -22,6 +22,8 @@ Encore
      */
     .addEntry('app', './assets/app.js')
     .addEntry('nav', './assets/scripts/_navbar.js')
+    .addEntry('home', './assets/scripts/index.js')
+
 
     .addStyleEntry('main', './assets/styles/app.scss')
     .addStyleEntry('navbar', './assets/styles/_navbar.scss')
