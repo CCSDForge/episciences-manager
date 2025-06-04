@@ -37,16 +37,37 @@ class DefaultController extends AbstractController
         return $this->redirect($url);
     }
 
+    #[Route('/logout-confirm', name:'logout_confirm', methods: ['GET'])]
+    public function logoutConfirm(Request $request, LoggerInterface $logger): Response
+    {
+        $logger->info('Logout confirmation page accessed');
+
+        return $this->render('Security/logout_confirm.html.twig', [
+            'cas_logout_url' => 'https://cas-preprod.ccsd.cnrs.fr/cas/logout'
+        ]);
+    }
 
     #[Route('/logout', name:'logout', methods: ['GET'])]
     public function logout(Request $request, LoggerInterface $logger) {
-        if (($this->getParameter('cas_logout_target') !== null) && (!empty($this->getParameter('cas_logout_target')))) {
-            $logger->info('Logging out with redirect', ['target' => $this->getParameter('cas_logout_target')]);
-            \phpCAS::logoutWithRedirectService($this->getParameter('cas_logout_target'));
-        } else {
-            $logger->info('Logging out without redirect');
-            \phpCAS::logout();
+        $logger->info('Logout action triggered');
+
+        // Nettoyer la session Symfony
+        $session = $request->getSession();
+        if ($session->isStarted()) {
+            $session->clear();
+            $session->invalidate();
+            $logger->info('Symfony session completely cleared');
         }
+
+        // Nettoyer le token de sécurité
+        $this->container->get('security.token_storage')->setToken(null);
+
+        // Toujours rediriger vers la page de confirmation
+        $confirmUrl = $this->generateUrl('logout_confirm', [], true);
+
+        // Utiliser logoutWithRedirectService dans tous les cas
+        $logger->info('Logging out with redirect to confirmation page', ['target' => $confirmUrl]);
+        \phpCAS::logoutWithRedirectService($confirmUrl);
     }
 
     #[Route('/force', name:'force', methods: ['GET'])]
@@ -71,7 +92,8 @@ class DefaultController extends AbstractController
         dump('User:', $this->getUser());
         $logger->info('User after CAS login', ['user' => $user ? $user->getUserIdentifier() : 'null']);
 
-        return $this->redirectToRoute('user_profile');
+        //return $this->redirectToRoute('user_profile');
+        return $this->redirectToRoute('index');
     }
 
     #[Route('/', name:'index', methods: ['GET'])]

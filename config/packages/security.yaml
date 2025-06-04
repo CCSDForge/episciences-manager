@@ -25,7 +25,12 @@ security:
             provider: app_user_provider
             custom_authenticators:
                 - cas.security.authentication.authenticator
-
+            logout:
+                path: app_logout
+                target: /logout-confirm
+                invalidate_session: true
+                delete_cookies:
+                    PHPSESSID: { path: '/', domain: null }
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall

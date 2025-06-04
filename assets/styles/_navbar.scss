@@ -38,6 +38,33 @@
   }
 }
 
+// STYLES POUR LOGIN/LOGOUT
+.login-btn-container {
+  .user-menu {
+    @media (max-width: 991px) {
+      flex-direction: column;
+      align-items: center !important;
+      text-align: center;
+    }
+
+    .welcome-text {
+      color: $text-color;
+      font-weight: $font-weight-medium;
+      font-size: 0.95rem;
+
+      strong {
+        color: $primary-color;
+        font-weight: $font-weight-bold;
+      }
+
+      @media (max-width: 991px) {
+        margin-bottom: 0.5rem;
+        margin-right: 0 !important;
+      }
+    }
+  }
+}
+
 // ✅ BOUTON LOGIN : État normal et hover parfaits
 .custom-btn {
   border-radius: $border-radius-pill;
@@ -45,17 +72,31 @@
   font-weight: $font-weight-bold;
   @include smooth-transition();
 
-  // ✅ État NORMAL : Background blanc, texte #337ab7
+  // Style pour btn-outline-primary (Login)
   &.btn-outline-primary {
     background-color: white !important;
     border-color: $primary-color !important;
     color: $primary-color !important;
   }
 
-  // ✅ État HOVER : Background #337ab7, texte blanc
+  // État HOVER : Background #337ab7, texte blanc
   &.btn-outline-primary:hover {
     background-color: $primary-color !important;
     border-color: $primary-color !important;
+    color: white !important;
+    @include button-hover-effect;
+  }
+
+  // Style pour btn-outline-danger (Logout)
+  &.btn-outline-danger {
+    border-color: $danger-color !important;
+    color: $danger-color !important;
+    background-color: transparent !important;
+  }
+
+  &.btn-outline-danger:hover {
+    background-color: $danger-color !important;
+    border-color: $danger-color !important;
     color: white !important;
     @include button-hover-effect;
   }
