@@ -1,11 +1,18 @@
+import 'bootstrap';
 
-    // Auto-dismiss logout message after 5 seconds
-    document.addEventListener('DOMContentLoaded', function() {
+
+document.addEventListener('DOMContentLoaded', function () {
     const logoutAlert = document.querySelector('.alert-success');
+
     if (logoutAlert && logoutAlert.textContent.includes('Déconnexion réussie')) {
-    setTimeout(function() {
-    const bsAlert = new bootstrap.Alert(logoutAlert);
-    bsAlert.close();
-}, 5000);
-}
+        // Attendre 5 secondes avant de fermer l'alerte
+        setTimeout(() => {
+            try {
+                const bsAlert = bootstrap.Alert.getOrCreateInstance(logoutAlert);
+                bsAlert.close();
+            } catch (e) {
+                console.error('Erreur lors de la fermeture de l’alerte Bootstrap :', e);
+            }
+        }, 5000);
+    }
 });

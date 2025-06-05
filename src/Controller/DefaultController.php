@@ -67,6 +67,9 @@ class DefaultController extends AbstractController
             'cas_url' => $casLogoutUrl,
             'service_url' => $homeUrl
         ]);
+
+        //$this->addFlash('logout_success', 'Déconnexion réussie !');
+
         // Redirection vers CAS avec service parameter
         return $this->redirect($casLogoutUrl);
     }
