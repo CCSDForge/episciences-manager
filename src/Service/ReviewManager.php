@@ -70,4 +70,17 @@ class ReviewManager
         return sprintf(ReviewConstants::LOGO_PATH_TEMPLATE, $code, ReviewConstants::DOMAIN, $code);
     }
 
+    /**
+     * Retrieves all reviews for display
+     */
+    public function getAllReviewsForDisplay(): array
+    {
+        $reviews = $this->reviewRepository->findAllForList();
+        $reviewItems = [];
+        foreach ($reviews as $review) {
+            $reviewItems[] = $this->SingleReview($review);
+        }
+        return $reviewItems;
+    }
+
 }

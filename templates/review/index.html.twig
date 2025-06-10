@@ -1,0 +1,192 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        /* Style avec votre couleur primaire */
+        body {
+            background-color: #337ab7;
+            min-height: 100vh;
+        }
+
+        .page-title {
+            color: white !important;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            font-size: 3rem;
+            font-weight: 700;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .stat-card {
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .action-btn {
+            background-color: #337ab7 !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 8px !important;
+            width: 40px;
+            height: 40px;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            background-color: #2e6da4 !important;
+            transform: scale(1.1);
+            color: white !important;
+        }
+
+        .table thead {
+            background-color: #337ab7 !important;
+        }
+
+        .table thead th {
+            border: none !important;
+            font-weight: 700;
+        }
+
+        .table tbody tr:hover {
+            background-color: rgba(51, 122, 183, 0.1) !important;
+        }
+
+        .badge.bg-primary {
+            background-color: #337ab7 !important;
+        }
+
+        /* Input de recherche avec focus sur votre couleur */
+        .form-control:focus {
+            border-color: #337ab7;
+            box-shadow: 0 0 0 0.2rem rgba(51, 122, 183, 0.25);
+        }
+
+        @media (min-width: 992px) {
+            .container-fluid {
+                padding: 100px 60px !important;
+            }
+
+            .glass {
+                padding: 4rem !important;
+                margin: 3rem 0 !important;
+            }
+        }
+
+        /* Tablet */
+        @media (min-width: 768px) and (max-width: 991px) {
+            .container-fluid {
+                padding: 60px 30px !important;
+            }
+
+            .glass {
+                padding: 2.5rem !important;
+                margin: 2rem 0 !important;
+            }
+        }
+
+        /* Mobile */
+        @media (max-width: 767px) {
+            .container-fluid {
+                padding: 40px 20px !important;
+            }
+
+            .glass {
+                padding: 2rem !important;
+                margin: 1.5rem 0 !important;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="container-fluid py-5">
+        <div class="journal-list">
+            <!-- Page Title -->
+            <div class="row">
+                <div class="col-12">
+                    <h1 class="page-title text-white text-center mb-5">Revues Listes</h1>
+                </div>
+            </div>
+
+            <div class="row mb-5">
+                <div class="col-12">
+                    <div class="stats-section glass p-4 rounded-4">
+                        <div class="row g-4 align-items-center">
+
+                            <div class="col-lg-2 col-md-3 col-sm-6">
+                                <div class="stat-card p-4 rounded-3" style="background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);">
+                                    <div class="text-center text-white">
+                                        <h3 class="display-4 fw-bold mb-2">{{ reviews|length|default('?') }}</h3>
+                                        <p class="h5 mb-0">Total Reviews</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-2 col-md-3 col-sm-6">
+                                <div class="stat-card p-4 rounded-3" style="background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);">
+                                    <div class="text-center text-white">
+                                        <h3 class="display-4 fw-bold mb-2">{{ reviews|filter(r => r.status == 1)|length|default('?') }}</h3>
+                                        <p class="h5 mb-0">Actifs</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Search -->
+                            <div class="col-lg-8 col-md-6">
+                                <div class="search-container ms-auto" style="max-width: 400px;">
+                                    <input type="text" class="form-control form-control-lg" placeholder="Rechercher...">
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table Section -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="journal-table glass p-4 rounded-4">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead>
+                                <tr>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Code</th>
+                                    <th scope="col" class="text-center">Manager</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for review in reviews %}
+                                    <tr>
+                                        <td>
+                                            <div class="fw-semibold">{{ review.name }}</div>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-primary">{{ review.code }}</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <a href="{{ path('app_page_index', {'code': review.code}) }}" class="btn action-btn border-0 p-0 d-inline-flex align-items-center justify-content-center" target="_blank">
+                                                <i class="fas fa-pencil"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

@@ -68,7 +68,7 @@ class DefaultController extends AbstractController
             'service_url' => $homeUrl
         ]);
 
-        //$this->addFlash('logout_success', 'Déconnexion réussie !');
+        $this->addFlash('logout_success', 'Déconnexion réussie ! Vous êtes maintenant déconnecté(e) du système.');
 
         // Redirection vers CAS avec service parameter
         return $this->redirect($casLogoutUrl);
@@ -149,7 +149,7 @@ class DefaultController extends AbstractController
 
         $showLogoutMessage = $request->query->get('logout') === 'success';
 
-        return $this->render('Home/index.html.twig', [
+        return $this->render('home/index.html.twig', [
             'logout_success' => $showLogoutMessage,
             'reviews' => $reviews,
             'user' => $user,

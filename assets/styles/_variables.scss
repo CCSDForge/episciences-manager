@@ -9,3 +9,41 @@ $transition-smooth: all 0.3s ease;
 $border-radius-pill: 20px;
 $font-weight-medium: 500;
 $font-weight-bold: bold;
+
+// Variables dérivées et complémentaires
+$white: #fff;
+$light-gray: #f8f9fa;
+$medium-gray: #e9ecef;
+$dark-gray: #343a40;
+$gray-800: #2d3748;
+$gray-700: #4a5568;
+$gray-500: #a0aec0;
+$gray-200: #e2e8f0;
+
+  // Couleurs avec transparence
+$glass-white: rgba(255, 255, 255, 0.95);
+$border-white: rgba(255, 255, 255, 0.2);
+$primary-light: rgba($primary-color, 0.1);
+$primary-lighter: rgba($primary-color, 0.05);
+
+// Espacements
+$spacing-xs: 0.25rem;
+$spacing-sm: 0.5rem;
+$spacing-md: 1rem;
+$spacing-lg: 1.5rem;
+$spacing-xl: 2rem;
+$spacing-xxl: 3rem;
+
+// Border radius
+$border-radius-sm: 0.375rem;
+$border-radius-md: 0.5rem;
+$border-radius-lg: 0.75rem;
+$border-radius-xl: 1rem;
+
+// Font sizes
+$font-size-sm: 0.875rem;
+$font-size-base: 1rem;
+$font-size-lg: 1.125rem;
+$font-size-xl: 1.25rem;
+$font-size-xxl: 1.5rem;
+$font-size-display: 2.5rem;

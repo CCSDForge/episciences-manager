@@ -1,0 +1,31 @@
+
+
+{% block body %}
+    <div class="container-fluid py-5">
+        <div class="page-content">
+            <div class="row">
+                <div class="col-12">
+                    <h1 class="page-title text-white text-center mb-5">
+                        {% if review is defined %}
+                            Welcome to {{ review.name }}
+                        {% else %}
+                            Welcome to the homepage
+                        {% endif %}
+                    </h1>
+                </div>
+            </div>
+
+            {% if review is defined %}
+                <div class="row">
+                    <div class="col-12">
+                        <div class="review-details glass p-4 rounded-4">
+                            <h2>{{ review.name }}</h2>
+                            <p><strong>Code:</strong> {{ review.code }}</p>
+                            <p><strong>Status:</strong> {{ review.status == 1 ? 'Actif' : 'Inactif' }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

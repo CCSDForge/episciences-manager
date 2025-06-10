@@ -4,17 +4,8 @@
 
 {% block body %}
     <div class="container review-container">
-        <h1>{{ 'Welcome to Episciences manager'|trans }}</h1>
+        <h1>{{ "Bienvenue dans l'espace de gestion Episciences"|trans }}</h1>
         <h2 class="review-title text-center">{{ 'Liste des revues'|trans }}</h2>
-
-        {# Message de déconnexion avec auto-dismiss #}
-        {% if logout_success %}
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="fa fa-check-circle me-2"></i>
-                <strong>Déconnexion réussie !</strong> Vous êtes maintenant déconnecté(e) du système.
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        {% endif %}
 
         {# Messages flash #}
         {% for message in app.flashes('logout_success') %}
