@@ -1,9 +1,13 @@
 
+// Import des variables en premier
+@use 'components/variables' as *;
+
+@use 'components/alerts' as *;
+
 // Import Bootstrap functions et variables en premier
 @import "~bootstrap/scss/functions";
 
-// Import des variables en premier
-@import 'variables';
+
 
 
 
@@ -32,4 +36,4 @@ $card-border-radius: $border-radius-lg;
 @import "~@fortawesome/fontawesome-free/scss/fontawesome";
 @import "~@fortawesome/fontawesome-free/scss/solid";
 
-@import 'components/alerts';
+

@@ -1,4 +1,5 @@
-@import 'variables';
+@use 'sass:color';
+@use '../components/variables' as *;
 
 // Mixins
 @mixin button-hover-effect {
@@ -112,8 +113,8 @@
 
   &.btn-outline-primary:active,
   &.btn-outline-primary.active {
-    background-color: darken($primary-color, 10%) !important;
-    border-color: darken($primary-color, 10%) !important;
+    background-color: color.adjust($primary-color, $lightness: -10%) !important;
+    border-color: color.adjust($primary-color, $lightness: -10%)  !important;
     color: white !important;
   }
 }

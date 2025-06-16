@@ -21,15 +21,15 @@ Encore
      * and one CSS file (e.g. app.css) if your JavaScript imports CSS.
      */
     .addEntry('app', './assets/app.js')
-    .addEntry('nav', './assets/scripts/_navbar.js')
-    .addEntry('home', './assets/scripts/index.js')
+    .addEntry('nav', './assets/scripts/partials/_navbar.js')
+    .addEntry('home', './assets/scripts/pages/index.js')
 
 
     .addStyleEntry('main', './assets/styles/app.scss')
-    .addStyleEntry('navbar', './assets/styles/_navbar.scss')
-    .addStyleEntry('footer', './assets/styles/_footer.scss')
-    .addStyleEntry('index', './assets/styles/index.scss')
-    .addStyleEntry('journal', './assets/styles/journal.scss')
+    .addStyleEntry('navbar', './assets/styles/partials/_navbar.scss')
+    .addStyleEntry('footer', './assets/styles/partials/_footer.scss')
+    .addStyleEntry('index', './assets/styles/pages/index.scss')
+    .addStyleEntry('journal', './assets/styles/pages/journal.scss')
 
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
     .enableStimulusBridge('./assets/controllers.json')
@@ -42,6 +42,8 @@ Encore
     .enableSingleRuntimeChunk()
 
     .enableSassLoader()
+
+    .enablePostCssLoader()
 
     /*
      * FEATURE CONFIG
@@ -57,7 +59,7 @@ Encore
 
     .enableSourceMaps(!Encore.isProduction())
     // enables hashed filenames (e.g. app.abc123.css)
-    .enableVersioning(Encore.isProduction())
+    .enableVersioning()
 
     // configure Babel
     // .configureBabel((config) => {
