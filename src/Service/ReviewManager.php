@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Constants\ReviewConstants;
+use App\Entity\Review;
 use App\Repository\ReviewRepository;
 use Knp\Component\Pager\PaginatorInterface;
 
@@ -40,18 +41,18 @@ class ReviewManager
      */
     private function SingleReview(array $review): array
     {
-
-            return [
-                'rvid' => $review['rvid'],
-                'code' => $review['code'],
-                'status' => $review['status'],
-                'name' => $review['name'],
-                'is_new_front_switched' => $review['is_new_front_switched'],
-                // Logique métier : génération URL et logo
-                'url' => $this->generateReviewUrl($review['code']),
-                'logo' => $this->generateReviewLogo($review['code']),
-            ];
+        return [
+            'rvid' => $review['rvid'],
+            'code' => $review['code'],
+            'status' => $review['status'],
+            'name' => $review['name'],
+            'is_new_front_switched' => $review['is_new_front_switched'],
+            // Logique métier : génération URL et logo
+            'url' => $this->generateReviewUrl($review['code']),
+            'logo' => $this->generateReviewLogo($review['code']),
+        ];
     }
+
 
     /**
      * Generates the URL of a review
@@ -83,4 +84,31 @@ class ReviewManager
         return $reviewItems;
     }
 
+
+    /**
+     * Get single review by code with full logo support
+     */
+    public function getReviewByCode(string $code): ?array
+    {
+        if (empty(trim($code))) {
+            return null;
+        }
+
+        $review = $this->reviewRepository->findOneBy(['code' => $code]);
+        if (!$review) {
+            return null;
+        }
+
+        $reviewCode = $review->getCode();
+
+        return [
+            'rvid' => $review->getRvid(),
+            'code' => $reviewCode,
+            'status' => $review->getStatus(),
+            'name' => $review->getName(),
+            'is_new_front_switched' => $review->isNewFrontSwitched(),
+            'url' => $this->generateReviewUrl($reviewCode),
+            'logo' => $this->generateReviewLogo($reviewCode),
+        ];
+    }
 }

@@ -30,6 +30,7 @@ Encore
     .addStyleEntry('footer', './assets/styles/partials/_footer.scss')
     .addStyleEntry('index', './assets/styles/pages/index.scss')
     .addStyleEntry('journal', './assets/styles/pages/journal.scss')
+    .addStyleEntry('accueil', './assets/styles/pages/accueil.scss')
 
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
     .enableStimulusBridge('./assets/controllers.json')
@@ -41,10 +42,17 @@ Encore
     // but, you probably want this, unless you're building a single-page app
     .enableSingleRuntimeChunk()
 
+    // enables Sass/SCSS support
     .enableSassLoader()
 
+    //
     .enablePostCssLoader()
 
+    .copyFiles({
+        from: './assets/images',
+        pattern: /\.(png|jpg|jpeg|gif|svg|webp)$/,
+        to: 'images/[name].[ext]'
+    })
     /*
      * FEATURE CONFIG
      *
@@ -59,7 +67,7 @@ Encore
 
     .enableSourceMaps(!Encore.isProduction())
     // enables hashed filenames (e.g. app.abc123.css)
-    .enableVersioning()
+    .enableVersioning(Encore.isProduction())
 
     // configure Babel
     // .configureBabel((config) => {

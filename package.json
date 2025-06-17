@@ -6,6 +6,7 @@
         "autoprefixer": "^10.4.21",
         "core-js": "^3.38.0",
         "css-loader": "^7.1.2",
+        "file-loader": "^6.0.0",
         "postcss-loader": "^8.1.1",
         "regenerator-runtime": "^0.13.9",
         "sass": "^1.89.2",
@@ -33,9 +34,6 @@
         "sass-migrator": "^2.3.2"
     },
     "browserslist": [
-        "> 1%",
-        "last 2 versions",
-        "not dead",
-        "not ie 11"
+        "defaults"
     ]
 }
