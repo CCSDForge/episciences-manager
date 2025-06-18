@@ -102,13 +102,24 @@ class ReviewManager
         $reviewCode = $review->getCode();
 
         return [
+            ...$this->convertEntityToArray($review),
+            'url' => $this->generateReviewUrl($review->getCode()),
+            'logo' => $this->generateReviewLogo($review->getCode()),
+        ];
+    }
+
+    /**
+     * Converts Review entity to array format
+     */
+    private function convertEntityToArray(Review $review): array
+    {
+        return [
             'rvid' => $review->getRvid(),
-            'code' => $reviewCode,
+            'code' => $review->getCode(),
             'status' => $review->getStatus(),
             'name' => $review->getName(),
             'is_new_front_switched' => $review->isNewFrontSwitched(),
-            'url' => $this->generateReviewUrl($reviewCode),
-            'logo' => $this->generateReviewLogo($reviewCode),
         ];
     }
+
 }
