@@ -1,0 +1,38 @@
+@use 'sass:color';
+@use '../components/variables' as *;
+
+
+.container .d-flex {
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-top: 3rem;
+  width: auto;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    align-items: flex-start;
+    text-align: left;
+  }
+}
+
+.journal-logo {
+  margin: 1.5rem 3rem;
+
+  .logo {
+    max-width: 100%;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.journal-title h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: $primary-color;
+
+  @media (max-width: 768px) {
+    font-size: 1.8rem;
+  }
+}
+

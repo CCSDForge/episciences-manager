@@ -2,28 +2,27 @@
 
 {% block body %}
 
-    <header class="header">
-        <!-- Journal header -->
-        <div class="header-journal py-3">
             <div class="container">
+
+                {% include 'partials/_navbar.html.twig' %}
+
                 <div class="d-flex align-items-center">
                     <!-- Journal Logo -->
-                    <div class="col-sm-12 col-md-6 header-journal-logo me-4">
-                        <img src="{{ review.logo }}" alt="{{ review.name }} Logo" class="img-fluid journal-logo">
+                    <div class="col-sm-12 col-md-6 journal-logo me-4">
+                        <img src="{{ review.logo }}" alt="{{ review.name }} Logo" class="img-fluid logo">
                     </div>
 
                     <!-- Journal Title -->
-                    <div class="col-sm-12 col-md-6 header-journal-title">
+                    <div class="col-sm-12 col-md-6 journal-title">
                         <h1 class="h3 mb-0 text-primary fw-bold">{{ review.name }}</h1>
                     </div>
                 </div>
             </div>
-        </div>
-    </header>
 
 {% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
-    {{ encore_entry_link_tags('accueil') }}
+    {{ encore_entry_link_tags('page') }}
+    {{ encore_entry_link_tags('navbar') }}
 {% endblock %}

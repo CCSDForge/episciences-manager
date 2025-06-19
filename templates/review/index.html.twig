@@ -2,8 +2,12 @@
 
 
 {% block body %}
-    <div class="container py-5">
-        <div class="journal-list">
+
+    <div class="container">
+        {% if app.user and app.user.userIdentifier != '__NO_USER__' %}
+            {% include 'partials/_navbar.html.twig' %}
+        {% endif %}
+        <div class="journal-list mt-5">
             <!-- Page Title -->
             <div class="d-flex">
                 <div class="col-12">
@@ -19,7 +23,7 @@
                                 <div class="stat-card p-4 rounded-3" style="background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);">
                                     <div class="text-center text-white">
                                         <h3 class="display-8 fw-bold mb-2">{{ reviews|length|default('?') }}</h3>
-                                        <p class="h5 mb-0">Total journal <J></J></p>
+                                        <p class="h5 mb-0">Total journals </p>
                                     </div>
                                 </div>
                             </div>
@@ -28,7 +32,7 @@
                                 <div class="stat-card p-4 rounded-3" style="background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);">
                                     <div class="text-center text-white">
                                         <h3 class="display-8 fw-bold mb-2">{{ reviews|filter(r => r.status == 1)|length|default('?') }}</h3>
-                                        <p class="h5 mb-0">Actifs</p>
+                                        <p class="h5 mb-0">Active journals</p>
                                     </div>
                                 </div>
                             </div>
@@ -87,4 +91,5 @@
 {% block stylesheets %}
     {{ parent() }}
     {{ encore_entry_link_tags('journal') }}
+    {{ encore_entry_link_tags('navbar') }}
 {% endblock %}

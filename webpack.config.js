@@ -30,7 +30,7 @@ Encore
     .addStyleEntry('footer', './assets/styles/partials/_footer.scss')
     .addStyleEntry('index', './assets/styles/pages/index.scss')
     .addStyleEntry('journal', './assets/styles/pages/journal.scss')
-    .addStyleEntry('accueil', './assets/styles/pages/accueil.scss')
+    .addStyleEntry('page', './assets/styles/pages/page.scss')
     .addStyleEntry('header', './assets/styles/partials/_header.scss')
 
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)

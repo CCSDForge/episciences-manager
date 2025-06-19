@@ -7,7 +7,6 @@ $transition: all 0.3s ease;
 
 // Container principal
 .review-container {
-  padding: 2rem 0;
   min-height: 80vh;
 
   // Titre principal - centré avec gap
@@ -16,7 +15,7 @@ $transition: all 0.3s ease;
     font-size: 2.5rem;
     font-weight: 700;
     color: $primary-color;
-    margin-bottom: 3rem;
+    margin:3rem 0;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
     @media (max-width: 768px) {

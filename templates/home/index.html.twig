@@ -3,15 +3,14 @@
 {% block title %}Accueil - Episciences Manager{% endblock %}
 
 {% block body %}
-
-
-    {% if app.user and app.user.userIdentifier != '__NO_USER__' %}
+    <div class="container  review-container">
+        {% if app.user and app.user.userIdentifier != '__NO_USER__' %}
             {% include 'partials/_navbar.html.twig' %}
-    {% endif %}
-
-    <div class="container review-container">
+        {% endif %}
+        <div class="text-center my-5">
         <h1>{{ "Bienvenue dans l'espace de gestion Episciences"|trans }}</h1>
         <h2 class="review-title text-center">{{ 'Liste des revues'|trans }}</h2>
+        <div>
 
         {# Messages flash #}
         {% for message in app.flashes('logout_success') %}
