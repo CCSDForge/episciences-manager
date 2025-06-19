@@ -1,46 +1,19 @@
+{% extends 'base.html.twig' %}
+
 {% block body %}
 
     <header class="header">
-        <!-- Pre-header with logo and login -->
-        <div class="header-preheader">
-            <div class="container-fluid">
-                <div class="d-flex justify-content-between align-items-center">
-                    <!-- Logo à gauche -->
-                    <div class="header-preheader-logo">
-                        <img src="{{ asset('images/episciences.svg') }}" alt="Episciences Logo" class="img-fluid logo-img">
-                    </div>
-
-                    <!-- Bloc utilisateur à droite -->
-                    <div class="login-btn-container">
-                        {% if app.user and app.user.userIdentifier != '__NO_USER__' %}
-                            <div class="user-menu d-flex align-items-center">
-                        <span class="welcome-text me-3">
-                            Welcome, <strong>{{ app.user.userIdentifier }}</strong>
-                        </span>
-                                <a class="btn btn-outline-danger custom-btn" href="{{ path('logout') }}" role="button">
-                                    <i class="fas fa-sign-out-alt me-1"></i> Logout
-                                </a>
-                            </div>
-                        {% else %}
-                            <a class="btn btn-outline-primary custom-btn" href="{{ path('login') }}" role="button">Login</a>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
         <!-- Journal header -->
         <div class="header-journal py-3">
             <div class="container">
-                <div class="row align-items-center">
+                <div class="d-flex align-items-center">
                     <!-- Journal Logo -->
-                    <div class="col-md-4 header-journal-logo me-4">
+                    <div class="col-sm-12 col-md-6 header-journal-logo me-4">
                         <img src="{{ review.logo }}" alt="{{ review.name }} Logo" class="img-fluid journal-logo">
                     </div>
 
                     <!-- Journal Title -->
-                    <div class="col-md-8 header-journal-title">
+                    <div class="col-sm-12 col-md-6 header-journal-title">
                         <h1 class="h3 mb-0 text-primary fw-bold">{{ review.name }}</h1>
                     </div>
                 </div>
@@ -51,5 +24,6 @@
 {% endblock %}
 
 {% block stylesheets %}
+    {{ parent() }}
     {{ encore_entry_link_tags('accueil') }}
 {% endblock %}

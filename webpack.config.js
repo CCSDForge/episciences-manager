@@ -31,6 +31,7 @@ Encore
     .addStyleEntry('index', './assets/styles/pages/index.scss')
     .addStyleEntry('journal', './assets/styles/pages/journal.scss')
     .addStyleEntry('accueil', './assets/styles/pages/accueil.scss')
+    .addStyleEntry('header', './assets/styles/partials/_header.scss')
 
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
     .enableStimulusBridge('./assets/controllers.json')

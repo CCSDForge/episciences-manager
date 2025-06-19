@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
 use App\Repository\ReviewRepository;
 use App\Service\ReviewManager;
 use Knp\Component\Pager\PaginatorInterface;
@@ -41,7 +42,7 @@ class DefaultController extends AbstractController
     }
 
     #[Route('/logout', name:'logout', methods: ['GET'])]
-    public function logout(Request $request, LoggerInterface $logger) {
+    public function logout(Request $request,LoggerInterface $logger) {
         $logger->info('Logout action triggered');
 
         // Nettoyer la session Symfony
@@ -136,6 +137,7 @@ class DefaultController extends AbstractController
         } else {
             $logger->warning('User is not authenticated');
         }
+        //dd($user);
         dump($this->container->get('security.token_storage'));
         dump($this->getUser());
         //$reviews = $this->reviewRepository->findAllForList();

@@ -1,0 +1,45 @@
+<header class="header">
+    <!-- Pre-header with logo and login -->
+    <div class="header-preheader">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between align-items-center">
+                <!-- Logo à gauche -->
+                <div class="header-preheader-logo">
+                    <img src="{{ asset('images/episciences.svg') }}" alt="Episciences Logo" class="img-fluid">
+                </div>
+
+                <!-- Navigation collapsible -->
+                <div class="header-container">
+                    <!-- Toggle Button for Mobile -->
+                    <button class="login-toggler d-lg-none" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#headerNav" aria-controls="headerNav" aria-expanded="false"
+                            aria-label="Toggle user">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                    <!-- Bloc utilisateur à droite - collapsible -->
+                    <div class="collapse d-lg-block" id="headerNav">
+                        <div class="login-btn-container">
+                            {% if app.user and app.user.userIdentifier != '__NO_USER__' %}
+                                <div class="user-menu d-flex align-items-center">
+                                    <span class="welcome-text me-3">
+                                        Welcome, <strong>{{ app.user.userIdentifier }}</strong>
+                                    </span>
+                                    <a class="btn btn-outline-danger custom-btn" href="{{ path('logout') }}" role="button">
+                                        <i class="fas fa-sign-out-alt me-1"></i> Logout
+                                    </a>
+                                </div>
+                            {% else %}
+                                <a class="btn btn-outline-primary custom-btn" href="{{ path('login') }}" role="button">Login</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+{% block javascripts %}
+    {{ encore_entry_script_tags('header') }}
+{% endblock %}

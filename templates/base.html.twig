@@ -4,11 +4,9 @@
         <meta charset="UTF-8">
         <title>{% block title %}Welcome!{% endblock %}</title>
 
-
-
         {% block stylesheets %}
             {{ encore_entry_link_tags('main') }}
-            {{ encore_entry_link_tags('navbar') }}
+            {{ encore_entry_link_tags('header') }}
         {% endblock %}
 
         {% block javascripts %}
@@ -17,7 +15,7 @@
     </head>
     <body>
     {% block navbar %}
-        {% include '/partials/_navbar.html.twig' %}
+        {% include '/partials/_header.html.twig' %}
     {% endblock %}
     {% block body %}
         <div class="flex h-screen">
