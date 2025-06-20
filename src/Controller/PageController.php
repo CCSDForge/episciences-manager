@@ -10,21 +10,6 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class PageController extends AbstractController
 {
-    #[Route('/journal/{code}', name: 'app_page_index', requirements: ['code' => '[\w\-]+'])]
-    public function index(string $code, ReviewManager $reviewManager): Response
-    {
-        // Récupérer la review par son code
-        $review = $reviewManager->getReviewByCode($code);
 
-        //dd($review);
-
-        if (!$review) {
-            throw $this->createNotFoundException('Review not found');
-        }
-
-        return $this->render('page/index.html.twig', [
-            'review' => $review
-        ]);
-    }
 
 }
