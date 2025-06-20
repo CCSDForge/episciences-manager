@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Repository\ReviewRepository;
 use App\Service\ReviewManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -12,14 +13,21 @@ final class ReviewController extends AbstractController
 {
 
     #[Route('/journal', name: 'app_journal')]
-    public function index(ReviewRepository $reviewRepository): Response
+    public function index(Request $request, ReviewManager $reviewManager): Response
     {
-        $reviews = $reviewRepository->findAll();
+        $search = $request->query->get('search', '');
+
+        if (!empty($search)) {
+            $reviews = $reviewManager->searchReviews($search);
+        } else {
+            $reviews = $reviewManager->getAllReviews();
+        }
 
         //dd($reviews);
 
         return $this->render('review/journal.html.twig', [
             'reviews' => $reviews,
+            'search' => $search,
         ]);
     }
 
@@ -40,4 +48,5 @@ final class ReviewController extends AbstractController
             'code' => $code,
         ]);
     }
+
 }

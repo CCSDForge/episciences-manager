@@ -54,6 +54,25 @@ class ReviewRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+
+    /**
+     * Find a review by code or name (case insensitive).
+     *
+     * @param string $search
+     * @return Review[] Returns an array of Review objects
+     */
+    public function findByCodeOrName(string $search): array
+    {
+        return $this->createQueryBuilder('r')
+            ->where('LOWER(r.code) LIKE :search')
+            ->orWhere('LOWER(r.name) LIKE :search')
+            ->setParameter('search', '%' . strtolower($search) . '%')
+            ->getQuery()
+            ->getResult();
+    }
+
+
     //    /**
     //     * @return Review[] Returns an array of Review objects
     //     */

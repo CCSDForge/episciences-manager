@@ -101,40 +101,55 @@ body {
 
 // Search container
 .search-container {
-  position: relative;
+  .search-wrapper {
+    position: relative;
 
-  input {
-    border: none;
-    background: $glass-white;
-    backdrop-filter: blur(10px);
-    border-radius: $border-radius-pill;
-    padding: $spacing-lg $spacing-xl $spacing-lg 50px;
-    box-shadow: 0 4px 15px $shadow-light;
-    transition: $transition-smooth;
-    font-size: $font-size-base;
-
-    &:focus {
-      outline: none;
-      box-shadow: 0 8px 25px $shadow-primary;
-      transform: translateY(-2px);
-      background: $white;
-    }
-
-    &::placeholder {
-      color: $gray-500;
+    input {
+      padding-right: 60px;
     }
   }
 
-  &::before {
-    content: '\f002';
-    font-family: 'Font Awesome 6 Free';
-    font-weight: 900;
+  .search-btn {
     position: absolute;
-    left: $spacing-lg;
+    right: 9px;
     top: 50%;
     transform: translateY(-50%);
-    color: $gray-500;
-    z-index: 1;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: $primary-gradient;
+    color: $white;
+    border: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0px 4px 15px $shadow-light;
+    z-index: 2;
+
+    &:hover {
+      transform: translateY(-50%) scale(1.1);
+      background: $primary-color;
+      box-shadow: 0 8px 25px $shadow-primary;
+      color: $white;
+    }
+
+    &:active,
+    &:focus {
+      transform: translateY(-50%) scale(0.95);
+      background: $primary-color !important;
+      box-shadow: 0 4px 15px $shadow-primary;
+      color: $white;
+      outline: none;
+    }
+
+    &:active {
+      background: darken($primary-color, 10%) !important;
+    }
+
+    i {
+      font-size: 14px;
+    }
   }
 }
 

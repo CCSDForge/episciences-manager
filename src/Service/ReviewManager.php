@@ -122,4 +122,44 @@ class ReviewManager
         ];
     }
 
+    /**
+     * Get all reviews as arrays
+     */
+    public function getAllReviews(): array
+    {
+        $allReviews = $this->reviewRepository->findAll();
+        $reviews = [];
+
+        foreach ($allReviews as $review) {
+            $reviewArray = $this->getReviewByCode($review->getCode());
+            if ($reviewArray) {
+                $reviews[] = $reviewArray;
+            }
+        }
+
+        return $reviews;
+    }
+
+    /**
+     * Search reviews and return as arrays
+     */
+    public function searchReviews(string $search): array
+    {
+        if (empty(trim($search))) {
+            return [];
+        }
+
+        $reviewBySearch = $this->reviewRepository->findByCodeOrName($search);
+        $reviews = [];
+
+        foreach ($reviewBySearch as $review) {
+            $reviewArray = $this->getReviewByCode($review->getCode());
+            if ($reviewArray) {
+                $reviews[] = $reviewArray;
+            }
+        }
+
+        return $reviews;
+    }
+
 }

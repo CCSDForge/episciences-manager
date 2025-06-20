@@ -7,11 +7,11 @@
         {% if app.user and app.user.userIdentifier != '__NO_USER__' %}
             {% include 'partials/_navbar.html.twig' %}
         {% endif %}
-        <div class="journal-list mt-5">
+        <div class="journal-list">
             <!-- Page Title -->
             <div class="d-flex">
                 <div class="col-12">
-                    <h1 class="page-title text-center mb-5">Journal List</h1>
+                    <h1 class="page-title text-center my-5">Journal List</h1>
                 </div>
             </div>
             <div class="d-flex">
@@ -40,10 +40,21 @@
                             <!-- Search -->
                             <div class="col-lg-8 col-md-6">
                                 <div class="search-container ms-auto" style="max-width: 400px;">
-                                    <input type="text" class="form-control form-control-lg" placeholder="Rechercher...">
+                                    <form method="GET" action="{{ path('app_journal') }}" class="search-form">
+                                        <div class="search-wrapper">
+                                            <input type="text"
+                                                   name="search"
+                                                   class="form-control form-control-lg"
+                                                   placeholder="Input journal name or code"
+                                                   value="{{ app.request.query.get('search') }}"
+                                                   autocomplete="off">
+                                            <button class="search-btn" type="submit">
+                                                <i class="fas fa-search"></i>
+                                            </button>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
