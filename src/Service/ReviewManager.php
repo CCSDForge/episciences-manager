@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Constants\ReviewConstants;
 use App\Entity\Review;
+use App\Entity\User;
 use App\Repository\ReviewRepository;
 use Knp\Component\Pager\PaginatorInterface;
 
@@ -161,5 +162,4 @@ class ReviewManager
 
         return $reviews;
     }
-
 }

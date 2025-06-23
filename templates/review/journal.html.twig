@@ -45,7 +45,7 @@
                                             <input type="text"
                                                    name="search"
                                                    class="form-control form-control-lg"
-                                                   placeholder="Input journal name or code"
+                                                   placeholder="Search journal by name or code"
                                                    value="{{ app.request.query.get('search') }}"
                                                    autocomplete="off">
                                             <button class="search-btn" type="submit">
@@ -83,9 +83,19 @@
                                             <span class="badge bg-primary">{{ review.code }}</span>
                                         </td>
                                         <td class="text-center">
-                                            <a href="{{ path('app_journal_detail', {'code': review.code}) }}" class="btn action-btn border-0 p-0 d-inline-flex align-items-center justify-content-center" target="_blank">
-                                                <i class="fas fa-pencil"></i>
-                                            </a>
+                                            {# View details button - only for epiadmin #}
+                                            {% if is_granted('REVIEW_VIEW', review) %}
+                                                <a href="{{ path('app_journal_detail', {code: review.code}) }}"
+                                                   class="action-btn"
+                                                   title="See Details (epiadmin uniquement)">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                            {% else %}
+                                                {# Grayed-out icon for users without access #}
+                                                <span class="action-btn disabled" title="Accès restreint aux epiadmin">
+                                                    <i class="fas fa-eye-slash text-muted"></i>
+                                                </span>
+                                            {% endif %}
                                         </td>
                                     </tr>
                                 {% endfor %}
