@@ -397,3 +397,215 @@ body {
     }
   }
 }
+// Pagination styles
+.pagination-wrapper {
+  margin-top: $spacing-xl;
+  padding: $spacing-lg 0;
+
+  .pagination {
+    margin-bottom: 0;
+    gap: $spacing-xs;
+    justify-content: center;
+    flex-wrap: wrap;
+
+    .page-item {
+      margin: 0 2px;
+
+      .page-link {
+        border: none;
+        background: rgba(255, 255, 255, 0.25);
+        backdrop-filter: blur(20px);
+        color: $primary-color;
+        padding: $spacing-md $spacing-lg;
+        border-radius: $border-radius-lg;
+        font-weight: $font-weight-medium;
+        font-size: $font-size-sm;
+        text-decoration: none;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 15px $shadow-light;
+        position: relative;
+        overflow: hidden;
+        min-width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &:hover {
+          background: $glass-white;
+          color: $primary-color;
+          transform: translateY(-2px) scale(1.05);
+          box-shadow: 0 8px 25px $shadow-primary;
+          border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        &:focus {
+          box-shadow: 0 0 0 3px $primary-light;
+          outline: none;
+          color: $primary-color;
+        }
+
+        &::before {
+          content: '';
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: 0;
+          height: 0;
+          background: rgba($primary-color, 0.1);
+          border-radius: 50%;
+          transition: $transition-smooth;
+          transform: translate(-50%, -50%);
+        }
+
+        &:active::before {
+          width: 100%;
+          height: 100%;
+        }
+      }
+
+      // Page active
+      &.active .page-link {
+        background: $primary-gradient;
+        color: $white;
+        box-shadow: 0 8px 25px $shadow-primary;
+        transform: scale(1.1);
+        font-weight: $font-weight-bold;
+
+        &:hover {
+          background: $primary-gradient;
+          color: $white;
+          transform: translateY(-2px) scale(1.15);
+        }
+      }
+
+      // Pages disabled
+      &.disabled .page-link {
+        background: rgba(255, 255, 255, 0.1);
+        color: $gray-500;
+        cursor: not-allowed;
+        opacity: 0.5;
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.1);
+          color: $gray-500;
+          transform: none;
+          box-shadow: 0 4px 15px $shadow-light;
+        }
+      }
+    }
+  }
+}
+
+// Informations de pagination
+.pagination-info {
+  margin-top: $spacing-md;
+  padding: $spacing-md;
+  text-align: center;
+
+  small {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    padding: $spacing-sm $spacing-lg;
+    border-radius: $border-radius-pill;
+    color: $gray-700;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    box-shadow: 0 2px 8px $shadow-light;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    display: inline-block;
+  }
+}
+
+// Media queries pour pagination
+@media (max-width: 768px) {
+  .pagination-wrapper {
+    margin-top: $spacing-lg;
+    padding: $spacing-md 0;
+
+    .pagination {
+      gap: 2px;
+
+      .page-item .page-link {
+        padding: $spacing-sm $spacing-md;
+        min-width: 38px;
+        height: 38px;
+        font-size: 0.875rem;
+        border-radius: $border-radius-md;
+      }
+    }
+  }
+
+  .pagination-info small {
+    padding: $spacing-xs $spacing-md;
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .pagination-wrapper .pagination {
+    .page-item {
+      &:not(.active):not(:first-child):not(:last-child) {
+        display: none;
+
+        &.nearby {
+          display: block;
+        }
+      }
+
+      .page-link {
+        min-width: 35px;
+        height: 35px;
+        padding: $spacing-xs $spacing-sm;
+      }
+    }
+  }
+}
+
+// Animation
+.pagination-wrapper {
+  animation: fadeInUp 0.6s ease-out 0.2s both;
+}
+
+// Correction des boutons d'action
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: $border-radius-md;
+  background: $primary-color;
+  color: $white;
+  text-decoration: none;
+  transition: $transition-smooth;
+  box-shadow: 0 2px 4px $shadow-light;
+
+  &:hover:not(.disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px $shadow-primary;
+    color: $white;
+    text-decoration: none;
+    background: darken($primary-color, 10%);
+  }
+
+  &.disabled {
+    background: $gray-200 !important;
+    color: $gray-500 !important;
+    cursor: not-allowed;
+    opacity: 0.6;
+
+    &:hover {
+      transform: none !important;
+      box-shadow: 0 2px 4px $shadow-light !important;
+    }
+  }
+
+  &.btn-view {
+    background: $primary-color;
+
+    &:hover:not(.disabled) {
+      background: darken($primary-color, 10%);
+    }
+  }
+}

@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Repository\ReviewRepository;
 use App\Service\ReviewManager;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,7 +16,7 @@ final class ReviewController extends AbstractController
 {
 
     #[Route('/journal', name: 'app_journal')]
-    public function index(Request $request, ReviewManager $reviewManager): Response
+    public function index(Request $request, ReviewManager $reviewManager,PaginatorInterface $paginator): Response
     {
         $user = $this->getUser();
 
@@ -24,11 +25,12 @@ final class ReviewController extends AbstractController
         }
 
         $search = $request->query->get('search', '');
+        $page = $request->query->getInt('page', 1);
 
         if (!empty($search)) {
             $reviews = $reviewManager->searchReviews($search);
         } else {
-            $reviews = $reviewManager->getAllReviews();
+            $reviews = $reviewManager->getAllReviewsForDisplayPaginated($paginator,$page,10);
         }
 
         //dd($reviews);
@@ -38,6 +40,7 @@ final class ReviewController extends AbstractController
             'reviews' => $reviews,
             'search' => $search,
             'user' => $user,
+            'current_page' => $page,
         ]);
     }
 

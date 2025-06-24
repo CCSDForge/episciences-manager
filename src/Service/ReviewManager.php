@@ -126,19 +126,24 @@ class ReviewManager
     /**
      * Get all reviews as arrays
      */
-    public function getAllReviews(): array
+    public function getAllReviewsForDisplayPaginated(PaginatorInterface $paginator, int $page, int $limit = 10): array
     {
         $allReviews = $this->reviewRepository->findAll();
+        $paginatedReviews = $paginator->paginate($allReviews, $page, $limit);
+
         $reviews = [];
 
-        foreach ($allReviews as $review) {
+        foreach ( $paginatedReviews ->getItems() as $review) {
             $reviewArray = $this->getReviewByCode($review->getCode());
             if ($reviewArray) {
                 $reviews[] = $reviewArray;
             }
         }
 
-        return $reviews;
+        return [
+            'reviews' => $reviews,
+            'pagination' => $paginatedReviews
+        ];
     }
 
     /**
