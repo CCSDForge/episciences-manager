@@ -586,7 +586,7 @@ body {
     box-shadow: 0 4px 8px $shadow-primary;
     color: $white;
     text-decoration: none;
-    background: darken($primary-color, 10%);
+    background: color.adjust($primary-color, $lightness: -10%);;
   }
 
   &.disabled {
@@ -603,9 +603,8 @@ body {
 
   &.btn-view {
     background: $primary-color;
-
     &:hover:not(.disabled) {
-      background: darken($primary-color, 10%);
+      background: color.adjust($primary-color, $lightness: -10%);
     }
   }
 }

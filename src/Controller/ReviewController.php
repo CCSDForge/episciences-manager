@@ -2,15 +2,13 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
-use App\Repository\ReviewRepository;
+
 use App\Service\ReviewManager;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class ReviewController extends AbstractController
 {
@@ -29,8 +27,12 @@ final class ReviewController extends AbstractController
 
         if (!empty($search)) {
             $reviews = $reviewManager->searchReviews($search);
+            $pagination = null;
         } else {
-            $reviews = $reviewManager->getAllReviewsForDisplayPaginated($paginator,$page,10);
+            $result = $reviewManager->getAllReviewsForDisplayPaginated($paginator,$page,10);
+                $reviews = $result['reviews'];
+                $pagination = $result['pagination'];
+
         }
 
         //dd($reviews);
@@ -38,6 +40,7 @@ final class ReviewController extends AbstractController
         //dd($user);
         return $this->render('review/journal.html.twig', [
             'reviews' => $reviews,
+            'pagination' => $pagination,
             'search' => $search,
             'user' => $user,
             'current_page' => $page,
