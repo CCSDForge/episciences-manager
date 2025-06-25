@@ -25,6 +25,8 @@ final class ReviewController extends AbstractController
         $search = $request->query->get('search', '');
         $page = $request->query->getInt('page', 1);
 
+        $activeJournalsCount = $reviewManager->getActiveReviewsCount();
+
         if (!empty($search)) {
             $reviews = $reviewManager->searchReviews($search);
             $pagination = null;
@@ -44,6 +46,7 @@ final class ReviewController extends AbstractController
             'search' => $search,
             'user' => $user,
             'current_page' => $page,
+            'activeJournalsCount' => $activeJournalsCount,
         ]);
     }
 

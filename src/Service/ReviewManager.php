@@ -6,12 +6,14 @@ use App\Constants\ReviewConstants;
 use App\Entity\Review;
 use App\Entity\User;
 use App\Repository\ReviewRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 
 class ReviewManager
 {
     public function __construct(
-        private ReviewRepository $reviewRepository
+        private ReviewRepository $reviewRepository,
+        private EntityManagerInterface $entityManager
     )
     {
     }
@@ -166,5 +168,11 @@ class ReviewManager
         }
 
         return $reviews;
+    }
+
+    public function getActiveReviewsCount(): int
+    {
+        return $this->entityManager->getRepository(Review::class)
+            ->count(['status' => 1]);
     }
 }

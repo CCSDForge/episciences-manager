@@ -23,9 +23,9 @@
                                 <div class="stat-card p-4 rounded-3" style="background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);">
                                     <div class="text-center text-white">
                                         {% if pagination %}
-                                        <h3 class="display-8 fw-bold mb-2">{{ reviews.pagination.totalItemCount|default('?') }}</h3>
+                                        <h3 class="display-8 fw-bold mb-2">{{ pagination.totalItemCount|default('0') }}</h3>
                                         {% else %}
-                                        <h3 class="display-8 fw-bold mb-2">{{ reviews|length|default('?') }}</h3>
+                                        <h3 class="display-8 fw-bold mb-2">{{ reviews|length }}</h3>
                                         {% endif %}
                                         <p class="h5 mb-0">Total journals </p>
                                     </div>
@@ -35,6 +35,11 @@
                             <div class="col-lg-2 col-md-3 col-sm-6">
                                 <div class="stat-card p-4 rounded-3" style="background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);">
                                     <div class="text-center text-white">
+                                        {% if pagination %}
+                                        {# Si pagination, on doit compter depuis toutes les reviews, pas seulement la page courante #}
+                                        {# Option 1: Calculer dans le contrôleur (recommandé) #}
+                                        <h3 class="display-8 fw-bold mb-2">{{ activeJournalsCount|default(0) }}</h3>
+                                        {% else %}
                                             {% set activeCount = 0 %}
                                             {% for review in reviews %}
                                                 {% if review.status == 1 %}
@@ -42,6 +47,7 @@
                                                 {% endif %}
                                             {% endfor %}
                                             <h3 class="display-8 fw-bold mb-2">{{ activeCount }}</h3>
+                                        {% endif %}
                                              <p class="h5 mb-0">Active journals</p>
                                     </div>
                                 </div>
