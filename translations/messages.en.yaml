@@ -1,0 +1,8 @@
+home:
+  welcome_title: "Welcome to our Episciences platform"
+
+reviews:
+  list_title: "List of reviews"
+
+flash:
+  logout_success: "You have been successfully logged out"

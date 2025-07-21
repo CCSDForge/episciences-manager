@@ -1,0 +1,8 @@
+home:
+ welcome_title: "Bienvenue sur notre plateforme Episciences"
+
+reviews:
+ list_title: "Liste des revues"
+
+flash:
+ logout_success: "Vous avez été déconnecté avec succès"

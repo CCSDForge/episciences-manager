@@ -8,15 +8,15 @@
             {% include 'partials/_navbar.html.twig' %}
         {% endif %}
         <div class="text-center my-5">
-        <h1>{{ "Bienvenue dans l'espace de gestion Episciences"|trans }}</h1>
-        <h2 class="review-title text-center">{{ 'Liste des revues'|trans }}</h2>
+        <h1>{{ 'home.welcome_title' |trans }}</h1>
+        <h2 class="review-title text-center">{{ 'reviews.list_title'|trans }}</h2>
         <div>
 
         {# Messages flash #}
         {% for message in app.flashes('logout_success') %}
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 <i class="fa fa-check-circle me-2"></i>
-                <strong>{{ message }}</strong>
+                <strong>{{ 'flash.logout_success' }}</strong>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         {% endfor %}
