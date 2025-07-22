@@ -7,7 +7,7 @@ controllers:
     requirements:
         _locale: en|fr
     defaults:
-        _locale: fr
+        _locale: en
 
 home_redirect:
     path: /
@@ -15,5 +15,5 @@ home_redirect:
     methods: [GET]
     defaults:
         route: app_home
-        _locale: 'fr'
+        _locale: 'en'
         permanent: true
