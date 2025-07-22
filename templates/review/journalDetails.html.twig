@@ -8,14 +8,11 @@
 
                 <div class="d-flex align-items-center">
                     <!-- Journal Logo -->
-                    <div class="col-sm-12 col-md-6 journal-logo me-4">
-                        <img src="{{ review.logo }}" alt="{{ review.name }} Logo" class="img-fluid logo">
+                    <div class="journal-logo me-4">
+                        <img src="{{ asset('build/images/logo-' ~ review.code ~ '-big.svg') }}"
+                             alt="{{ review.name }} Logo" class="img-fluid logo">
                     </div>
 
-                    <!-- Journal Title -->
-                    <div class="col-sm-12 col-md-6 journal-title">
-                        <h1 class="h3 mb-0 text-primary fw-bold">{{ review.name }}</h1>
-                    </div>
                 </div>
             </div>
 
