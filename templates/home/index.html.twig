@@ -16,7 +16,7 @@
         {% for message in app.flashes('logout_success') %}
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 <i class="fa fa-check-circle me-2"></i>
-                <strong>{{ 'flash.logout_success' }}</strong>
+                <strong>{{ 'flash.logout_success' |trans }}</strong>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         {% endfor %}
@@ -25,7 +25,7 @@
             {# Affichage du total #}
             <div class="text-center mb-3">
                 <span class="badge bg-primary">
-                    {{ reviews.totalItemCount }} {{ 'revues au total'|trans }}
+                    {{ reviews.totalItemCount }} {{ 'home.total_journals'|trans }}
                 </span>
             </div>
 
@@ -48,7 +48,7 @@
         {% else %}
             <div class="alert alert-info text-center">
                 <i class="fa fa-info-circle"></i>
-                {{ 'Aucune revue disponible pour le moment.'|trans }}
+                {{ 'home.no_journals_available'|trans }}
             </div>
         {% endif %}
     </div>

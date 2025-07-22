@@ -2,8 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
-use App\Repository\ReviewRepository;
 use App\Service\ReviewManager;
 use Knp\Component\Pager\PaginatorInterface;
 use Psr\Log\LoggerInterface;
@@ -13,6 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class DefaultController extends AbstractController
 {
@@ -28,8 +27,9 @@ class DefaultController extends AbstractController
         $baseUrl = rtrim($this->getParameter('cas_service_base_url'), '/');
         $secureBaseUrl = $this->loadHttpsOrHttp($baseUrl);
 
-        // Prepare the full return URL including the /force path
-        $target = urlencode($secureBaseUrl . '/force');
+        // Prepare the full return URL including the /force path with locale
+        $locale = $request->getLocale();
+        $target = urlencode($secureBaseUrl . '/' . $locale . '/force');
 
         // Construct the CAS login URL with the service parameter
         $url = 'https://' . 'cas-preprod.ccsd.cnrs.fr'
@@ -42,7 +42,7 @@ class DefaultController extends AbstractController
     }
 
     #[Route('/logout', name:'logout', methods: ['GET'])]
-    public function logout(Request $request,LoggerInterface $logger) {
+    public function logout(Request $request, LoggerInterface $logger, TranslatorInterface $translator) {
         $logger->info('Logout action triggered');
 
         // Nettoyer la session Symfony
@@ -69,7 +69,7 @@ class DefaultController extends AbstractController
             'service_url' => $homeUrl
         ]);
 
-        $this->addFlash('logout_success', 'Déconnexion réussie ! Vous êtes maintenant déconnecté(e) du système.');
+        $this->addFlash('logout_success', $translator->trans('flash.logout_success'));
 
         // Redirection vers CAS avec service parameter
         return $this->redirect($casLogoutUrl);

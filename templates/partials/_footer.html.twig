@@ -2,30 +2,30 @@
 <footer class="footer">
     <div class="footer-columns">
         <div class="footer-column">
-            <h3>À propos d'Episciences</h3>
+            <h3>{{ 'footer.about_title'|trans }}</h3>
             <ul>
-                <li><a href="#">Blog</a></li>
-                <li><a href="#">Contact</a></li>
+                <li><a href="#">{{ 'footer.blog'|trans }}</a></li>
+                <li><a href="#">{{ 'footer.contact'|trans }}</a></li>
             </ul>
         </div>
 
         <div class="footer-column">
-            <h3>Support</h3>
+            <h3>{{ 'footer.contact'|trans }}</h3>
             <ul>
-                <li><i class="fas fa-book"></i> <a href="#">Documentation</a></li>
-                <li><i class="fas fa-balance-scale"></i> <a href="#">Mentions légales</a></li>
-                <li><i class="fas fa-user-shield"></i> <a href="#">Vie privée</a></li>
-                <li><i class="fas fa-comment-dots"></i> <a href="#">Retours utilisateurs</a></li>
-                <li><i class="fas fa-file-contract"></i> <a href="#">Conditions Générales d’Utilisation</a></li>
+                <li><i class="fas fa-book"></i> <a href="#">{{ 'footer.documentation'|trans }}</a></li>
+                <li><i class="fas fa-balance-scale"></i> <a href="#">{{ 'footer.legal_mentions'|trans }}</a></li>
+                <li><i class="fas fa-user-shield"></i> <a href="#">{{ 'footer.privacy'|trans }}</a></li>
+                <li><i class="fas fa-comment-dots"></i> <a href="#">{{ 'footer.user_feedback'|trans }}</a></li>
+                <li><i class="fas fa-file-contract"></i> <a href="#">{{ 'footer.terms_conditions'|trans }}</a></li>
             </ul>
         </div>
 
         <div class="footer-column">
             <h3>Code/Dev</h3>
             <ul>
-                <li><i class="fas fa-code-branch"></i> <a href="#">Code</a></li>
-                <li><i class="fas fa-sitemap"></i> <a href="#">OAI-PMH</a></li>
-                <li><i class="fas fa-map"></i> <a href="#">Feuille de route</a></li>
+                <li><i class="fas fa-code-branch"></i> <a href="#">{{ 'footer.code_dev_title'|trans }}</a></li>
+                <li><i class="fas fa-sitemap"></i> <a href="#">{{ 'footer.privacy'|trans }}OAI-PMH</a></li>
+                <li><i class="fas fa-map"></i> <a href="#">{{ 'footer.roadmap'|trans }}</a></li>
             </ul>
         </div>
     </div>
@@ -33,10 +33,10 @@
     <div class="footer-credit">
         <p>
             <img src="https://upload.wikimedia.org/wikipedia/commons/b/b7/Flag_of_Europe.svg" alt="EU Flag" width="20">
-            Episciences has received support from
-            <a href="https://www.openaire.eu">OpenAIRE</a> and its services, notably for the integration of its service in the OpenAIRE Nexus project: funding from the
-            <a href="https://cordis.europa.eu/project/id/101017452">European Commission grant 101017452</a>
-            “OpenAIRE Nexus - OpenAIRE-Nexus Scholarly Communication Services for EOSC users”.
+            {{ 'footer.support_text'|trans }}
+            <a href="https://www.openaire.eu">{{ 'footer.open_aire'|trans }}</a> {{ 'footer.services_text'|trans }}
+            <a href="https://cordis.europa.eu/project/id/101017452">{{ 'footer.grant_text'|trans }}</a>
+            "{{ 'footer.nexus_description'|trans }}".
         </p>
     </div>
 </footer>

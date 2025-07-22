@@ -11,7 +11,7 @@
             <!-- Page Title -->
             <div class="d-flex">
                 <div class="col-12">
-                    <h1 class="page-title text-center my-5">Journal List</h1>
+                    <h1 class="page-title text-center my-5">{{ 'journal.journal_list' | trans }}</h1>
                 </div>
             </div>
             <div class="d-flex">
@@ -27,7 +27,7 @@
                                         {% else %}
                                         <h3 class="display-8 fw-bold mb-2">{{ reviews|length }}</h3>
                                         {% endif %}
-                                        <p class="h5 mb-0">Total journals </p>
+                                        <p class="h5 mb-0">{{ 'journal.title' | trans }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -37,7 +37,7 @@
                                     <div class="text-center text-white">
                                         {% if pagination %}
                                         {# Si pagination, on doit compter depuis toutes les reviews, pas seulement la page courante #}
-                                        {# Option 1: Calculer dans le contrôleur (recommandé) #}
+                                        {# Option 1: Calculer dans le contrôleur #}
                                         <h3 class="display-8 fw-bold mb-2">{{ activeJournalsCount|default(0) }}</h3>
                                         {% else %}
                                             {% set activeCount = 0 %}
@@ -48,7 +48,7 @@
                                             {% endfor %}
                                             <h3 class="display-8 fw-bold mb-2">{{ activeCount }}</h3>
                                         {% endif %}
-                                             <p class="h5 mb-0">Active journals</p>
+                                             <p class="h5 mb-0">{{ 'journal.active_journals' | trans }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -61,7 +61,7 @@
                                             <input type="text"
                                                    name="search"
                                                    class="form-control form-control-lg"
-                                                   placeholder="Search for a journal by name or code"
+                                                   placeholder="{{ 'journal.search_placeholder' | trans }}"
                                                    value="{{ app.request.query.get('search') }}"
                                                    autocomplete="off">
                                             <button class="search-btn" type="submit">
@@ -87,9 +87,9 @@
                             <table class="table table-hover align-middle">
                                 <thead>
                                 <tr>
-                                    <th scope="col">Name</th>
-                                    <th scope="col">Code</th>
-                                    <th scope="col" class="text-center">Manager</th>
+                                    <th scope="col">{{ 'journal.table_name' | trans }}</th>
+                                    <th scope="col">{{ 'journal.table_code' | trans }}</th>
+                                    <th scope="col" class="text-center">{{ 'journal.table_action' | trans }}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -106,7 +106,7 @@
                                             {% if is_granted('REVIEW_VIEW', review) %}
                                                 <a href="{{ path('app_journal_detail', {code: review.code}) }}"
                                                    class="action-btn"
-                                                   title="See Details (epiadmin uniquement)">
+                                                   title="{{ 'journal.see_details'|trans }}">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
                                             {% else %}
@@ -122,7 +122,7 @@
                                     <tr>
                                         <td colspan="3" class="text-center text-muted py-4">
                                             <i class="fas fa-inbox fa-2x mb-3"></i>
-                                            <p class="mb-0">Aucun journal trouvé</p>
+                                            <p class="mb-0">{{ 'journal.NJournals' | trans }}</p>
                                         </td>
                                     </tr>
                                 {% endfor %}

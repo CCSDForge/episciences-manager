@@ -1,8 +1,54 @@
+head:
+ login: "Connexion"
+ logout: "Déconnexion"
+ welcome: "Bienvenue"
+
+nav:
+ home: "Accueil"
+ the_journal: "Le Journal"
+ folder: "Dossier"
+ dashboard: "Tableau de bord"
+ users: "Utilisateurs"
+ journal: "Journal"
+ website: "Site Web"
+ statistics: "Statistiques"
+
 home:
  welcome_title: "Bienvenue sur notre plateforme Episciences"
+ total_journals: "Revues au total"
+ no_journals_available: "Aucune revue disponible pour le moment."
 
 reviews:
  list_title: "Liste des revues"
 
 flash:
- logout_success: "Vous avez été déconnecté avec succès"
+ logout_success: "Déconnexion réussie ! Vous êtes maintenant déconnecté(e) du système."
+
+journal:
+ title: "Revues au total"
+ journal_list: "Liste des journaux"
+ active_journals: "Journaux actifs"
+ table_name: "Nom"
+ table_code: "Code"
+ table_action: "Action"
+ no_journals: "Aucun journal trouvé"
+ search_placeholder: "Rechercher un journal par nom ou code"
+ see_details: "Voir les détails (epiadmin uniquement)"
+
+footer:
+ about_title: "À propos d'Episciences"
+ blog: "Blog"
+ contact: "Contact"
+ support_title: "Support"
+ documentation: "Documentation"
+ legal_mentions: "Mentions légales"
+ privacy: "Confidentialité"
+ user_feedback: "Retours utilisateurs"
+ terms_conditions: "Conditions Générales d'Utilisation"
+ code_dev_title: "Code/Dev"
+ roadmap: "Feuille de route"
+ support_text: "Episciences a reçu le support de"
+ open_aire: "OpenAIRE"
+ services_text: "et ses services, notamment pour l'intégration de son service dans le projet OpenAIRE Nexus : financement de la"
+ grant_text: "Commission Européenne subvention 101017452"
+ nexus_description: "OpenAIRE Nexus - Services de Communication Scientifique OpenAIRE-Nexus pour les utilisateurs EOSC"

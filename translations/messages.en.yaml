@@ -1,8 +1,54 @@
+head:
+  login: "Login"
+  logout: "Logout"
+  welcome: "Welcome"
+
+nav:
+  home: "Home"
+  the_journal: "The Journal"
+  folder: "Folder"
+  dashboard: "Dashboard"
+  users: "Users"
+  journal: "Journal"
+  website: "Website"
+  statistics: "Statistics"
+
 home:
   welcome_title: "Welcome to our Episciences platform"
+  total_journals: "Total journals"
+  no_journals_available: "No journals available at the moment."
 
 reviews:
   list_title: "List of reviews"
 
 flash:
   logout_success: "You have been successfully logged out"
+
+journal:
+  title: "Total journals"
+  journal_list: "List of Journals"
+  active_journals: "Active Journals"
+  table_name: "Name"
+  table_code: "Code"
+  table_action: "Action"
+  no_journals: "No journals found"
+  search_placeholder: "Search for a journal by name or code"
+  see_details: "See Details (epiadmin only)"
+
+footer:
+  about_title: "About Episciences"
+  blog: "Blog"
+  contact: "Contact"
+  support: "Support"
+  documentation: "Documentation"
+  legal_mentions: "Legal Notices"
+  privacy: "Privacy"
+  user_feedback: "User Feedback"
+  terms_conditions: "Terms of Use"
+  code_dev_title: "Code/Dev"
+  roadmap: "Roadmap"
+  support_text: "Episciences has received support from"
+  open_aire: "OpenAIRE"
+  services_text: "and its services, notably for the integration of its service in the OpenAIRE Nexus project: funding from the"
+  grant_text: "European Commission grant 101017452"
+  nexus_description: "OpenAIRE Nexus - OpenAIRE-Nexus Scholarly Communication Services for EOSC users"

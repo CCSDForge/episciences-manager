@@ -37,14 +37,14 @@
                             {% if app.user and app.user.userIdentifier != '__NO_USER__' %}
                                 <div class="user-menu d-flex align-items-center">
                                     <span class="welcome-text me-3">
-                                        Welcome, <strong>{{ app.user.userIdentifier }}</strong>
+                                        {{ 'head.welcome' | trans }}, <strong>{{ app.user.userIdentifier }}</strong>
                                     </span>
                                     <a class="btn btn-outline-danger custom-btn" href="{{ path('logout') }}" role="button">
-                                        <i class="fas fa-sign-out-alt me-1"></i> Logout
+                                        <i class="fas fa-sign-out-alt me-1"></i> {{ 'head.logout' | trans  }}
                                     </a>
                                 </div>
                             {% else %}
-                                <a class="btn btn-outline-primary custom-btn" href="{{ path('login') }}" role="button">Login</a>
+                                <a class="btn btn-outline-primary custom-btn" href="{{ path('login') }}" role="button">{{ 'head.login' | trans  }}</a>
                             {% endif %}
                         </div>
                     </div>
