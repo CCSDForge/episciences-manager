@@ -3,14 +3,15 @@
 {% block body %}
 
             <div class="container">
-
-                {% include 'partials/_navbar.html.twig' %}
-
-                <div class="d-flex align-items-center">
+                <div class="d-flex align-items-center justify-content-center">
                     <!-- Journal Logo -->
-                    <div class="journal-logo me-4">
+                    <div class="col-sm-4 col-md-4 journal-logo me-4 text-center">
                         <img src="{{ asset('build/images/logo-' ~ review.code ~ '-big.svg') }}"
                              alt="{{ review.name }} Logo" class="img-fluid logo">
+                    </div>
+                    <!-- Journal Title -->
+                    <div class="col-sm-8 col-md-8 journal-title text-center">
+                        <h1 class="h3 mb-0 text-primary fw-bold">{{ review.name }}</h1>
                     </div>
 
                 </div>
