@@ -22,14 +22,14 @@
                         <div class="login-btn-container d-flex align-items-center">
                             <!-- Dropdown langue -->
                             <div class="language-selector me-3">
-                                <div class="dropdown">
+                                <div class="dropdown" id="language-dropdown">
                                     <a class="btn btn-outline-secondary btn-sm dropdown-toggle" href="#" role="button" 
-                                       data-bs-toggle="dropdown" aria-expanded="false">
+                                       data-bs-toggle="dropdown" aria-expanded="false" id="language-dropdown-toggle">
                                         <i class="fas fa-globe me-1"></i> {{ app.request.locale|upper }}
                                     </a>
-                                    <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" href="{{ path(app.request.get('_route'), app.request.get('_route_params')|merge({'_locale': 'fr'})) }}">🇫🇷 Français</a></li>
-                                        <li><a class="dropdown-item" href="{{ path(app.request.get('_route'), app.request.get('_route_params')|merge({'_locale': 'en'})) }}">🇺🇸 English</a></li>
+                                    <ul class="dropdown-menu" id="language-dropdown-menu">
+                                        <li><a class="dropdown-item language-switch" href="#" data-locale="fr">🇫🇷 Français</a></li>
+                                        <li><a class="dropdown-item language-switch" href="#" data-locale="en">🇺🇸 English</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -55,6 +55,10 @@
     </div>
 </header>
 
+{% block stylesheets %}
+    {{ encore_entry_link_tags('header') }}
+{% endblock %}
+
 {% block javascripts %}
-    {{ encore_entry_script_tags('header') }}
+    {{ encore_entry_script_tags('headerJs') }}
 {% endblock %}
