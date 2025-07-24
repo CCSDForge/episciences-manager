@@ -1,0 +1,69 @@
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded');
+    const pageLinks = document.querySelectorAll('.page-nav-link');
+    const pageContent = document.getElementById('page-content');
+    const pageTitle = document.getElementById('page-title');
+    const pageBody = document.getElementById('page-body');
+
+    console.log('Found links:', pageLinks.length);
+    console.log('Page content element:', pageContent);
+
+    pageLinks.forEach(link => {
+    link.addEventListener('click', function(e) {
+    e.preventDefault();
+    console.log('Link clicked');
+
+    const pageCode = this.getAttribute('data-page-code');
+    const journalCode = this.getAttribute('data-journal-code');
+
+    console.log('Page code:', pageCode);
+    console.log('Journal code:', journalCode);
+
+    // Remove active class from all links
+    pageLinks.forEach(l => l.classList.remove('active'));
+    // Add active class to clicked link
+    this.classList.add('active');
+    // Extraire la locale de l'URL
+    const locale = window.location.pathname.split('/')[1];
+    const pageUrl = `/${locale}/journal/${journalCode}/page/${pageCode}`;
+    console.log('Fetching:', pageUrl);
+    
+    // Mettre à jour l'URL dans le navigateur sans recharger
+    console.log('Current URL:', window.location.href);
+    console.log('New URL will be:', pageUrl);
+    history.pushState({}, '', pageUrl);
+    console.log('URL after pushState:', window.location.href);
+
+    // Fetch page content via AJAX
+    fetch(pageUrl, {
+    headers: {
+    'X-Requested-With': 'XMLHttpRequest'
+}
+})
+    .then(response => {
+    console.log('Response status:', response.status);
+    return response.json();
+})
+    .then(data => {
+    console.log('Data received:', data);
+    if (data.error) {
+    pageTitle.textContent = 'Erreur';
+    pageBody.innerHTML = '<p class="text-danger">Page non trouvée</p>';
+} else {
+        // Utiliser la locale extraite de l'URL
+    const currentLocale = locale;
+    pageTitle.textContent = data.title[currentLocale] || data.title['en'] || data.pageCode;
+    pageBody.innerHTML = data.content[currentLocale] || data.content['en'] || 'Pas de contenu disponible';
+}
+    pageContent.style.display = 'block';
+})
+    .catch(error => {
+    console.error('Fetch error:', error);
+    pageTitle.textContent = 'Erreur';
+    pageBody.innerHTML = '<p class="text-danger">Erreur lors du chargement du contenu</p>';
+    pageContent.style.display = 'block';
+            });
+        });
+    });
+});

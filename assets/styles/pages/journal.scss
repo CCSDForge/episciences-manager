@@ -3,8 +3,8 @@
 
 
 // Gradients personnalisés
-$primary-gradient: linear-gradient(135deg, $primary-color 0%, darken($primary-color, 15%) 100%);
-$success-gradient: linear-gradient(135deg, $success-color 0%, darken($success-color, 10%) 100%);
+$primary-gradient: linear-gradient(135deg, $primary-color 0%, color.adjust($primary-color, $lightness: -15%) 100%);
+$success-gradient: linear-gradient(135deg, $success-color 0%, color.adjust($success-color, $lightness: -10%) 100%);
 $warning-gradient: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);
 
 // Body et layout principal
@@ -144,7 +144,7 @@ body {
     }
 
     &:active {
-      background: darken($primary-color, 10%) !important;
+      background: color.adjust($primary-color, $lightness: -10%) !important;
     }
 
     i {

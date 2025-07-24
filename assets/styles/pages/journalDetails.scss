@@ -36,3 +36,23 @@
   }
 }
 
+//Specific navigation for the pages
+.navbar .page-nav-link {
+  padding: 8px 16px;
+  border-radius: 5px;
+  text-decoration: none;
+  color: $primary-color;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: $primary-color !important;
+    color: $white !important;
+  }
+
+  &.active {
+    background-color: $primary-color !important;
+    color: $white !important;
+  }
+}
+
+

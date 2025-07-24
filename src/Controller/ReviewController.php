@@ -3,9 +3,11 @@
 namespace App\Controller;
 
 
+use App\Repository\PageRepository;
 use App\Service\ReviewManager;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -51,7 +53,7 @@ final class ReviewController extends AbstractController
     }
 
     #[Route('/journal/{code}', name: 'app_journal_detail', requirements: ['code' => '[\w\-]+'])]
-    public function getJournal(string $code, ReviewManager $reviewManager): Response
+    public function getJournal(string $code, ReviewManager $reviewManager, PageRepository $pageRepository): Response
     {
         // Récupérer la review par son code
         $review = $reviewManager->getReviewByCode($code);
@@ -72,11 +74,17 @@ final class ReviewController extends AbstractController
         // Check if user has permission to view this specific review
         $this->denyAccessUnlessGranted('REVIEW_VIEW', $review);
 
+        //Retrieve the journal pages
+        $pages = $pageRepository->findBy([
+            'rvcode' => $code
+        ]);
 
         return $this->render('review/journalDetails.html.twig', [
             'review' => $review,
             'code' => $code,
+            'pages' => $pages,
         ]);
     }
+
 
 }
