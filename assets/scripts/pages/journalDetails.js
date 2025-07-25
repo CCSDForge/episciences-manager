@@ -58,6 +58,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Use the locale extracted from the URL
     const currentLocale = locale;
     pageTitle.textContent = data.title[currentLocale] || data.title['en'] || data.pageCode;
+    //Now, the content is HTML converted from markdown, so it's safe to use innerHTML
     pageBody.innerHTML = data.content[currentLocale] || data.content['en'] || 'Pas de contenu disponible';
 }
     pageContent.style.display = 'block';
