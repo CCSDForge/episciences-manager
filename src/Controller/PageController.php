@@ -35,10 +35,9 @@ final class PageController extends AbstractController
             ]);
         }
 
-        // Sinon, retourner la vue normale
-        return $this->render('page/show.html.twig', [
-            'page' => $page,
-            'code' => $code,
-        ]);
+        // Pour les accès directs, rediriger vers la page principale du journal
+        return $this->redirectToRoute('app_journal_detail', [
+            'code' => $code
+        ], 301);
     }
 }

@@ -24,12 +24,16 @@ document.addEventListener('DOMContentLoaded', function() {
     pageLinks.forEach(l => l.classList.remove('active'));
     // Add active class to clicked link
     this.classList.add('active');
-    // Extraire la locale de l'URL
-    const locale = window.location.pathname.split('/')[1];
+    // Extract the locale from the URL, or use the document's locale if it has been changed
+    let locale = document.documentElement.lang || window.location.pathname.split('/')[1] || 'en';
+    // Validate the locale
+    if (locale !== 'en' && locale !== 'fr') {
+        locale = 'en';
+    }
     const pageUrl = `/${locale}/journal/${journalCode}/page/${pageCode}`;
     console.log('Fetching:', pageUrl);
     
-    // Mettre à jour l'URL dans le navigateur sans recharger
+    //Update the URL in the browser without reloading
     console.log('Current URL:', window.location.href);
     console.log('New URL will be:', pageUrl);
     history.pushState({}, '', pageUrl);
@@ -51,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function() {
     pageTitle.textContent = 'Erreur';
     pageBody.innerHTML = '<p class="text-danger">Page non trouvée</p>';
 } else {
-        // Utiliser la locale extraite de l'URL
+    // Use the locale extracted from the URL
     const currentLocale = locale;
     pageTitle.textContent = data.title[currentLocale] || data.title['en'] || data.pageCode;
     pageBody.innerHTML = data.content[currentLocale] || data.content['en'] || 'Pas de contenu disponible';
