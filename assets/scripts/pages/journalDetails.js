@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM loaded');
     const pageLinks = document.querySelectorAll('.page-nav-link');
     const pageContent = document.getElementById('page-content');
-    const pageTitle = document.getElementById('page-title');
     const pageBody = document.getElementById('page-body');
 
     console.log('Found links:', pageLinks.length);
@@ -19,6 +18,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     console.log('Page code:', pageCode);
     console.log('Journal code:', journalCode);
+    
+    if (!pageCode || !journalCode) {
+        console.error('Missing pageCode or journalCode');
+        return;
+    }
 
     // Remove active class from all links
     pageLinks.forEach(l => l.classList.remove('active'));
@@ -52,20 +56,17 @@ document.addEventListener('DOMContentLoaded', function() {
     .then(data => {
     console.log('Data received:', data);
     if (data.error) {
-    pageTitle.textContent = 'Erreur';
     pageBody.innerHTML = '<p class="text-danger">Page non trouvée</p>';
 } else {
     // Use the locale extracted from the URL
     const currentLocale = locale;
-    pageTitle.textContent = data.title[currentLocale] || data.title['en'] || data.pageCode;
-    //Now, the content is HTML converted from markdown, so it's safe to use innerHTML
+    //the content is HTML converted from markdown, so it's safe to use innerHTML
     pageBody.innerHTML = data.content[currentLocale] || data.content['en'] || 'Pas de contenu disponible';
 }
     pageContent.style.display = 'block';
 })
     .catch(error => {
     console.error('Fetch error:', error);
-    pageTitle.textContent = 'Erreur';
     pageBody.innerHTML = '<p class="text-danger">Erreur lors du chargement du contenu</p>';
     pageContent.style.display = 'block';
             });

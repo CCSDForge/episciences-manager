@@ -29,7 +29,7 @@
                                         </a>
                                         {% for page in pages %}
                                             <a class="nav-link page-nav-link me-2 mb-2" 
-                                               href="#" 
+                                               href="#"
                                                data-page-code="{{ page.pageCode }}"
                                                data-journal-code="{{ code }}">
                                                 {{ page.title[app.request.locale] ?? page.title['en'] ?? page.pageCode }}
@@ -45,12 +45,9 @@
                 <!-- Page Content Display Area -->
                 <div class="row mt-4">
                     <div class="col-12">
-                        <div id="page-content" style="display: none;">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h3 id="page-title"></h3>
-                                </div>
-                                <div class="card-body">
+                        <div class="card">
+                            <div class="card-body">
+                                <div id="page-content" style="display: none;">
                                     <div id="page-body"></div>
                                 </div>
                             </div>
