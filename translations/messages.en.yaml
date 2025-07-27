@@ -37,6 +37,7 @@ journal:
 
 journalDetails:
   home: "Home"
+  edit: "Edit"
 
 footer:
   about_title: "About Episciences"

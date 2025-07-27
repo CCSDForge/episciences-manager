@@ -47,9 +47,15 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-body">
-                                <div id="page-content" style="display: none;">
+                                <div id="page-content" style="display: block; min-height: 1000px;">
                                     <div id="page-body"></div>
                                 </div>
+                            </div>
+                            <div class="card-footer text-end">
+                                <button type="button" class="btn btn-primary">
+                                    <i class="fas fa-edit me-1"></i>
+                                    {{ 'journalDetails.edit' | trans }}
+                                </button>
                             </div>
                         </div>
                     </div>
