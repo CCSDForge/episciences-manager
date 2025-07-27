@@ -35,6 +35,9 @@ journal:
   search_placeholder: "Search for a journal by name or code"
   see_details: "See Details (epiadmin only)"
 
+journalDetails:
+  home: "Home"
+
 footer:
   about_title: "About Episciences"
   blog: "Blog"

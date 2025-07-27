@@ -23,6 +23,10 @@
                             <nav class="navbar navbar-expand-lg navbar-light bg-light rounded">
                                 <div class="container-fluid">
                                     <div class="navbar-nav d-flex flex-wrap">
+                                        <a class="nav-link me-2 mb-2" 
+                                           href="{{ path('app_journal_detail', {'code': code, '_locale': app.request.locale}) }}">
+                                            {{ 'journalDetails.home' | trans }}
+                                        </a>
                                         {% for page in pages %}
                                             <a class="nav-link page-nav-link me-2 mb-2" 
                                                href="#" 
