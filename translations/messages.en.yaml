@@ -38,6 +38,13 @@ journal:
 journalDetails:
   home: "Home"
   edit: "Edit"
+  editContent: "Edit Content"
+  pageTitle: "Page Title"
+  content: "Content"
+  enterContent: "Enter content here..."
+  cancel: "Cancel"
+  save: "Save"
+
 
 footer:
   about_title: "About Episciences"

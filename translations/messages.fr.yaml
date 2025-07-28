@@ -38,6 +38,12 @@ journal:
 journalDetails:
  home: "Accueil"
  edit: "Éditer"
+ editContent: "Éditer le contenu"
+ pageTitle: "Title de la page"
+ content: "Contenu"
+ enterContent: "Saisissez le contenu ici..."
+ cancel: "Annuler"
+ save: "Sauvegarder"
 
 
 footer:

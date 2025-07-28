@@ -8,6 +8,7 @@ use App\Repository\ReviewRepository;
 use App\Service\ReviewManager;
 use App\Service\MarkdownService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -43,5 +44,53 @@ final class PageController extends AbstractController
         return $this->redirectToRoute('app_journal_detail', [
             'code' => $code
         ], 301);
+    }
+
+    #[Route('/journal/{code}/page/{pageTitle}/edit', name: 'app_page_edit', methods: ['POST'])]
+    public function editPage(
+        string $code, 
+        string $pageTitle, 
+        Request $request, 
+        PageRepository $pageRepository, 
+        EntityManagerInterface $entityManager,
+        MarkdownService $markdownService
+    ): JsonResponse {
+        $page = $pageRepository->findOneBy([
+            'rvcode' => $code,
+            'page_code' => $pageTitle
+        ]);
+
+        if (!$page) {
+            return new JsonResponse(['success' => false, 'message' => 'Page not found'], 404);
+        }
+
+        $data = json_decode($request->getContent(), true);
+        
+        if (!isset($data['content']) || !isset($data['locale'])) {
+            return new JsonResponse(['success' => false, 'message' => 'Missing content or locale'], 400);
+        }
+
+        $content = $data['content'];
+        $locale = $data['locale'];
+
+        // Update the content for the specific locale
+        $currentContent = $page->getContent() ?? [];
+        $currentContent[$locale] = $content;
+        $page->setContent($currentContent);
+
+        try {
+            $entityManager->flush();
+            
+            // Convert the new content to HTML and return it
+            $htmlContent = $markdownService->convertContentArray($page->getContent());
+            
+            return new JsonResponse([
+                'success' => true, 
+                'message' => 'Page updated successfully',
+                'htmlContent' => $htmlContent[$locale] ?? ''
+            ]);
+        } catch (\Exception $e) {
+            return new JsonResponse(['success' => false, 'message' => 'Error saving page: ' . $e->getMessage()], 500);
+        }
     }
 }
