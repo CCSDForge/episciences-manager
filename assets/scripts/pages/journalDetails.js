@@ -119,6 +119,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         const newContent = pageContentEdit.value;
+        const newTitle = pageTitleEdit.value;
         let locale = document.documentElement.lang || window.location.pathname.split('/')[1] || 'en';
         
         // Validate locale
@@ -130,6 +131,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         console.log('Saving to:', saveUrl);
         console.log('Content:', newContent);
+        console.log('Title:', newTitle);
         
         // Save via AJAX
         fetch(saveUrl, {
@@ -140,6 +142,7 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             body: JSON.stringify({
                 content: newContent,
+                title: newTitle,
                 locale: locale
             })
         })
@@ -153,6 +156,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Update page content with HTML converted content
                 pageBody.innerHTML = data.htmlContent || newContent;
                 
+                // Update the page title in navigation if it was changed
+                const activeLink = document.querySelector('.page-nav-link.active');
+                if (activeLink && data.updatedTitle) {
+                    activeLink.textContent = data.updatedTitle;
+                }
+                
                 // Close modal
                 const modalElement = document.getElementById('editModal');
                 const modal = Modal.getInstance(modalElement);
@@ -164,7 +173,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 
                 // Show success message
-                alert('Contenu sauvegardé avec succès!');
+                alert('Titre et contenu sauvegardés avec succès!');
             } else {
                 alert('Erreur lors de la sauvegarde: ' + (data.message || 'Erreur inconnue'));
             }

@@ -72,11 +72,23 @@ final class PageController extends AbstractController
 
         $content = $data['content'];
         $locale = $data['locale'];
+        $title = $data['title'] ?? null;
+        
+        // Debug: log what we received
+        error_log('Received data: ' . json_encode($data));
+        error_log('Title received: ' . ($title ?? 'null'));
 
         // Update the content for the specific locale
         $currentContent = $page->getContent() ?? [];
         $currentContent[$locale] = $content;
         $page->setContent($currentContent);
+        
+        // Update the title if provided
+        if ($title !== null) {
+            $currentTitle = $page->getTitle() ?? [];
+            $currentTitle[$locale] = $title;
+            $page->setTitle($currentTitle);
+        }
 
         try {
             $entityManager->flush();
@@ -87,7 +99,8 @@ final class PageController extends AbstractController
             return new JsonResponse([
                 'success' => true, 
                 'message' => 'Page updated successfully',
-                'htmlContent' => $htmlContent[$locale] ?? ''
+                'htmlContent' => $htmlContent[$locale] ?? '',
+                'updatedTitle' => $title ? $page->getTitle()[$locale] ?? '' : null
             ]);
         } catch (\Exception $e) {
             return new JsonResponse(['success' => false, 'message' => 'Error saving page: ' . $e->getMessage()], 500);
