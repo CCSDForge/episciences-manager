@@ -1,8 +1,77 @@
 
 import { Modal } from 'bootstrap';
 
+// Function to update modal translations dynamically
+function updateModalTranslations() {
+    console.log('updateModalTranslations called, translations:', window.translations);
+    
+    // Update edit button
+    const editButton = document.getElementById('edit-button');
+    if (editButton && window.translations) {
+        console.log('Updating edit button with:', window.translations.edit);
+        editButton.innerHTML = '<i class="fas fa-edit me-1"></i>' + window.translations.edit;
+    }
+    
+    // Update modal title
+    const modalTitle = document.getElementById('editModalLabel');
+    if (modalTitle && window.translations) {
+        modalTitle.innerHTML = '<i class="fas fa-edit me-2"></i>' + window.translations.editContent;
+    }
+    
+    // Update page title label
+    const pageTitleLabel = document.querySelector('label[for="page-title-edit"]');
+    if (pageTitleLabel && window.translations) {
+        pageTitleLabel.textContent = window.translations.pageTitle;
+    }
+    
+    // Update content label
+    const contentLabel = document.querySelector('label[for="page-content-edit"]');
+    if (contentLabel && window.translations) {
+        contentLabel.textContent = window.translations.content;
+    }
+    
+    // Update textarea placeholder
+    const textarea = document.getElementById('page-content-edit');
+    if (textarea && window.translations) {
+        textarea.placeholder = window.translations.enterContent;
+    }
+    
+    // Update cancel button
+    const cancelButton = document.querySelector('button[data-bs-dismiss="modal"]');
+    if (cancelButton && window.translations) {
+        cancelButton.innerHTML = '<i class="fas fa-times me-1"></i>' + window.translations.cancel;
+    }
+    
+    // Update save button
+    const saveButton = document.getElementById('save-button');
+    if (saveButton && window.translations) {
+        saveButton.innerHTML = '<i class="fas fa-save me-1"></i>' + window.translations.save;
+    }
+}
+
+// Make the function globally available for the header script
+window.updateModalTranslations = updateModalTranslations;
+
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM loaded');
+    
+    // Initialize translations for the current locale
+    const currentLocale = document.documentElement.lang || window.location.pathname.split('/')[1] || 'en';
+    if (currentLocale === 'en' || currentLocale === 'fr') {
+        fetch(`/${currentLocale}/api/translations/${currentLocale}`, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(translations => {
+            window.translations = translations;
+        })
+        .catch(error => {
+            console.error('Error loading initial translations:', error);
+        });
+    }
+    
     const pageLinks = document.querySelectorAll('.page-nav-link');
     const pageContent = document.getElementById('page-content');
     const pageBody = document.getElementById('page-body');
@@ -91,7 +160,7 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Edit button clicked');
         
         if (!currentPageCode || !currentJournalCode) {
-            alert('Veuillez d\'abord sélectionner une page à éditer');
+            alert(window.translations.selectPageFirst);
             return;
         }
         
@@ -114,7 +183,7 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Save button clicked');
         
         if (!currentPageCode || !currentJournalCode) {
-            alert('Erreur: informations de page manquantes');
+            alert(window.translations.missingPageInfo);
             return;
         }
         
@@ -173,15 +242,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 
                 // Show success message
-                alert('Titre et contenu sauvegardés avec succès!');
+                alert(window.translations.saveSuccess);
             } else {
-                alert('Erreur lors de la sauvegarde: ' + (data.message || 'Erreur inconnue'));
+                alert(window.translations.saveError + (data.message || 'Erreur inconnue'));
             }
         })
         .catch(error => {
             console.error('Save error:', error);
             console.error('Error stack:', error.stack);
-            alert('Erreur lors de la sauvegarde: ' + error.message);
+            alert(window.translations.saveError + error.message);
         });
     });
 });

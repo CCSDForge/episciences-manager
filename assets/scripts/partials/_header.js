@@ -32,6 +32,8 @@
             // This is a page route, try to load content via AJAX
             loadPageContentAjax(finalUrl, selectedLocale, hash);
         } else {
+            // Update translations before navigating for non-AJAX routes
+            updateTranslations(selectedLocale);
             // For other routes, navigate normally
             window.location.href = finalUrl;
         }
@@ -105,6 +107,9 @@
 
             // Update page navigation links to use the new locale
             updatePageNavLinks(selectedLocale);
+            
+            // Update translations and modal content
+            updateTranslations(selectedLocale);
         })
         .catch(error => {
             console.error('Error loading page content:', error);
@@ -169,6 +174,37 @@
 }
 });
 }
+
+    // Function to update translations and modal content
+    function updateTranslations(newLocale) {
+        console.log('updateTranslations called with locale:', newLocale);
+        // Fetch new translations from the server
+        fetch(`/${newLocale}/api/translations/${newLocale}`, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => {
+            console.log('Translation response:', response.status);
+            return response.json();
+        })
+        .then(translations => {
+            console.log('New translations loaded:', translations);
+            // Update window.translations object
+            window.translations = translations;
+            
+            // Update modal content if the function exists
+            if (typeof window.updateModalTranslations === 'function') {
+                console.log('Calling updateModalTranslations function');
+                window.updateModalTranslations();
+            } else {
+                console.log('updateModalTranslations function not found');
+            }
+        })
+        .catch(error => {
+            console.error('Error loading translations:', error);
+        });
+    }
 
     // Function to update page navigation links with new locale
     function updatePageNavLinks(newLocale) {

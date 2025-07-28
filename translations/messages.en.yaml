@@ -38,12 +38,16 @@ journal:
 journalDetails:
   home: "Home"
   edit: "Edit"
-  editContent: "Edit Content"
-  pageTitle: "Page Title"
+  edit_content: "Edit Content"
+  page_title: "Page Title"
   content: "Content"
-  enterContent: "Enter content here..."
+  enter_content: "Enter content here..."
   cancel: "Cancel"
   save: "Save"
+  select_page_first: "Please select a page to edit first"
+  missing_page_info: "Error: missing page information"
+  save_success: "Title and content saved successfully!"
+  save_error: "Error while saving: "
 
 
 footer:

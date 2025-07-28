@@ -38,12 +38,16 @@ journal:
 journalDetails:
  home: "Accueil"
  edit: "Éditer"
- editContent: "Éditer le contenu"
- pageTitle: "Title de la page"
+ edit_content: "Éditer le contenu"
+ page_title: "Title de la page"
  content: "Contenu"
- enterContent: "Saisissez le contenu ici..."
+ enter_content: "Saisissez le contenu ici..."
  cancel: "Annuler"
  save: "Sauvegarder"
+ select_page_first: "Veuillez d'abord sélectionner une page à éditer"
+ missing_page_info: "Erreur: informations de page manquantes"
+ save_success: "Titre et contenu sauvegardés avec succès!"
+ save_error: "Erreur lors de la sauvegarde: "
 
 
 footer:
