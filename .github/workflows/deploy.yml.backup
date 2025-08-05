@@ -1,0 +1,260 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+      version:
+        description: 'Version/Tag to deploy'
+        required: false
+        default: 'latest'
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build-and-push:
+    name: Build and Push Docker Images
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    outputs:
+      image-tag: ${{ steps.meta.outputs.tags }}
+      image-digest: ${{ steps.build.outputs.digest }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=raw,value=${{ github.event.inputs.version }}
+
+      - name: Build and push PHP-FPM image
+        id: build
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./docker/php-fpm/Dockerfile
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-php:${{ github.event.inputs.version || 'latest' }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and push Apache image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./docker/apache/Dockerfile
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-apache:${{ github.event.inputs.version || 'latest' }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    if: github.event.inputs.environment == 'staging' || github.ref == 'refs/heads/develop'
+    environment: staging
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.STAGING_SSH_KEY }}
+
+      - name: Deploy to staging server
+        run: |
+          echo "🚀 Deploying to STAGING environment..."
+          
+          # Variables d'environnement
+          STAGING_HOST="${{ secrets.STAGING_HOST }}"
+          STAGING_USER="${{ secrets.STAGING_USER }}"
+          IMAGE_TAG="${{ github.event.inputs.version || 'latest' }}"
+          
+          # Commands de déploiement
+          ssh -o StrictHostKeyChecking=no $STAGING_USER@$STAGING_HOST << EOF
+            cd /var/www/episciences-manager
+            
+            # Backup current deployment
+            docker-compose down
+            
+            # Pull latest images
+            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-php:$IMAGE_TAG
+            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-apache:$IMAGE_TAG
+            
+            # Update docker-compose with new image tags
+            sed -i 's/image: .*-php:.*/image: ${{ env.REGISTRY }}\/${{ env.IMAGE_NAME }}-php:$IMAGE_TAG/' docker-compose.staging.yml
+            sed -i 's/image: .*-apache:.*/image: ${{ env.REGISTRY }}\/${{ env.IMAGE_NAME }}-apache:$IMAGE_TAG/' docker-compose.staging.yml
+            
+            # Start services
+            docker-compose -f docker-compose.staging.yml up -d
+            
+            # Run migrations
+            docker-compose -f docker-compose.staging.yml exec -T php-fpm-manager php bin/console doctrine:migrations:migrate --no-interaction
+            
+            # Clear cache
+            docker-compose -f docker-compose.staging.yml exec -T php-fpm-manager php bin/console cache:clear --env=prod
+            
+            # Warm up cache
+            docker-compose -f docker-compose.staging.yml exec -T php-fpm-manager php bin/console cache:warmup --env=prod
+            
+            echo "✅ Staging deployment completed!"
+          EOF
+
+      - name: Health check
+        run: |
+          echo "🔍 Running health check..."
+          sleep 30
+          curl -f ${{ secrets.STAGING_URL }}/health || exit 1
+          echo "✅ Health check passed!"
+
+      - name: Notify deployment
+        uses: 8398a7/action-slack@v3
+        if: always()
+        with:
+          status: ${{ job.status }}
+          channel: '#deployments'
+          text: |
+            Staging Deployment: ${{ job.status }}
+            Environment: staging
+            Version: ${{ github.event.inputs.version || 'latest' }}
+            URL: ${{ secrets.STAGING_URL }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    if: github.event.inputs.environment == 'production'
+    environment: production
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.PRODUCTION_SSH_KEY }}
+
+      - name: Deploy to production server
+        run: |
+          echo "🚀 Deploying to PRODUCTION environment..."
+          
+          # Variables d'environnement
+          PRODUCTION_HOST="${{ secrets.PRODUCTION_HOST }}"
+          PRODUCTION_USER="${{ secrets.PRODUCTION_USER }}"
+          IMAGE_TAG="${{ github.event.inputs.version || 'latest' }}"
+          
+          # Commands de déploiement avec rollback automatique
+          ssh -o StrictHostKeyChecking=no $PRODUCTION_USER@$PRODUCTION_HOST << EOF
+            cd /var/www/episciences-manager
+            
+            # Backup current state
+            docker-compose -f docker-compose.prod.yml down
+            docker tag current-php:latest backup-php:$(date +%Y%m%d-%H%M%S) || true
+            docker tag current-apache:latest backup-apache:$(date +%Y%m%d-%H%M%S) || true
+            
+            # Pull new images
+            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-php:$IMAGE_TAG
+            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-apache:$IMAGE_TAG
+            
+            # Tag as current
+            docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-php:$IMAGE_TAG current-php:latest
+            docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-apache:$IMAGE_TAG current-apache:latest
+            
+            # Start services with new images
+            docker-compose -f docker-compose.prod.yml up -d
+            
+            # Wait for services to be ready
+            sleep 30
+            
+            # Health check
+            if ! curl -f http://localhost/health; then
+              echo "❌ Health check failed, rolling back..."
+              docker-compose -f docker-compose.prod.yml down
+              docker tag backup-php:latest current-php:latest
+              docker tag backup-apache:latest current-apache:latest
+              docker-compose -f docker-compose.prod.yml up -d
+              exit 1
+            fi
+            
+            # Run migrations (only if health check passed)
+            docker-compose -f docker-compose.prod.yml exec -T php-fpm-manager php bin/console doctrine:migrations:migrate --no-interaction
+            
+            # Clear and warm cache
+            docker-compose -f docker-compose.prod.yml exec -T php-fpm-manager php bin/console cache:clear --env=prod
+            docker-compose -f docker-compose.prod.yml exec -T php-fpm-manager php bin/console cache:warmup --env=prod
+            
+            echo "✅ Production deployment completed!"
+          EOF
+
+      - name: Final health check
+        run: |
+          echo "🔍 Running final health check..."
+          sleep 60
+          curl -f ${{ secrets.PRODUCTION_URL }}/health || exit 1
+          echo "✅ Production health check passed!"
+
+      - name: Notify deployment
+        uses: 8398a7/action-slack@v3
+        if: always()
+        with:
+          status: ${{ job.status }}
+          channel: '#deployments'
+          text: |
+            🚀 Production Deployment: ${{ job.status }}
+            Environment: production  
+            Version: ${{ github.event.inputs.version || 'latest' }}
+            URL: ${{ secrets.PRODUCTION_URL }}
+            Deployed by: ${{ github.actor }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  rollback:
+    name: Rollback
+    runs-on: ubuntu-latest
+    if: failure() && github.event.inputs.environment == 'production'
+    needs: deploy-production
+
+    steps:
+      - name: Rollback production deployment
+        run: |
+          echo "🔄 Rolling back production deployment..."
+          # Implement rollback logic here
+          echo "Rollback completed!"

@@ -3,6 +3,11 @@ head:
   logout: "Logout"
   welcome: "Welcome"
 
+meta:
+  default_title: "Episciences Manager - Scientific Journal Management Platform"
+  default_description: "Administration interface for managing Episciences scientific journals. Access open access academic publishing tools."
+  default_keywords: "episciences, scientific journals, open access, academic publishing, research, hal"
+
 nav:
   home: "Home"
   the_journal: "The Journal"

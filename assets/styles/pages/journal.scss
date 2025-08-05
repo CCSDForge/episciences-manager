@@ -11,7 +11,6 @@ $warning-gradient: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);
 body {
   background: linear-gradient(135deg, $light-gray 0%, $medium-gray 100%);
   min-height: 100vh;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: $text-color;
 }
 

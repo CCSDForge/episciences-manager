@@ -3,6 +3,11 @@ head:
  logout: "Déconnexion"
  welcome: "Bienvenue"
 
+meta:
+ default_title: "Episciences Manager - Plateforme de gestion des journaux scientifiques"
+ default_description: "Interface d'administration pour la gestion des journaux scientifiques Episciences. Accédez aux outils de publication académique en libre accès."
+ default_keywords: "episciences, journaux scientifiques, libre accès, publication académique, recherche, hal"
+
 nav:
  home: "Accueil"
  the_journal: "Le Journal"
