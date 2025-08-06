@@ -1,0 +1,122 @@
+<testsuites id="" name="" tests="28" failures="0" skipped="28" errors="0" time="0.060293000000000006">
+<testsuite name="homepage.spec.js" timestamp="2025-08-06T15:08:39.527Z" hostname="chromium" tests="7" failures="0" skipped="7" time="0" errors="0">
+<testcase name="Homepage E2E Tests › should load homepage successfully" classname="homepage.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Homepage E2E Tests › should display language selector" classname="homepage.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Homepage E2E Tests › should switch languages correctly" classname="homepage.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Homepage E2E Tests › should display journal list" classname="homepage.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Homepage E2E Tests › should navigate to journal list page" classname="homepage.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Homepage E2E Tests › should be responsive on mobile" classname="homepage.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Homepage E2E Tests › should handle login/logout flow" classname="homepage.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="homepage.spec.js" timestamp="2025-08-06T15:08:39.527Z" hostname="firefox" tests="7" failures="0" skipped="7" time="0" errors="0">
+<testcase name="Homepage E2E Tests › should load homepage successfully" classname="homepage.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Homepage E2E Tests › should display language selector" classname="homepage.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Homepage E2E Tests › should switch languages correctly" classname="homepage.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Homepage E2E Tests › should display journal list" classname="homepage.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Homepage E2E Tests › should navigate to journal list page" classname="homepage.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Homepage E2E Tests › should be responsive on mobile" classname="homepage.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Homepage E2E Tests › should handle login/logout flow" classname="homepage.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="homepage.spec.js" timestamp="2025-08-06T15:08:39.527Z" hostname="webkit" tests="7" failures="0" skipped="7" time="0" errors="0">
+<testcase name="Homepage E2E Tests › should load homepage successfully" classname="homepage.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Homepage E2E Tests › should display language selector" classname="homepage.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Homepage E2E Tests › should switch languages correctly" classname="homepage.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Homepage E2E Tests › should display journal list" classname="homepage.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Homepage E2E Tests › should navigate to journal list page" classname="homepage.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Homepage E2E Tests › should be responsive on mobile" classname="homepage.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Homepage E2E Tests › should handle login/logout flow" classname="homepage.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="homepage.spec.js" timestamp="2025-08-06T15:08:39.527Z" hostname="mobile-chrome" tests="7" failures="0" skipped="7" time="0" errors="0">
+<testcase name="Homepage E2E Tests › should load homepage successfully" classname="homepage.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Homepage E2E Tests › should display language selector" classname="homepage.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Homepage E2E Tests › should switch languages correctly" classname="homepage.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Homepage E2E Tests › should display journal list" classname="homepage.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Homepage E2E Tests › should navigate to journal list page" classname="homepage.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Homepage E2E Tests › should be responsive on mobile" classname="homepage.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Homepage E2E Tests › should handle login/logout flow" classname="homepage.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+</testsuites>
