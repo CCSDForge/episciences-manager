@@ -2,7 +2,7 @@
 const { defineConfig, devices } = require('@playwright/test');
 
 module.exports = defineConfig({
-  testDir: './tests/e2e',
+  testDir: './tests/javascript/e2e',
   
   // Timeout pour chaque test
   timeout: 30 * 1000,
