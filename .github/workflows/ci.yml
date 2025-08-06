@@ -87,7 +87,7 @@ jobs:
         run: |
           echo "🌐 Running E2E tests..."
           if [ -f "playwright.config.js" ]; then
-            # Install Playwright browsers
+            # Install Playwright browsers (chromium only)
             npx playwright install chromium --with-deps
             
             # Run E2E tests
