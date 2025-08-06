@@ -7,7 +7,7 @@ on:
     branches: [ main, develop ]
 
 jobs:
-  # Tests et vérifications de qualité
+  # Tests and quality checks
   ci:
     name: Tests & Quality Checks
     runs-on: ubuntu-latest
@@ -65,16 +65,18 @@ jobs:
           ls -la public/build/ || echo "Build folder created"
           echo "✅ Assets built successfully"
 
-      - name: 📊 JavaScript linting
+      - name: 📊 JavaScript linting & formatting
         run: |
           echo "📊 Checking JavaScript..."
           npx eslint assets/scripts/ assets/controllers/ || echo "⚠️ JS issues found but continuing"
+          echo "🎨 Checking JavaScript formatting with Prettier..."
+          npx prettier --check "assets/**/*.js" || echo "⚠️ Formatting issues found but continuing"
           echo "✅ JavaScript check completed"
 
       - name: 🧪 Run JavaScript unit tests
         run: |
           echo "🧪 Running JavaScript unit tests..."
-          if [ -f "tests/frontend/setup.js" ]; then
+          if [ -f "tests/javascript/unit/setup.js" ]; then
             npm test -- --passWithNoTests --coverage
             echo "✅ JavaScript unit tests completed"
           else
@@ -85,10 +87,10 @@ jobs:
         run: |
           echo "🌐 Running E2E tests..."
           if [ -f "playwright.config.js" ]; then
-            # Installer les navigateurs Playwright
+            # Install Playwright browsers (chromium only)
             npx playwright install chromium --with-deps
             
-            # Lancer les tests E2E
+            # Run E2E tests
             npx playwright test --project=chromium || echo "⚠️ Some E2E tests failed but continuing"
             echo "✅ E2E tests completed"
           else
@@ -97,7 +99,7 @@ jobs:
 
       - name: 📊 Upload test results
         uses: actions/upload-artifact@v4
-        if: always()
+        if: always() && (hashFiles('coverage/**/*') != '' || hashFiles('test-results/**/*') != '')
         with:
           name: test-results
           path: |
@@ -105,17 +107,16 @@ jobs:
             test-results/
           retention-days: 7
 
-      - name: 🧪 Run PHPUnit tests
+      - name: 🧪 Run Pest PHP tests
         run: |
-          echo "🧪 Running PHP tests..."
-          if [ -f "vendor/bin/phpunit" ]; then
-            vendor/bin/phpunit --testdox || echo "⚠️ Some tests failed but continuing"
+          echo "🧪 Running PHP tests with Pest..."
+          if [ -f "vendor/bin/pest" ]; then
+            vendor/bin/pest || echo "⚠️ Some tests failed but continuing"
           else
-            echo "ℹ️ PHPUnit not configured - creating basic test structure"
-            mkdir -p tests
-            echo "<?php echo 'Basic test placeholder';" > tests/BasicTest.php
+            echo "ℹ️ Pest not configured - running PHPUnit fallback"
+            vendor/bin/phpunit --testdox || echo "⚠️ Some tests failed but continuing"
           fi
-          echo "✅ Tests completed"
+          echo "✅ PHP tests completed"
 
       - name: 🔧 Symfony Console check
         run: |
@@ -142,7 +143,7 @@ jobs:
           echo "✅ CI Pipeline completed successfully!"
           echo "🚀 Project is ready for development"
 
-  # Notification des résultats (optionnel)
+  # Results notification
   notify:
     name: Notify Results
     runs-on: ubuntu-latest

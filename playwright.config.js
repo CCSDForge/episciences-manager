@@ -2,7 +2,7 @@
 const { defineConfig, devices } = require('@playwright/test');
 
 module.exports = defineConfig({
-  testDir: './tests/e2e',
+  testDir: './tests/javascript/e2e',
   
   // Timeout pour chaque test
   timeout: 30 * 1000,
@@ -28,30 +28,17 @@ module.exports = defineConfig({
     video: 'retain-on-failure',
   },
 
-  // Navigateurs à tester
+  // Navigateurs à tester - Chromium seulement pour le CI
   projects: [
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
-    },
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-    },
-    // Tests mobiles
-    {
-      name: 'mobile-chrome',
-      use: { ...devices['Pixel 5'] },
-    },
   ],
 
   // Dossier pour les rapports
   reporter: [
-    ['html', { outputFolder: 'test-results/html' }],
-    ['junit', { outputFile: 'test-results/junit.xml' }]
+    ['html', { outputFolder: 'playwright-report' }],
+    ['junit', { outputFile: 'playwright-results/junit.xml' }]
   ]
 });
