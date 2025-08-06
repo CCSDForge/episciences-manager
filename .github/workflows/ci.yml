@@ -65,10 +65,12 @@ jobs:
           ls -la public/build/ || echo "Build folder created"
           echo "✅ Assets built successfully"
 
-      - name: 📊 JavaScript linting
+      - name: 📊 JavaScript linting & formatting
         run: |
           echo "📊 Checking JavaScript..."
           npx eslint assets/scripts/ assets/controllers/ || echo "⚠️ JS issues found but continuing"
+          echo "🎨 Checking JavaScript formatting with Prettier..."
+          npx prettier --check "assets/**/*.js" || echo "⚠️ Formatting issues found but continuing"
           echo "✅ JavaScript check completed"
 
       - name: 🧪 Run JavaScript unit tests
