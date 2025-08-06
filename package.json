@@ -13,7 +13,12 @@
         "sass-loader": "^16.0.5",
         "style-loader": "^4.0.0",
         "webpack": "^5.74.0",
-        "webpack-cli": "^5.1.0"
+        "webpack-cli": "^5.1.0",
+        "jest": "^29.7.0",
+        "jest-environment-jsdom": "^29.7.0",
+        "@testing-library/jest-dom": "^6.1.0",
+        "@testing-library/dom": "^9.3.0",
+        "playwright": "^1.40.0"
     },
     "license": "UNLICENSED",
     "private": true,
@@ -21,7 +26,23 @@
         "dev-server": "encore dev-server",
         "dev": "encore dev",
         "watch": "encore dev --watch",
-        "build": "encore production --progress"
+        "build": "encore production --progress",
+        "test": "jest",
+        "test:watch": "jest --watch",
+        "test:coverage": "jest --coverage",
+        "test:e2e": "playwright test",
+        "test:e2e:ui": "playwright test --ui"
+    },
+    "jest": {
+        "testEnvironment": "jsdom",
+        "setupFilesAfterEnv": ["<rootDir>/tests/frontend/setup.js"],
+        "testMatch": [
+            "<rootDir>/tests/frontend/**/*.test.js"
+        ],
+        "collectCoverageFrom": [
+            "assets/scripts/**/*.js",
+            "assets/controllers/**/*.js"
+        ]
     },
     "dependencies": {
         "@fortawesome/fontawesome-free": "^6.7.2",
