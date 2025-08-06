@@ -1,0 +1,113 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+            <div class="container">
+                <div class="d-flex align-items-center justify-content-center">
+                    <!-- Journal Logo -->
+                    <div class="col-sm-4 col-md-4 journal-logo me-4 text-center">
+                        <img src="{{ asset('build/images/logo-' ~ review.code ~ '-big.svg') }}"
+                             alt="{{ review.name }} Logo" class="img-fluid logo">
+                    </div>
+                    <!-- Journal Title -->
+                    <div class="col-sm-8 col-md-8 journal-title text-center">
+                        <h1 class="h3 mb-0 text-primary fw-bold">{{ review.name }}</h1>
+                    </div>
+
+                </div>
+
+                <!-- Pages Navigation -->
+                {% if pages is defined and pages is not empty %}
+                    <div class="row mt-5">
+                        <div class="col-12">
+                            <nav class="navbar navbar-expand-lg navbar-light bg-light rounded">
+                                <div class="container-fluid">
+                                    <div class="navbar-nav d-flex flex-wrap">
+                                        <a class="nav-link me-2 mb-2" 
+                                           href="{{ path('app_journal_detail', {'code': code, '_locale': app.request.locale}) }}">
+                                            {{ 'journalDetails.home' | trans }}
+                                        </a>
+                                        {% for page in pages %}
+                                            <a class="nav-link page-nav-link me-2 mb-2" 
+                                               href="#"
+                                               data-page-code="{{ page.pageCode }}"
+                                               data-journal-code="{{ code }}">
+                                                {{ page.title[app.request.locale] ?? page.title['en'] ?? page.pageCode }}
+                                            </a>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </nav>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <!-- Page Content Display Area -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div id="page-content" style="display: block; min-height: 1000px;">
+                                    <div id="page-body"></div>
+                                </div>
+                            </div>
+                            <div class="card-footer text-end">
+                                <button type="button" class="btn btn-primary" id="edit-button" data-bs-toggle="modal" data-bs-target="#editModal">
+                                    <i class="fas fa-edit me-1"></i>
+                                    {{ 'journalDetails.edit' | trans }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Edit Modal -->
+            <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editModalLabel">
+                                <i class="fas fa-edit me-2"></i>
+                                {{ 'journalDetails.edit_content' | trans }}
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="edit-form">
+                                <div class="mb-3">
+                                    <label for="page-title-edit" class="form-label">{{ 'journalDetails.page_title' | trans }}</label>
+                                    <input type="text" class="form-control" id="page-title-edit">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="page-content-edit" class="form-label">{{ 'journalDetails.content' | trans }}</label>
+                                    <textarea class="form-control" id="page-content-edit" rows="15" placeholder="{{ 'journalDetails.enter_content' | trans }}"></textarea>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                <i class="fas fa-times me-1"></i>
+                                {{ 'journalDetails.cancel' | trans }}
+                            </button>
+                            <button type="button" class="btn btn-primary" id="save-button">
+                                <i class="fas fa-save me-1"></i>
+                                {{ 'journalDetails.save' | trans }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('journalDetails') }}
+    {{ encore_entry_link_tags('navbar') }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('journalDetailsJs') }}
+{% endblock %}

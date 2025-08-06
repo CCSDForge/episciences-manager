@@ -1,0 +1,22 @@
+<h1>Profil utilisateur</h1>
+
+<ul>
+    <li><strong>UID</strong> : {{ user_info.UID }}</li>
+    <li><strong>Nom</strong> : {{ user_info.LASTNAME }}</li>
+    <li><strong>Prénom</strong> : {{ user_info.FIRSTNAME }}</li>
+    <li><strong>Email</strong> : {{ user_info.EMAIL }}</li>
+    <li><strong>Username</strong> : {{ user_info.username }}</li>
+</ul>
+
+<div class="user-roles">
+    <h3>Rôles et RVID</h3>
+    {% if rolesDetails is not empty %}
+        <ul>
+            {% for row in rolesDetails %}
+                <li>{{ row.ROLEID }} (RVID: {{ row.RVID }})</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Aucun rôle attribué</p>
+    {% endif %}
+</div>

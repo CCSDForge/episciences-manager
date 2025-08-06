@@ -1,0 +1,64 @@
+services:
+  httpd:
+    image: "${COMPOSE_PROJECT_NAME}-httpd:latest"
+    container_name: httpd-manager
+    build:
+      context: .
+      dockerfile: docker/apache/Dockerfile
+    restart: always
+    volumes:
+      - ./docker/apache/vhost.conf:/usr/local/apache2/conf/extra/episciences-manager.conf
+      - .:/var/www/htdocs
+      - ./var/cache:/var/www/htdocs/var/cache
+      - ./var/log:/var/www/htdocs/var/log
+    ports:
+      - "80:80"
+    depends_on:
+      - php-fpm-manager
+    networks:
+      - epi-manager-network
+    command: >
+      /bin/sh -c "chown -R www-data:www-data /var/www/htdocs/var && httpd-foreground"
+
+  php-fpm-manager:
+    container_name: php-fpm-manager
+    working_dir: /var/www/htdocs
+    build:
+      context: .
+      dockerfile: docker/php-fpm/Dockerfile
+    restart: always
+    volumes:
+      - .:/var/www/htdocs
+      - ./var/cache:/var/www/htdocs/var/cache
+      - ./var/log:/var/www/htdocs/var/log
+      - ./docker/php-fpm/php.ini:/usr/local/etc/php/conf.d/z-docker.conf
+    environment:
+      - PHP_FPM_LISTEN_PORT=9000
+      - DB_EPISCIENCES_HOST=db-episciences
+      - DB_EPISCIENCES_PORT=3306
+      - DB_EPISCIENCES_USER=root
+      - DB_EPISCIENCES_PASSWORD=root
+      - DB_EPISCIENCES_DATABASE=episciences
+      - DB_INDEXING_HOST=db-indexing
+      - DB_INDEXING_PORT=3306
+      - DB_INDEXING_USER=root
+      - DB_INDEXING_PASSWORD=root
+      - DB_INDEXING_DATABASE=indexing
+      - DB_AUTH_HOST=db-auth
+      - DB_AUTH_PORT=3306
+      - DB_AUTH_USER=root
+      - DB_AUTH_PASSWORD=root
+      - DB_AUTH_DATABASE=auth
+    expose:
+      - "9000"
+    networks:
+      - epi-manager-network
+      - epi-network
+
+networks:
+  epi-manager-network:
+    driver: bridge
+  epi-network:
+    name: episciences_epi-network
+    external: true
+

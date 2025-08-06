@@ -1,0 +1,19 @@
+controllers:
+    resource:
+        path: ../src/Controller/
+        namespace: App\Controller
+    type: attribute
+    prefix: /{_locale}
+    requirements:
+        _locale: en|fr
+    defaults:
+        _locale: en
+
+home_redirect:
+    path: /
+    controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController::redirectAction
+    methods: [GET]
+    defaults:
+        route: app_home
+        _locale: 'en'
+        permanent: true

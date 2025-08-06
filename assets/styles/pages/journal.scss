@@ -1,0 +1,609 @@
+@use 'sass:color';
+@use '../components/variables' as *;
+
+
+// Gradients personnalisés
+$primary-gradient: linear-gradient(135deg, $primary-color 0%, color.adjust($primary-color, $lightness: -15%) 100%);
+$success-gradient: linear-gradient(135deg, $success-color 0%, color.adjust($success-color, $lightness: -10%) 100%);
+$warning-gradient: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);
+
+// Body et layout principal
+body {
+  background: linear-gradient(135deg, $light-gray 0%, $medium-gray 100%);
+  min-height: 100vh;
+  color: $text-color;
+}
+
+// Effet glassmorphism
+.glass {
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(20px);
+  border: 1px solid $border-white;
+  box-shadow: 0 8px 32px 0 $shadow-light;
+}
+
+// Page title avec gradient
+.page-title {
+  background: $primary-gradient;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 800;
+  font-size: $font-size-display;
+  text-shadow: 0 4px 8px $shadow-light;
+  margin-bottom: $spacing-xxl;
+
+  @media (max-width: 768px) {
+    font-size: $font-size-xxl;
+  }
+}
+
+// Stats cards
+.stats-section {
+  margin-bottom: $spacing-xl;
+
+  .stat-card {
+    transition: $transition-smooth;
+    border: none;
+    position: relative;
+    overflow: hidden;
+    border-radius: $border-radius-xl;
+
+    &:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
+      pointer-events: none;
+    }
+
+    // Variantes de couleurs
+    &.total {
+      background: $warning-gradient;
+    }
+
+    &.active {
+      background: $success-gradient;
+    }
+
+    &.primary {
+      background: $primary-gradient;
+    }
+
+    .stat-icon {
+      font-size: $font-size-xxl;
+      margin-bottom: $spacing-md;
+      opacity: 0.75;
+    }
+
+    .stat-number {
+      font-size: $font-size-display;
+      font-weight: $font-weight-bold;
+      margin-bottom: $spacing-sm;
+    }
+
+    .stat-label {
+      font-size: $font-size-lg;
+      margin-bottom: 0;
+      font-weight: $font-weight-medium;
+    }
+  }
+}
+
+// Search container
+.search-container {
+  .search-wrapper {
+    position: relative;
+
+    input {
+      padding-right: 60px;
+    }
+  }
+
+  .search-btn {
+    position: absolute;
+    right: 9px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: $primary-gradient;
+    color: $white;
+    border: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0px 4px 15px $shadow-light;
+    z-index: 2;
+
+    &:hover {
+      transform: translateY(-50%) scale(1.1);
+      background: $primary-color;
+      box-shadow: 0 8px 25px $shadow-primary;
+      color: $white;
+    }
+
+    &:active,
+    &:focus {
+      transform: translateY(-50%) scale(0.95);
+      background: $primary-color !important;
+      box-shadow: 0 4px 15px $shadow-primary;
+      color: $white;
+      outline: none;
+    }
+
+    &:active {
+      background: color.adjust($primary-color, $lightness: -10%) !important;
+    }
+
+    i {
+      font-size: 14px;
+    }
+  }
+}
+
+// Journal table
+.journal-table {
+  margin-top: $spacing-xl;
+
+  .table {
+    background: transparent;
+    border: none;
+    margin-bottom: 0;
+
+    thead th {
+      background: $primary-gradient;
+      color: $white;
+      border: none;
+      padding: $spacing-lg;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-size: $font-size-sm;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+
+      &:first-child {
+        border-top-left-radius: $border-radius-lg;
+      }
+
+      &:last-child {
+        border-top-right-radius: $border-radius-lg;
+      }
+
+      i {
+        margin-right: $spacing-sm;
+        opacity: 0.8;
+      }
+    }
+
+    tbody {
+      tr {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(10px);
+        border: none;
+        transition: $transition-smooth;
+
+        &:hover {
+          background: $glass-white;
+          transform: translateX(5px);
+          box-shadow: 5px 0 15px $shadow-primary;
+        }
+
+        td {
+          border: none;
+          padding: $spacing-lg;
+          vertical-align: middle;
+        }
+      }
+    }
+  }
+}
+
+// Journal name styling
+.journal-name {
+  font-weight: 600;
+  color: $gray-800;
+  font-size: $font-size-lg;
+  margin-bottom: $spacing-xs;
+}
+
+.journal-subtitle {
+  color: $gray-500;
+  font-size: $font-size-sm;
+}
+
+// Badge styling
+.badge {
+  padding: $spacing-sm $spacing-md;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  border-radius: $border-radius-pill;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+
+  &.bg-primary {
+    background-color: $primary-color !important;
+  }
+
+  &.bg-success {
+    background-color: $success-color !important;
+  }
+
+  &.bg-warning {
+    background-color: #ffc107 !important;
+    color: $dark-gray !important;
+  }
+
+  &.bg-info {
+    background-color: #17a2b8 !important;
+  }
+
+  &.bg-secondary {
+    background-color: $secondary-color !important;
+  }
+
+  &.pulse {
+    animation: pulse 2s infinite;
+  }
+}
+
+// Action button
+.action-btn {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: $primary-gradient;
+  color: $white;
+  border: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    transition: $transition-smooth;
+    transform: translate(-50%, -50%);
+  }
+
+  &:hover {
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 8px 20px $shadow-primary;
+    color: $white;
+
+    &::before {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  &:focus {
+    box-shadow: 0 0 0 3px $primary-light;
+    color: $white;
+  }
+}
+
+// Animations
+.fade-in {
+  animation: fadeInUp 0.8s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 $shadow-primary;
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba($primary-color, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba($primary-color, 0);
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .stats-section {
+    padding: $spacing-md;
+
+    .stat-card {
+      margin-bottom: $spacing-md;
+    }
+  }
+
+  .search-container {
+    margin-top: $spacing-md;
+    max-width: 100% !important;
+
+    input {
+      padding: $spacing-md $spacing-lg $spacing-md 45px;
+    }
+
+    &::before {
+      left: $spacing-md;
+    }
+  }
+
+  .journal-table {
+    .table {
+      thead th {
+        padding: $spacing-md;
+        font-size: 0.75rem;
+      }
+
+      tbody td {
+        padding: $spacing-md;
+      }
+    }
+  }
+
+  .journal-name {
+    font-size: $font-size-base;
+  }
+
+  .action-btn {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+@media (max-width: 576px) {
+  .page-title {
+    font-size: $font-size-xl;
+    margin-bottom: $spacing-xl;
+  }
+
+  .stats-section {
+    .stat-card {
+      .stat-number {
+        font-size: $font-size-xl;
+      }
+
+      .stat-label {
+        font-size: $font-size-base;
+      }
+    }
+  }
+}
+// Pagination styles
+.pagination-wrapper {
+  margin-top: $spacing-xl;
+  padding: $spacing-lg 0;
+
+  .pagination {
+    margin-bottom: 0;
+    gap: $spacing-xs;
+    justify-content: center;
+    flex-wrap: wrap;
+
+    .page-item {
+      margin: 0 2px;
+
+      .page-link {
+        border: none;
+        background: rgba(255, 255, 255, 0.25);
+        backdrop-filter: blur(20px);
+        color: $primary-color;
+        padding: $spacing-md $spacing-lg;
+        border-radius: $border-radius-lg;
+        font-weight: $font-weight-medium;
+        font-size: $font-size-sm;
+        text-decoration: none;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 15px $shadow-light;
+        position: relative;
+        overflow: hidden;
+        min-width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &:hover {
+          background: $glass-white;
+          color: $primary-color;
+          transform: translateY(-2px) scale(1.05);
+          box-shadow: 0 8px 25px $shadow-primary;
+          border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        &:focus {
+          box-shadow: 0 0 0 3px $primary-light;
+          outline: none;
+          color: $primary-color;
+        }
+
+        &::before {
+          content: '';
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: 0;
+          height: 0;
+          background: rgba($primary-color, 0.1);
+          border-radius: 50%;
+          transition: $transition-smooth;
+          transform: translate(-50%, -50%);
+        }
+
+        &:active::before {
+          width: 100%;
+          height: 100%;
+        }
+      }
+
+      // Page active
+      &.active .page-link {
+        background: $primary-gradient;
+        color: $white;
+        box-shadow: 0 8px 25px $shadow-primary;
+        transform: scale(1.1);
+        font-weight: $font-weight-bold;
+
+        &:hover {
+          background: $primary-gradient;
+          color: $white;
+          transform: translateY(-2px) scale(1.15);
+        }
+      }
+
+      // Pages disabled
+      &.disabled .page-link {
+        background: rgba(255, 255, 255, 0.1);
+        color: $gray-500;
+        cursor: not-allowed;
+        opacity: 0.5;
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.1);
+          color: $gray-500;
+          transform: none;
+          box-shadow: 0 4px 15px $shadow-light;
+        }
+      }
+    }
+  }
+}
+
+// Informations de pagination
+.pagination-info {
+  margin-top: $spacing-md;
+  padding: $spacing-md;
+  text-align: center;
+
+  small {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    padding: $spacing-sm $spacing-lg;
+    border-radius: $border-radius-pill;
+    color: $gray-700;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    box-shadow: 0 2px 8px $shadow-light;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    display: inline-block;
+  }
+}
+
+// Media queries pour pagination
+@media (max-width: 768px) {
+  .pagination-wrapper {
+    margin-top: $spacing-lg;
+    padding: $spacing-md 0;
+
+    .pagination {
+      gap: 2px;
+
+      .page-item .page-link {
+        padding: $spacing-sm $spacing-md;
+        min-width: 38px;
+        height: 38px;
+        font-size: 0.875rem;
+        border-radius: $border-radius-md;
+      }
+    }
+  }
+
+  .pagination-info small {
+    padding: $spacing-xs $spacing-md;
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .pagination-wrapper .pagination {
+    .page-item {
+      &:not(.active):not(:first-child):not(:last-child) {
+        display: none;
+
+        &.nearby {
+          display: block;
+        }
+      }
+
+      .page-link {
+        min-width: 35px;
+        height: 35px;
+        padding: $spacing-xs $spacing-sm;
+      }
+    }
+  }
+}
+
+// Animation
+.pagination-wrapper {
+  animation: fadeInUp 0.6s ease-out 0.2s both;
+}
+
+// Correction des boutons d'action
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: $border-radius-md;
+  background: $primary-color;
+  color: $white;
+  text-decoration: none;
+  transition: $transition-smooth;
+  box-shadow: 0 2px 4px $shadow-light;
+
+  &:hover:not(.disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px $shadow-primary;
+    color: $white;
+    text-decoration: none;
+    background: color.adjust($primary-color, $lightness: -10%);;
+  }
+
+  &.disabled {
+    background: $gray-200 !important;
+    color: $gray-500 !important;
+    cursor: not-allowed;
+    opacity: 0.6;
+
+    &:hover {
+      transform: none !important;
+      box-shadow: 0 2px 4px $shadow-light !important;
+    }
+  }
+
+  &.btn-view {
+    background: $primary-color;
+    &:hover:not(.disabled) {
+      background: color.adjust($primary-color, $lightness: -10%);
+    }
+  }
+}

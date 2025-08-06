@@ -1,0 +1,64 @@
+<header class="header">
+    <!-- Pre-header with logo and login -->
+    <div class="header-preheader">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between align-items-center">
+                <!-- Logo à gauche -->
+                <div class="header-preheader-logo">
+                    <img src="{{ asset('images/episciences.svg') }}" alt="Episciences Logo" class="img-fluid">
+                </div>
+
+                <!-- Navigation collapsible -->
+                <div class="header-container">
+                    <!-- Toggle Button for Mobile -->
+                    <button class="login-toggler d-lg-none" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#headerNav" aria-controls="headerNav" aria-expanded="false"
+                            aria-label="Toggle user">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                    <!-- Bloc utilisateur à droite - collapsible -->
+                    <div class="collapse d-lg-block" id="headerNav">
+                        <div class="login-btn-container d-flex align-items-center">
+                            <!-- Dropdown langue -->
+                            <div class="language-selector me-3">
+                                <div class="dropdown" id="language-dropdown">
+                                    <a class="btn btn-outline-secondary btn-sm dropdown-toggle" href="#" role="button" 
+                                       aria-expanded="false" id="language-dropdown-toggle">
+                                        <i class="fas fa-globe me-1"></i> {{ app.request.locale|upper }}
+                                    </a>
+                                    <ul class="dropdown-menu" id="language-dropdown-menu">
+                                        <li><a class="dropdown-item language-switch" href="#" data-locale="fr">🇫🇷 Français</a></li>
+                                        <li><a class="dropdown-item language-switch" href="#" data-locale="en">🇺🇸 English</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            {% if app.user and app.user.userIdentifier != '__NO_USER__' %}
+                                <div class="user-menu d-flex align-items-center">
+                                    <span class="welcome-text me-3">
+                                        {{ 'head.welcome' | trans }}, <strong>{{ app.user.userIdentifier }}</strong>
+                                    </span>
+                                    <a class="btn btn-outline-danger custom-btn" href="{{ path('logout') }}" role="button">
+                                        <i class="fas fa-sign-out-alt me-1"></i> {{ 'head.logout' | trans  }}
+                                    </a>
+                                </div>
+                            {% else %}
+                                <a class="btn btn-outline-primary custom-btn" href="{{ path('login') }}" role="button">{{ 'head.login' | trans  }}</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</header>
+
+{% block stylesheets %}
+    {{ encore_entry_link_tags('header') }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ encore_entry_script_tags('headerJs') }}
+{% endblock %}

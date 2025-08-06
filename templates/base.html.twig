@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}{{ 'meta.default_title'|trans }}{% endblock %}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+        {# SEO Meta tags #}
+        <meta name="description" content="{% block meta_description %}{{ 'meta.default_description'|trans }}{% endblock %}">
+        <meta name="keywords" content="{% block meta_keywords %}{{ 'meta.default_keywords'|trans }}{% endblock %}">
+        <meta name="author" content="Episciences">
+        <meta name="robots" content="{% block robots %}index, follow{% endblock %}">
+
+        {# Canonical URL #}
+        <link rel="canonical" href="{% block canonical %}{{ url(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) }}{% endblock %}">
+
+        {# Open Graph #}
+        <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+        <meta property="og:url" content="{% block og_url %}{{ app.request.uri }}{% endblock %}">
+        <meta property="og:image" content="{% block og_image %}{{ absolute_url(asset('images/episciences-og.png')) }}{% endblock %}">
+        <meta property="og:site_name" content="Episciences Manager">
+        <meta property="og:locale" content="{{ app.request.locale|default('fr') }}_{{ app.request.locale|default('fr')|upper }}">
+
+
+        {# Multilingual #}
+        {% block alternate_languages %}
+            <link rel="alternate" hreflang="fr" href="{{ url(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')|merge({'_locale': 'fr'})) }}">
+            <link rel="alternate" hreflang="en" href="{{ url(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')|merge({'_locale': 'en'})) }}">
+            <link rel="alternate" hreflang="x-default" href="{{ url(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')|merge({'_locale': 'fr'})) }}">
+        {% endblock %}
+
+
+        {% block stylesheets %}
+            {{ encore_entry_link_tags('main') }}
+            {{ encore_entry_link_tags('header') }}
+        {% endblock %}
+
+        {% block javascripts %}
+            {{ encore_entry_script_tags('app') }}
+        {% endblock %}
+    </head>
+    <body>
+    {% block navbar %}
+        {% include '/partials/_header.html.twig' %}
+    {% endblock %}
+    {% block body %}
+        <div class="flex h-screen">
+            <div class="m-auto">
+                <p class="text-2xl">{{ 'Welcome to Episciences manager'|trans }}</p>
+            </div>
+        </div>
+    {% endblock %}
+
+    {% block footer %}
+        {% include '/partials/_footer.html.twig' %}
+    {% endblock %}
+    </body>
+
+</html>

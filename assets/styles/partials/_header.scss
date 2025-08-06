@@ -1,0 +1,217 @@
+@use 'sass:color';
+@use '../components/variables' as *;
+
+// Variables
+$breakpoint-lg: 991.98px;
+$border-color: #dee2e6;
+$bg-color: #fff;
+$shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+@mixin smooth-transition($property: all, $duration: 0.3s, $timing: ease) {
+  transition: $property $duration $timing;
+}
+
+
+// Header principal
+.header {
+  background-color: $bg-color;
+  box-shadow: $shadow;
+  position: relative;
+  z-index: 1000;
+
+  .header-preheader {
+    padding: 1rem 0;
+    border-bottom: 1px solid $border-color;
+
+    .container-fluid {
+      max-width: 100%;
+      padding: 0 1rem;
+    }
+
+    // Logo
+    .header-preheader-logo {
+      img {
+        max-height: 40px;
+        width: 100px;
+        @include smooth-transition(transform);
+      }
+      &:hover img {
+        transform: scale(1.05);
+      }
+    }
+
+    // Container principal de navigation
+    .header-container {
+      position: relative;
+      display: flex;
+      align-items: center;
+
+      // Bouton toggle pour mobile
+      .login-toggler {
+        border: none;
+        background: transparent;
+        padding: 0.375rem 0.75rem;
+        cursor: pointer;
+        border-radius: 0.375rem;
+        transition: all 0.3s ease;
+
+        &:hover {
+          background-color: rgba($primary-color, 0.1);
+        }
+
+        &:focus {
+          outline: none;
+          box-shadow: 0 0 0 0.2rem rgba($primary-color, 0.25);
+        }
+
+        .navbar-toggler-icon {
+          display: inline-block;
+          width: 1.5em;
+          height: 1.5em;
+          vertical-align: middle;
+          background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2833, 37, 41, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='m4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+          background-repeat: no-repeat;
+          background-position: center;
+          background-size: 100%;
+        }
+      }
+
+      // Zone utilisateur
+      .login-btn-container {
+        .user-menu {
+          .welcome-text {
+            color: $text-color;
+            font-size: 0.9rem;
+
+            strong {
+              font-weight: 600;
+            }
+          }
+        }
+
+        .custom-btn {
+          padding: 0.5rem 1rem;
+          font-size: 0.9rem;
+          border-radius: 0.375rem;
+          text-decoration: none;
+          display: inline-flex;
+          align-items: center;
+          transition: all 0.3s ease;
+
+          &.btn-outline-primary {
+            color: $primary-color;
+            border-color: $primary-color;
+
+            &:hover {
+              color: white;
+              background-color: $primary-color;
+              border-color: $primary-color;
+            }
+          }
+
+          &.btn-outline-danger {
+            color: $danger-color;
+            border-color: $danger-color;
+
+            &:hover {
+              color: white;
+              background-color: $danger-color;
+              border-color: $danger-color;
+            }
+          }
+
+          i {
+            font-size: 0.85rem;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: $breakpoint-lg) {
+  .header {
+    .header-preheader {
+      .header-container {
+        // Positionnement du collapse sur mobile
+        #headerNav {
+          position: absolute;
+          top: 100%;
+          right: 0;
+          min-width: 250px;
+          background-color: $bg-color;
+          border: 1px solid $border-color;
+          border-radius: 0.375rem;
+          box-shadow: $shadow;
+          margin-top: 0.5rem;
+          z-index: 1001;
+
+          .login-btn-container {
+            padding: 1rem;
+            text-align: center;
+
+            .user-menu {
+              flex-direction: column;
+              gap: 0.75rem;
+
+              .welcome-text {
+                text-align: center;
+                margin: 0 0 0.5rem 0;
+              }
+            }
+
+            .custom-btn {
+              width: 100%;
+              justify-content: center;
+            }
+          }
+        }
+
+        // Animation du collapse
+        .collapse {
+          &:not(.show) {
+            display: none;
+          }
+
+          &.collapsing {
+            height: auto;
+            overflow: hidden;
+            transition: all 0.35s ease;
+          }
+        }
+      }
+    }
+  }
+}
+
+// États actifs et focus
+@media (min-width: calc($breakpoint-lg + 1px)) {
+  .header {
+    .header-preheader {
+      .header-container {
+        .login-btn-container {
+          .user-menu {
+            align-items: center;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Animation smooth pour les transitions
+* {
+  &:focus {
+    outline: none;
+  }
+}
+
+// Amélioration de l'accessibilité
+.login-toggler {
+  &[aria-expanded="true"] {
+    .navbar-toggler-icon {
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2833, 37, 41, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='m7 7l16 16M7 23L23 7'/%3e%3c/svg%3e");
+    }
+  }
+}
