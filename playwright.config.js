@@ -51,7 +51,7 @@ module.exports = defineConfig({
 
   // Dossier pour les rapports
   reporter: [
-    ['html', { outputFolder: 'test-results/html' }],
-    ['junit', { outputFile: 'test-results/junit.xml' }]
+    ['html', { outputFolder: 'playwright-report' }],
+    ['junit', { outputFile: 'playwright-results/junit.xml' }]
   ]
 });
