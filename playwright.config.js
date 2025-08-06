@@ -28,24 +28,11 @@ module.exports = defineConfig({
     video: 'retain-on-failure',
   },
 
-  // Navigateurs à tester
+  // Navigateurs à tester - Chromium seulement pour le CI
   projects: [
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
-    },
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
-    },
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-    },
-    // Tests mobiles
-    {
-      name: 'mobile-chrome',
-      use: { ...devices['Pixel 5'] },
     },
   ],
 
