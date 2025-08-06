@@ -103,7 +103,7 @@
     "require-dev": {
         "pestphp/pest": "^2.34",
         "phpunit/phpunit": "^10.0",
-        "symfony/browser-kit": "7.2.*",
+        "symfony/browser-kit": "7.3.*",
         "symfony/css-selector": "7.2.*",
         "symfony/debug-bundle": "7.2.*",
         "symfony/maker-bundle": "^1.0",
