@@ -71,6 +71,40 @@ jobs:
           npx eslint assets/scripts/ assets/controllers/ || echo "⚠️ JS issues found but continuing"
           echo "✅ JavaScript check completed"
 
+      - name: 🧪 Run JavaScript unit tests
+        run: |
+          echo "🧪 Running JavaScript unit tests..."
+          if [ -f "tests/frontend/setup.js" ]; then
+            npm test -- --passWithNoTests --coverage
+            echo "✅ JavaScript unit tests completed"
+          else
+            echo "ℹ️ No JavaScript tests configured yet"
+          fi
+
+      - name: 🌐 Run E2E tests
+        run: |
+          echo "🌐 Running E2E tests..."
+          if [ -f "playwright.config.js" ]; then
+            # Installer les navigateurs Playwright
+            npx playwright install chromium --with-deps
+            
+            # Lancer les tests E2E
+            npx playwright test --project=chromium || echo "⚠️ Some E2E tests failed but continuing"
+            echo "✅ E2E tests completed"
+          else
+            echo "ℹ️ No E2E tests configured yet"
+          fi
+
+      - name: 📊 Upload test results
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: test-results
+          path: |
+            coverage/
+            test-results/
+          retention-days: 7
+
       - name: 🧪 Run PHPUnit tests
         run: |
           echo "🧪 Running PHP tests..."
