@@ -71,8 +71,8 @@ document.addEventListener('DOMContentLoaded', function () {
   if (currentLocale === 'en' || currentLocale === 'fr') {
     fetch(`/${currentLocale}/api/translations/${currentLocale}`, {
       headers: {
-        'X-Requested-With': 'XMLHttpRequest',
-      },
+        'X-Requested-With': 'XMLHttpRequest'
+      }
     })
       .then(response => response.json())
       .then(translations => {
@@ -142,8 +142,8 @@ document.addEventListener('DOMContentLoaded', function () {
       // Fetch page content via AJAX
       fetch(pageUrl, {
         headers: {
-          'X-Requested-With': 'XMLHttpRequest',
-        },
+          'X-Requested-With': 'XMLHttpRequest'
+        }
       })
         .then(response => {
           console.log('Response status:', response.status);
@@ -230,13 +230,13 @@ document.addEventListener('DOMContentLoaded', function () {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest',
+        'X-Requested-With': 'XMLHttpRequest'
       },
       body: JSON.stringify({
         content: newContent,
         title: newTitle,
-        locale: locale,
-      }),
+        locale: locale
+      })
     })
       .then(response => {
         console.log('Save response status:', response.status);

@@ -237,8 +237,8 @@ document.addEventListener('DOMContentLoaded', function () {
         // Fetch the page data to get the title in the new locale
         fetch(newUrl, {
           headers: {
-            'X-Requested-With': 'XMLHttpRequest',
-          },
+            'X-Requested-With': 'XMLHttpRequest'
+          }
         })
           .then(response => response.json())
           .then(data => {
