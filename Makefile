@@ -71,14 +71,21 @@ test-e2e: ## Run E2E tests with Playwright
 lint: ## Check JavaScript code with ESLint
 	npm run lint
 
-lint-fix: ## Fix JavaScript code with ESLint
-	npm run lint:fix
+lint-fix: ## Fix JavaScript code with ESLint (usage: make lint-fix [FILE=path/to/file.js])
+	@if [ -n "$(FILE)" ]; then \
+		echo "🔧 Fixing specific file: $(FILE)"; \
+		npx eslint $(FILE) --fix; \
+	else \
+		echo "🔧 Fixing all JavaScript files"; \
+		npm run lint:fix; \
+	fi
 
 format: ## Format JavaScript code with Prettier
 	npm run format
 
 format-check: ## Check JavaScript formatting with Prettier
 	npm run format:check
+
 
 enter-container-php: ## Open shell on PHP container
 	$(DOCKER) exec -it $(CNTR_NAME_PHP) sh -c "cd /var/www/htdocs && /bin/bash"
