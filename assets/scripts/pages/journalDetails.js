@@ -4,7 +4,7 @@ import { Modal } from 'bootstrap';
 function updateModalTranslations() {
   console.log(
     'updateModalTranslations called, translations:',
-    window.translations
+    window.translations,
   );
 
   // Update edit button
@@ -42,7 +42,7 @@ function updateModalTranslations() {
 
   // Update cancel button
   const cancelButton = document.querySelector(
-    'button[data-bs-dismiss="modal"]'
+    'button[data-bs-dismiss="modal"]',
   );
   if (cancelButton && window.translations) {
     cancelButton.innerHTML =
@@ -268,7 +268,7 @@ document.addEventListener('DOMContentLoaded', function () {
           alert(window.translations.saveSuccess);
         } else {
           alert(
-            window.translations.saveError + (data.message || 'Erreur inconnue')
+            window.translations.saveError + (data.message || 'Erreur inconnue'),
           );
         }
       })

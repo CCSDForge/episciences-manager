@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Update language button text
         const languageToggle = document.getElementById(
-          'language-dropdown-toggle'
+          'language-dropdown-toggle',
         );
         if (languageToggle) {
           const iconElement = languageToggle.querySelector('i.fas.fa-globe');
