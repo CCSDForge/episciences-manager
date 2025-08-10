@@ -51,8 +51,8 @@ document.addEventListener('DOMContentLoaded', function () {
   function loadPageContentAjax(newUrl, selectedLocale, hash) {
     fetch(newUrl, {
       headers: {
-        'X-Requested-With': 'XMLHttpRequest',
-      },
+        'X-Requested-With': 'XMLHttpRequest'
+      }
     })
       .then(response => {
         if (!response.ok) {
@@ -197,8 +197,8 @@ document.addEventListener('DOMContentLoaded', function () {
     // Fetch new translations from the server
     fetch(`/${newLocale}/api/translations/${newLocale}`, {
       headers: {
-        'X-Requested-With': 'XMLHttpRequest',
-      },
+        'X-Requested-With': 'XMLHttpRequest'
+      }
     })
       .then(response => {
         console.log('Translation response:', response.status);
