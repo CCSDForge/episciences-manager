@@ -18,7 +18,7 @@
     "quotes": ["error", "single"],
     "no-trailing-spaces": "error",
     "indent": ["error", 2],
-    "comma-dangle": ["error", "never"]
+    "comma-dangle": ["error", "always-multiline"]
   },
   "ignorePatterns": [
     "node_modules/",
