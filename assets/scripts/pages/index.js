@@ -1,4 +1,4 @@
-import 'bootstrap';
+import { Alert } from 'bootstrap';
 
 document.addEventListener('DOMContentLoaded', function () {
   const logoutAlert = document.querySelector('.alert-success');
@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Attendre 5 secondes avant de fermer l'alerte
     setTimeout(() => {
       try {
-        const bsAlert = bootstrap.Alert.getOrCreateInstance(logoutAlert);
+        const bsAlert = Alert.getOrCreateInstance(logoutAlert);
         bsAlert.close();
       } catch (e) {
         console.error('Erreur lors de la fermeture de l’alerte Bootstrap :', e);

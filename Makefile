@@ -9,7 +9,7 @@ CNTR_APP_USER := www-data
 MYSQL_CONNECT_EPISCIENCES:= mysql -u root -proot -h 127.0.0.1 -P 33060 episciences
 MYSQL_CONNECT_AUTH:= mysql -u root -proot -h 127.0.0.1 -P 33062 cas_users
 
-.PHONY: build up down clean help test test-php test-e2e
+.PHONY: build up down clean help test test-php test-e2e lint lint-fix format format-check
 
 help: ## Display this help
 	@echo "Available targets:"
@@ -67,6 +67,18 @@ test-php: ## Run PHP tests with Pest
 
 test-e2e: ## Run E2E tests with Playwright
 	npm run test:e2e
+
+lint: ## Check JavaScript code with ESLint
+	npm run lint
+
+lint-fix: ## Fix JavaScript code with ESLint
+	npm run lint:fix
+
+format: ## Format JavaScript code with Prettier
+	npm run format
+
+format-check: ## Check JavaScript formatting with Prettier
+	npm run format:check
 
 enter-container-php: ## Open shell on PHP container
 	$(DOCKER) exec -it $(CNTR_NAME_PHP) sh -c "cd /var/www/htdocs && /bin/bash"
