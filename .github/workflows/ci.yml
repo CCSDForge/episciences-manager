@@ -20,7 +20,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
-          extensions: intl, opcache, pdo, pdo_pgsql, zip
+          extensions: intl, opcache, pdo, pdo_mysql, zip
           tools: composer:v2
 
       - name: 📦 Cache Composer dependencies
@@ -38,7 +38,7 @@ jobs:
       - name: 🟢 Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '22'
           cache: 'npm'
 
       - name: 📦 Install Node dependencies
@@ -76,7 +76,7 @@ jobs:
       - name: 🧪 Run JavaScript unit tests
         run: |
           echo "🧪 Running JavaScript unit tests..."
-          if [ -f "tests/javascript/unit/setup.js" ]; then
+          if [ -f "tests/javascript/setup.js" ]; then
             npm test -- --passWithNoTests --coverage
             echo "✅ JavaScript unit tests completed"
           else

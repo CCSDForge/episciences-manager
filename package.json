@@ -43,10 +43,10 @@
     "jest": {
         "testEnvironment": "jsdom",
         "setupFilesAfterEnv": [
-            "<rootDir>/tests/javascript/unit/setup.js"
+            "<rootDir>/tests/javascript/setup.js"
         ],
         "testMatch": [
-            "<rootDir>/tests/javascript/unit/**/*.test.js"
+            "<rootDir>/tests/javascript/**/*.test.js"
         ],
         "collectCoverageFrom": [
             "assets/scripts/**/*.js",
