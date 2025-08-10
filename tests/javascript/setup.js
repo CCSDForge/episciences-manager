@@ -1,11 +1,11 @@
-// Configuration Jest pour les tests frontend
+// Jest configuration for frontend tests
 require('@testing-library/jest-dom');
 
-// Mock des fonctions globales nécessaires
+// Mock necessary global functions
 global.fetch = jest.fn();
 global.URL = URL;
 
-// Mock de window.location
+// Mock window.location
 delete window.location;
 window.location = {
     href: 'http://localhost',
@@ -15,13 +15,13 @@ window.location = {
     hash: ''
 };
 
-// Mock des éléments DOM couramment utilisés
+// Mock commonly used DOM elements
 document.body.innerHTML = `
   <div id="language-dropdown-toggle"></div>
   <div id="language-dropdown-menu"></div>
 `;
 
-// Cleanup après chaque test
+// Cleanup after each test
 afterEach(() => {
     jest.clearAllMocks();
     document.body.innerHTML = '';

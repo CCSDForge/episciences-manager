@@ -2,7 +2,7 @@
 const { defineConfig, devices } = require('@playwright/test');
 
 module.exports = defineConfig({
-  testDir: './tests/javascript/e2e',
+  testDir: './tests/e2e',
   
   // Timeout pour chaque test
   timeout: 30 * 1000,
@@ -10,16 +10,13 @@ module.exports = defineConfig({
     timeout: 5000
   },
 
-  // Serveur de test
-  webServer: {
-    command: 'php -S localhost:8000 -t public/',
-    port: 8000,
-    reuseExistingServer: !process.env.CI,
-  },
+  // Serveur de test - assumez que Docker est déjà en cours d'exécution
+  // Démarrez manuellement avec : docker compose up -d
+  webServer: false, // Pas de démarrage automatique
 
   use: {
-    // URL de base
-    baseURL: 'http://localhost:8000',
+    // URL de base - utilise Apache via Docker
+    baseURL: 'http://localhost:80',
     
     // Capture d'écran en cas d'échec
     screenshot: 'only-on-failure',
