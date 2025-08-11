@@ -19,7 +19,7 @@
     "jsdom": "^26.1.0",
     "postcss-loader": "^8.1.1",
     "regenerator-runtime": "^0.13.9",
-    "sass": "^1.89.2",
+    "sass": "^1.90.0",
     "sass-loader": "^16.0.5",
     "style-loader": "^4.0.0",
     "webpack": "^5.74.0",
