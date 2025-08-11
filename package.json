@@ -1,52 +1,56 @@
 {
-    "devDependencies": {
-        "@babel/core": "^7.17.0",
-        "@babel/preset-env": "^7.16.0",
-        "@symfony/webpack-encore": "^5.0.0",
-        "@testing-library/dom": "^10.4.1",
-        "@testing-library/jest-dom": "^6.6.4",
-        "autoprefixer": "^10.4.21",
-        "core-js": "^3.38.0",
-        "css-loader": "^7.1.2",
-        "file-loader": "^6.0.0",
-        "identity-obj-proxy": "^3.0.0",
-        "jest": "^30.0.5",
-        "jest-environment-jsdom": "^30.0.5",
-        "jsdom": "^26.1.0",
-        "postcss-loader": "^8.1.1",
-        "regenerator-runtime": "^0.13.9",
-        "sass": "^1.89.2",
-        "sass-loader": "^16.0.5",
-        "style-loader": "^4.0.0",
-        "webpack": "^5.74.0",
-        "webpack-cli": "^5.1.0"
-    },
-    "license": "UNLICENSED",
-    "private": true,
-    "scripts": {
-        "dev-server": "encore dev-server",
-        "dev": "encore dev",
-        "watch": "encore dev --watch",
-        "build": "encore production --progress",
-        "test": "jest",
-        "test:e2e": "playwright test",
-        "test:all": "npm run test && npm run test:e2e",
-        "lint": "eslint assets/ tests/javascript/ --ext .js",
-        "lint:fix": "eslint assets/ tests/javascript/ --ext .js --fix",
-        "format": "prettier --write \"assets/**/*.{js,css,scss}\" \"tests/javascript/**/*.js\"",
-        "format:check": "prettier --check \"assets/**/*.{js,css,scss}\" \"tests/javascript/**/*.js\""
-    },
-    "dependencies": {
-        "@fortawesome/fontawesome-free": "^6.7.2",
-        "@hotwired/stimulus": "^3.2.2",
-        "@hotwired/stimulus-webpack-helpers": "^1.0.1",
-        "@popperjs/core": "^2.11.8",
-        "@symfony/stimulus-bridge": "^4.0.1",
-        "bootstrap": "^5.3.6",
-        "postcss": "^8.5.3",
-        "sass-migrator": "^2.3.2"
-    },
-    "browserslist": [
-        "defaults"
-    ]
+  "devDependencies": {
+    "@babel/core": "^7.17.0",
+    "@babel/preset-env": "^7.16.0",
+    "@playwright/test": "^1.54.2",
+    "@symfony/webpack-encore": "^5.0.0",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.6.4",
+    "@types/node": "^24.2.1",
+    "autoprefixer": "^10.4.21",
+    "core-js": "^3.38.0",
+    "css-loader": "^7.1.2",
+    "eslint": "^9.33.0",
+    "file-loader": "^6.0.0",
+    "globals": "^16.3.0",
+    "identity-obj-proxy": "^3.0.0",
+    "jest": "^30.0.5",
+    "jest-environment-jsdom": "^30.0.5",
+    "jsdom": "^26.1.0",
+    "postcss-loader": "^8.1.1",
+    "regenerator-runtime": "^0.13.9",
+    "sass": "^1.89.2",
+    "sass-loader": "^16.0.5",
+    "style-loader": "^4.0.0",
+    "webpack": "^5.74.0",
+    "webpack-cli": "^5.1.0"
+  },
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {
+    "dev-server": "encore dev-server",
+    "dev": "encore dev",
+    "watch": "encore dev --watch",
+    "build": "encore production --progress",
+    "test": "jest",
+    "test:e2e": "playwright test",
+    "test:all": "npm run test && npm run test:e2e",
+    "lint": "eslint assets/ tests/javascript/",
+    "lint:fix": "eslint assets/ tests/javascript/ --fix",
+    "format": "npx prettier --write \"assets/**/*.{js,css,scss}\" \"tests/javascript/**/*.js\"",
+    "format:check": "npx prettier --check \"assets/**/*.{js,css,scss}\" \"tests/javascript/**/*.js\""
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.7.2",
+    "@hotwired/stimulus": "^3.2.2",
+    "@hotwired/stimulus-webpack-helpers": "^1.0.1",
+    "@popperjs/core": "^2.11.8",
+    "@symfony/stimulus-bridge": "^4.0.1",
+    "bootstrap": "^5.3.6",
+    "postcss": "^8.5.3",
+    "sass-migrator": "^2.3.2"
+  },
+  "browserslist": [
+    "defaults"
+  ]
 }

@@ -40,3 +40,9 @@ assets/images/logos
 test-results/
 playwright-results/
 playwright-report/
+
+# Playwright
+node_modules/
+/playwright-report/
+/blob-report/
+/playwright/.cache/

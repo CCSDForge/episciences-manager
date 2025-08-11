@@ -77,7 +77,7 @@ jobs:
         run: |
           echo "🧪 Running JavaScript unit tests..."
           if [ -f "tests/javascript/setup.js" ]; then
-            npm test -- --passWithNoTests --coverage
+            npm test
             echo "✅ JavaScript unit tests completed"
           else
             echo "ℹ️ No JavaScript tests configured yet"
@@ -87,11 +87,11 @@ jobs:
         run: |
           echo "🌐 Running E2E tests..."
           if [ -f "playwright.config.js" ]; then
-            # Install Playwright browsers (chromium only)
-            npx playwright install chromium --with-deps
+            # Install Playwright browsers with system dependencies
+            npx playwright install --with-deps chromium
             
-            # Run E2E tests
-            npx playwright test --project=chromium || echo "⚠️ Some E2E tests failed but continuing"
+            # Run E2E tests (chromium only for faster CI)
+            npx playwright test --project=chromium
             echo "✅ E2E tests completed"
           else
             echo "ℹ️ No E2E tests configured yet"
@@ -99,13 +99,13 @@ jobs:
 
       - name: 📊 Upload test results
         uses: actions/upload-artifact@v4
-        if: always() && (hashFiles('coverage/**/*') != '' || hashFiles('test-results/**/*') != '')
+        if: always() && (hashFiles('test-results/**/*') != '' || hashFiles('playwright-report/**/*') != '')
         with:
           name: test-results
           path: |
-            coverage/
             test-results/
-          retention-days: 7
+            playwright-report/
+          retention-days: 30
 
       - name: 🧪 Run Pest PHP tests
         run: |

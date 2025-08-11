@@ -8,7 +8,7 @@ global.URL = URL;
 // Mock window.location without triggering jsdom navigation
 const mockLocation = {
   href: 'http://localhost',
-  origin: 'http://localhost', 
+  origin: 'http://localhost',
   pathname: '/',
   search: '',
   hash: '',
