@@ -68,9 +68,9 @@ jobs:
       - name: 📊 JavaScript linting & formatting
         run: |
           echo "📊 Checking JavaScript..."
-          npx eslint assets/scripts/ assets/controllers/ || echo "⚠️ JS issues found but continuing"
+          npm run lint || echo "⚠️ JS issues found but continuing"
           echo "🎨 Checking JavaScript formatting with Prettier..."
-          npx prettier --check "assets/**/*.js" || echo "⚠️ Formatting issues found but continuing"
+          npm run format:check || echo "⚠️ Formatting issues found but continuing"
           echo "✅ JavaScript check completed"
 
       - name: 🧪 Run JavaScript unit tests
