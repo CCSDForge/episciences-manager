@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "94fa91c324ecb30937c4687ac10ed6a9",
+    "content-hash": "1198846ec3bfc71bcf66c71613d4572d",
     "packages": [
         {
             "name": "apereo/phpcas",
@@ -3162,7 +3162,7 @@
         },
         {
             "name": "symfony/dotenv",
-            "version": "v7.2.9",
+            "version": "v7.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/dotenv.git",
@@ -3216,7 +3216,7 @@
                 "environment"
             ],
             "support": {
-                "source": "https://github.com/symfony/dotenv/tree/v7.2.9"
+                "source": "https://github.com/symfony/dotenv/tree/v7.3.2"
             },
             "funding": [
                 {
