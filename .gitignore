@@ -35,3 +35,14 @@ yarn-error.log
 
 auth.json
 assets/images/logos
+
+# Playwright test artifacts
+test-results/
+playwright-results/
+playwright-report/
+
+# Playwright
+node_modules/
+/playwright-report/
+/blob-report/
+/playwright/.cache/

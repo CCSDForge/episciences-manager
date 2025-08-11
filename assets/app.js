@@ -8,6 +8,4 @@ import './bootstrap.js';
  */
 import './styles/app.scss';
 
-
-
 console.log('Welcome to Webpack Encore with Bootstrap!🎉');
