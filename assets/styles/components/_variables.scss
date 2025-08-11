@@ -15,7 +15,6 @@ $font-family-system: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 $font-family-base: $font-family-system;
 $line-height-base: 1.5;
 
-
 // Variables dérivées et complémentaires
 $white: #fff;
 $light-gray: #f8f9fa;
@@ -26,7 +25,7 @@ $gray-700: #4a5568;
 $gray-500: #a0aec0;
 $gray-200: #e2e8f0;
 
-  // Couleurs avec transparence
+// Couleurs avec transparence
 $glass-white: rgba(255, 255, 255, 0.95);
 $border-white: rgba(255, 255, 255, 0.2);
 $primary-light: rgba($primary-color, 0.1);

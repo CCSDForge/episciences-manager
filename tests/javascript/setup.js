@@ -8,11 +8,11 @@ global.URL = URL;
 // Mock window.location
 delete window.location;
 window.location = {
-    href: 'http://localhost',
-    origin: 'http://localhost',
-    pathname: '/',
-    search: '',
-    hash: ''
+  href: 'http://localhost',
+  origin: 'http://localhost',
+  pathname: '/',
+  search: '',
+  hash: '',
 };
 
 // Mock commonly used DOM elements
@@ -23,6 +23,6 @@ document.body.innerHTML = `
 
 // Cleanup after each test
 afterEach(() => {
-    jest.clearAllMocks();
-    document.body.innerHTML = '';
+  jest.clearAllMocks();
+  document.body.innerHTML = '';
 });

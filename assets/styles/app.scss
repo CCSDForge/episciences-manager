@@ -1,15 +1,10 @@
-
 // Import des variables en premier
 @use 'components/variables' as *;
 
 @use 'components/alerts' as *;
 
 // Import Bootstrap functions et variables en premier
-@import "~bootstrap/scss/functions";
-
-
-
-
+@import '~bootstrap/scss/functions';
 
 // Override Bootstrap variables AVANT l'import des variables Bootstrap
 $primary: $primary-color;
@@ -24,16 +19,13 @@ $btn-border-radius: $border-radius-md;
 $card-border-radius: $border-radius-lg;
 
 // Import Bootstrap variables APRÈS les overrides
-@import "~bootstrap/scss/variables";
-@import "~bootstrap/scss/mixins";
+@import '~bootstrap/scss/variables';
+@import '~bootstrap/scss/mixins';
 
 // Import du Bootstrap complet
-@import "~bootstrap/scss/bootstrap";
-
+@import '~bootstrap/scss/bootstrap';
 
 // Components
 //@use "bootstrap/scss/bootstrap";
-@import "~@fortawesome/fontawesome-free/scss/fontawesome";
-@import "~@fortawesome/fontawesome-free/scss/solid";
-
-
+@import '~@fortawesome/fontawesome-free/scss/fontawesome';
+@import '~@fortawesome/fontawesome-free/scss/solid';

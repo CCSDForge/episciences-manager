@@ -1,10 +1,17 @@
 @use 'sass:color';
 @use '../components/variables' as *;
 
-
 // Gradients personnalisés
-$primary-gradient: linear-gradient(135deg, $primary-color 0%, color.adjust($primary-color, $lightness: -15%) 100%);
-$success-gradient: linear-gradient(135deg, $success-color 0%, color.adjust($success-color, $lightness: -10%) 100%);
+$primary-gradient: linear-gradient(
+  135deg,
+  $primary-color 0%,
+  color.adjust($primary-color, $lightness: -15%) 100%
+);
+$success-gradient: linear-gradient(
+  135deg,
+  $success-color 0%,
+  color.adjust($success-color, $lightness: -10%) 100%
+);
 $warning-gradient: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);
 
 // Body et layout principal
@@ -61,7 +68,11 @@ body {
       left: 0;
       right: 0;
       bottom: 0;
-      background: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
+      background: linear-gradient(
+        45deg,
+        rgba(255, 255, 255, 0.1) 0%,
+        transparent 100%
+      );
       pointer-events: none;
     }
 
@@ -585,7 +596,7 @@ body {
     box-shadow: 0 4px 8px $shadow-primary;
     color: $white;
     text-decoration: none;
-    background: color.adjust($primary-color, $lightness: -10%);;
+    background: color.adjust($primary-color, $lightness: -10%);
   }
 
   &.disabled {
