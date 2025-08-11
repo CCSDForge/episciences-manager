@@ -21,7 +21,14 @@
         "dev-server": "encore dev-server",
         "dev": "encore dev",
         "watch": "encore dev --watch",
-        "build": "encore production --progress"
+        "build": "encore production --progress",
+        "test": "jest --testPathPattern=tests/javascript",
+        "test:e2e": "playwright test",
+        "test:all": "npm run test && npm run test:e2e",
+        "lint": "eslint assets/ tests/javascript/ --ext .js",
+        "lint:fix": "eslint assets/ tests/javascript/ --ext .js --fix",
+        "format": "prettier --write \"assets/**/*.{js,css,scss}\" \"tests/javascript/**/*.js\"",
+        "format:check": "prettier --check \"assets/**/*.{js,css,scss}\" \"tests/javascript/**/*.js\""
     },
     "dependencies": {
         "@fortawesome/fontawesome-free": "^6.7.2",
