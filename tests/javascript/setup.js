@@ -5,20 +5,7 @@ require('@testing-library/jest-dom');
 global.fetch = jest.fn();
 global.URL = URL;
 
-// Mock window.location without triggering jsdom navigation
-const mockLocation = {
-  href: 'http://localhost',
-  origin: 'http://localhost',
-  pathname: '/',
-  search: '',
-  hash: '',
-  assign: jest.fn(),
-  replace: jest.fn(),
-  reload: jest.fn(),
-};
-
-delete window.location;
-window.location = mockLocation;
+// Remove problematic window.location mocking - tests will use jsdom's default location
 
 // Mock commonly used DOM elements
 document.body.innerHTML = `
