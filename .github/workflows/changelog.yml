@@ -19,6 +19,8 @@ jobs:
         id: changelog
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          fromTag: ""
+          toTag: "HEAD"
           
       - name: Save changelog
         run: echo "${{ steps.changelog.outputs.changelog }}" > CHANGELOG.md
