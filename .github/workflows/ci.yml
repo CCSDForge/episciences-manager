@@ -2,9 +2,9 @@ name: CI Pipeline
 
 on:
   push:
-    branches: [ main, develop, preprod ]
+    branches: [ main, develop, main_creer_projet_symfony ]
   pull_request:
-    branches: [ main, develop, preprod ]
+    branches: [ main, develop ]
 
 jobs:
   # Tests and quality checks
