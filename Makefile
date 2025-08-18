@@ -13,7 +13,7 @@ MYSQL_CONNECT_AUTH:= mysql -u root -proot -h 127.0.0.1 -P 33062 cas_users
 
 help: ## Display this help
 	@echo "Available targets:"
-	@grep -E '^[a-zA-Z_-]+:.*##' Makefile | awk 'BEGIN {FS = ":.*?## "}; {printf "%-30s %s\n", $$1, $$2}'
+	@grep -E '^[a-zA-Z_0-9-]+:.*##' Makefile | awk 'BEGIN {FS = ":.*?## "}; {printf "%-30s %s\n", $$1, $$2}'
 
 build: ## Build the docker containers
 	$(DOCKER_COMPOSE) build
