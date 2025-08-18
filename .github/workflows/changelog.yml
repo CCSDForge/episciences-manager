@@ -13,10 +13,13 @@ jobs:
           fetch-depth: 0
       
       - name: Generate changelog
-        uses: heinrichreimer/action-github-changelog-generator@v2.3
+        uses: mikepenz/release-changelog-builder-action@v3
+        id: changelog
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          output: CHANGELOG_AUTO.md
+          
+      - name: Save changelog
+        run: echo "${{ steps.changelog.outputs.changelog }}" > CHANGELOG.md
           
       - name: Commit changelog
         run: |
