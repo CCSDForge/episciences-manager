@@ -15,7 +15,7 @@ jobs:
           fetch-depth: 0
       
       - name: Generate changelog
-        uses: mikepenz/release-changelog-builder-action@v3
+        uses: mikepenz/release-changelog-builder-action@v5
         id: changelog
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
