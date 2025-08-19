@@ -47,8 +47,43 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-body">
+                                <!-- View Mode -->
                                 <div id="page-content" style="display: block; min-height: 1000px;">
                                     <div id="page-body"></div>
+                                </div>
+                                
+                                <!-- Inline Edit Mode -->
+                                <div id="inline-edit-content" style="display: none;">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h5 class="mb-0">
+                                            <i class="fas fa-edit me-2"></i>
+                                            {{ 'journalDetails.edit_page_content' | trans }}
+                                            <i class="fas fa-file-alt ms-2"></i>
+                                        </h5>
+                                        <div>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary me-2" id="cancel-inline-edit">
+                                                <i class="fas fa-times me-1"></i>
+                                                {{ 'journalDetails.cancel' | trans }}
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-primary" id="save-inline-edit">
+                                                <i class="fas fa-save me-1"></i>
+                                                {{ 'journalDetails.save' | trans }}
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <form id="inline-edit-form">
+                                        <div class="mb-3">
+                                            <label for="page-title-inline" class="form-label">
+                                                {{ 'journalDetails.page_title' | trans }}
+                                            </label>
+                                            <input type="text" class="form-control" id="page-title-inline">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="page-content-inline" class="form-label">{{ 'journalDetails.content' | trans }}</label>
+                                            <textarea class="form-control" id="page-content-inline" rows="25" placeholder="{{ 'journalDetails.enter_content' | trans }}"></textarea>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                             <div class="card-footer text-end">
@@ -68,15 +103,18 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="editModalLabel">
-                                <i class="fas fa-edit me-2"></i>
-                                {{ 'journalDetails.edit_content' | trans }}
+                                <i class="fas fa-up-right-and-down-left-from-center me-2 expand-icon" style="cursor: pointer;" title="Open in full page"></i>
+                                {{ 'journalDetails.edit_page_content' | trans }}
+                                <i class="fas fa-file-alt ms-2"></i>
                             </h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
                             <form id="edit-form">
                                 <div class="mb-3">
-                                    <label for="page-title-edit" class="form-label">{{ 'journalDetails.page_title' | trans }}</label>
+                                    <label for="page-title-edit" class="form-label">
+                                        {{ 'journalDetails.page_title' | trans }}
+                                    </label>
                                     <input type="text" class="form-control" id="page-title-edit">
                                 </div>
                                 <div class="mb-3">
