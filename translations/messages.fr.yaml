@@ -43,7 +43,7 @@ journal:
 journalDetails:
  home: "Accueil"
  edit: "Éditer"
- edit_content: "Éditer le contenu"
+ edit_page_content: "Éditer le contenu de la page"
  page_title: "Title de la page"
  content: "Contenu"
  enter_content: "Saisissez le contenu ici..."

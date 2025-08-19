@@ -124,7 +124,7 @@ final class PageController extends AbstractController
             'saveSuccess' => $translator->trans('journalDetails.save_success', [], 'messages', $locale),
             'saveError' => $translator->trans('journalDetails.save_error', [], 'messages', $locale),
             'edit' => $translator->trans('journalDetails.edit', [], 'messages', $locale),
-            'editContent' => $translator->trans('journalDetails.edit_content', [], 'messages', $locale),
+            'editPageContent' => $translator->trans('journalDetails.edit_page_content', [], 'messages', $locale),
             'pageTitle' => $translator->trans('journalDetails.page_title', [], 'messages', $locale),
             'content' => $translator->trans('journalDetails.content', [], 'messages', $locale),
             'enterContent' => $translator->trans('journalDetails.enter_content', [], 'messages', $locale),

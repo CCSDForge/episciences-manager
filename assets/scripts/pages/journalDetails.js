@@ -19,7 +19,8 @@ function updateModalTranslations() {
   const modalTitle = document.getElementById('editModalLabel');
   if (modalTitle && window.translations) {
     modalTitle.innerHTML =
-      '<i class="fas fa-edit me-2"></i>' + window.translations.editContent;
+      '<i class="fas fa-up-right-and-down-left-from-center me-2 expand-icon" style="cursor: pointer;" title="Open in full page"></i>' +
+      window.translations.editPageContent || 'Edit Content';
   }
 
   // Update page title label
@@ -77,9 +78,32 @@ document.addEventListener('DOMContentLoaded', function () {
       .then(response => response.json())
       .then(translations => {
         window.translations = translations;
+        console.log('Translations loaded:', translations);
+        console.log('Available keys:', Object.keys(translations));
+        console.log('journalDetails keys:', Object.keys(translations).filter(k => k.includes('journalDetails')));
+        console.log('All keys details:', Object.keys(translations).map(k => k + ': ' + translations[k]));
+        // Update modal translations after loading
+        updateModalTranslations();
       })
       .catch(error => {
         console.error('Error loading initial translations:', error);
+        // Fallback translations - direct assignment without API
+        window.translations = {
+          edit: 'Éditer',
+          editContent: 'Éditer le contenu',
+          'journalDetails.edit_page_content': 'Éditer le contenu de la page',
+          pageTitle: 'Titre de la page',
+          content: 'Contenu',
+          enterContent: 'Saisissez le contenu ici...',
+          cancel: 'Annuler',
+          save: 'Sauvegarder',
+          selectPageFirst: 'Veuillez sélectionner une page',
+          missingPageInfo: 'Informations de page manquantes',
+          saveSuccess: 'Sauvegardé avec succès',
+          saveError: 'Erreur de sauvegarde: '
+        };
+        console.log('Using fallback translations:', window.translations);
+        updateModalTranslations();
       });
   }
 
@@ -90,9 +114,18 @@ document.addEventListener('DOMContentLoaded', function () {
   const saveButton = document.getElementById('save-button');
   const pageTitleEdit = document.getElementById('page-title-edit');
   const pageContentEdit = document.getElementById('page-content-edit');
+  
+  // Inline edit elements
+  const inlineEditContent = document.getElementById('inline-edit-content');
+  const pageTitleInline = document.getElementById('page-title-inline');
+  const pageContentInline = document.getElementById('page-content-inline');
+  const saveInlineButton = document.getElementById('save-inline-edit');
+  const cancelInlineButton = document.getElementById('cancel-inline-edit');
 
   let currentPageCode = null;
   let currentJournalCode = null;
+  let isFullscreen = false;
+  let isInlineEdit = false;
 
   console.log('Found links:', pageLinks.length);
   console.log('Page content element:', pageContent);
@@ -111,6 +144,11 @@ document.addEventListener('DOMContentLoaded', function () {
       if (!pageCode || !journalCode) {
         console.error('Missing pageCode or journalCode');
         return;
+      }
+
+      // Exit inline edit mode if active
+      if (isInlineEdit) {
+        exitInlineEdit();
       }
 
       // Store current page info for editing
@@ -278,4 +316,130 @@ document.addEventListener('DOMContentLoaded', function () {
         alert(window.translations.saveError + error.message);
       });
   });
+
+  // Function to switch to inline edit mode
+  function switchToInlineEdit() {
+    if (!currentPageCode || !currentJournalCode) {
+      alert(window.translations?.selectPageFirst || 'Veuillez sélectionner une page');
+      return;
+    }
+
+    // Get current page title and content
+    const activeLink = document.querySelector('.page-nav-link.active');
+    const pageTitle = activeLink ? activeLink.textContent.trim() : currentPageCode;
+    const currentContent = pageBody.innerHTML || '';
+
+    // Populate inline edit form
+    pageTitleInline.value = pageTitle;
+    pageContentInline.value = currentContent.replace(/<[^>]*>/g, ''); // Strip HTML tags
+
+    // Hide page content and show inline edit
+    pageContent.style.display = 'none';
+    inlineEditContent.style.display = 'block';
+    
+    // Hide the edit button in footer since we're already in edit mode
+    const cardFooter = document.querySelector('.card-footer');
+    if (cardFooter) {
+      cardFooter.style.display = 'none';
+    }
+    
+    // Let CSS handle the height naturally - no forced JavaScript heights
+    
+    isInlineEdit = true;
+
+    // Close modal if open
+    const modalElement = document.getElementById('editModal');
+    const modal = Modal.getInstance(modalElement);
+    if (modal) {
+      modal.hide();
+    }
+  }
+
+  // Function to exit inline edit mode
+  function exitInlineEdit() {
+    pageContent.style.display = 'block';
+    inlineEditContent.style.display = 'none';
+    
+    // Show the edit button footer again
+    const cardFooter = document.querySelector('.card-footer');
+    if (cardFooter) {
+      cardFooter.style.display = 'block';
+    }
+    
+    isInlineEdit = false;
+  }
+
+  // Fullscreen toggle handler using event delegation
+  document.addEventListener('click', function(e) {
+    if (e.target && e.target.classList.contains('expand-icon')) {
+      e.preventDefault();
+      switchToInlineEdit();
+    }
+  });
+
+  // Cancel inline edit handler
+  if (cancelInlineButton) {
+    cancelInlineButton.addEventListener('click', function() {
+      exitInlineEdit();
+    });
+  }
+
+  // Save inline edit handler
+  if (saveInlineButton) {
+    saveInlineButton.addEventListener('click', function() {
+      if (!currentPageCode || !currentJournalCode) {
+        alert(window.translations?.missingPageInfo || 'Informations de page manquantes');
+        return;
+      }
+
+      const newContent = pageContentInline.value;
+      const newTitle = pageTitleInline.value;
+      let locale = document.documentElement.lang || window.location.pathname.split('/')[1] || 'en';
+
+      if (locale !== 'en' && locale !== 'fr') {
+        locale = 'en';
+      }
+
+      const saveUrl = `/${locale}/journal/${currentJournalCode}/page/${currentPageCode}/edit`;
+
+      // Save via AJAX
+      fetch(saveUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+        },
+        body: JSON.stringify({
+          content: newContent,
+          title: newTitle,
+          locale: locale,
+        }),
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            // Update page content
+            pageBody.innerHTML = data.htmlContent || newContent;
+
+            // Update page title in navigation
+            const activeLink = document.querySelector('.page-nav-link.active');
+            if (activeLink && data.updatedTitle) {
+              activeLink.textContent = data.updatedTitle;
+            }
+
+            // Exit inline edit mode
+            exitInlineEdit();
+
+            // Show success message
+            alert(window.translations?.saveSuccess || 'Sauvegardé avec succès');
+          } else {
+            alert((window.translations?.saveError || 'Erreur de sauvegarde: ') + (data.message || 'Erreur inconnue'));
+          }
+        })
+        .catch(error => {
+          console.error('Save error:', error);
+          alert((window.translations?.saveError || 'Erreur de sauvegarde: ') + error.message);
+        });
+    });
+  }
 });
