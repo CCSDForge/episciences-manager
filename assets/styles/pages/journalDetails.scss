@@ -35,7 +35,7 @@
   }
 }
 
-//Specific navigation for the pages
+// Specific navigation for the pages
 .navbar .page-nav-link {
   padding: 8px 16px;
   border-radius: 5px;
@@ -67,67 +67,112 @@
   }
 }
 
-// Custom fullscreen modal that respects header/nav
-.modal-fullscreen-custom {
-  position: fixed !important;
-  top: 120px !important; // Adjust based on header height
-  left: 15px !important;
-  right: 15px !important;
-  bottom: 15px !important;
-  margin: 0 !important;
-  max-width: none !important;
-  width: auto !important;
-  height: auto !important;
-  
-  .modal-content {
-    height: 100%;
-    border-radius: 0.5rem;
-  }
-  
-  .modal-body {
-    height: calc(100% - 120px); // Adjust for modal header + footer
-    overflow-y: auto;
-    padding: 1.5rem;
-  }
-  
-  #page-content-edit {
-    height: calc(100% - 100px); // Adjust for form labels and spacing
-    min-height: 400px;
-    resize: vertical;
-  }
-}
 
 // Base styles for content areas - stable size that grows with content
 .card-body {
-  min-height: 600px; // Base stable height
+  min-height: 700px; // Stable zone increased
   height: auto; // Allow natural growth with content
+  padding: 1.5rem;
+  
+  // Responsive adjustments
+  @media (max-width: 768px) {
+    min-height: 500px; // More compact on mobile
+    padding: 1rem;
+  }
+  
+  @media (min-width: 1200px) {
+    min-height: 800px; // More generous on large screen
+  }
 }
 
 #page-content {
-  min-height: 500px; // Stable base height for display area
+  min-height: 600px; // Stable zone for display
   height: auto; // Grows with content
+  
+  @media (max-width: 768px) {
+    min-height: 400px; // Compact on mobile
+  }
 }
 
 // Inline edit mode styles
 #inline-edit-content {
-  min-height: 600px; // Same stable base as display area
+  min-height: 700px; // Stable zone same size as card-body
   height: auto; // Grows naturally with content
+  padding: 1.5rem;
+  
+  // Responsive adjustments
+  @media (max-width: 768px) {
+    min-height: 500px; // More compact on mobile
+    padding: 1rem;
+  }
+  
+  @media (min-width: 1200px) {
+    min-height: 800px; // More generous on large screen
+  }
   
   // Ensure it takes full available space
   .d-flex {
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
   }
   
   #page-content-inline {
-    min-height: 400px; // Stable base height for textarea
-    height: auto; // Let it grow naturally
-    max-height: none; // No height restriction
+    min-height: 500px; // More generous stable zone for textarea
+    height: 500px; // Fixed base height to start
+    max-height: 80vh; // Smart limit = 80% of screen height
     font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
     font-size: 14px;
-    line-height: 1.5;
+    line-height: 1.6; // Improved line spacing
     resize: vertical; // Allow manual resize
     width: 100%;
-    overflow-y: auto; // Scroll if needed
+    overflow-y: auto; // Internal scroll if exceeds max-height
+    border: 2px solid #e2e8f0;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    transition: border-color 0.2s ease, height 0.2s ease;
+    
+    // Auto-expand behavior with smart limit
+    box-sizing: border-box;
+    
+    // Responsive textarea sizing
+    @media (max-width: 768px) {
+      min-height: 350px; // More compact on mobile
+      height: 350px; // Mobile base height
+      max-height: 70vh; // Mobile adapted limit
+      font-size: 13px;
+      padding: 0.75rem;
+    }
+    
+    @media (min-width: 1200px) {
+      min-height: 600px; // More generous on large screen
+      height: 600px; // Large screen base height
+      max-height: 85vh; // More generous on large screen
+      font-size: 15px;
+    }
+    
+    &:focus {
+      border-color: $primary-color;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+    }
+    
+    // Visual indicator when in internal scroll
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 4px;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 4px;
+      
+      &:hover {
+        background: #a8a8a8;
+      }
+    }
   }
   
   #page-title-inline {
