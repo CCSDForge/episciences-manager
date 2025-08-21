@@ -1,3 +1,5 @@
+import { initializeCKEditor, getEditorContent, setEditorContent, destroyEditor, focusEditor } from '../components/ckeditor.js';
+
 // Function to update inline edit translations dynamically
 function updateInlineEditTranslations() {
   console.log(
@@ -78,67 +80,6 @@ function updateInlineEditTranslations() {
   }
 
   console.log('=== updateInlineEditTranslations completed ===');
-}
-
-// Function to auto-resize textarea based on content with intelligent limit
-function autoResizeTextarea(textarea) {
-  // Get responsive limits based on screen size
-  function getHeightLimits() {
-    const vh = window.innerHeight;
-    const isMobile = window.innerWidth <= 768;
-    const isLarge = window.innerWidth >= 1200;
-    if (isMobile) {
-      return {
-        minHeight: 350,
-        maxHeight: vh * 0.7,  // 70% of viewport on mobile
-      };
-    } else if (isLarge) {
-      return {
-        minHeight: 600,
-        maxHeight: vh * 0.85,  // 85% of viewport on large screens
-      };
-    } else {
-      return {
-        minHeight: 500,
-        maxHeight: vh * 0.8,  // 80% of viewport on desktop
-      };
-    }
-  }
-
-  function resizeTextarea() {
-    const limits = getHeightLimits();
-
-    // Reset height to calculate the correct scrollHeight
-    textarea.style.height = 'auto';
-
-    // Calculate ideal height based on content
-    const contentHeight = textarea.scrollHeight + 10; // Add padding
-
-    // Apply intelligent limit: auto-resize up to max, then scroll internally
-    const newHeight = Math.min(
-      Math.max(limits.minHeight, contentHeight), // Respect minimum
-      limits.maxHeight,                           // But cap at maximum
-    );
-
-    textarea.style.height = newHeight + 'px';
-
-    // Log for debugging
-    const isAtLimit = contentHeight > limits.maxHeight;
-    console.log('Textarea resized to:', newHeight + 'px', isAtLimit ? '(at limit, internal scroll)' : '(auto-resize)');
-  }
-
-  // Initial resize
-  resizeTextarea();
-
-  // Add input event listener for dynamic resizing as user types
-  if (!textarea.hasAttribute('data-auto-resize-listener')) {
-    textarea.addEventListener('input', resizeTextarea);
-
-    // Handle window resize to recalculate limits
-    window.addEventListener('resize', resizeTextarea);
-
-    textarea.setAttribute('data-auto-resize-listener', 'true');
-  }
 }
 
 // Make functions globally available for the header script
@@ -360,16 +301,55 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Populate inline edit form
     pageTitleInline.value = pageTitle;
-    pageContentInline.value = currentContent.replace(/<[^>]*>/g, ''); // Strip HTML tags
 
     // Hide page content and show inline edit
     pageContent.style.display = 'none';
     inlineEditContent.style.display = 'block';
-    
-    // Auto-resize textarea to fit content
-    autoResizeTextarea(pageContentInline);
-    
-    // Hide the edit button in footer since we're already in edit mode
+
+      // Initialize CKEditor
+      const placeholder = window.translations?.enterContent || 'Enter the content here...';
+      console.log('About to initialize CKEditor with placeholder:', placeholder);
+      console.log('Target element:', document.getElementById('page-content-inline'));
+      
+      try {
+        const editorPromise = initializeCKEditor('page-content-inline', placeholder);
+        console.log('initializeCKEditor returned:', editorPromise);
+        
+        if (editorPromise) {
+          editorPromise
+            .then(editor => {
+                console.log('CKEditor initialized successfully');
+                // Convert the HTML into cleaner content for the editor
+                const cleanContent = currentContent.replace(/<div class="text-center[^>]*>[\s\S]*?<\/div>/g, '').trim();
+                setEditorContent(cleanContent || '');
+
+                // Focus on the editor after a short delay
+                setTimeout(() => {
+                    focusEditor();
+                }, 100);
+            })
+            .catch(error => {
+                console.error('Failed to initialize CKEditor:', error);
+                // Fallback: create a simple textarea
+                const editorElement = document.getElementById('page-content-inline');
+                const parentElement = editorElement.parentNode;
+                const textarea = document.createElement('textarea');
+                textarea.className = 'form-control';
+                textarea.id = 'page-content-fallback';
+                textarea.rows = 10;
+                textarea.placeholder = placeholder;
+                textarea.value = currentContent.replace(/<[^>]*>/g, '');
+
+                parentElement.replaceChild(textarea, editorElement);
+            });
+        } else {
+          console.error('initializeCKEditor returned null');
+        }
+      } catch (error) {
+        console.error('Error calling initializeCKEditor:', error);
+      }
+
+      // Hide the edit button in footer since we're already in edit mode
     const cardFooter = document.querySelector('.card-footer');
     if (cardFooter) {
       cardFooter.style.display = 'none';
@@ -382,16 +362,28 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Function to exit inline edit mode
   function exitInlineEdit() {
-    pageContent.style.display = 'block';
-    inlineEditContent.style.display = 'none';
-    
-    // Show the edit button footer again
-    const cardFooter = document.querySelector('.card-footer');
-    if (cardFooter) {
-      cardFooter.style.display = 'block';
-    }
-    
-    isInlineEdit = false;
+      // Destroy CKEditor instance
+      destroyEditor().then(() => {
+          const fallbackTextarea = document.getElementById('page-content-fallback');
+          if (fallbackTextarea) {
+              const parentElement = fallbackTextarea.parentNode;
+              const originalDiv = document.createElement('div');
+              originalDiv.id = 'page-content-inline';
+              originalDiv.setAttribute('data-placeholder', window.translations?.enterContent || 'Enter the content here...');
+              parentElement.replaceChild(originalDiv, fallbackTextarea);
+          }
+
+          pageContent.style.display = 'block';
+          inlineEditContent.style.display = 'none';
+
+          // Show the edit button footer again
+          const cardFooter = document.querySelector('.card-footer');
+          if (cardFooter) {
+              cardFooter.style.display = 'block';
+          }
+
+          isInlineEdit = false;
+      });
   }
 
 
@@ -410,7 +402,8 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
       }
 
-      const newContent = pageContentInline.value;
+      //const newContent = pageContentInline.value;
+        const newContent = getEditorContent();
       const newTitle = pageTitleInline.value;
       let locale = document.documentElement.lang || window.location.pathname.split('/')[1] || 'en';
 
