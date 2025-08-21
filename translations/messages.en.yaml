@@ -42,8 +42,10 @@ journal:
 
 journalDetails:
   home: "Home"
+  welcome_backoffice: "Welcome to the journal management backoffice"
   edit: "Edit"
   edit_content: "Edit Content"
+  edit_page_content: "Edit Page Content"
   page_title: "Page Title"
   content: "Content"
   enter_content: "Enter content here..."

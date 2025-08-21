@@ -17,7 +17,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class PageController extends AbstractController
 {
-    #[Route('/journal/{code}/page/{pageTitle}', name: 'app_page_show')]
+    #[Route('/journal/{code}/page/{pageTitle}', name: 'app_page_show', methods: ['GET'])]
     public function showPage(string $code, string $pageTitle, PageRepository $pageRepository, MarkdownService $markdownService, Request $request): Response
     {
         $page = $pageRepository->findOneBy([
@@ -124,12 +124,16 @@ final class PageController extends AbstractController
             'saveSuccess' => $translator->trans('journalDetails.save_success', [], 'messages', $locale),
             'saveError' => $translator->trans('journalDetails.save_error', [], 'messages', $locale),
             'edit' => $translator->trans('journalDetails.edit', [], 'messages', $locale),
-            'editContent' => $translator->trans('journalDetails.edit_content', [], 'messages', $locale),
+            'editPageContent' => $translator->trans('journalDetails.edit_page_content', [], 'messages', $locale),
             'pageTitle' => $translator->trans('journalDetails.page_title', [], 'messages', $locale),
             'content' => $translator->trans('journalDetails.content', [], 'messages', $locale),
             'enterContent' => $translator->trans('journalDetails.enter_content', [], 'messages', $locale),
             'cancel' => $translator->trans('journalDetails.cancel', [], 'messages', $locale),
-            'save' => $translator->trans('journalDetails.save', [], 'messages', $locale)
+            'save' => $translator->trans('journalDetails.save', [], 'messages', $locale),
+            'welcomeBackoffice' => $translator->trans('journalDetails.welcome_backoffice', [], 'messages', $locale),
+            'welcome' => $translator->trans('head.welcome', [], 'messages', $locale),
+            'login' => $translator->trans('head.login', [], 'messages', $locale),
+            'logout' => $translator->trans('head.logout', [], 'messages', $locale)
         ];
 
         return new JsonResponse($translations);

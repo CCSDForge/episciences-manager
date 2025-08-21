@@ -61,19 +61,19 @@ document.addEventListener('DOMContentLoaded', function () {
         return response.json();
       })
       .then(data => {
-        // Update page title - try multiple selectors to ensure we catch it
+        // Update page title - avoid updating journal name h1
         if (data.title && data.title[selectedLocale]) {
-          // Try h1 element first
-          const titleElement = document.querySelector('h1');
-          if (titleElement) {
-            titleElement.textContent = data.title[selectedLocale];
-          }
-
-          // Also try page-title id if it exists (from journalDetails.js)
+          // Only update elements specifically meant for page titles, not journal names
           const pageTitle = document.getElementById('page-title');
           if (pageTitle) {
             pageTitle.textContent = data.title[selectedLocale];
           }
+          
+          // Update any element with class page-title specifically
+          const pageTitleElements = document.querySelectorAll('.page-title');
+          pageTitleElements.forEach(element => {
+            element.textContent = data.title[selectedLocale];
+          });
         }
 
         // Update page content - try multiple selectors
@@ -121,7 +121,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // Update page navigation links to use the new locale
         updatePageNavLinks(selectedLocale);
 
-        // Update translations and modal content
+        // Update translations and inline edit content
         updateTranslations(selectedLocale);
       })
       .catch(error => {
@@ -191,35 +191,61 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // Function to update translations and modal content
-  function updateTranslations(newLocale) {
+  // Function to update translations using cached loader
+  async function updateTranslations(newLocale) {
     console.log('updateTranslations called with locale:', newLocale);
-    // Fetch new translations from the server
-    fetch(`/${newLocale}/api/translations/${newLocale}`, {
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest',
-      },
-    })
-      .then(response => {
-        console.log('Translation response:', response.status);
-        return response.json();
-      })
-      .then(translations => {
-        console.log('New translations loaded:', translations);
-        // Update window.translations object
-        window.translations = translations;
+    
+    try {
+      // Use cached translation loader if available, fallback to direct fetch
+      const translations = window.loadTranslations 
+        ? await window.loadTranslations(newLocale)
+        : await fetch(`/${newLocale}/api/translations/${newLocale}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+          }).then(r => r.json());
 
-        // Update modal content if the function exists
-        if (typeof window.updateModalTranslations === 'function') {
-          console.log('Calling updateModalTranslations function');
-          window.updateModalTranslations();
-        } else {
-          console.log('updateModalTranslations function not found');
-        }
-      })
-      .catch(error => {
-        console.error('Error loading translations:', error);
-      });
+      console.log('Translations loaded (cached or fresh):', Object.keys(translations).length, 'keys');
+      
+      // Update global translations
+      window.translations = translations;
+      window.currentLocale = newLocale;
+
+      // Update inline edit content if the function exists
+      if (typeof window.updateInlineEditTranslations === 'function') {
+        window.updateInlineEditTranslations();
+      }
+      
+      // Update header translations
+      updateHeaderTranslations(translations);
+    } catch (error) {
+      console.error('Error loading translations:', error);
+    }
+  }
+
+  // Function to update header translations
+  function updateHeaderTranslations(translations) {
+    console.log('Updating header translations');
+    
+    // Update welcome message
+    const welcomeText = document.querySelector('.welcome-text');
+    if (welcomeText && translations.welcome) {
+      const userIdentifier = welcomeText.querySelector('strong');
+      if (userIdentifier) {
+        const username = userIdentifier.textContent;
+        welcomeText.innerHTML = translations.welcome + ', <strong>' + username + '</strong>';
+      }
+    }
+    
+    // Update login button
+    const loginButton = document.querySelector('a[href*="login"]');
+    if (loginButton && translations.login) {
+      loginButton.textContent = translations.login;
+    }
+    
+    // Update logout button
+    const logoutButton = document.querySelector('a[href*="logout"]');
+    if (logoutButton && translations.logout) {
+      logoutButton.innerHTML = '<i class="fas fa-sign-out-alt me-1"></i> ' + translations.logout;
+    }
   }
 
   // Function to update page navigation links with new locale

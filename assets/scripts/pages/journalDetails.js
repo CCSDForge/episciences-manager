@@ -1,98 +1,224 @@
-import { Modal } from 'bootstrap';
-
-// Function to update modal translations dynamically
-function updateModalTranslations() {
+// Function to update inline edit translations dynamically
+function updateInlineEditTranslations() {
   console.log(
-    'updateModalTranslations called, translations:',
-    window.translations,
+    '=== updateInlineEditTranslations called ===',
+    'translations available:',
+    !!window.translations,
+    'keys:',
+    window.translations ? Object.keys(window.translations) : 'none'
   );
+
+  if (!window.translations) {
+    console.warn('No translations available');
+    return;
+  }
 
   // Update edit button
   const editButton = document.getElementById('edit-button');
-  if (editButton && window.translations) {
-    console.log('Updating edit button with:', window.translations.edit);
+  console.log('Edit button found:', !!editButton);
+  if (editButton && window.translations.edit) {
+    console.log('Updating edit button:', window.translations.edit);
     editButton.innerHTML =
       '<i class="fas fa-edit me-1"></i>' + window.translations.edit;
   }
 
-  // Update modal title
-  const modalTitle = document.getElementById('editModalLabel');
-  if (modalTitle && window.translations) {
-    modalTitle.innerHTML =
-      '<i class="fas fa-edit me-2"></i>' + window.translations.editContent;
+  // Update inline edit title
+  const inlineEditTitle = document.querySelector('#inline-edit-content h5');
+  console.log('Inline edit title found:', !!inlineEditTitle);
+  if (inlineEditTitle && window.translations.editPageContent) {
+    console.log('Updating inline edit title:', window.translations.editPageContent);
+    const oldContent = inlineEditTitle.innerHTML;
+    inlineEditTitle.innerHTML =
+      '<i class="fas fa-edit me-2"></i>' +
+      window.translations.editPageContent +
+      '<i class="fas fa-file-alt ms-2"></i>';
+    console.log('Title updated from:', oldContent, 'to:', inlineEditTitle.innerHTML);
   }
 
-  // Update page title label
-  const pageTitleLabel = document.querySelector('label[for="page-title-edit"]');
-  if (pageTitleLabel && window.translations) {
+  // Update page title label (inline edit)
+  const pageTitleLabel = document.querySelector('label[for="page-title-inline"]');
+  console.log('Page title label found:', !!pageTitleLabel);
+  if (pageTitleLabel && window.translations.pageTitle) {
+    console.log('Updating page title label from:', pageTitleLabel.textContent, 'to:', window.translations.pageTitle);
     pageTitleLabel.textContent = window.translations.pageTitle;
   }
 
-  // Update content label
-  const contentLabel = document.querySelector('label[for="page-content-edit"]');
-  if (contentLabel && window.translations) {
+  // Update content label (inline edit)
+  const contentLabel = document.querySelector('label[for="page-content-inline"]');
+  console.log('Content label found:', !!contentLabel);
+  if (contentLabel && window.translations.content) {
+    console.log('Updating content label from:', contentLabel.textContent, 'to:', window.translations.content);
     contentLabel.textContent = window.translations.content;
   }
 
-  // Update textarea placeholder
-  const textarea = document.getElementById('page-content-edit');
-  if (textarea && window.translations) {
+  // Update textarea placeholder (inline edit)
+  const textarea = document.getElementById('page-content-inline');
+  console.log('Textarea found:', !!textarea);
+  if (textarea && window.translations.enterContent) {
+    console.log('Updating textarea placeholder from:', textarea.placeholder, 'to:', window.translations.enterContent);
     textarea.placeholder = window.translations.enterContent;
   }
 
-  // Update cancel button
-  const cancelButton = document.querySelector(
-    'button[data-bs-dismiss="modal"]',
-  );
-  if (cancelButton && window.translations) {
+  // Update cancel button (inline edit)
+  const cancelButton = document.getElementById('cancel-inline-edit');
+  console.log('Cancel button found:', !!cancelButton);
+  if (cancelButton && window.translations.cancel) {
+    console.log('Updating cancel button:', window.translations.cancel);
     cancelButton.innerHTML =
       '<i class="fas fa-times me-1"></i>' + window.translations.cancel;
   }
 
-  // Update save button
-  const saveButton = document.getElementById('save-button');
-  if (saveButton && window.translations) {
+  // Update save button (inline edit)
+  const saveButton = document.getElementById('save-inline-edit');
+  console.log('Save button found:', !!saveButton);
+  if (saveButton && window.translations.save) {
+    console.log('Updating save button:', window.translations.save);
     saveButton.innerHTML =
       '<i class="fas fa-save me-1"></i>' + window.translations.save;
   }
+  
+  console.log('=== updateInlineEditTranslations completed ===');
 }
 
-// Make the function globally available for the header script
-window.updateModalTranslations = updateModalTranslations;
+// Function to auto-resize textarea based on content with intelligent limit
+function autoResizeTextarea(textarea) {
+  // Get responsive limits based on screen size
+  function getHeightLimits() {
+    const vh = window.innerHeight;
+    const isMobile = window.innerWidth <= 768;
+    const isLarge = window.innerWidth >= 1200;
+    
+    if (isMobile) {
+      return {
+        minHeight: 350,
+        maxHeight: vh * 0.7  // 70% of viewport on mobile
+      };
+    } else if (isLarge) {
+      return {
+        minHeight: 600,
+        maxHeight: vh * 0.85  // 85% of viewport on large screens
+      };
+    } else {
+      return {
+        minHeight: 500,
+        maxHeight: vh * 0.8  // 80% of viewport on desktop
+      };
+    }
+  }
+  
+  function resizeTextarea() {
+    const limits = getHeightLimits();
+    
+    // Reset height to calculate the correct scrollHeight
+    textarea.style.height = 'auto';
+    
+    // Calculate ideal height based on content
+    const contentHeight = textarea.scrollHeight + 10; // Add padding
+    
+    // Apply intelligent limit: auto-resize up to max, then scroll internally
+    const newHeight = Math.min(
+      Math.max(limits.minHeight, contentHeight), // Respect minimum
+      limits.maxHeight                           // But cap at maximum
+    );
+    
+    textarea.style.height = newHeight + 'px';
+    
+    // Log for debugging
+    const isAtLimit = contentHeight > limits.maxHeight;
+    console.log('Textarea resized to:', newHeight + 'px', isAtLimit ? '(at limit, internal scroll)' : '(auto-resize)');
+  }
+  
+  // Initial resize
+  resizeTextarea();
+  
+  // Add input event listener for dynamic resizing as user types
+  if (!textarea.hasAttribute('data-auto-resize-listener')) {
+    textarea.addEventListener('input', resizeTextarea);
+    
+    // Handle window resize to recalculate limits
+    window.addEventListener('resize', resizeTextarea);
+    
+    textarea.setAttribute('data-auto-resize-listener', 'true');
+  }
+}
+
+// Make functions globally available for the header script
+window.updateInlineEditTranslations = updateInlineEditTranslations;
+window.loadTranslations = loadTranslations;
+
+// Translation cache and management
+const translationCache = new Map();
+const fallbackTranslations = {
+  edit: 'Éditer',
+  editPageContent: 'Éditer le contenu de la page',
+  pageTitle: 'Titre de la page', 
+  content: 'Contenu',
+  enterContent: 'Saisissez le contenu ici...',
+  cancel: 'Annuler',
+  save: 'Sauvegarder',
+  selectPageFirst: 'Veuillez sélectionner une page',
+  welcomeBackoffice: 'Bienvenue dans le backoffice de gestion du journal',
+  missingPageInfo: 'Informations de page manquantes',
+  saveSuccess: 'Sauvegardé avec succès',
+  saveError: 'Erreur de sauvegarde: '
+};
+
+// Lazy load translations only when needed
+async function loadTranslations(locale) {
+  // Check cache first
+  if (translationCache.has(locale)) {
+    return translationCache.get(locale);
+  }
+
+  try {
+    const response = await fetch(`/${locale}/api/translations/${locale}`, {
+      headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    });
+    const translations = await response.json();
+    
+    // Cache the translations
+    translationCache.set(locale, translations);
+    return translations;
+  } catch (error) {
+    console.error(`Error loading translations for ${locale}:`, error);
+    return fallbackTranslations;
+  }
+}
+
+// Initialize with current page locale (no API call yet)
+function initializeTranslations() {
+  const currentLocale = document.documentElement.lang || 
+                       window.location.pathname.split('/')[1] || 
+                       'en';
+  
+  // Start with fallback, load via API only when language changes
+  window.translations = fallbackTranslations;
+  window.currentLocale = currentLocale;
+}
 
 document.addEventListener('DOMContentLoaded', function () {
   console.log('DOM loaded');
-
-  // Initialize translations for the current locale
-  const currentLocale =
-    document.documentElement.lang ||
-    window.location.pathname.split('/')[1] ||
-    'en';
-  if (currentLocale === 'en' || currentLocale === 'fr') {
-    fetch(`/${currentLocale}/api/translations/${currentLocale}`, {
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest',
-      },
-    })
-      .then(response => response.json())
-      .then(translations => {
-        window.translations = translations;
-      })
-      .catch(error => {
-        console.error('Error loading initial translations:', error);
-      });
-  }
+  
+  // Initialize with fallback translations (no API call)
+  initializeTranslations();
 
   const pageLinks = document.querySelectorAll('.page-nav-link');
+  const homeLink = document.querySelector('a[href*="app_journal_detail"]');
   const pageContent = document.getElementById('page-content');
   const pageBody = document.getElementById('page-body');
   const editButton = document.getElementById('edit-button');
-  const saveButton = document.getElementById('save-button');
-  const pageTitleEdit = document.getElementById('page-title-edit');
-  const pageContentEdit = document.getElementById('page-content-edit');
+  
+  // Inline edit elements
+  const inlineEditContent = document.getElementById('inline-edit-content');
+  const pageTitleInline = document.getElementById('page-title-inline');
+  const pageContentInline = document.getElementById('page-content-inline');
+  const saveInlineButton = document.getElementById('save-inline-edit');
+  const cancelInlineButton = document.getElementById('cancel-inline-edit');
 
   let currentPageCode = null;
   let currentJournalCode = null;
+  let isFullscreen = false;
+  let isInlineEdit = false;
 
   console.log('Found links:', pageLinks.length);
   console.log('Page content element:', pageContent);
@@ -111,6 +237,11 @@ document.addEventListener('DOMContentLoaded', function () {
       if (!pageCode || !journalCode) {
         console.error('Missing pageCode or journalCode');
         return;
+      }
+
+      // Exit inline edit mode if active
+      if (isInlineEdit) {
+        exitInlineEdit();
       }
 
       // Store current page info for editing
@@ -152,7 +283,7 @@ document.addEventListener('DOMContentLoaded', function () {
         .then(data => {
           console.log('Data received:', data);
           if (data.error) {
-            pageBody.innerHTML = '<p class="text-danger">Page non trouvée</p>';
+            pageBody.innerHTML = '<p class="text-danger">Page not found</p>';
           } else {
             // Use the locale extracted from the URL
             const currentLocale = locale;
@@ -160,122 +291,175 @@ document.addEventListener('DOMContentLoaded', function () {
             pageBody.innerHTML =
               data.content[currentLocale] ||
               data.content['en'] ||
-              'Pas de contenu disponible';
+              'No content available';
           }
           pageContent.style.display = 'block';
         })
         .catch(error => {
           console.error('Fetch error:', error);
           pageBody.innerHTML =
-            '<p class="text-danger">Erreur lors du chargement du contenu</p>';
+            '<p class="text-danger">Error loading content</p>';
           pageContent.style.display = 'block';
         });
     });
   });
 
-  // Edit button handler
-  editButton.addEventListener('click', function () {
-    console.log('Edit button clicked');
+  // Home link handler - shows welcome content
+  if (homeLink) {
+    homeLink.addEventListener('click', function (e) {
+      e.preventDefault();
+      console.log('Home link clicked');
 
+      // Exit inline edit mode if active
+      if (isInlineEdit) {
+        exitInlineEdit();
+      }
+
+      // Clear current page info
+      currentPageCode = null;
+      currentJournalCode = null;
+
+      // Remove active class from all page links
+      pageLinks.forEach(l => l.classList.remove('active'));
+
+      // Show default home content
+      pageBody.innerHTML = `
+        <div class="text-center py-5">
+          <i class="fas fa-home fa-3x text-primary mb-3"></i>
+          <h3>${window.translations?.welcomeBackoffice || 'Welcome to the journal management backoffice'}</h3>
+          <p class="text-muted">${window.translations?.selectPageFirst || 'Please select a page to edit first'}</p>
+        </div>
+      `;
+      pageContent.style.display = 'block';
+    });
+  }
+
+  // Edit button handler - launches inline edit directly
+  editButton.addEventListener('click', function (e) {
+    e.preventDefault();
+    console.log('Edit button clicked - launching inline edit');
+    
+    switchToInlineEdit();
+  });
+
+
+  // Function to switch to inline edit mode
+  function switchToInlineEdit() {
+    console.log('switchToInlineEdit called');
+    console.log('currentPageCode:', currentPageCode);
+    console.log('currentJournalCode:', currentJournalCode);
+    
     if (!currentPageCode || !currentJournalCode) {
-      alert(window.translations.selectPageFirst);
+      console.log('Missing page info - showing alert');
+      alert(window.translations?.selectPageFirst || 'Please select a page first');
       return;
     }
 
-    // Get current page title from active link
+    // Get current page title and content
     const activeLink = document.querySelector('.page-nav-link.active');
-    const pageTitle = activeLink
-      ? activeLink.textContent.trim()
-      : currentPageCode;
-
-    // Get current content (strip HTML for editing)
+    const pageTitle = activeLink ? activeLink.textContent.trim() : currentPageCode;
     const currentContent = pageBody.innerHTML || '';
 
-    // Populate modal
-    pageTitleEdit.value = pageTitle;
-    pageContentEdit.value = currentContent.replace(/<[^>]*>/g, ''); // Strip HTML tags
+    // Populate inline edit form
+    pageTitleInline.value = pageTitle;
+    pageContentInline.value = currentContent.replace(/<[^>]*>/g, ''); // Strip HTML tags
 
-    console.log('Modal populated with:', { pageTitle, currentPageCode });
-  });
-
-  // Save button handler
-  saveButton.addEventListener('click', function () {
-    console.log('Save button clicked');
-
-    if (!currentPageCode || !currentJournalCode) {
-      alert(window.translations.missingPageInfo);
-      return;
+    // Hide page content and show inline edit
+    pageContent.style.display = 'none';
+    inlineEditContent.style.display = 'block';
+    
+    // Auto-resize textarea to fit content
+    autoResizeTextarea(pageContentInline);
+    
+    // Hide the edit button in footer since we're already in edit mode
+    const cardFooter = document.querySelector('.card-footer');
+    if (cardFooter) {
+      cardFooter.style.display = 'none';
     }
+    
+    // Let CSS handle the height naturally - no forced JavaScript heights
+    
+    isInlineEdit = true;
+  }
 
-    const newContent = pageContentEdit.value;
-    const newTitle = pageTitleEdit.value;
-    let locale =
-      document.documentElement.lang ||
-      window.location.pathname.split('/')[1] ||
-      'en';
-
-    // Validate locale
-    if (locale !== 'en' && locale !== 'fr') {
-      locale = 'en';
+  // Function to exit inline edit mode
+  function exitInlineEdit() {
+    pageContent.style.display = 'block';
+    inlineEditContent.style.display = 'none';
+    
+    // Show the edit button footer again
+    const cardFooter = document.querySelector('.card-footer');
+    if (cardFooter) {
+      cardFooter.style.display = 'block';
     }
+    
+    isInlineEdit = false;
+  }
 
-    const saveUrl = `/${locale}/journal/${currentJournalCode}/page/${currentPageCode}/edit`;
 
-    console.log('Saving to:', saveUrl);
-    console.log('Content:', newContent);
-    console.log('Title:', newTitle);
+  // Cancel inline edit handler
+  if (cancelInlineButton) {
+    cancelInlineButton.addEventListener('click', function() {
+      exitInlineEdit();
+    });
+  }
 
-    // Save via AJAX
-    fetch(saveUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest',
-      },
-      body: JSON.stringify({
-        content: newContent,
-        title: newTitle,
-        locale: locale,
-      }),
-    })
-      .then(response => {
-        console.log('Save response status:', response.status);
-        return response.json();
+  // Save inline edit handler
+  if (saveInlineButton) {
+    saveInlineButton.addEventListener('click', function() {
+      if (!currentPageCode || !currentJournalCode) {
+        alert(window.translations?.missingPageInfo || 'Missing page information');
+        return;
+      }
+
+      const newContent = pageContentInline.value;
+      const newTitle = pageTitleInline.value;
+      let locale = document.documentElement.lang || window.location.pathname.split('/')[1] || 'en';
+
+      if (locale !== 'en' && locale !== 'fr') {
+        locale = 'en';
+      }
+
+      const saveUrl = `/${locale}/journal/${currentJournalCode}/page/${currentPageCode}/edit`;
+
+      // Save via AJAX
+      fetch(saveUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+        },
+        body: JSON.stringify({
+          content: newContent,
+          title: newTitle,
+          locale: locale,
+        }),
       })
-      .then(data => {
-        console.log('Save response data:', data);
-        if (data.success) {
-          // Update page content with HTML converted content
-          pageBody.innerHTML = data.htmlContent || newContent;
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            // Update page content
+            pageBody.innerHTML = data.htmlContent || newContent;
 
-          // Update the page title in navigation if it was changed
-          const activeLink = document.querySelector('.page-nav-link.active');
-          if (activeLink && data.updatedTitle) {
-            activeLink.textContent = data.updatedTitle;
-          }
+            // Update page title in navigation
+            const activeLink = document.querySelector('.page-nav-link.active');
+            if (activeLink && data.updatedTitle) {
+              activeLink.textContent = data.updatedTitle;
+            }
 
-          // Close modal
-          const modalElement = document.getElementById('editModal');
-          const modal = Modal.getInstance(modalElement);
-          if (modal) {
-            modal.hide();
+            // Exit inline edit mode
+            exitInlineEdit();
+
+            // Show success message
+            alert(window.translations?.saveSuccess || 'Saved successfully');
           } else {
-            // If no instance exists, create one and hide it
-            new Modal(modalElement).hide();
+            alert((window.translations?.saveError || 'Save error: ') + (data.message || 'Unknown error'));
           }
-
-          // Show success message
-          alert(window.translations.saveSuccess);
-        } else {
-          alert(
-            window.translations.saveError + (data.message || 'Erreur inconnue'),
-          );
-        }
-      })
-      .catch(error => {
-        console.error('Save error:', error);
-        console.error('Error stack:', error.stack);
-        alert(window.translations.saveError + error.message);
-      });
-  });
+        })
+        .catch(error => {
+          console.error('Save error:', error);
+          alert((window.translations?.saveError || 'Save error: ') + error.message);
+        });
+    });
+  }
 });
