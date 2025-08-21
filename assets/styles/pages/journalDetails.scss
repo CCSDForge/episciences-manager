@@ -1,5 +1,6 @@
 @use 'sass:color';
 @use '../components/variables' as *;
+@import '~ckeditor5/ckeditor5.css';
 
 .container .d-flex {
   flex-direction: column;
@@ -211,5 +212,32 @@
         }
       }
     }
+  }
+}
+
+// Custom theme
+.ck.ck-editor {
+  .ck-editor__editable {
+    min-height: 200px;
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+}
+
+// In inline edit mode
+#inline-edit-content {
+  .ck.ck-editor {
+    .ck-editor__editable {
+      min-height: 300px;
+      max-height: 50vh;
+    }
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .ck.ck-editor .ck-editor__editable {
+    min-height: 150px;
+    max-height: 40vh;
   }
 }
