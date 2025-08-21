@@ -113,30 +113,30 @@ function autoResizeTextarea(textarea) {
 
     // Calculate ideal height based on content
     const contentHeight = textarea.scrollHeight + 10; // Add padding
-    
+
     // Apply intelligent limit: auto-resize up to max, then scroll internally
     const newHeight = Math.min(
       Math.max(limits.minHeight, contentHeight), // Respect minimum
-      limits.maxHeight                           // But cap at maximum
+      limits.maxHeight,                           // But cap at maximum
     );
-    
+
     textarea.style.height = newHeight + 'px';
-    
+
     // Log for debugging
     const isAtLimit = contentHeight > limits.maxHeight;
     console.log('Textarea resized to:', newHeight + 'px', isAtLimit ? '(at limit, internal scroll)' : '(auto-resize)');
   }
-  
+
   // Initial resize
   resizeTextarea();
-  
+
   // Add input event listener for dynamic resizing as user types
   if (!textarea.hasAttribute('data-auto-resize-listener')) {
     textarea.addEventListener('input', resizeTextarea);
-    
+
     // Handle window resize to recalculate limits
     window.addEventListener('resize', resizeTextarea);
-    
+
     textarea.setAttribute('data-auto-resize-listener', 'true');
   }
 }
@@ -150,7 +150,7 @@ const translationCache = new Map();
 const fallbackTranslations = {
   edit: 'Éditer',
   editPageContent: 'Éditer le contenu de la page',
-  pageTitle: 'Titre de la page', 
+  pageTitle: 'Titre de la page',
   content: 'Contenu',
   enterContent: 'Saisissez le contenu ici...',
   cancel: 'Annuler',
@@ -159,7 +159,7 @@ const fallbackTranslations = {
   welcomeBackoffice: 'Bienvenue dans le backoffice de gestion du journal',
   missingPageInfo: 'Informations de page manquantes',
   saveSuccess: 'Sauvegardé avec succès',
-  saveError: 'Erreur de sauvegarde: '
+  saveError: 'Erreur de sauvegarde: ',
 };
 
 // Lazy load translations only when needed
