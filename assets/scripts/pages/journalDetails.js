@@ -5,7 +5,7 @@ function updateInlineEditTranslations() {
     'translations available:',
     !!window.translations,
     'keys:',
-    window.translations ? Object.keys(window.translations) : 'none'
+    window.translations ? Object.keys(window.translations) : 'none',
   );
 
   if (!window.translations) {
@@ -76,7 +76,7 @@ function updateInlineEditTranslations() {
     saveButton.innerHTML =
       '<i class="fas fa-save me-1"></i>' + window.translations.save;
   }
-  
+
   console.log('=== updateInlineEditTranslations completed ===');
 }
 
@@ -87,31 +87,30 @@ function autoResizeTextarea(textarea) {
     const vh = window.innerHeight;
     const isMobile = window.innerWidth <= 768;
     const isLarge = window.innerWidth >= 1200;
-    
     if (isMobile) {
       return {
         minHeight: 350,
-        maxHeight: vh * 0.7  // 70% of viewport on mobile
+        maxHeight: vh * 0.7,  // 70% of viewport on mobile
       };
     } else if (isLarge) {
       return {
         minHeight: 600,
-        maxHeight: vh * 0.85  // 85% of viewport on large screens
+        maxHeight: vh * 0.85,  // 85% of viewport on large screens
       };
     } else {
       return {
         minHeight: 500,
-        maxHeight: vh * 0.8  // 80% of viewport on desktop
+        maxHeight: vh * 0.8,  // 80% of viewport on desktop
       };
     }
   }
-  
+
   function resizeTextarea() {
     const limits = getHeightLimits();
-    
+
     // Reset height to calculate the correct scrollHeight
     textarea.style.height = 'auto';
-    
+
     // Calculate ideal height based on content
     const contentHeight = textarea.scrollHeight + 10; // Add padding
     
@@ -217,7 +216,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
   let currentPageCode = null;
   let currentJournalCode = null;
-  let isFullscreen = false;
   let isInlineEdit = false;
 
   console.log('Found links:', pageLinks.length);
