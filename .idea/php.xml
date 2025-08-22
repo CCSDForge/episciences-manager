@@ -172,6 +172,7 @@
       <path value="$PROJECT_DIR$/vendor/sebastian/resource-operations" />
       <path value="$PROJECT_DIR$/vendor/doctrine/cache" />
       <path value="$PROJECT_DIR$/vendor/symfony/ux-turbo" />
+      <path value="$PROJECT_DIR$/vendor/league/html-to-markdown" />
     </include_path>
   </component>
   <component name="PhpInterpreters">
