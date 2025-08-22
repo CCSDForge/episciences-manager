@@ -13,19 +13,19 @@ class MarkdownService
     public function __construct()
     {
         $this->parsedown = new Parsedown();
-        $this->parsedown->setSafeMode(false); // Allow HTML tags for colors and styling
+        $this->parsedown->setSafeMode(false); // Allow HTML tags for basic styling
         $this->parsedown->setMarkupEscaped(false); // Don't escape HTML markup
         $this->htmlConverter = new HtmlConverter([
             'strip_tags' => false,  // Keep HTML tags that have no Markdown equivalent
             'preserve_comments' => false,
-            'remove_nodes' => 'script iframe object embed',  // Remove dangerous tags
+            'remove_nodes' => 'script iframe object embed span[style*="color"]',  // Remove dangerous tags and color spans only
             'hard_break' => true,
             'strip_placeholder_links' => true
         ]);
     }
 
     /**
-     * Convert markdown text to HTML
+     * Convert Markdown text to HTML
      */
     public function toHtml(string $markdown): string
     {
@@ -38,13 +38,7 @@ class MarkdownService
      */
     public function convertContentArray(array $content): array
     {
-        $convertedContent = [];
-        
-        foreach ($content as $locale => $markdownText) {
-            $convertedContent[$locale] = $this->toHtml($markdownText);
-        }
-        
-        return $convertedContent;
+        return array_map([$this, 'toHtml'], $content);
     }
 
     /**
@@ -55,18 +49,4 @@ class MarkdownService
         return $this->htmlConverter->convert($html);
     }
 
-    /**
-     * Convert an array of HTML content to Markdown
-     * Maintains the same array structure but converts content values
-     */
-    public function convertContentArrayToMarkdown(array $htmlContent): array
-    {
-        $convertedContent = [];
-
-        foreach ($htmlContent as $locale => $htmlText) {
-            $convertedContent[$locale] = $this->toMarkdown($htmlText);
-        }
-
-        return $convertedContent;
-    }
 }
