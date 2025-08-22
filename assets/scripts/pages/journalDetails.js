@@ -220,17 +220,19 @@ document.addEventListener('DOMContentLoaded', function () {
           return response.json();
         })
         .then(data => {
-          console.log('Data received:', data);
+          console.log('Data received:', JSON.stringify(data, null, 2));
+          console.log('Raw content from server:', JSON.stringify(data.content, null, 2));
+          console.log('Current locale:', locale);
           if (data.error) {
             pageBody.innerHTML = '<p class="text-danger">Page not found</p>';
           } else {
             // Use the locale extracted from the URL
-            const currentLocale = locale;
+            const contentToShow = data.content[locale] ||
+                                 data.content['en'] ||
+                                 'No content available';
+            console.log('Content to show:', contentToShow);
             //the content is HTML converted from markdown, so it's safe to use innerHTML
-            pageBody.innerHTML =
-              data.content[currentLocale] ||
-              data.content['en'] ||
-              'No content available';
+            pageBody.innerHTML = contentToShow;
           }
           pageContent.style.display = 'block';
         })
@@ -412,6 +414,10 @@ document.addEventListener('DOMContentLoaded', function () {
       }
 
       const saveUrl = `/${locale}/journal/${currentJournalCode}/page/${currentPageCode}/edit`;
+      
+      console.log('Saving content:', newContent);
+      console.log('Save URL:', saveUrl);
+      console.log('Locale:', locale);
 
       // Save via AJAX
       fetch(saveUrl, {
@@ -428,6 +434,9 @@ document.addEventListener('DOMContentLoaded', function () {
       })
         .then(response => response.json())
         .then(data => {
+          console.log('Save response received:', data);
+          console.log('HTML content received:', data.htmlContent);
+          
           if (data.success) {
             // Update page content
             pageBody.innerHTML = data.htmlContent || newContent;

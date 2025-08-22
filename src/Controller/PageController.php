@@ -2,10 +2,8 @@
 
 namespace App\Controller;
 
-use App\Entity\Page;
+
 use App\Repository\PageRepository;
-use App\Repository\ReviewRepository;
-use App\Service\ReviewManager;
 use App\Service\MarkdownService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Doctrine\ORM\EntityManagerInterface;
@@ -29,7 +27,7 @@ final class PageController extends AbstractController
             throw $this->createNotFoundException('Page not found');
         }
 
-        // Si c'est une requête AJAX, retourner du JSON
+        // If it's an AJAX request, return JSON
         if ($request->isXmlHttpRequest()) {
             // Convert markdown content to HTML
             $htmlContent = $markdownService->convertContentArray($page->getContent());
@@ -41,7 +39,7 @@ final class PageController extends AbstractController
             ]);
         }
 
-        // Pour les accès directs, rediriger vers la page principale du journal
+        // For direct access, redirect to the main journal page
         return $this->redirectToRoute('app_journal_detail', [
             'code' => $code
         ], 301);
@@ -71,7 +69,7 @@ final class PageController extends AbstractController
             return new JsonResponse(['success' => false, 'message' => 'Missing content or locale'], 400);
         }
 
-        $content = $data['content'];
+        $htmlContent = $data['content']; // CKEditor gives HTML
         $locale = $data['locale'];
         $title = $data['title'] ?? null;
         
@@ -79,9 +77,12 @@ final class PageController extends AbstractController
         error_log('Received data: ' . json_encode($data));
         error_log('Title received: ' . ($title ?? 'null'));
 
-        // Update the content for the specific locale
+        // Convert HTML to Markdown before saving
+        $markdownContent = $markdownService->toMarkdown($htmlContent);
+
+        // Update the content for the specific locale (save as Markdown)
         $currentContent = $page->getContent() ?? [];
-        $currentContent[$locale] = $content;
+        $currentContent[$locale] = $markdownContent;
         $page->setContent($currentContent);
         
         // Update the title if provided
