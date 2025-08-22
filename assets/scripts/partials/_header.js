@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function () {
           if (pageTitle) {
             pageTitle.textContent = data.title[selectedLocale];
           }
-          
+
           // Update any element with class page-title specifically
           const pageTitleElements = document.querySelectorAll('.page-title');
           pageTitleElements.forEach(element => {
@@ -194,17 +194,17 @@ document.addEventListener('DOMContentLoaded', function () {
   // Function to update translations using cached loader
   async function updateTranslations(newLocale) {
     console.log('updateTranslations called with locale:', newLocale);
-    
+
     try {
       // Use cached translation loader if available, fallback to direct fetch
-      const translations = window.loadTranslations 
+      const translations = window.loadTranslations
         ? await window.loadTranslations(newLocale)
         : await fetch(`/${newLocale}/api/translations/${newLocale}`, {
-            headers: { 'X-Requested-With': 'XMLHttpRequest' }
-          }).then(r => r.json());
+          headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        }).then(r => r.json());
 
       console.log('Translations loaded (cached or fresh):', Object.keys(translations).length, 'keys');
-      
+
       // Update global translations
       window.translations = translations;
       window.currentLocale = newLocale;
@@ -213,7 +213,7 @@ document.addEventListener('DOMContentLoaded', function () {
       if (typeof window.updateInlineEditTranslations === 'function') {
         window.updateInlineEditTranslations();
       }
-      
+
       // Update header translations
       updateHeaderTranslations(translations);
     } catch (error) {
@@ -224,7 +224,7 @@ document.addEventListener('DOMContentLoaded', function () {
   // Function to update header translations
   function updateHeaderTranslations(translations) {
     console.log('Updating header translations');
-    
+
     // Update welcome message
     const welcomeText = document.querySelector('.welcome-text');
     if (welcomeText && translations.welcome) {
@@ -234,13 +234,13 @@ document.addEventListener('DOMContentLoaded', function () {
         welcomeText.innerHTML = translations.welcome + ', <strong>' + username + '</strong>';
       }
     }
-    
+
     // Update login button
     const loginButton = document.querySelector('a[href*="login"]');
     if (loginButton && translations.login) {
       loginButton.textContent = translations.login;
     }
-    
+
     // Update logout button
     const logoutButton = document.querySelector('a[href*="logout"]');
     if (logoutButton && translations.logout) {
