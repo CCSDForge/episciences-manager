@@ -112,10 +112,10 @@ async function loadTranslations(locale) {
 
   try {
     const response = await fetch(`/${locale}/api/translations/${locale}`, {
-      headers: { 'X-Requested-With': 'XMLHttpRequest' }
+      headers: { 'X-Requested-With': 'XMLHttpRequest' },
     });
     const translations = await response.json();
-    
+
     // Cache the translations
     translationCache.set(locale, translations);
     return translations;
@@ -127,10 +127,10 @@ async function loadTranslations(locale) {
 
 // Initialize with current page locale (no API call yet)
 function initializeTranslations() {
-  const currentLocale = document.documentElement.lang || 
-                       window.location.pathname.split('/')[1] || 
+  const currentLocale = document.documentElement.lang ||
+                       window.location.pathname.split('/')[1] ||
                        'en';
-  
+
   // Start with fallback, load via API only when language changes
   window.translations = fallbackTranslations;
   window.currentLocale = currentLocale;
@@ -138,7 +138,7 @@ function initializeTranslations() {
 
 document.addEventListener('DOMContentLoaded', function () {
   console.log('DOM loaded');
-  
+
   // Initialize with fallback translations (no API call)
   initializeTranslations();
 
@@ -147,11 +147,10 @@ document.addEventListener('DOMContentLoaded', function () {
   const pageContent = document.getElementById('page-content');
   const pageBody = document.getElementById('page-body');
   const editButton = document.getElementById('edit-button');
-  
+
   // Inline edit elements
   const inlineEditContent = document.getElementById('inline-edit-content');
   const pageTitleInline = document.getElementById('page-title-inline');
-  const pageContentInline = document.getElementById('page-content-inline');
   const saveInlineButton = document.getElementById('save-inline-edit');
   const cancelInlineButton = document.getElementById('cancel-inline-edit');
 
@@ -279,7 +278,7 @@ document.addEventListener('DOMContentLoaded', function () {
   editButton.addEventListener('click', function (e) {
     e.preventDefault();
     console.log('Edit button clicked - launching inline edit');
-    
+
     switchToInlineEdit();
   });
 
@@ -289,7 +288,7 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log('switchToInlineEdit called');
     console.log('currentPageCode:', currentPageCode);
     console.log('currentJournalCode:', currentJournalCode);
-    
+
     if (!currentPageCode || !currentJournalCode) {
       console.log('Missing page info - showing alert');
       alert(window.translations?.selectPageFirst || 'Please select a page first');
@@ -308,84 +307,84 @@ document.addEventListener('DOMContentLoaded', function () {
     pageContent.style.display = 'none';
     inlineEditContent.style.display = 'block';
 
-      // Initialize CKEditor
-      const placeholder = window.translations?.enterContent || 'Enter the content here...';
-      console.log('About to initialize CKEditor with placeholder:', placeholder);
-      console.log('Target element:', document.getElementById('page-content-inline'));
-      
-      try {
-        const editorPromise = initializeCKEditor('page-content-inline', placeholder);
-        console.log('initializeCKEditor returned:', editorPromise);
-        
-        if (editorPromise) {
-          editorPromise
-            .then(editor => {
-                console.log('CKEditor initialized successfully');
-                // Convert the HTML into cleaner content for the editor
-                const cleanContent = currentContent.replace(/<div class="text-center[^>]*>[\s\S]*?<\/div>/g, '').trim();
-                setEditorContent(cleanContent || '');
+    // Initialize CKEditor
+    const placeholder = window.translations?.enterContent || 'Enter the content here...';
+    console.log('About to initialize CKEditor with placeholder:', placeholder);
+    console.log('Target element:', document.getElementById('page-content-inline'));
 
-                // Focus on the editor after a short delay
-                setTimeout(() => {
-                    focusEditor();
-                }, 100);
-            })
-            .catch(error => {
-                console.error('Failed to initialize CKEditor:', error);
-                // Fallback: create a simple textarea
-                const editorElement = document.getElementById('page-content-inline');
-                const parentElement = editorElement.parentNode;
-                const textarea = document.createElement('textarea');
-                textarea.className = 'form-control';
-                textarea.id = 'page-content-fallback';
-                textarea.rows = 10;
-                textarea.placeholder = placeholder;
-                textarea.value = currentContent.replace(/<[^>]*>/g, '');
+    try {
+      const editorPromise = initializeCKEditor('page-content-inline', placeholder);
+      console.log('initializeCKEditor returned:', editorPromise);
 
-                parentElement.replaceChild(textarea, editorElement);
-            });
-        } else {
-          console.error('initializeCKEditor returned null');
-        }
-      } catch (error) {
-        console.error('Error calling initializeCKEditor:', error);
+      if (editorPromise) {
+        editorPromise
+          .then(() => {
+            console.log('CKEditor initialized successfully');
+            // Convert the HTML into cleaner content for the editor
+            const cleanContent = currentContent.replace(/<div class="text-center[^>]*>[\s\S]*?<\/div>/g, '').trim();
+            setEditorContent(cleanContent || '');
+
+            // Focus on the editor after a short delay
+            setTimeout(() => {
+              focusEditor();
+            }, 100);
+          })
+          .catch(error => {
+            console.error('Failed to initialize CKEditor:', error);
+            // Fallback: create a simple textarea
+            const editorElement = document.getElementById('page-content-inline');
+            const parentElement = editorElement.parentNode;
+            const textarea = document.createElement('textarea');
+            textarea.className = 'form-control';
+            textarea.id = 'page-content-fallback';
+            textarea.rows = 10;
+            textarea.placeholder = placeholder;
+            textarea.value = currentContent.replace(/<[^>]*>/g, '');
+
+            parentElement.replaceChild(textarea, editorElement);
+          });
+      } else {
+        console.error('initializeCKEditor returned null');
       }
+    } catch (error) {
+      console.error('Error calling initializeCKEditor:', error);
+    }
 
-      // Hide the edit button in footer since we're already in edit mode
+    // Hide the edit button in footer since we're already in edit mode
     const cardFooter = document.querySelector('.card-footer');
     if (cardFooter) {
       cardFooter.style.display = 'none';
     }
-    
+
     // Let CSS handle the height naturally - no forced JavaScript heights
-    
+
     isInlineEdit = true;
   }
 
   // Function to exit inline edit mode
   function exitInlineEdit() {
-      // Destroy CKEditor instance
-      destroyEditor().then(() => {
-          const fallbackTextarea = document.getElementById('page-content-fallback');
-          if (fallbackTextarea) {
-              const parentElement = fallbackTextarea.parentNode;
-              const originalDiv = document.createElement('div');
-              originalDiv.id = 'page-content-inline';
-              originalDiv.setAttribute('data-placeholder', window.translations?.enterContent || 'Enter the content here...');
-              parentElement.replaceChild(originalDiv, fallbackTextarea);
-          }
+    // Destroy CKEditor instance
+    destroyEditor().then(() => {
+      const fallbackTextarea = document.getElementById('page-content-fallback');
+      if (fallbackTextarea) {
+        const parentElement = fallbackTextarea.parentNode;
+        const originalDiv = document.createElement('div');
+        originalDiv.id = 'page-content-inline';
+        originalDiv.setAttribute('data-placeholder', window.translations?.enterContent || 'Enter the content here...');
+        parentElement.replaceChild(originalDiv, fallbackTextarea);
+      }
 
-          pageContent.style.display = 'block';
-          inlineEditContent.style.display = 'none';
+      pageContent.style.display = 'block';
+      inlineEditContent.style.display = 'none';
 
-          // Show the edit button footer again
-          const cardFooter = document.querySelector('.card-footer');
-          if (cardFooter) {
-              cardFooter.style.display = 'block';
-          }
+      // Show the edit button footer again
+      const cardFooter = document.querySelector('.card-footer');
+      if (cardFooter) {
+        cardFooter.style.display = 'block';
+      }
 
-          isInlineEdit = false;
-      });
+      isInlineEdit = false;
+    });
   }
 
 
@@ -405,7 +404,7 @@ document.addEventListener('DOMContentLoaded', function () {
       }
 
       //const newContent = pageContentInline.value;
-        const newContent = getEditorContent();
+      const newContent = getEditorContent();
       const newTitle = pageTitleInline.value;
       let locale = document.documentElement.lang || window.location.pathname.split('/')[1] || 'en';
 
@@ -414,7 +413,7 @@ document.addEventListener('DOMContentLoaded', function () {
       }
 
       const saveUrl = `/${locale}/journal/${currentJournalCode}/page/${currentPageCode}/edit`;
-      
+
       console.log('Saving content:', newContent);
       console.log('Save URL:', saveUrl);
       console.log('Locale:', locale);
@@ -436,7 +435,7 @@ document.addEventListener('DOMContentLoaded', function () {
         .then(data => {
           console.log('Save response received:', data);
           console.log('HTML content received:', data.htmlContent);
-          
+
           if (data.success) {
             // Update page content
             pageBody.innerHTML = data.htmlContent || newContent;
