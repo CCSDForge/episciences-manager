@@ -203,7 +203,11 @@ document.addEventListener('DOMContentLoaded', function () {
           headers: { 'X-Requested-With': 'XMLHttpRequest' },
         }).then(r => r.json());
 
-      console.log('Translations loaded (cached or fresh):', Object.keys(translations).length, 'keys');
+      console.log(
+        'Translations loaded (cached or fresh):',
+        Object.keys(translations).length,
+        'keys',
+      );
 
       // Update global translations
       window.translations = translations;
@@ -231,7 +235,8 @@ document.addEventListener('DOMContentLoaded', function () {
       const userIdentifier = welcomeText.querySelector('strong');
       if (userIdentifier) {
         const username = userIdentifier.textContent;
-        welcomeText.innerHTML = translations.welcome + ', <strong>' + username + '</strong>';
+        welcomeText.innerHTML =
+          translations.welcome + ', <strong>' + username + '</strong>';
       }
     }
 
@@ -244,7 +249,8 @@ document.addEventListener('DOMContentLoaded', function () {
     // Update logout button
     const logoutButton = document.querySelector('a[href*="logout"]');
     if (logoutButton && translations.logout) {
-      logoutButton.innerHTML = '<i class="fas fa-sign-out-alt me-1"></i> ' + translations.logout;
+      logoutButton.innerHTML =
+        '<i class="fas fa-sign-out-alt me-1"></i> ' + translations.logout;
     }
   }
 
