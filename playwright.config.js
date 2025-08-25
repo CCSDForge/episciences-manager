@@ -73,10 +73,10 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'php -S localhost:8000 -t public public/index.php',
+    command: 'php -S localhost:8000 -t public -d display_errors=1',
     url: 'http://localhost:8000',
     reuseExistingServer: !process.env.CI,
-    timeout: 120 * 1000, // 2 minutes timeout
+    timeout: 180 * 1000, // 3 minutes timeout
     env: {
       APP_ENV: 'test',
       APP_DEBUG: '1',
