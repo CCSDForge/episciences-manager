@@ -137,7 +137,7 @@ jobs:
           echo "🧪 Running PHP tests with Pest..."
           if [ -f "vendor/bin/pest" ]; then
             echo "📍 Found Pest, running PHP tests..."
-            vendor/bin/pest --verbose
+            vendor/bin/pest
           else
             echo "ℹ️ Pest not configured - running PHPUnit fallback"
             vendor/bin/phpunit --testdox --verbose
