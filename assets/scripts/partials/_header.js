@@ -197,11 +197,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
     try {
       // Use cached translation loader if available, fallback to direct fetch
+      /* eslint-disable indent */
       const translations = window.loadTranslations
         ? await window.loadTranslations(newLocale)
         : await fetch(`/${newLocale}/api/translations/${newLocale}`, {
-          headers: { 'X-Requested-With': 'XMLHttpRequest' },
-        }).then(r => r.json());
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+          }).then(r => r.json());
+      /* eslint-enable indent */
 
       console.log(
         'Translations loaded (cached or fresh):',

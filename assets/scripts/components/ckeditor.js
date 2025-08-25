@@ -71,7 +71,6 @@ export function initializeCKEditor(elementId, placeholder = '') {
       FontSize,
       FontFamily,
 
-
       // Editing (editing group)
       FindAndReplace,
     ],
@@ -127,8 +126,6 @@ export function initializeCKEditor(elementId, placeholder = '') {
         'imageStyle:alignRight',
       ],
     },
-
-
 
     placeholder: placeholder,
   })
