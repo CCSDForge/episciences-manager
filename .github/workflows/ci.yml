@@ -45,6 +45,8 @@ jobs:
         run: |
           npm ci
           echo "✅ Node dependencies installed"
+          echo "🔍 JavaScript files to be linted:"
+          find assets/ tests/javascript/ -name "*.js" -type f 2>/dev/null | head -10 || echo "No JS files found yet"
 
       - name: 🔍 Lint YAML files
         run: |
@@ -65,13 +67,34 @@ jobs:
           ls -la public/build/ || echo "Build folder created"
           echo "✅ Assets built successfully"
 
+      - name: 🔍 Debug files before linting
+        run: |
+          echo "🔍 Debugging file state before linting..."
+          echo "Current working directory: $(pwd)"
+          echo "Git status:"
+          git status --porcelain || echo "No git changes"
+          echo "Modified JavaScript files in last commit:"
+          git show --name-only --pretty=format: HEAD | grep '\.js$' || echo "No JS files in last commit"
+          echo "ESLint configuration:"
+          ls -la eslint.config.js .eslintrc* 2>/dev/null || echo "No ESLint config found"
+          echo "Prettier configuration:"
+          ls -la .prettierrc* prettier.config.js 2>/dev/null || echo "No Prettier config found"
+
       - name: 📊 JavaScript linting & formatting
         run: |
           set -e  # Exit on any error
           echo "📊 Checking JavaScript..."
-          npm run lint
+          echo "🔍 Running ESLint with detailed output..."
+          npm run lint -- --format=compact || (
+            echo "❌ ESLint failed. Running with verbose output for debugging:"
+            echo "Files that ESLint will process:"
+            npx eslint --print-config assets/app.js 2>/dev/null | head -10 || echo "Cannot print config"
+            echo "ESLint command that's being executed:"
+            npm run lint -- --format=compact --debug 2>&1 | head -30
+            exit 1
+          )
           echo "🎨 Checking JavaScript formatting with Prettier..."
-          npm run format:check
+          npm run format:check || (echo "❌ Prettier check failed. Showing file differences:"; npm run format:check -- --list-different; exit 1)
           echo "✅ JavaScript check completed"
 
       - name: 🧪 Run JavaScript unit tests
