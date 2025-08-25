@@ -67,10 +67,11 @@ jobs:
 
       - name: 📊 JavaScript linting & formatting
         run: |
+          set -e  # Exit on any error
           echo "📊 Checking JavaScript..."
-          npm run lint || echo "⚠️ JS issues found but continuing"
+          npm run lint
           echo "🎨 Checking JavaScript formatting with Prettier..."
-          npm run format:check || echo "⚠️ Formatting issues found but continuing"
+          npm run format:check
           echo "✅ JavaScript check completed"
 
       - name: 🧪 Run JavaScript unit tests
@@ -109,12 +110,14 @@ jobs:
 
       - name: 🧪 Run Pest PHP tests
         run: |
+          set -e  # Exit on any error
           echo "🧪 Running PHP tests with Pest..."
           if [ -f "vendor/bin/pest" ]; then
-            vendor/bin/pest || echo "⚠️ Some tests failed but continuing"
+            echo "📍 Found Pest, running PHP tests..."
+            vendor/bin/pest --verbose
           else
             echo "ℹ️ Pest not configured - running PHPUnit fallback"
-            vendor/bin/phpunit --testdox || echo "⚠️ Some tests failed but continuing"
+            vendor/bin/phpunit --testdox --verbose
           fi
           echo "✅ PHP tests completed"
 

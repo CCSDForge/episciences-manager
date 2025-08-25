@@ -1,3 +1,11 @@
+import {
+  initializeCKEditor,
+  getEditorContent,
+  setEditorContent,
+  destroyEditor,
+  focusEditor,
+} from '../components/ckeditor.js';
+
 // Function to update inline edit translations dynamically
 function updateInlineEditTranslations() {
   console.log(
@@ -26,28 +34,50 @@ function updateInlineEditTranslations() {
   const inlineEditTitle = document.querySelector('#inline-edit-content h5');
   console.log('Inline edit title found:', !!inlineEditTitle);
   if (inlineEditTitle && window.translations.editPageContent) {
-    console.log('Updating inline edit title:', window.translations.editPageContent);
+    console.log(
+      'Updating inline edit title:',
+      window.translations.editPageContent,
+    );
     const oldContent = inlineEditTitle.innerHTML;
     inlineEditTitle.innerHTML =
       '<i class="fas fa-edit me-2"></i>' +
       window.translations.editPageContent +
       '<i class="fas fa-file-alt ms-2"></i>';
-    console.log('Title updated from:', oldContent, 'to:', inlineEditTitle.innerHTML);
+    console.log(
+      'Title updated from:',
+      oldContent,
+      'to:',
+      inlineEditTitle.innerHTML,
+    );
   }
 
   // Update page title label (inline edit)
-  const pageTitleLabel = document.querySelector('label[for="page-title-inline"]');
+  const pageTitleLabel = document.querySelector(
+    'label[for="page-title-inline"]',
+  );
   console.log('Page title label found:', !!pageTitleLabel);
   if (pageTitleLabel && window.translations.pageTitle) {
-    console.log('Updating page title label from:', pageTitleLabel.textContent, 'to:', window.translations.pageTitle);
+    console.log(
+      'Updating page title label from:',
+      pageTitleLabel.textContent,
+      'to:',
+      window.translations.pageTitle,
+    );
     pageTitleLabel.textContent = window.translations.pageTitle;
   }
 
   // Update content label (inline edit)
-  const contentLabel = document.querySelector('label[for="page-content-inline"]');
+  const contentLabel = document.querySelector(
+    'label[for="page-content-inline"]',
+  );
   console.log('Content label found:', !!contentLabel);
   if (contentLabel && window.translations.content) {
-    console.log('Updating content label from:', contentLabel.textContent, 'to:', window.translations.content);
+    console.log(
+      'Updating content label from:',
+      contentLabel.textContent,
+      'to:',
+      window.translations.content,
+    );
     contentLabel.textContent = window.translations.content;
   }
 
@@ -55,7 +85,12 @@ function updateInlineEditTranslations() {
   const textarea = document.getElementById('page-content-inline');
   console.log('Textarea found:', !!textarea);
   if (textarea && window.translations.enterContent) {
-    console.log('Updating textarea placeholder from:', textarea.placeholder, 'to:', window.translations.enterContent);
+    console.log(
+      'Updating textarea placeholder from:',
+      textarea.placeholder,
+      'to:',
+      window.translations.enterContent,
+    );
     textarea.placeholder = window.translations.enterContent;
   }
 
@@ -78,67 +113,6 @@ function updateInlineEditTranslations() {
   }
 
   console.log('=== updateInlineEditTranslations completed ===');
-}
-
-// Function to auto-resize textarea based on content with intelligent limit
-function autoResizeTextarea(textarea) {
-  // Get responsive limits based on screen size
-  function getHeightLimits() {
-    const vh = window.innerHeight;
-    const isMobile = window.innerWidth <= 768;
-    const isLarge = window.innerWidth >= 1200;
-    if (isMobile) {
-      return {
-        minHeight: 350,
-        maxHeight: vh * 0.7,  // 70% of viewport on mobile
-      };
-    } else if (isLarge) {
-      return {
-        minHeight: 600,
-        maxHeight: vh * 0.85,  // 85% of viewport on large screens
-      };
-    } else {
-      return {
-        minHeight: 500,
-        maxHeight: vh * 0.8,  // 80% of viewport on desktop
-      };
-    }
-  }
-
-  function resizeTextarea() {
-    const limits = getHeightLimits();
-
-    // Reset height to calculate the correct scrollHeight
-    textarea.style.height = 'auto';
-
-    // Calculate ideal height based on content
-    const contentHeight = textarea.scrollHeight + 10; // Add padding
-
-    // Apply intelligent limit: auto-resize up to max, then scroll internally
-    const newHeight = Math.min(
-      Math.max(limits.minHeight, contentHeight), // Respect minimum
-      limits.maxHeight,                           // But cap at maximum
-    );
-
-    textarea.style.height = newHeight + 'px';
-
-    // Log for debugging
-    const isAtLimit = contentHeight > limits.maxHeight;
-    console.log('Textarea resized to:', newHeight + 'px', isAtLimit ? '(at limit, internal scroll)' : '(auto-resize)');
-  }
-
-  // Initial resize
-  resizeTextarea();
-
-  // Add input event listener for dynamic resizing as user types
-  if (!textarea.hasAttribute('data-auto-resize-listener')) {
-    textarea.addEventListener('input', resizeTextarea);
-
-    // Handle window resize to recalculate limits
-    window.addEventListener('resize', resizeTextarea);
-
-    textarea.setAttribute('data-auto-resize-listener', 'true');
-  }
 }
 
 // Make functions globally available for the header script
@@ -171,10 +145,10 @@ async function loadTranslations(locale) {
 
   try {
     const response = await fetch(`/${locale}/api/translations/${locale}`, {
-      headers: { 'X-Requested-With': 'XMLHttpRequest' }
+      headers: { 'X-Requested-With': 'XMLHttpRequest' },
     });
     const translations = await response.json();
-    
+
     // Cache the translations
     translationCache.set(locale, translations);
     return translations;
@@ -186,10 +160,11 @@ async function loadTranslations(locale) {
 
 // Initialize with current page locale (no API call yet)
 function initializeTranslations() {
-  const currentLocale = document.documentElement.lang || 
-                       window.location.pathname.split('/')[1] || 
-                       'en';
-  
+  const currentLocale =
+    document.documentElement.lang ||
+    window.location.pathname.split('/')[1] ||
+    'en';
+
   // Start with fallback, load via API only when language changes
   window.translations = fallbackTranslations;
   window.currentLocale = currentLocale;
@@ -197,7 +172,7 @@ function initializeTranslations() {
 
 document.addEventListener('DOMContentLoaded', function () {
   console.log('DOM loaded');
-  
+
   // Initialize with fallback translations (no API call)
   initializeTranslations();
 
@@ -206,11 +181,10 @@ document.addEventListener('DOMContentLoaded', function () {
   const pageContent = document.getElementById('page-content');
   const pageBody = document.getElementById('page-body');
   const editButton = document.getElementById('edit-button');
-  
+
   // Inline edit elements
   const inlineEditContent = document.getElementById('inline-edit-content');
   const pageTitleInline = document.getElementById('page-title-inline');
-  const pageContentInline = document.getElementById('page-content-inline');
   const saveInlineButton = document.getElementById('save-inline-edit');
   const cancelInlineButton = document.getElementById('cancel-inline-edit');
 
@@ -279,17 +253,23 @@ document.addEventListener('DOMContentLoaded', function () {
           return response.json();
         })
         .then(data => {
-          console.log('Data received:', data);
+          console.log('Data received:', JSON.stringify(data, null, 2));
+          console.log(
+            'Raw content from server:',
+            JSON.stringify(data.content, null, 2),
+          );
+          console.log('Current locale:', locale);
           if (data.error) {
             pageBody.innerHTML = '<p class="text-danger">Page not found</p>';
           } else {
             // Use the locale extracted from the URL
-            const currentLocale = locale;
-            //the content is HTML converted from markdown, so it's safe to use innerHTML
-            pageBody.innerHTML =
-              data.content[currentLocale] ||
+            const contentToShow =
+              data.content[locale] ||
               data.content['en'] ||
               'No content available';
+            console.log('Content to show:', contentToShow);
+            //the content is HTML converted from markdown, so it's safe to use innerHTML
+            pageBody.innerHTML = contentToShow;
           }
           pageContent.style.display = 'block';
         })
@@ -336,89 +316,166 @@ document.addEventListener('DOMContentLoaded', function () {
   editButton.addEventListener('click', function (e) {
     e.preventDefault();
     console.log('Edit button clicked - launching inline edit');
-    
+
     switchToInlineEdit();
   });
-
 
   // Function to switch to inline edit mode
   function switchToInlineEdit() {
     console.log('switchToInlineEdit called');
     console.log('currentPageCode:', currentPageCode);
     console.log('currentJournalCode:', currentJournalCode);
-    
+
     if (!currentPageCode || !currentJournalCode) {
       console.log('Missing page info - showing alert');
-      alert(window.translations?.selectPageFirst || 'Please select a page first');
+      alert(
+        window.translations?.selectPageFirst || 'Please select a page first',
+      );
       return;
     }
 
     // Get current page title and content
     const activeLink = document.querySelector('.page-nav-link.active');
-    const pageTitle = activeLink ? activeLink.textContent.trim() : currentPageCode;
+    const pageTitle = activeLink
+      ? activeLink.textContent.trim()
+      : currentPageCode;
     const currentContent = pageBody.innerHTML || '';
 
     // Populate inline edit form
     pageTitleInline.value = pageTitle;
-    pageContentInline.value = currentContent.replace(/<[^>]*>/g, ''); // Strip HTML tags
 
     // Hide page content and show inline edit
     pageContent.style.display = 'none';
     inlineEditContent.style.display = 'block';
-    
-    // Auto-resize textarea to fit content
-    autoResizeTextarea(pageContentInline);
-    
+
+    // Initialize CKEditor
+    const placeholder =
+      window.translations?.enterContent || 'Enter the content here...';
+    console.log('About to initialize CKEditor with placeholder:', placeholder);
+    console.log(
+      'Target element:',
+      document.getElementById('page-content-inline'),
+    );
+
+    try {
+      const editorPromise = initializeCKEditor(
+        'page-content-inline',
+        placeholder,
+      );
+      console.log('initializeCKEditor returned:', editorPromise);
+
+      if (editorPromise) {
+        editorPromise
+          .then(() => {
+            console.log('CKEditor initialized successfully');
+            // Convert the HTML into cleaner content for the editor
+            const cleanContent = currentContent
+              .replace(/<div class="text-center[^>]*>[\s\S]*?<\/div>/g, '')
+              .trim();
+            setEditorContent(cleanContent || '');
+
+            // Focus on the editor after a short delay
+            setTimeout(() => {
+              focusEditor();
+            }, 100);
+          })
+          .catch(error => {
+            console.error('Failed to initialize CKEditor:', error);
+            // Fallback: create a simple textarea
+            const editorElement = document.getElementById(
+              'page-content-inline',
+            );
+            const parentElement = editorElement.parentNode;
+            const textarea = document.createElement('textarea');
+            textarea.className = 'form-control';
+            textarea.id = 'page-content-fallback';
+            textarea.rows = 10;
+            textarea.placeholder = placeholder;
+            textarea.value = currentContent.replace(/<[^>]*>/g, '');
+
+            parentElement.replaceChild(textarea, editorElement);
+          });
+      } else {
+        console.error('initializeCKEditor returned null');
+      }
+    } catch (error) {
+      console.error('Error calling initializeCKEditor:', error);
+    }
+
     // Hide the edit button in footer since we're already in edit mode
     const cardFooter = document.querySelector('.card-footer');
     if (cardFooter) {
       cardFooter.style.display = 'none';
     }
-    
+
     // Let CSS handle the height naturally - no forced JavaScript heights
-    
+
     isInlineEdit = true;
   }
 
   // Function to exit inline edit mode
   function exitInlineEdit() {
-    pageContent.style.display = 'block';
-    inlineEditContent.style.display = 'none';
-    
-    // Show the edit button footer again
-    const cardFooter = document.querySelector('.card-footer');
-    if (cardFooter) {
-      cardFooter.style.display = 'block';
-    }
-    
-    isInlineEdit = false;
-  }
+    // Destroy CKEditor instance
+    destroyEditor().then(() => {
+      const fallbackTextarea = document.getElementById('page-content-fallback');
+      if (fallbackTextarea) {
+        const parentElement = fallbackTextarea.parentNode;
+        const originalDiv = document.createElement('div');
+        originalDiv.id = 'page-content-inline';
+        originalDiv.setAttribute(
+          'data-placeholder',
+          window.translations?.enterContent || 'Enter the content here...',
+        );
+        parentElement.replaceChild(originalDiv, fallbackTextarea);
+      }
 
+      pageContent.style.display = 'block';
+      inlineEditContent.style.display = 'none';
+
+      // Show the edit button footer again
+      const cardFooter = document.querySelector('.card-footer');
+      if (cardFooter) {
+        cardFooter.style.display = 'block';
+      }
+
+      isInlineEdit = false;
+    });
+  }
 
   // Cancel inline edit handler
   if (cancelInlineButton) {
-    cancelInlineButton.addEventListener('click', function() {
+    cancelInlineButton.addEventListener('click', function () {
       exitInlineEdit();
     });
   }
 
   // Save inline edit handler
   if (saveInlineButton) {
-    saveInlineButton.addEventListener('click', function() {
+    saveInlineButton.addEventListener('click', function () {
       if (!currentPageCode || !currentJournalCode) {
-        alert(window.translations?.missingPageInfo || 'Missing page information');
+        alert(
+          window.translations?.missingPageInfo || 'Missing page information',
+        );
         return;
       }
 
-      const newContent = pageContentInline.value;
+      //const newContent = pageContentInline.value;
+      const newContent = getEditorContent();
       const newTitle = pageTitleInline.value;
-      let locale = document.documentElement.lang || window.location.pathname.split('/')[1] || 'en';
+      let locale =
+        document.documentElement.lang ||
+        window.location.pathname.split('/')[1] ||
+        'en';
 
       if (locale !== 'en' && locale !== 'fr') {
         locale = 'en';
       }
 
       const saveUrl = `/${locale}/journal/${currentJournalCode}/page/${currentPageCode}/edit`;
+
+      console.log('Saving content:', newContent);
+      console.log('Save URL:', saveUrl);
+      console.log('Locale:', locale);
 
       // Save via AJAX
       fetch(saveUrl, {
@@ -435,6 +492,9 @@ document.addEventListener('DOMContentLoaded', function () {
       })
         .then(response => response.json())
         .then(data => {
+          console.log('Save response received:', data);
+          console.log('HTML content received:', data.htmlContent);
+
           if (data.success) {
             // Update page content
             pageBody.innerHTML = data.htmlContent || newContent;
@@ -451,12 +511,17 @@ document.addEventListener('DOMContentLoaded', function () {
             // Show success message
             alert(window.translations?.saveSuccess || 'Saved successfully');
           } else {
-            alert((window.translations?.saveError || 'Save error: ') + (data.message || 'Unknown error'));
+            alert(
+              (window.translations?.saveError || 'Save error: ') +
+                (data.message || 'Unknown error'),
+            );
           }
         })
         .catch(error => {
           console.error('Save error:', error);
-          alert((window.translations?.saveError || 'Save error: ') + error.message);
+          alert(
+            (window.translations?.saveError || 'Save error: ') + error.message,
+          );
         });
     });
   }

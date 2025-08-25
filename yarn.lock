@@ -919,6 +919,753 @@
   resolved "https://registry.npmjs.org/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
+"@ckeditor/ckeditor5-adapter-ckfinder@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-adapter-ckfinder/-/ckeditor5-adapter-ckfinder-46.0.2.tgz"
+  integrity sha512-S4VO8l+WS8yVGpu9vB00rWNdFIR4NTAkuCP7iLlodB45KFgMobP1GTqF8EqNFIJEU2PHJz24R0kcsOyvfU6V/A==
+  dependencies:
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-upload" "46.0.2"
+    ckeditor5 "46.0.2"
+
+"@ckeditor/ckeditor5-alignment@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-alignment/-/ckeditor5-alignment-46.0.2.tgz"
+  integrity sha512-iCVJIkmJ+DT2Podmc0gH8Ntj7rYr9kziYLup1VHo/k8mKPfqC3a6o6ngT8ZtPdr1nZ4h4kozVjF+ge2BqnxzmQ==
+  dependencies:
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-icons" "46.0.2"
+    "@ckeditor/ckeditor5-ui" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+    ckeditor5 "46.0.2"
+
+"@ckeditor/ckeditor5-autoformat@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-autoformat/-/ckeditor5-autoformat-46.0.2.tgz"
+  integrity sha512-IMEWvgRCYw4PkUsshIb7V54fqJvLLohFLH+CQ0RtjzGE8ZYDkuusu7cHDz8hgQwlDWH5X7VOvTdEdPzb0uRhjA==
+  dependencies:
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-engine" "46.0.2"
+    "@ckeditor/ckeditor5-heading" "46.0.2"
+    "@ckeditor/ckeditor5-typing" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+    ckeditor5 "46.0.2"
+
+"@ckeditor/ckeditor5-autosave@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-autosave/-/ckeditor5-autosave-46.0.2.tgz"
+  integrity sha512-DKUCaGzbpwJC4FdWLVQivjJAkOkNqAaCv4+xNESPQvq8pGzBqHPFTZl0ZBvGUxEUj7S1dypIHkVWqRywSNsKJg==
+  dependencies:
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+    ckeditor5 "46.0.2"
+    es-toolkit "1.39.5"
+
+"@ckeditor/ckeditor5-basic-styles@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-basic-styles/-/ckeditor5-basic-styles-46.0.2.tgz"
+  integrity sha512-KFMNihlxg7LG7wKhG9OgAOqY621qkdz9clzLPmaoZzFydDfoVlnumFlC3cLnhIK1HOJvDnUec3u9te49pbqllQ==
+  dependencies:
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-icons" "46.0.2"
+    "@ckeditor/ckeditor5-typing" "46.0.2"
+    "@ckeditor/ckeditor5-ui" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+    ckeditor5 "46.0.2"
+
+"@ckeditor/ckeditor5-block-quote@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-block-quote/-/ckeditor5-block-quote-46.0.2.tgz"
+  integrity sha512-QWfqWPFQ4xFSzVgX8L3XqYYnUZE8/p3K23a2S35jwUJRrJl7PzyDNtzqbqohVWn5mGRXlO66qHdbyayrHTx0Lw==
+  dependencies:
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-enter" "46.0.2"
+    "@ckeditor/ckeditor5-icons" "46.0.2"
+    "@ckeditor/ckeditor5-typing" "46.0.2"
+    "@ckeditor/ckeditor5-ui" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+    ckeditor5 "46.0.2"
+
+"@ckeditor/ckeditor5-bookmark@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-bookmark/-/ckeditor5-bookmark-46.0.2.tgz"
+  integrity sha512-qtWBf55fyogvgwR/ftHPT6paMtqWKs1nKMxFkJI2ZAYkd7R1E8YYDmZGNjzbYTCRf8NLxJn6bBc9FCwZUfSxeA==
+  dependencies:
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-icons" "46.0.2"
+    "@ckeditor/ckeditor5-link" "46.0.2"
+    "@ckeditor/ckeditor5-ui" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+    "@ckeditor/ckeditor5-widget" "46.0.2"
+    ckeditor5 "46.0.2"
+
+"@ckeditor/ckeditor5-ckbox@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-ckbox/-/ckeditor5-ckbox-46.0.2.tgz"
+  integrity sha512-Q2oqIktjDFi8X2fCE9oELZH02USd4QDcPUShUPRnr/FWcUllx3nXDhz/O+i4bvSh6ckSQKyneRlDtIx11bDbuQ==
+  dependencies:
+    "@ckeditor/ckeditor5-cloud-services" "46.0.2"
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-engine" "46.0.2"
+    "@ckeditor/ckeditor5-icons" "46.0.2"
+    "@ckeditor/ckeditor5-image" "46.0.2"
+    "@ckeditor/ckeditor5-ui" "46.0.2"
+    "@ckeditor/ckeditor5-upload" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+    blurhash "2.0.5"
+    ckeditor5 "46.0.2"
+    es-toolkit "1.39.5"
+
+"@ckeditor/ckeditor5-ckfinder@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-ckfinder/-/ckeditor5-ckfinder-46.0.2.tgz"
+  integrity sha512-TC2ZIm1klZ6ZGP1aSbgqiQ6E4fx74pCGqtX5zj+Uk3E3yD48Yr7Wg4dO3eeKcVanIM2MRzg2kr2pGJVlTPcjUw==
+  dependencies:
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-icons" "46.0.2"
+    "@ckeditor/ckeditor5-image" "46.0.2"
+    "@ckeditor/ckeditor5-ui" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+    ckeditor5 "46.0.2"
+
+"@ckeditor/ckeditor5-clipboard@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-clipboard/-/ckeditor5-clipboard-46.0.2.tgz"
+  integrity sha512-FL1Dy3CWRmdMrk31oCpYi9FZew3okXlfgkfLyjbXIgAdUiJ+b/9Tu2ZzR6fNjpAN6BYTiOjx5cDq8h8yMLUgwg==
+  dependencies:
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-engine" "46.0.2"
+    "@ckeditor/ckeditor5-ui" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+    "@ckeditor/ckeditor5-widget" "46.0.2"
+    es-toolkit "1.39.5"
+
+"@ckeditor/ckeditor5-cloud-services@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-cloud-services/-/ckeditor5-cloud-services-46.0.2.tgz"
+  integrity sha512-auY6i4FCrdUiRCOGPUnIEcISKQad7rUm2fkjWHtS89v9sWabDq6BWLyuAFH8HNGjb81csrwb6b2bzMAL7M1rng==
+  dependencies:
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+    ckeditor5 "46.0.2"
+
+"@ckeditor/ckeditor5-code-block@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-code-block/-/ckeditor5-code-block-46.0.2.tgz"
+  integrity sha512-ADNMDWSmlvrle0j9vNR5WMNyWjVn8t1TVILmLOab2T0/LTZcTzFXdz5i6I/oKhoxKty7soB8lmCUfJqrXNIhTw==
+  dependencies:
+    "@ckeditor/ckeditor5-clipboard" "46.0.2"
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-engine" "46.0.2"
+    "@ckeditor/ckeditor5-enter" "46.0.2"
+    "@ckeditor/ckeditor5-icons" "46.0.2"
+    "@ckeditor/ckeditor5-ui" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+    ckeditor5 "46.0.2"
+
+"@ckeditor/ckeditor5-core@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-core/-/ckeditor5-core-46.0.2.tgz"
+  integrity sha512-nXFO2hlmz6gkGzt2/C1yqxwxNqmHxvHy3npIiIuVHWE+e+Zx1BzJjjNEUoZ/K9+6IW0uybhidzGdpdwS6apfpg==
+  dependencies:
+    "@ckeditor/ckeditor5-engine" "46.0.2"
+    "@ckeditor/ckeditor5-ui" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+    "@ckeditor/ckeditor5-watchdog" "46.0.2"
+    es-toolkit "1.39.5"
+
+"@ckeditor/ckeditor5-easy-image@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-easy-image/-/ckeditor5-easy-image-46.0.2.tgz"
+  integrity sha512-TjSbCEd8x31k4IlZZmEXA76LW9l1IGzq/bIBX4lLjSF+X30XYVqn9jYzJnPzZ73dNZ1mbzL4gzWO20TaCNyTuA==
+  dependencies:
+    "@ckeditor/ckeditor5-cloud-services" "46.0.2"
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-upload" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+    ckeditor5 "46.0.2"
+
+"@ckeditor/ckeditor5-editor-balloon@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-editor-balloon/-/ckeditor5-editor-balloon-46.0.2.tgz"
+  integrity sha512-ZZMFkZ1xP+O3JDFP03fsWZXrPbbzzV0ut2cyHvmTbvxsL8nWkByArbAyc4qs7ceF6wQ68PqLk1o+sPkEWHdVnw==
+  dependencies:
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-engine" "46.0.2"
+    "@ckeditor/ckeditor5-ui" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+    ckeditor5 "46.0.2"
+    es-toolkit "1.39.5"
+
+"@ckeditor/ckeditor5-editor-classic@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-editor-classic/-/ckeditor5-editor-classic-46.0.2.tgz"
+  integrity sha512-LTgCEyKapUURBZHZ2y5Z5nmPrl1zl8+kTiTgtpUOgZMQURq/G5BLxx5fdSyF2P0pZAoDYbrDR4uc2ngMH+6lgg==
+  dependencies:
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-engine" "46.0.2"
+    "@ckeditor/ckeditor5-ui" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+    ckeditor5 "46.0.2"
+    es-toolkit "1.39.5"
+
+"@ckeditor/ckeditor5-editor-decoupled@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-editor-decoupled/-/ckeditor5-editor-decoupled-46.0.2.tgz"
+  integrity sha512-eunAH7bAC7Y0FkxK9ukecG2a7Jxm0NAXlaDIWBRBYmNOycUDnMjeD54Ax4udJ7SxJXiTFYYF6fUIZ/mQy/DHbQ==
+  dependencies:
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-engine" "46.0.2"
+    "@ckeditor/ckeditor5-ui" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+    ckeditor5 "46.0.2"
+    es-toolkit "1.39.5"
+
+"@ckeditor/ckeditor5-editor-inline@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-editor-inline/-/ckeditor5-editor-inline-46.0.2.tgz"
+  integrity sha512-XYERPRnt/KNSje/AXpT0aCr6BLpSDAXaGil7edmuPL09oC+gGfjEzvCJDyDHbPCEwOTu684AHVvjiJNKJiJOTQ==
+  dependencies:
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-engine" "46.0.2"
+    "@ckeditor/ckeditor5-ui" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+    ckeditor5 "46.0.2"
+    es-toolkit "1.39.5"
+
+"@ckeditor/ckeditor5-editor-multi-root@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-editor-multi-root/-/ckeditor5-editor-multi-root-46.0.2.tgz"
+  integrity sha512-QUHS10vQ+9XqRfe/djzD6P4Q8rFav3ewXldW2D5trMpQ+d9HzpyyGnYOOHzM5P8VSpgXm1ma8lTuXtqeLnIhnw==
+  dependencies:
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-engine" "46.0.2"
+    "@ckeditor/ckeditor5-ui" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+    ckeditor5 "46.0.2"
+    es-toolkit "1.39.5"
+
+"@ckeditor/ckeditor5-emoji@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-emoji/-/ckeditor5-emoji-46.0.2.tgz"
+  integrity sha512-ZxjWu2JxnvX8ZyMQpmJ5VpaoXXtWWJxiO6MNeWjL/tcZ2DhD6/lQye7CLuAOvW4P5WBwrGKDdnk+vx7GLO6NIA==
+  dependencies:
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-icons" "46.0.2"
+    "@ckeditor/ckeditor5-mention" "46.0.2"
+    "@ckeditor/ckeditor5-typing" "46.0.2"
+    "@ckeditor/ckeditor5-ui" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+    ckeditor5 "46.0.2"
+    es-toolkit "1.39.5"
+    fuzzysort "3.1.0"
+
+"@ckeditor/ckeditor5-engine@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-engine/-/ckeditor5-engine-46.0.2.tgz"
+  integrity sha512-KrOmMtfLON/5EFS7x8GgCTRfVE4rFniPCRfBPzNL6rA/eWOclLYvwUGHpI6+JAymZ5XzyPLb8ftn6KjG8vvC+w==
+  dependencies:
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+    es-toolkit "1.39.5"
+
+"@ckeditor/ckeditor5-enter@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-enter/-/ckeditor5-enter-46.0.2.tgz"
+  integrity sha512-AZ+WhDEWDH4Ss6i7zd/YcuszlF5QKfkbGPQVsymsUziDvD/IuIQ1WtTDvLfdXbxGKI7amp9e1HCoilOJfv5uDw==
+  dependencies:
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-engine" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+
+"@ckeditor/ckeditor5-essentials@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-essentials/-/ckeditor5-essentials-46.0.2.tgz"
+  integrity sha512-ckcjNJiT1KDfllMr6eiBO9t1GlQUELXotjvUW1H93+g87qvl2yFJa/WB7PCpFOc5Derq45/OQWGL5hjySAqGUA==
+  dependencies:
+    "@ckeditor/ckeditor5-clipboard" "46.0.2"
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-enter" "46.0.2"
+    "@ckeditor/ckeditor5-select-all" "46.0.2"
+    "@ckeditor/ckeditor5-typing" "46.0.2"
+    "@ckeditor/ckeditor5-ui" "46.0.2"
+    "@ckeditor/ckeditor5-undo" "46.0.2"
+    ckeditor5 "46.0.2"
+
+"@ckeditor/ckeditor5-find-and-replace@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-find-and-replace/-/ckeditor5-find-and-replace-46.0.2.tgz"
+  integrity sha512-k/gAR69CxdjeBf7mrGKWswdsVrdXoHRjCR7RbnTJH+tgzPpbn1sZydD2UacqqC5hON088whTokDY3KFd6zdbXA==
+  dependencies:
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-icons" "46.0.2"
+    "@ckeditor/ckeditor5-ui" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+    ckeditor5 "46.0.2"
+    es-toolkit "1.39.5"
+
+"@ckeditor/ckeditor5-font@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-font/-/ckeditor5-font-46.0.2.tgz"
+  integrity sha512-dKkjRE8+GU6+LtQP45nQSEJkvnW1xltdpHZQrZCKXlf/51b2gBg408JtSBhqc1NOT5t1ZxaJCKHnf91dd6g4Hg==
+  dependencies:
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-engine" "46.0.2"
+    "@ckeditor/ckeditor5-icons" "46.0.2"
+    "@ckeditor/ckeditor5-ui" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+    ckeditor5 "46.0.2"
+
+"@ckeditor/ckeditor5-fullscreen@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-fullscreen/-/ckeditor5-fullscreen-46.0.2.tgz"
+  integrity sha512-G+w2c5PpKRa9e5mZKR333FKkS1BH5bwKnkc0Xw4p2fowdIaytyv73fmUk2oQMTWEEe8sMMNfXCe69sfRSm4FmA==
+  dependencies:
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-editor-classic" "46.0.2"
+    "@ckeditor/ckeditor5-editor-decoupled" "46.0.2"
+    "@ckeditor/ckeditor5-icons" "46.0.2"
+    "@ckeditor/ckeditor5-ui" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+    ckeditor5 "46.0.2"
+
+"@ckeditor/ckeditor5-heading@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-heading/-/ckeditor5-heading-46.0.2.tgz"
+  integrity sha512-AdvE53zuBGyuiBitaLPztWL/OyT3hG9F2kcdf1yG+RYovLXS6lG2Ut1tEL3jzmTNOoObWLQQ9Jpthj7gawXlQw==
+  dependencies:
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-engine" "46.0.2"
+    "@ckeditor/ckeditor5-icons" "46.0.2"
+    "@ckeditor/ckeditor5-paragraph" "46.0.2"
+    "@ckeditor/ckeditor5-ui" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+    ckeditor5 "46.0.2"
+
+"@ckeditor/ckeditor5-highlight@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-highlight/-/ckeditor5-highlight-46.0.2.tgz"
+  integrity sha512-wOLa7exXWaIObdFmXIWchgfDEUyk4+j2/B25NLXyYFhk+EVDOIA0le48Tq+nAM7cusA6PP4skwkUZCBOP31UIA==
+  dependencies:
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-icons" "46.0.2"
+    "@ckeditor/ckeditor5-ui" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+    ckeditor5 "46.0.2"
+
+"@ckeditor/ckeditor5-horizontal-line@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-horizontal-line/-/ckeditor5-horizontal-line-46.0.2.tgz"
+  integrity sha512-TWpcU7xDQnqyKvvv30cYHy+57FTLEuNgUbKRs+ziP1Ywogd6X3jFVnmJk/WMCNc315v1IfDFiuaPbZn04zrmjA==
+  dependencies:
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-icons" "46.0.2"
+    "@ckeditor/ckeditor5-ui" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+    "@ckeditor/ckeditor5-widget" "46.0.2"
+    ckeditor5 "46.0.2"
+
+"@ckeditor/ckeditor5-html-embed@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-html-embed/-/ckeditor5-html-embed-46.0.2.tgz"
+  integrity sha512-GJouBoKYKEP1NYrMSeu+vadP5vHsJgUBb/9yvx+kup/50u+HOylenBfVc+IdMMzZyU8ZoNw3wND5mgOpyQPLdQ==
+  dependencies:
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-icons" "46.0.2"
+    "@ckeditor/ckeditor5-ui" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+    "@ckeditor/ckeditor5-widget" "46.0.2"
+    ckeditor5 "46.0.2"
+
+"@ckeditor/ckeditor5-html-support@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-html-support/-/ckeditor5-html-support-46.0.2.tgz"
+  integrity sha512-DZAMx55Qxz7YQMy4qOCiNKf9oUp/FkAxqJRAG+102nweLQePq86w//oE6pc/mRo3q6U3/za8NLz6JP4L2duztw==
+  dependencies:
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-engine" "46.0.2"
+    "@ckeditor/ckeditor5-enter" "46.0.2"
+    "@ckeditor/ckeditor5-heading" "46.0.2"
+    "@ckeditor/ckeditor5-image" "46.0.2"
+    "@ckeditor/ckeditor5-list" "46.0.2"
+    "@ckeditor/ckeditor5-remove-format" "46.0.2"
+    "@ckeditor/ckeditor5-table" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+    "@ckeditor/ckeditor5-widget" "46.0.2"
+    ckeditor5 "46.0.2"
+    es-toolkit "1.39.5"
+
+"@ckeditor/ckeditor5-icons@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-icons/-/ckeditor5-icons-46.0.2.tgz"
+  integrity sha512-QNLncoTeHgv4fU7Q/jv/qWH1nQMQ1JreWVQLysu1nEDlm4KiVLzP+8ng51BquY+wxw4rIVJTwZv1FYdyc6xlQw==
+
+"@ckeditor/ckeditor5-image@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-image/-/ckeditor5-image-46.0.2.tgz"
+  integrity sha512-1b72bijZ4lhysL6K9ZZBQZPldMUZwoAar4DFHmCnM/WN6psf/MEyFce+hr5Qq/LFOvCiOeevuNz6DTDKO7eXSg==
+  dependencies:
+    "@ckeditor/ckeditor5-clipboard" "46.0.2"
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-engine" "46.0.2"
+    "@ckeditor/ckeditor5-icons" "46.0.2"
+    "@ckeditor/ckeditor5-typing" "46.0.2"
+    "@ckeditor/ckeditor5-ui" "46.0.2"
+    "@ckeditor/ckeditor5-undo" "46.0.2"
+    "@ckeditor/ckeditor5-upload" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+    "@ckeditor/ckeditor5-widget" "46.0.2"
+    ckeditor5 "46.0.2"
+    es-toolkit "1.39.5"
+
+"@ckeditor/ckeditor5-indent@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-indent/-/ckeditor5-indent-46.0.2.tgz"
+  integrity sha512-EKA4kM3uZexI6j7GzQyDuYNwY0ULRet0+AZTYbr4rEaB+Mo2zaJCJxuJw1RPTNBwE/9fVJyqYsPzb0UmSRqsGQ==
+  dependencies:
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-engine" "46.0.2"
+    "@ckeditor/ckeditor5-heading" "46.0.2"
+    "@ckeditor/ckeditor5-icons" "46.0.2"
+    "@ckeditor/ckeditor5-list" "46.0.2"
+    "@ckeditor/ckeditor5-ui" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+    ckeditor5 "46.0.2"
+
+"@ckeditor/ckeditor5-language@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-language/-/ckeditor5-language-46.0.2.tgz"
+  integrity sha512-eYwRnEkoWGabEZ4PVtSobORa+vnUQFuRetInuhDrkBwyMv9IjVUukS46AWHEjkPBO/rlI++O9SK1oOFyzOARCg==
+  dependencies:
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-ui" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+    ckeditor5 "46.0.2"
+
+"@ckeditor/ckeditor5-link@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-link/-/ckeditor5-link-46.0.2.tgz"
+  integrity sha512-5uliK3QCIOcEsq2bgZF5Qz88cmN0E1YXUrYc5uoqC8LF0lzOimE+EA+7/dJhBZCya8/+Y/rvvpJ8SHsjhd++kg==
+  dependencies:
+    "@ckeditor/ckeditor5-clipboard" "46.0.2"
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-engine" "46.0.2"
+    "@ckeditor/ckeditor5-icons" "46.0.2"
+    "@ckeditor/ckeditor5-image" "46.0.2"
+    "@ckeditor/ckeditor5-typing" "46.0.2"
+    "@ckeditor/ckeditor5-ui" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+    "@ckeditor/ckeditor5-widget" "46.0.2"
+    ckeditor5 "46.0.2"
+    es-toolkit "1.39.5"
+
+"@ckeditor/ckeditor5-list@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-list/-/ckeditor5-list-46.0.2.tgz"
+  integrity sha512-0Pq5UU4SP9UOlcRhxpjCoGXfDxHeqdumn8qtNbL5X5yRGqRE4GsVgJ4CkOmtZNTy1JVv1clZ37NPKh5miqTP4A==
+  dependencies:
+    "@ckeditor/ckeditor5-clipboard" "46.0.2"
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-engine" "46.0.2"
+    "@ckeditor/ckeditor5-enter" "46.0.2"
+    "@ckeditor/ckeditor5-font" "46.0.2"
+    "@ckeditor/ckeditor5-icons" "46.0.2"
+    "@ckeditor/ckeditor5-typing" "46.0.2"
+    "@ckeditor/ckeditor5-ui" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+    ckeditor5 "46.0.2"
+
+"@ckeditor/ckeditor5-markdown-gfm@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-markdown-gfm/-/ckeditor5-markdown-gfm-46.0.2.tgz"
+  integrity sha512-+PaA5D10LnxqrsdW+UI45vqjR7C0l6vWAHFR+M99v7bxHEW+hQiLS6af8FhL/yv9Sno9AL4Oqdsee1HUU7hjHA==
+  dependencies:
+    "@ckeditor/ckeditor5-clipboard" "46.0.2"
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-engine" "46.0.2"
+    "@types/hast" "3.0.4"
+    ckeditor5 "46.0.2"
+    hast-util-from-dom "5.0.1"
+    hast-util-to-html "9.0.5"
+    hast-util-to-mdast "10.1.2"
+    hastscript "9.0.1"
+    rehype-dom-parse "5.0.2"
+    rehype-dom-stringify "4.0.2"
+    rehype-remark "10.0.1"
+    remark-breaks "4.0.0"
+    remark-gfm "4.0.1"
+    remark-parse "11.0.0"
+    remark-rehype "11.1.2"
+    remark-stringify "11.0.0"
+    unified "11.0.5"
+    unist-util-visit "5.0.0"
+
+"@ckeditor/ckeditor5-media-embed@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-media-embed/-/ckeditor5-media-embed-46.0.2.tgz"
+  integrity sha512-HQqtmuZPGvMKvshVIkz9GQvnSxuvsuw1o99zHvkr73H2OpL2uRRgCwVLufKZpIsn6CMtNbWq9PlZxk6ZME6Nyg==
+  dependencies:
+    "@ckeditor/ckeditor5-clipboard" "46.0.2"
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-engine" "46.0.2"
+    "@ckeditor/ckeditor5-icons" "46.0.2"
+    "@ckeditor/ckeditor5-typing" "46.0.2"
+    "@ckeditor/ckeditor5-ui" "46.0.2"
+    "@ckeditor/ckeditor5-undo" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+    "@ckeditor/ckeditor5-widget" "46.0.2"
+    ckeditor5 "46.0.2"
+
+"@ckeditor/ckeditor5-mention@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-mention/-/ckeditor5-mention-46.0.2.tgz"
+  integrity sha512-/2FT0TmXyxgO5CWg841Yy5PF0uGT4mmp8NQYPpamfgP6E236L/aOTJP4kHtZV5uOSEnt6P48N59MTXswXA3Glg==
+  dependencies:
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-typing" "46.0.2"
+    "@ckeditor/ckeditor5-ui" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+    ckeditor5 "46.0.2"
+    es-toolkit "1.39.5"
+
+"@ckeditor/ckeditor5-minimap@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-minimap/-/ckeditor5-minimap-46.0.2.tgz"
+  integrity sha512-Hi0qLjWLgGSwT1u3BlDc5tXMA5eHsDm6L9Sv+LiyxPFPBgX/HQhWT6L6x4jIexHQLlDhBO5o/Hp3tnlW57K5Kg==
+  dependencies:
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-engine" "46.0.2"
+    "@ckeditor/ckeditor5-ui" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+    ckeditor5 "46.0.2"
+
+"@ckeditor/ckeditor5-page-break@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-page-break/-/ckeditor5-page-break-46.0.2.tgz"
+  integrity sha512-8wSzQU0lwoqzMPFyZHYVJJRTc1GA5gwgtz7XVKKHtKRF9FsKmHYASHsEsjjX3TkU0dPTGnaqsttZ7mBGU9K9Ww==
+  dependencies:
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-icons" "46.0.2"
+    "@ckeditor/ckeditor5-ui" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+    "@ckeditor/ckeditor5-widget" "46.0.2"
+    ckeditor5 "46.0.2"
+
+"@ckeditor/ckeditor5-paragraph@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-paragraph/-/ckeditor5-paragraph-46.0.2.tgz"
+  integrity sha512-Mg4BxYvIzonlLe9zzFZTyiiMbW40NLue9G26lWaCUz+O2z8ms5CShNc065t4alJiihJis5Dtuho8tvPDiRgCNg==
+  dependencies:
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-engine" "46.0.2"
+    "@ckeditor/ckeditor5-icons" "46.0.2"
+    "@ckeditor/ckeditor5-ui" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+
+"@ckeditor/ckeditor5-paste-from-office@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-paste-from-office/-/ckeditor5-paste-from-office-46.0.2.tgz"
+  integrity sha512-eI08nXazXzdIBxKjiU7tANFAdqz1cb5+xRdzn6dmZj0QBLHdEMWZVLLng5XC2gPqB7V3gSA0XbuYeSLF6fTfQg==
+  dependencies:
+    "@ckeditor/ckeditor5-clipboard" "46.0.2"
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-engine" "46.0.2"
+    ckeditor5 "46.0.2"
+
+"@ckeditor/ckeditor5-remove-format@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-remove-format/-/ckeditor5-remove-format-46.0.2.tgz"
+  integrity sha512-/Ez72jjpnvDqFtP4afNimyrqbt3xJn/ab7p4DoByqyuBJ/Wy7mkaRcw9dDO0oJB+GVWdcGeRWeYoFUYj3Yw0NQ==
+  dependencies:
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-icons" "46.0.2"
+    "@ckeditor/ckeditor5-ui" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+    ckeditor5 "46.0.2"
+
+"@ckeditor/ckeditor5-restricted-editing@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-restricted-editing/-/ckeditor5-restricted-editing-46.0.2.tgz"
+  integrity sha512-WR8HciP0DcD1TB+i8zRVwroPMiCy9Z7m0kfirCSLmwWP8bn792XwU+kId9DrOWalNzfNh4BXoviaPpi0vtRcmA==
+  dependencies:
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-engine" "46.0.2"
+    "@ckeditor/ckeditor5-icons" "46.0.2"
+    "@ckeditor/ckeditor5-ui" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+    ckeditor5 "46.0.2"
+
+"@ckeditor/ckeditor5-select-all@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-select-all/-/ckeditor5-select-all-46.0.2.tgz"
+  integrity sha512-qC+HAZ0BWO4daXkZ84dAu7ynMRJfhtcnUP8pR/o2D6VxJO7Cu+5MwtwfoLmSiJAUGYwcxVd/iFq3RP7ZxS4Rew==
+  dependencies:
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-engine" "46.0.2"
+    "@ckeditor/ckeditor5-icons" "46.0.2"
+    "@ckeditor/ckeditor5-ui" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+
+"@ckeditor/ckeditor5-show-blocks@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-show-blocks/-/ckeditor5-show-blocks-46.0.2.tgz"
+  integrity sha512-J+C59BMbnAH4gPrkUlu/dccKR2NBUqrRIFa01hnDHk+ECYeJsBNlsENNPImxeay4hiF+p4cujhQnI8Xq1NkzQQ==
+  dependencies:
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-icons" "46.0.2"
+    "@ckeditor/ckeditor5-ui" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+    ckeditor5 "46.0.2"
+
+"@ckeditor/ckeditor5-source-editing@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-source-editing/-/ckeditor5-source-editing-46.0.2.tgz"
+  integrity sha512-UdQELANPxAMhbbKTBCOfm/dMtqgQpMcU0D58LKjvvOT35ZGyjlrvZCKmXweFtfLPK5SmQhlS9z5/yy9JIH3pVQ==
+  dependencies:
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-icons" "46.0.2"
+    "@ckeditor/ckeditor5-theme-lark" "46.0.2"
+    "@ckeditor/ckeditor5-ui" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+    ckeditor5 "46.0.2"
+
+"@ckeditor/ckeditor5-special-characters@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-special-characters/-/ckeditor5-special-characters-46.0.2.tgz"
+  integrity sha512-X3XuIAchgFxmKcWcc513vzzsMcN6eOPOzQlQtVr9NKgUd/Zvw7YTyxCP1Wj2w9usgLn57p2ame/7GlBt/P1quw==
+  dependencies:
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-icons" "46.0.2"
+    "@ckeditor/ckeditor5-typing" "46.0.2"
+    "@ckeditor/ckeditor5-ui" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+    ckeditor5 "46.0.2"
+
+"@ckeditor/ckeditor5-style@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-style/-/ckeditor5-style-46.0.2.tgz"
+  integrity sha512-LeP6kV0AeY1mrv6hbuQ2s10AEoJ64Vgv7XMAieg/fYE2/CIH0GAXE9/4Xt1+X8zCEddZ0HcbKCyCJG2l20xzyQ==
+  dependencies:
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-html-support" "46.0.2"
+    "@ckeditor/ckeditor5-list" "46.0.2"
+    "@ckeditor/ckeditor5-table" "46.0.2"
+    "@ckeditor/ckeditor5-typing" "46.0.2"
+    "@ckeditor/ckeditor5-ui" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+    ckeditor5 "46.0.2"
+    es-toolkit "1.39.5"
+
+"@ckeditor/ckeditor5-table@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-table/-/ckeditor5-table-46.0.2.tgz"
+  integrity sha512-dGkTe1vEk7iDEmoRCTQszyerXvO5hrJH702kwHV5md2dlXyyJBteAJ9qHiSxf1euC2mOMMUhq7n5DlqpFAFb8A==
+  dependencies:
+    "@ckeditor/ckeditor5-clipboard" "46.0.2"
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-engine" "46.0.2"
+    "@ckeditor/ckeditor5-icons" "46.0.2"
+    "@ckeditor/ckeditor5-ui" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+    "@ckeditor/ckeditor5-widget" "46.0.2"
+    ckeditor5 "46.0.2"
+    es-toolkit "1.39.5"
+
+"@ckeditor/ckeditor5-theme-lark@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-theme-lark/-/ckeditor5-theme-lark-46.0.2.tgz"
+  integrity sha512-sHhwOZVg0e3SHm6caeHP67VlKojtoqxiu6oCwFduC+hK4s3OhQ3J/v+FIs7wGeFPz4ReBMAp63LNJVVcllRw+g==
+  dependencies:
+    "@ckeditor/ckeditor5-ui" "46.0.2"
+
+"@ckeditor/ckeditor5-typing@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-typing/-/ckeditor5-typing-46.0.2.tgz"
+  integrity sha512-jYrsRmE1rZ6c8jtOWVm6Q3FpIT9HWdJg6fK453w4upkjWM7lH3kXxtPgSLmEATUyO/ON91VNXEGA+LGml2MHnw==
+  dependencies:
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-engine" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+    es-toolkit "1.39.5"
+
+"@ckeditor/ckeditor5-ui@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-ui/-/ckeditor5-ui-46.0.2.tgz"
+  integrity sha512-c0Emy60YDY0EZl8nLPNaFoEA60cxQvfz8cD9uK7MYw9L5s4xSi+m0Nd0P2BR8gK/dfRnwiBnUyLDcu4yPMN1hw==
+  dependencies:
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-editor-multi-root" "46.0.2"
+    "@ckeditor/ckeditor5-engine" "46.0.2"
+    "@ckeditor/ckeditor5-icons" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+    "@types/color-convert" "2.0.4"
+    color-convert "3.1.0"
+    color-parse "2.0.2"
+    es-toolkit "1.39.5"
+    vanilla-colorful "0.7.2"
+
+"@ckeditor/ckeditor5-undo@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-undo/-/ckeditor5-undo-46.0.2.tgz"
+  integrity sha512-IOFL9rrYvk2KcNyFK9YPOENM3H7RRqtBNNmj9A9zntpqsoq+8QKqcY5BpcDeODrkOtmbrhwDwcwcek7uqI3S5g==
+  dependencies:
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-engine" "46.0.2"
+    "@ckeditor/ckeditor5-icons" "46.0.2"
+    "@ckeditor/ckeditor5-ui" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+
+"@ckeditor/ckeditor5-upload@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-upload/-/ckeditor5-upload-46.0.2.tgz"
+  integrity sha512-34lQ7Cx+/hiHAsY3yL+mwbD2Y1QPsqdr9VdgQU8McfwQNSh/PHBa5WplIMsdMRym8pEicj50nsli/hVl58FsZg==
+  dependencies:
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+
+"@ckeditor/ckeditor5-utils@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-utils/-/ckeditor5-utils-46.0.2.tgz"
+  integrity sha512-7t9PAZurES75Nz7ICadfRoGT5SbXnbxu6L5PoAxmyIGFPKICdZ6I4mVILVraPSNwgFDm/Zg2RxmiCOMWFTlxMg==
+  dependencies:
+    "@ckeditor/ckeditor5-ui" "46.0.2"
+    es-toolkit "1.39.5"
+
+"@ckeditor/ckeditor5-watchdog@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-watchdog/-/ckeditor5-watchdog-46.0.2.tgz"
+  integrity sha512-QaXczfT5WgyteNVzbYWhZ0SBLQj/qXXRefMq0v1mpI9Iro44iMV7XmvOWhTVsskwTuNq32a1C5zMzfW0Ax69rQ==
+  dependencies:
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-editor-multi-root" "46.0.2"
+    "@ckeditor/ckeditor5-engine" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+    es-toolkit "1.39.5"
+
+"@ckeditor/ckeditor5-widget@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-widget/-/ckeditor5-widget-46.0.2.tgz"
+  integrity sha512-uBcYwT7vTKCyuMXZIi0Qbs3neBQQp1sFFb/ClsX0elbh3UZEoVyr13uZIgl1+TrnVZa0scICJfWLbaiRHjVTXg==
+  dependencies:
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-engine" "46.0.2"
+    "@ckeditor/ckeditor5-enter" "46.0.2"
+    "@ckeditor/ckeditor5-icons" "46.0.2"
+    "@ckeditor/ckeditor5-typing" "46.0.2"
+    "@ckeditor/ckeditor5-ui" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+    es-toolkit "1.39.5"
+
+"@ckeditor/ckeditor5-word-count@46.0.2":
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-word-count/-/ckeditor5-word-count-46.0.2.tgz"
+  integrity sha512-U2b1DTchEE75ndHmDMmV3y/NXFFx9yIoSYzupsPJywKVTdBFdDZvSnulEocuP/YCgWTA1VWTiAirRTmccII/Qw==
+  dependencies:
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-ui" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+    ckeditor5 "46.0.2"
+    es-toolkit "1.39.5"
+
 "@csstools/color-helpers@^5.0.2":
   version "5.0.2"
   resolved "https://registry.npmjs.org/@csstools/color-helpers/-/color-helpers-5.0.2.tgz"
@@ -1566,6 +2313,25 @@
   dependencies:
     "@babel/types" "^7.28.2"
 
+"@types/color-convert@2.0.4":
+  version "2.0.4"
+  resolved "https://registry.npmjs.org/@types/color-convert/-/color-convert-2.0.4.tgz"
+  integrity sha512-Ub1MmDdyZ7mX//g25uBAoH/mWGd9swVbt8BseymnaE18SU4po/PjmCrHxqIIRjBo3hV/vh1KGr0eMxUhp+t+dQ==
+  dependencies:
+    "@types/color-name" "^1.1.0"
+
+"@types/color-name@^1.1.0":
+  version "1.1.5"
+  resolved "https://registry.npmjs.org/@types/color-name/-/color-name-1.1.5.tgz"
+  integrity sha512-j2K5UJqGTxeesj6oQuGpMgifpT5k9HprgQd8D1Y0lOFqKHl3PJu5GMeS4Y5EgjS55AE6OQxf8mPED9uaGbf4Cg==
+
+"@types/debug@^4.0.0":
+  version "4.1.12"
+  resolved "https://registry.npmjs.org/@types/debug/-/debug-4.1.12.tgz"
+  integrity sha512-vIChWdVG3LG1SMxEvI/AK+FWJthlrqlTu7fbrlywTkkaONwk/UAGaULXRlf8vkzFBLVm0zkMdCquhL5aOjhXPQ==
+  dependencies:
+    "@types/ms" "*"
+
 "@types/eslint-scope@^3.7.7":
   version "3.7.7"
   resolved "https://registry.npmjs.org/@types/eslint-scope/-/eslint-scope-3.7.7.tgz"
@@ -1586,6 +2352,13 @@
   version "1.0.7"
   resolved "https://registry.npmjs.org/@types/estree/-/estree-1.0.7.tgz"
   integrity sha512-w28IoSUCJpidD/TGviZwwMJckNESJZXFu7NBZ5YJ4mEUnNraUn9Pm8HSZm/jDF1pDWYKspWE7oVphigUPRakIQ==
+
+"@types/hast@^3.0.0", "@types/hast@3.0.4":
+  version "3.0.4"
+  resolved "https://registry.npmjs.org/@types/hast/-/hast-3.0.4.tgz"
+  integrity sha512-WPs+bbQw5aCj+x6laNGWLH3wviHtoCv/P3+otBhbOhJgG8qtpdAMlTCxLtsTWA7LH1Oh/bFCHsBn0TPS5m30EQ==
+  dependencies:
+    "@types/unist" "*"
 
 "@types/istanbul-lib-coverage@*", "@types/istanbul-lib-coverage@^2.0.0", "@types/istanbul-lib-coverage@^2.0.1", "@types/istanbul-lib-coverage@^2.0.6":
   version "2.0.6"
@@ -1620,6 +2393,18 @@
   resolved "https://registry.npmjs.org/@types/json-schema/-/json-schema-7.0.15.tgz"
   integrity sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==
 
+"@types/mdast@^4.0.0":
+  version "4.0.4"
+  resolved "https://registry.npmjs.org/@types/mdast/-/mdast-4.0.4.tgz"
+  integrity sha512-kGaNbPh1k7AFzgpud/gMdvIm5xuECykRR+JnWKQno9TAXVa6WIVCGTPvYGekIDL4uwCZQSYbUxNBSb1aUo79oA==
+  dependencies:
+    "@types/unist" "*"
+
+"@types/ms@*":
+  version "2.1.0"
+  resolved "https://registry.npmjs.org/@types/ms/-/ms-2.1.0.tgz"
+  integrity sha512-GsCCIZDE/p3i96vtEqx+7dBUGXrc7zeSK3wwPHIaRThS+9OhWIXRqzs4d6k1SVU8g91DrNRWxWUGhp5KXQb2VA==
+
 "@types/node@*", "@types/node@^24.2.1":
   version "24.2.1"
   resolved "https://registry.npmjs.org/@types/node/-/node-24.2.1.tgz"
@@ -1636,6 +2421,11 @@
   version "4.0.5"
   resolved "https://registry.npmjs.org/@types/tough-cookie/-/tough-cookie-4.0.5.tgz"
   integrity sha512-/Ad8+nIOV7Rl++6f1BdKxFSMgmoqEoYbHRpPcx3JEfv8VRsQe9Z4mCXeJBzxs7mbHY/XOZZuXlRNfhpVPbs6ZA==
+
+"@types/unist@*", "@types/unist@^3.0.0":
+  version "3.0.3"
+  resolved "https://registry.npmjs.org/@types/unist/-/unist-3.0.3.tgz"
+  integrity sha512-ko/gIFJRv177XgZsZcBwnqJN5x/Gien8qNOn0D5bQU/zAzVf9Zt3BlcUiLqhV9y4ARk0GbT3tnUiPNgnTXzc/Q==
 
 "@types/webpack-env@^1.16.4":
   version "1.18.8"
@@ -1654,7 +2444,7 @@
   dependencies:
     "@types/yargs-parser" "*"
 
-"@ungap/structured-clone@^1.3.0":
+"@ungap/structured-clone@^1.0.0", "@ungap/structured-clone@^1.3.0":
   version "1.3.0"
   resolved "https://registry.npmjs.org/@ungap/structured-clone/-/structured-clone-1.3.0.tgz"
   integrity sha512-WmoN8qaIAo7WTYWbAZuG8PYEhn5fkz7dZrqTBZ7dtt//lL2Gwms1IcnQ5yHqjDfX8Ft5j4YzDM23f87zBfDe9g==
@@ -2073,6 +2863,11 @@ babel-preset-jest@30.0.1:
     babel-plugin-jest-hoist "30.0.1"
     babel-preset-current-node-syntax "^1.1.0"
 
+bail@^2.0.0:
+  version "2.0.2"
+  resolved "https://registry.npmjs.org/bail/-/bail-2.0.2.tgz"
+  integrity sha512-0xO6mYd7JB2YesxDKplafRpsiOzPt9V02ddPCLbY1xYGPOX24NTyN50qnUxgCPcSoYMhKpAuBTjQoRZCAkUDRw==
+
 balanced-match@^1.0.0:
   version "1.0.2"
   resolved "https://registry.npmjs.org/balanced-match/-/balanced-match-1.0.2.tgz"
@@ -2082,6 +2877,11 @@ big.js@^5.2.2:
   version "5.2.2"
   resolved "https://registry.npmjs.org/big.js/-/big.js-5.2.2.tgz"
   integrity sha512-vyL2OymJxmarO8gxMr0mhChsO9QGwhynfuu4+MHTAW6czfq9humCB7rKpUjDd9YUiDPU4mzpyupFSvOClAwbmQ==
+
+blurhash@2.0.5:
+  version "2.0.5"
+  resolved "https://registry.npmjs.org/blurhash/-/blurhash-2.0.5.tgz"
+  integrity sha512-cRygWd7kGBQO3VEhPiTgq4Wc43ctsM+o46urrmPOiuAe+07fzlSB9OJVdpgDL0jPqXUVQ9ht7aq7kxOeJHRK+w==
 
 boolbase@^1.0.0:
   version "1.0.0"
@@ -2167,6 +2967,11 @@ caniuse-lite@^1.0.0, caniuse-lite@^1.0.30001702, caniuse-lite@^1.0.30001716:
   resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001718.tgz"
   integrity sha512-AflseV1ahcSunK53NfEs9gFWgOEmzr0f+kaMFA4xiLZlr9Hzt7HxcSpIFcnNCUkz6R6dWKa54rUz3HUmI3nVcw==
 
+ccount@^2.0.0:
+  version "2.0.1"
+  resolved "https://registry.npmjs.org/ccount/-/ccount-2.0.1.tgz"
+  integrity sha512-eyrF0jiFpY+3drT6383f1qhkbGsLSifNAjA61IUjZjmLCWjItY6LB9ft9YhoDgwfmclB2zhu51Lc7+95b8NRAg==
+
 chalk@^2.4.2:
   version "2.4.2"
   resolved "https://registry.npmjs.org/chalk/-/chalk-2.4.2.tgz"
@@ -2197,6 +3002,21 @@ char-regex@^1.0.2:
   resolved "https://registry.npmjs.org/char-regex/-/char-regex-1.0.2.tgz"
   integrity sha512-kWWXztvZ5SBQV+eRgKFeh8q5sLuZY2+8WUIzlxWVTg+oGwY14qylx1KbKzHd8P6ZYkAg0xyIDU9JMHhyJMZ1jw==
 
+character-entities-html4@^2.0.0:
+  version "2.1.0"
+  resolved "https://registry.npmjs.org/character-entities-html4/-/character-entities-html4-2.1.0.tgz"
+  integrity sha512-1v7fgQRj6hnSwFpq1Eu0ynr/CDEw0rXo2B61qXrLNdHZmPKgb7fqS1a2JwF0rISo9q77jDI8VMEHoApn8qDoZA==
+
+character-entities-legacy@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.npmjs.org/character-entities-legacy/-/character-entities-legacy-3.0.0.tgz"
+  integrity sha512-RpPp0asT/6ufRm//AJVwpViZbGM/MkjQFxJccQRHmISF/22NBtsHqAWmL+/pmkPWoIUJdWyeVleTl1wydHATVQ==
+
+character-entities@^2.0.0:
+  version "2.0.2"
+  resolved "https://registry.npmjs.org/character-entities/-/character-entities-2.0.2.tgz"
+  integrity sha512-shx7oQ0Awen/BRIdkjkvz54PnEEI/EjwXDSIZp86/KKdbafHh1Df/RYGBhn4hbe2+uKC9FnT5UCEdyPz3ai9hQ==
+
 chokidar@^4.0.0:
   version "4.0.3"
   resolved "https://registry.npmjs.org/chokidar/-/chokidar-4.0.3.tgz"
@@ -2223,6 +3043,73 @@ cjs-module-lexer@^2.1.0:
   version "2.1.0"
   resolved "https://registry.npmjs.org/cjs-module-lexer/-/cjs-module-lexer-2.1.0.tgz"
   integrity sha512-UX0OwmYRYQQetfrLEZeewIFFI+wSTofC+pMBLNuH3RUuu/xzG1oz84UCEDOSoQlN3fZ4+AzmV50ZYvGqkMh9yA==
+
+ckeditor5@^46.0.2, ckeditor5@46.0.2:
+  version "46.0.2"
+  resolved "https://registry.npmjs.org/ckeditor5/-/ckeditor5-46.0.2.tgz"
+  integrity sha512-Ly+pG/OkF+9P7DaaaCp+VYJOm0+flxLR3Ue1thm10JnMvOW52XXYaRyoasAXoiGz6CC4lh0ZN7AtQSWu85oj3g==
+  dependencies:
+    "@ckeditor/ckeditor5-adapter-ckfinder" "46.0.2"
+    "@ckeditor/ckeditor5-alignment" "46.0.2"
+    "@ckeditor/ckeditor5-autoformat" "46.0.2"
+    "@ckeditor/ckeditor5-autosave" "46.0.2"
+    "@ckeditor/ckeditor5-basic-styles" "46.0.2"
+    "@ckeditor/ckeditor5-block-quote" "46.0.2"
+    "@ckeditor/ckeditor5-bookmark" "46.0.2"
+    "@ckeditor/ckeditor5-ckbox" "46.0.2"
+    "@ckeditor/ckeditor5-ckfinder" "46.0.2"
+    "@ckeditor/ckeditor5-clipboard" "46.0.2"
+    "@ckeditor/ckeditor5-cloud-services" "46.0.2"
+    "@ckeditor/ckeditor5-code-block" "46.0.2"
+    "@ckeditor/ckeditor5-core" "46.0.2"
+    "@ckeditor/ckeditor5-easy-image" "46.0.2"
+    "@ckeditor/ckeditor5-editor-balloon" "46.0.2"
+    "@ckeditor/ckeditor5-editor-classic" "46.0.2"
+    "@ckeditor/ckeditor5-editor-decoupled" "46.0.2"
+    "@ckeditor/ckeditor5-editor-inline" "46.0.2"
+    "@ckeditor/ckeditor5-editor-multi-root" "46.0.2"
+    "@ckeditor/ckeditor5-emoji" "46.0.2"
+    "@ckeditor/ckeditor5-engine" "46.0.2"
+    "@ckeditor/ckeditor5-enter" "46.0.2"
+    "@ckeditor/ckeditor5-essentials" "46.0.2"
+    "@ckeditor/ckeditor5-find-and-replace" "46.0.2"
+    "@ckeditor/ckeditor5-font" "46.0.2"
+    "@ckeditor/ckeditor5-fullscreen" "46.0.2"
+    "@ckeditor/ckeditor5-heading" "46.0.2"
+    "@ckeditor/ckeditor5-highlight" "46.0.2"
+    "@ckeditor/ckeditor5-horizontal-line" "46.0.2"
+    "@ckeditor/ckeditor5-html-embed" "46.0.2"
+    "@ckeditor/ckeditor5-html-support" "46.0.2"
+    "@ckeditor/ckeditor5-icons" "46.0.2"
+    "@ckeditor/ckeditor5-image" "46.0.2"
+    "@ckeditor/ckeditor5-indent" "46.0.2"
+    "@ckeditor/ckeditor5-language" "46.0.2"
+    "@ckeditor/ckeditor5-link" "46.0.2"
+    "@ckeditor/ckeditor5-list" "46.0.2"
+    "@ckeditor/ckeditor5-markdown-gfm" "46.0.2"
+    "@ckeditor/ckeditor5-media-embed" "46.0.2"
+    "@ckeditor/ckeditor5-mention" "46.0.2"
+    "@ckeditor/ckeditor5-minimap" "46.0.2"
+    "@ckeditor/ckeditor5-page-break" "46.0.2"
+    "@ckeditor/ckeditor5-paragraph" "46.0.2"
+    "@ckeditor/ckeditor5-paste-from-office" "46.0.2"
+    "@ckeditor/ckeditor5-remove-format" "46.0.2"
+    "@ckeditor/ckeditor5-restricted-editing" "46.0.2"
+    "@ckeditor/ckeditor5-select-all" "46.0.2"
+    "@ckeditor/ckeditor5-show-blocks" "46.0.2"
+    "@ckeditor/ckeditor5-source-editing" "46.0.2"
+    "@ckeditor/ckeditor5-special-characters" "46.0.2"
+    "@ckeditor/ckeditor5-style" "46.0.2"
+    "@ckeditor/ckeditor5-table" "46.0.2"
+    "@ckeditor/ckeditor5-theme-lark" "46.0.2"
+    "@ckeditor/ckeditor5-typing" "46.0.2"
+    "@ckeditor/ckeditor5-ui" "46.0.2"
+    "@ckeditor/ckeditor5-undo" "46.0.2"
+    "@ckeditor/ckeditor5-upload" "46.0.2"
+    "@ckeditor/ckeditor5-utils" "46.0.2"
+    "@ckeditor/ckeditor5-watchdog" "46.0.2"
+    "@ckeditor/ckeditor5-widget" "46.0.2"
+    "@ckeditor/ckeditor5-word-count" "46.0.2"
 
 cliui@^8.0.1:
   version "8.0.1"
@@ -2266,6 +3153,18 @@ color-convert@^2.0.1:
   dependencies:
     color-name "~1.1.4"
 
+color-convert@3.1.0:
+  version "3.1.0"
+  resolved "https://registry.npmjs.org/color-convert/-/color-convert-3.1.0.tgz"
+  integrity sha512-TVoqAq8ZDIpK5lsQY874DDnu65CSsc9vzq0wLpNQ6UMBq81GSZocVazPiBbYGzngzBOIRahpkTzCLVe2at4MfA==
+  dependencies:
+    color-name "^2.0.0"
+
+color-name@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.npmjs.org/color-name/-/color-name-2.0.0.tgz"
+  integrity sha512-SbtvAMWvASO5TE2QP07jHBMXKafgdZz8Vrsrn96fiL+O92/FN/PLARzUW5sKt013fjAprK2d2iCn2hk2Xb5oow==
+
 color-name@~1.1.4:
   version "1.1.4"
   resolved "https://registry.npmjs.org/color-name/-/color-name-1.1.4.tgz"
@@ -2276,6 +3175,13 @@ color-name@1.1.3:
   resolved "https://registry.npmjs.org/color-name/-/color-name-1.1.3.tgz"
   integrity sha512-72fSenhMw2HZMTVHeCA9KCmpEIbzWiQsjN+BHcBbS9vr1mtt+vJjPdksIBNUmKAW8TFUDPJK5SUU3QhE9NEXDw==
 
+color-parse@2.0.2:
+  version "2.0.2"
+  resolved "https://registry.npmjs.org/color-parse/-/color-parse-2.0.2.tgz"
+  integrity sha512-eCtOz5w5ttWIUcaKLiktF+DxZO1R9KLNY/xhbV6CkhM7sR3GhVghmt6X6yOnzeaM24po+Z9/S1apbXMwA3Iepw==
+  dependencies:
+    color-name "^2.0.0"
+
 colord@^2.9.3:
   version "2.9.3"
   resolved "https://registry.npmjs.org/colord/-/colord-2.9.3.tgz"
@@ -2285,6 +3191,11 @@ colorette@^2.0.14:
   version "2.0.20"
   resolved "https://registry.npmjs.org/colorette/-/colorette-2.0.20.tgz"
   integrity sha512-IfEDxwoWIjkeXL1eXcDiow4UbKjhLdq6/EuSVR9GMN7KVH3r9gQ83e73hsz1Nd1T3ijd5xv1wcWRYO+D6kCI2w==
+
+comma-separated-tokens@^2.0.0:
+  version "2.0.3"
+  resolved "https://registry.npmjs.org/comma-separated-tokens/-/comma-separated-tokens-2.0.3.tgz"
+  integrity sha512-Fu4hJdvzeylCfQPp9SGWidpzrMs7tTrlu6Vb8XGaRGck8QSNZJJp538Wrb60Lax4fPwR64ViY468OIUTbRlGZg==
 
 commander@^10.0.1:
   version "10.0.1"
@@ -2513,7 +3424,7 @@ data-urls@^5.0.0:
     whatwg-mimetype "^4.0.0"
     whatwg-url "^14.0.0"
 
-debug@^4.1.0, debug@^4.1.1, debug@^4.3.1, debug@^4.3.2, debug@^4.3.4, debug@4:
+debug@^4.0.0, debug@^4.1.0, debug@^4.1.1, debug@^4.3.1, debug@^4.3.2, debug@^4.3.4, debug@4:
   version "4.4.1"
   resolved "https://registry.npmjs.org/debug/-/debug-4.4.1.tgz"
   integrity sha512-KcKCqiftBJcZr++7ykoDIEwSa3XWowTfNPo92BYxjXiyYEVrUQh2aLyhxBCwww+heortUFxEJYcRzosstTEBYQ==
@@ -2524,6 +3435,13 @@ decimal.js@^10.5.0:
   version "10.6.0"
   resolved "https://registry.npmjs.org/decimal.js/-/decimal.js-10.6.0.tgz"
   integrity sha512-YpgQiITW3JXGntzdUmyUR1V812Hn8T1YVXhCu+wO3OpS4eU9l4YdD3qjyiKdV6mvV29zapkMeD390UVEf2lkUg==
+
+decode-named-character-reference@^1.0.0:
+  version "1.2.0"
+  resolved "https://registry.npmjs.org/decode-named-character-reference/-/decode-named-character-reference-1.2.0.tgz"
+  integrity sha512-c6fcElNV6ShtZXmsgNgFFV5tVX2PaV4g+MOAkb8eXHvn6sryJBrZa9r0zV6+dtTyoCKxtDy5tyQ5ZwQuidtd+Q==
+  dependencies:
+    character-entities "^2.0.0"
 
 dedent@^1.6.0:
   version "1.6.0"
@@ -2540,7 +3458,7 @@ deepmerge@^4.3.1:
   resolved "https://registry.npmjs.org/deepmerge/-/deepmerge-4.3.1.tgz"
   integrity sha512-3sUqbMEc77XqpdNO7FRyRog+eW3ph+GYCbj+rK+uYyRMuwsVy0rMiVtPn+QJlKFvWP/1PYpapqYn0Me2knFn+A==
 
-dequal@^2.0.3:
+dequal@^2.0.0, dequal@^2.0.3:
   version "2.0.3"
   resolved "https://registry.npmjs.org/dequal/-/dequal-2.0.3.tgz"
   integrity sha512-0je+qPKHEMohvfRTCEo3CrPG6cAzAYgmzKyxRiYSSDkS6eGJdyVJm7WaYA5ECaAD9wLB2T4EEeymA5aFVcYXCA==
@@ -2554,6 +3472,13 @@ detect-newline@^3.1.0:
   version "3.1.0"
   resolved "https://registry.npmjs.org/detect-newline/-/detect-newline-3.1.0.tgz"
   integrity sha512-TLz+x/vEXm/Y7P7wn1EJFNLxYpUD4TgMosxY6fAVJUnJMbupHBOncxyWUG9OpTaH9EBD7uFI5LfEgmMOc54DsA==
+
+devlop@^1.0.0, devlop@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.npmjs.org/devlop/-/devlop-1.1.0.tgz"
+  integrity sha512-RWmIqhcFf1lRYBvNmr7qTNuyCt/7/ns2jbpp1+PalgE/rDQcBT0fioSMUpJ93irlUhC5hrg4cYqe6U+0ImW0rA==
+  dependencies:
+    dequal "^2.0.0"
 
 dom-accessibility-api@^0.5.9:
   version "0.5.16"
@@ -2709,6 +3634,11 @@ es-module-lexer@^1.2.1:
   resolved "https://registry.npmjs.org/es-module-lexer/-/es-module-lexer-1.7.0.tgz"
   integrity sha512-jEQoCwk8hyb2AZziIOLhDqpm5+2ww5uIE6lkO/6jcOCusfk6LhMHpXXfBLXTZ7Ydyt0j4VoUQv6uGNYbdW+kBA==
 
+es-toolkit@1.39.5:
+  version "1.39.5"
+  resolved "https://registry.npmjs.org/es-toolkit/-/es-toolkit-1.39.5.tgz"
+  integrity sha512-z9V0qU4lx1TBXDNFWfAASWk6RNU6c6+TJBKE+FLIg8u0XJ6Yw58Hi0yX8ftEouj6p1QARRlXLFfHbIli93BdQQ==
+
 escalade@^3.1.1, escalade@^3.2.0:
   version "3.2.0"
   resolved "https://registry.npmjs.org/escalade/-/escalade-3.2.0.tgz"
@@ -2728,6 +3658,11 @@ escape-string-regexp@^4.0.0:
   version "4.0.0"
   resolved "https://registry.npmjs.org/escape-string-regexp/-/escape-string-regexp-4.0.0.tgz"
   integrity sha512-TtpcNJ3XAzx3Gq8sWRzJaVajRs0uVxA2YAkdb1jm2YkPz4G6egUFAyA3n5vtEIZefPk5Wa4UXbKuS5fKkJWdgA==
+
+escape-string-regexp@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.npmjs.org/escape-string-regexp/-/escape-string-regexp-5.0.0.tgz"
+  integrity sha512-/veY75JbMK4j1yjvuUxuVsiS/hr/4iHs9FTT6cgTexxdE0Ly/glccBAkloH/DofkjRbZU3bnoj38mOmhkZ0lHw==
 
 eslint-scope@^8.4.0:
   version "8.4.0"
@@ -2881,6 +3816,11 @@ expect@30.0.5:
     jest-mock "30.0.5"
     jest-util "30.0.5"
 
+extend@^3.0.0:
+  version "3.0.2"
+  resolved "https://registry.npmjs.org/extend/-/extend-3.0.2.tgz"
+  integrity sha512-fjquC59cD7CyW6urNXK0FBufkZcoiGG80wTuPujX590cB5Ttln20E2UB4S/WARVqhXffZl2LNgS+gQdPIIim/g==
+
 fast-deep-equal@^3.1.1, fast-deep-equal@^3.1.3:
   version "3.1.3"
   resolved "https://registry.npmjs.org/fast-deep-equal/-/fast-deep-equal-3.1.3.tgz"
@@ -3016,6 +3956,11 @@ function-bind@^1.1.2:
   resolved "https://registry.npmjs.org/function-bind/-/function-bind-1.1.2.tgz"
   integrity sha512-7XHNxH7qX9xG5mIwxkhumTox/MIRNcOgDrxWsMt2pAr23WHp6MrRlN7FBSFpCpr+oVO0F744iUgR82nJMfG2SA==
 
+fuzzysort@3.1.0:
+  version "3.1.0"
+  resolved "https://registry.npmjs.org/fuzzysort/-/fuzzysort-3.1.0.tgz"
+  integrity sha512-sR9BNCjBg6LNgwvxlBd0sBABvQitkLzoVY9MYYROQVX/FvfJ4Mai9LsGhDgd8qYdds0bY77VzYd5iuB+v5rwQQ==
+
 gensync@^1.0.0-beta.2:
   version "1.0.0-beta.2"
   resolved "https://registry.npmjs.org/gensync/-/gensync-1.0.0-beta.2.tgz"
@@ -3114,6 +4059,147 @@ hasown@^2.0.2:
   dependencies:
     function-bind "^1.1.2"
 
+hast-util-embedded@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.npmjs.org/hast-util-embedded/-/hast-util-embedded-3.0.0.tgz"
+  integrity sha512-naH8sld4Pe2ep03qqULEtvYr7EjrLK2QHY8KJR6RJkTUjPGObe1vnx585uzem2hGra+s1q08DZZpfgDVYRbaXA==
+  dependencies:
+    "@types/hast" "^3.0.0"
+    hast-util-is-element "^3.0.0"
+
+hast-util-from-dom@^5.0.0, hast-util-from-dom@5.0.1:
+  version "5.0.1"
+  resolved "https://registry.npmjs.org/hast-util-from-dom/-/hast-util-from-dom-5.0.1.tgz"
+  integrity sha512-N+LqofjR2zuzTjCPzyDUdSshy4Ma6li7p/c3pA78uTwzFgENbgbUrm2ugwsOdcjI1muO+o6Dgzp9p8WHtn/39Q==
+  dependencies:
+    "@types/hast" "^3.0.0"
+    hastscript "^9.0.0"
+    web-namespaces "^2.0.0"
+
+hast-util-has-property@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.npmjs.org/hast-util-has-property/-/hast-util-has-property-3.0.0.tgz"
+  integrity sha512-MNilsvEKLFpV604hwfhVStK0usFY/QmM5zX16bo7EjnAEGofr5YyI37kzopBlZJkHD4t887i+q/C8/tr5Q94cA==
+  dependencies:
+    "@types/hast" "^3.0.0"
+
+hast-util-is-body-ok-link@^3.0.0:
+  version "3.0.1"
+  resolved "https://registry.npmjs.org/hast-util-is-body-ok-link/-/hast-util-is-body-ok-link-3.0.1.tgz"
+  integrity sha512-0qpnzOBLztXHbHQenVB8uNuxTnm/QBFUOmdOSsEn7GnBtyY07+ENTWVFBAnXd/zEgd9/SUG3lRY7hSIBWRgGpQ==
+  dependencies:
+    "@types/hast" "^3.0.0"
+
+hast-util-is-element@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.npmjs.org/hast-util-is-element/-/hast-util-is-element-3.0.0.tgz"
+  integrity sha512-Val9mnv2IWpLbNPqc/pUem+a7Ipj2aHacCwgNfTiK0vJKl0LF+4Ba4+v1oPHFpf3bLYmreq0/l3Gud9S5OH42g==
+  dependencies:
+    "@types/hast" "^3.0.0"
+
+hast-util-minify-whitespace@^1.0.0:
+  version "1.0.1"
+  resolved "https://registry.npmjs.org/hast-util-minify-whitespace/-/hast-util-minify-whitespace-1.0.1.tgz"
+  integrity sha512-L96fPOVpnclQE0xzdWb/D12VT5FabA7SnZOUMtL1DbXmYiHJMXZvFkIZfiMmTCNJHUeO2K9UYNXoVyfz+QHuOw==
+  dependencies:
+    "@types/hast" "^3.0.0"
+    hast-util-embedded "^3.0.0"
+    hast-util-is-element "^3.0.0"
+    hast-util-whitespace "^3.0.0"
+    unist-util-is "^6.0.0"
+
+hast-util-parse-selector@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.npmjs.org/hast-util-parse-selector/-/hast-util-parse-selector-4.0.0.tgz"
+  integrity sha512-wkQCkSYoOGCRKERFWcxMVMOcYE2K1AaNLU8DXS9arxnLOUEWbOXKXiJUNzEpqZ3JOKpnha3jkFrumEjVliDe7A==
+  dependencies:
+    "@types/hast" "^3.0.0"
+
+hast-util-phrasing@^3.0.0:
+  version "3.0.1"
+  resolved "https://registry.npmjs.org/hast-util-phrasing/-/hast-util-phrasing-3.0.1.tgz"
+  integrity sha512-6h60VfI3uBQUxHqTyMymMZnEbNl1XmEGtOxxKYL7stY2o601COo62AWAYBQR9lZbYXYSBoxag8UpPRXK+9fqSQ==
+  dependencies:
+    "@types/hast" "^3.0.0"
+    hast-util-embedded "^3.0.0"
+    hast-util-has-property "^3.0.0"
+    hast-util-is-body-ok-link "^3.0.0"
+    hast-util-is-element "^3.0.0"
+
+hast-util-to-dom@^4.0.0:
+  version "4.0.1"
+  resolved "https://registry.npmjs.org/hast-util-to-dom/-/hast-util-to-dom-4.0.1.tgz"
+  integrity sha512-z1VE7sZ8uFzS2baF3LEflX1IPw2gSzrdo3QFEsyoi23MkCVY3FoE9x6nLgOgjwJu8VNWgo+07iaxtONhDzKrUQ==
+  dependencies:
+    "@types/hast" "^3.0.0"
+    property-information "^7.0.0"
+    web-namespaces "^2.0.0"
+
+hast-util-to-html@^9.0.0, hast-util-to-html@9.0.5:
+  version "9.0.5"
+  resolved "https://registry.npmjs.org/hast-util-to-html/-/hast-util-to-html-9.0.5.tgz"
+  integrity sha512-OguPdidb+fbHQSU4Q4ZiLKnzWo8Wwsf5bZfbvu7//a9oTYoqD/fWpe96NuHkoS9h0ccGOTe0C4NGXdtS0iObOw==
+  dependencies:
+    "@types/hast" "^3.0.0"
+    "@types/unist" "^3.0.0"
+    ccount "^2.0.0"
+    comma-separated-tokens "^2.0.0"
+    hast-util-whitespace "^3.0.0"
+    html-void-elements "^3.0.0"
+    mdast-util-to-hast "^13.0.0"
+    property-information "^7.0.0"
+    space-separated-tokens "^2.0.0"
+    stringify-entities "^4.0.0"
+    zwitch "^2.0.4"
+
+hast-util-to-mdast@^10.0.0, hast-util-to-mdast@10.1.2:
+  version "10.1.2"
+  resolved "https://registry.npmjs.org/hast-util-to-mdast/-/hast-util-to-mdast-10.1.2.tgz"
+  integrity sha512-FiCRI7NmOvM4y+f5w32jPRzcxDIz+PUqDwEqn1A+1q2cdp3B8Gx7aVrXORdOKjMNDQsD1ogOr896+0jJHW1EFQ==
+  dependencies:
+    "@types/hast" "^3.0.0"
+    "@types/mdast" "^4.0.0"
+    "@ungap/structured-clone" "^1.0.0"
+    hast-util-phrasing "^3.0.0"
+    hast-util-to-html "^9.0.0"
+    hast-util-to-text "^4.0.0"
+    hast-util-whitespace "^3.0.0"
+    mdast-util-phrasing "^4.0.0"
+    mdast-util-to-hast "^13.0.0"
+    mdast-util-to-string "^4.0.0"
+    rehype-minify-whitespace "^6.0.0"
+    trim-trailing-lines "^2.0.0"
+    unist-util-position "^5.0.0"
+    unist-util-visit "^5.0.0"
+
+hast-util-to-text@^4.0.0:
+  version "4.0.2"
+  resolved "https://registry.npmjs.org/hast-util-to-text/-/hast-util-to-text-4.0.2.tgz"
+  integrity sha512-KK6y/BN8lbaq654j7JgBydev7wuNMcID54lkRav1P0CaE1e47P72AWWPiGKXTJU271ooYzcvTAn/Zt0REnvc7A==
+  dependencies:
+    "@types/hast" "^3.0.0"
+    "@types/unist" "^3.0.0"
+    hast-util-is-element "^3.0.0"
+    unist-util-find-after "^5.0.0"
+
+hast-util-whitespace@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.npmjs.org/hast-util-whitespace/-/hast-util-whitespace-3.0.0.tgz"
+  integrity sha512-88JUN06ipLwsnv+dVn+OIYOvAuvBMy/Qoi6O7mQHxdPXpjy+Cd6xRkWwux7DKO+4sYILtLBRIKgsdpS2gQc7qw==
+  dependencies:
+    "@types/hast" "^3.0.0"
+
+hastscript@^9.0.0, hastscript@9.0.1:
+  version "9.0.1"
+  resolved "https://registry.npmjs.org/hastscript/-/hastscript-9.0.1.tgz"
+  integrity sha512-g7df9rMFX/SPi34tyGCyUBREQoKkapwdY/T04Qn9TDWfHhAYt4/I0gMVirzK5wEzeUqIjEB+LXC/ypb7Aqno5w==
+  dependencies:
+    "@types/hast" "^3.0.0"
+    comma-separated-tokens "^2.0.0"
+    hast-util-parse-selector "^4.0.0"
+    property-information "^7.0.0"
+    space-separated-tokens "^2.0.0"
+
 html-encoding-sniffer@^4.0.0:
   version "4.0.0"
   resolved "https://registry.npmjs.org/html-encoding-sniffer/-/html-encoding-sniffer-4.0.0.tgz"
@@ -3125,6 +4211,11 @@ html-escaper@^2.0.0:
   version "2.0.2"
   resolved "https://registry.npmjs.org/html-escaper/-/html-escaper-2.0.2.tgz"
   integrity sha512-H2iMtd0I4Mt5eYiapRdIDjp+XzelXQ0tFE4JS7YFwFevXXMmOp9myNrUvCg0D6ws8iqkRPBfKHgbwig1SmlLfg==
+
+html-void-elements@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.npmjs.org/html-void-elements/-/html-void-elements-3.0.0.tgz"
+  integrity sha512-bEqo66MRXsUGxWHV5IP0PUiAWwoEjba4VCzg0LjFJBpchPaTfyfCKTG6bc5F8ucKec3q5y6qOdGyYTSBEvhCrg==
 
 htmlparser2@^6.1.0:
   version "6.1.0"
@@ -3268,6 +4359,11 @@ is-number@^7.0.0:
   version "7.0.0"
   resolved "https://registry.npmjs.org/is-number/-/is-number-7.0.0.tgz"
   integrity sha512-41Cifkg6e8TylSpdtTpeLVMqvSBEVzTttHvERD741+pnZ8ANv0004MRL43QKPDlK9cGvNp6NZWZUBlbGXYxxng==
+
+is-plain-obj@^4.0.0:
+  version "4.1.0"
+  resolved "https://registry.npmjs.org/is-plain-obj/-/is-plain-obj-4.1.0.tgz"
+  integrity sha512-+Pgi+vMuUNkJyExiMBt5IlFoMyKnr5zhJ4Uspz58WOhBF5QoIZkFyNHIbBAtHwzVAgk5RtndVNsDRN61/mmDqg==
 
 is-plain-object@^2.0.4:
   version "2.0.4"
@@ -3931,6 +5027,11 @@ lodash@^4.17.20, lodash@^4.17.21:
   resolved "https://registry.npmjs.org/lodash/-/lodash-4.17.21.tgz"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
 
+longest-streak@^3.0.0:
+  version "3.1.0"
+  resolved "https://registry.npmjs.org/longest-streak/-/longest-streak-3.1.0.tgz"
+  integrity sha512-9Ri+o0JYgehTaVBBDoMqIl8GXtbWg711O3srftcHhZ0dqnETqLaoIK0x17fUw9rFSlK/0NlsKe0Ahhyl5pXE2g==
+
 lru-cache@^10.2.0:
   version "10.4.3"
   resolved "https://registry.npmjs.org/lru-cache/-/lru-cache-10.4.3.tgz"
@@ -3967,6 +5068,157 @@ makeerror@1.0.12:
   dependencies:
     tmpl "1.0.5"
 
+markdown-table@^3.0.0:
+  version "3.0.4"
+  resolved "https://registry.npmjs.org/markdown-table/-/markdown-table-3.0.4.tgz"
+  integrity sha512-wiYz4+JrLyb/DqW2hkFJxP7Vd7JuTDm77fvbM8VfEQdmSMqcImWeeRbHwZjBjIFki/VaMK2BhFi7oUUZeM5bqw==
+
+mdast-util-find-and-replace@^3.0.0:
+  version "3.0.2"
+  resolved "https://registry.npmjs.org/mdast-util-find-and-replace/-/mdast-util-find-and-replace-3.0.2.tgz"
+  integrity sha512-Tmd1Vg/m3Xz43afeNxDIhWRtFZgM2VLyaf4vSTYwudTyeuTneoL3qtWMA5jeLyz/O1vDJmmV4QuScFCA2tBPwg==
+  dependencies:
+    "@types/mdast" "^4.0.0"
+    escape-string-regexp "^5.0.0"
+    unist-util-is "^6.0.0"
+    unist-util-visit-parents "^6.0.0"
+
+mdast-util-from-markdown@^2.0.0:
+  version "2.0.2"
+  resolved "https://registry.npmjs.org/mdast-util-from-markdown/-/mdast-util-from-markdown-2.0.2.tgz"
+  integrity sha512-uZhTV/8NBuw0WHkPTrCqDOl0zVe1BIng5ZtHoDk49ME1qqcjYmmLmOf0gELgcRMxN4w2iuIeVso5/6QymSrgmA==
+  dependencies:
+    "@types/mdast" "^4.0.0"
+    "@types/unist" "^3.0.0"
+    decode-named-character-reference "^1.0.0"
+    devlop "^1.0.0"
+    mdast-util-to-string "^4.0.0"
+    micromark "^4.0.0"
+    micromark-util-decode-numeric-character-reference "^2.0.0"
+    micromark-util-decode-string "^2.0.0"
+    micromark-util-normalize-identifier "^2.0.0"
+    micromark-util-symbol "^2.0.0"
+    micromark-util-types "^2.0.0"
+    unist-util-stringify-position "^4.0.0"
+
+mdast-util-gfm-autolink-literal@^2.0.0:
+  version "2.0.1"
+  resolved "https://registry.npmjs.org/mdast-util-gfm-autolink-literal/-/mdast-util-gfm-autolink-literal-2.0.1.tgz"
+  integrity sha512-5HVP2MKaP6L+G6YaxPNjuL0BPrq9orG3TsrZ9YXbA3vDw/ACI4MEsnoDpn6ZNm7GnZgtAcONJyPhOP8tNJQavQ==
+  dependencies:
+    "@types/mdast" "^4.0.0"
+    ccount "^2.0.0"
+    devlop "^1.0.0"
+    mdast-util-find-and-replace "^3.0.0"
+    micromark-util-character "^2.0.0"
+
+mdast-util-gfm-footnote@^2.0.0:
+  version "2.1.0"
+  resolved "https://registry.npmjs.org/mdast-util-gfm-footnote/-/mdast-util-gfm-footnote-2.1.0.tgz"
+  integrity sha512-sqpDWlsHn7Ac9GNZQMeUzPQSMzR6Wv0WKRNvQRg0KqHh02fpTz69Qc1QSseNX29bhz1ROIyNyxExfawVKTm1GQ==
+  dependencies:
+    "@types/mdast" "^4.0.0"
+    devlop "^1.1.0"
+    mdast-util-from-markdown "^2.0.0"
+    mdast-util-to-markdown "^2.0.0"
+    micromark-util-normalize-identifier "^2.0.0"
+
+mdast-util-gfm-strikethrough@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.npmjs.org/mdast-util-gfm-strikethrough/-/mdast-util-gfm-strikethrough-2.0.0.tgz"
+  integrity sha512-mKKb915TF+OC5ptj5bJ7WFRPdYtuHv0yTRxK2tJvi+BDqbkiG7h7u/9SI89nRAYcmap2xHQL9D+QG/6wSrTtXg==
+  dependencies:
+    "@types/mdast" "^4.0.0"
+    mdast-util-from-markdown "^2.0.0"
+    mdast-util-to-markdown "^2.0.0"
+
+mdast-util-gfm-table@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.npmjs.org/mdast-util-gfm-table/-/mdast-util-gfm-table-2.0.0.tgz"
+  integrity sha512-78UEvebzz/rJIxLvE7ZtDd/vIQ0RHv+3Mh5DR96p7cS7HsBhYIICDBCu8csTNWNO6tBWfqXPWekRuj2FNOGOZg==
+  dependencies:
+    "@types/mdast" "^4.0.0"
+    devlop "^1.0.0"
+    markdown-table "^3.0.0"
+    mdast-util-from-markdown "^2.0.0"
+    mdast-util-to-markdown "^2.0.0"
+
+mdast-util-gfm-task-list-item@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.npmjs.org/mdast-util-gfm-task-list-item/-/mdast-util-gfm-task-list-item-2.0.0.tgz"
+  integrity sha512-IrtvNvjxC1o06taBAVJznEnkiHxLFTzgonUdy8hzFVeDun0uTjxxrRGVaNFqkU1wJR3RBPEfsxmU6jDWPofrTQ==
+  dependencies:
+    "@types/mdast" "^4.0.0"
+    devlop "^1.0.0"
+    mdast-util-from-markdown "^2.0.0"
+    mdast-util-to-markdown "^2.0.0"
+
+mdast-util-gfm@^3.0.0:
+  version "3.1.0"
+  resolved "https://registry.npmjs.org/mdast-util-gfm/-/mdast-util-gfm-3.1.0.tgz"
+  integrity sha512-0ulfdQOM3ysHhCJ1p06l0b0VKlhU0wuQs3thxZQagjcjPrlFRqY215uZGHHJan9GEAXd9MbfPjFJz+qMkVR6zQ==
+  dependencies:
+    mdast-util-from-markdown "^2.0.0"
+    mdast-util-gfm-autolink-literal "^2.0.0"
+    mdast-util-gfm-footnote "^2.0.0"
+    mdast-util-gfm-strikethrough "^2.0.0"
+    mdast-util-gfm-table "^2.0.0"
+    mdast-util-gfm-task-list-item "^2.0.0"
+    mdast-util-to-markdown "^2.0.0"
+
+mdast-util-newline-to-break@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.npmjs.org/mdast-util-newline-to-break/-/mdast-util-newline-to-break-2.0.0.tgz"
+  integrity sha512-MbgeFca0hLYIEx/2zGsszCSEJJ1JSCdiY5xQxRcLDDGa8EPvlLPupJ4DSajbMPAnC0je8jfb9TiUATnxxrHUog==
+  dependencies:
+    "@types/mdast" "^4.0.0"
+    mdast-util-find-and-replace "^3.0.0"
+
+mdast-util-phrasing@^4.0.0:
+  version "4.1.0"
+  resolved "https://registry.npmjs.org/mdast-util-phrasing/-/mdast-util-phrasing-4.1.0.tgz"
+  integrity sha512-TqICwyvJJpBwvGAMZjj4J2n0X8QWp21b9l0o7eXyVJ25YNWYbJDVIyD1bZXE6WtV6RmKJVYmQAKWa0zWOABz2w==
+  dependencies:
+    "@types/mdast" "^4.0.0"
+    unist-util-is "^6.0.0"
+
+mdast-util-to-hast@^13.0.0:
+  version "13.2.0"
+  resolved "https://registry.npmjs.org/mdast-util-to-hast/-/mdast-util-to-hast-13.2.0.tgz"
+  integrity sha512-QGYKEuUsYT9ykKBCMOEDLsU5JRObWQusAolFMeko/tYPufNkRffBAQjIE+99jbA87xv6FgmjLtwjh9wBWajwAA==
+  dependencies:
+    "@types/hast" "^3.0.0"
+    "@types/mdast" "^4.0.0"
+    "@ungap/structured-clone" "^1.0.0"
+    devlop "^1.0.0"
+    micromark-util-sanitize-uri "^2.0.0"
+    trim-lines "^3.0.0"
+    unist-util-position "^5.0.0"
+    unist-util-visit "^5.0.0"
+    vfile "^6.0.0"
+
+mdast-util-to-markdown@^2.0.0:
+  version "2.1.2"
+  resolved "https://registry.npmjs.org/mdast-util-to-markdown/-/mdast-util-to-markdown-2.1.2.tgz"
+  integrity sha512-xj68wMTvGXVOKonmog6LwyJKrYXZPvlwabaryTjLh9LuvovB/KAH+kvi8Gjj+7rJjsFi23nkUxRQv1KqSroMqA==
+  dependencies:
+    "@types/mdast" "^4.0.0"
+    "@types/unist" "^3.0.0"
+    longest-streak "^3.0.0"
+    mdast-util-phrasing "^4.0.0"
+    mdast-util-to-string "^4.0.0"
+    micromark-util-classify-character "^2.0.0"
+    micromark-util-decode-string "^2.0.0"
+    unist-util-visit "^5.0.0"
+    zwitch "^2.0.0"
+
+mdast-util-to-string@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.npmjs.org/mdast-util-to-string/-/mdast-util-to-string-4.0.0.tgz"
+  integrity sha512-0H44vDimn51F0YwvxSJSm0eCDOJTRlmN0R1yBh4HLj9wiV1Dn0QoXGbvFAWj2hSItVTlCmBF1hqKlIyUBVFLPg==
+  dependencies:
+    "@types/mdast" "^4.0.0"
+
 mdn-data@2.0.28:
   version "2.0.28"
   resolved "https://registry.npmjs.org/mdn-data/-/mdn-data-2.0.28.tgz"
@@ -3981,6 +5233,279 @@ merge-stream@^2.0.0:
   version "2.0.0"
   resolved "https://registry.npmjs.org/merge-stream/-/merge-stream-2.0.0.tgz"
   integrity sha512-abv/qOcuPfk3URPfDzmZU1LKmuw8kT+0nIHvKrKgFrwifol/doWcdA4ZqsWQ8ENrFKkd67Mfpo/LovbIUsbt3w==
+
+micromark-core-commonmark@^2.0.0:
+  version "2.0.3"
+  resolved "https://registry.npmjs.org/micromark-core-commonmark/-/micromark-core-commonmark-2.0.3.tgz"
+  integrity sha512-RDBrHEMSxVFLg6xvnXmb1Ayr2WzLAWjeSATAoxwKYJV94TeNavgoIdA0a9ytzDSVzBy2YKFK+emCPOEibLeCrg==
+  dependencies:
+    decode-named-character-reference "^1.0.0"
+    devlop "^1.0.0"
+    micromark-factory-destination "^2.0.0"
+    micromark-factory-label "^2.0.0"
+    micromark-factory-space "^2.0.0"
+    micromark-factory-title "^2.0.0"
+    micromark-factory-whitespace "^2.0.0"
+    micromark-util-character "^2.0.0"
+    micromark-util-chunked "^2.0.0"
+    micromark-util-classify-character "^2.0.0"
+    micromark-util-html-tag-name "^2.0.0"
+    micromark-util-normalize-identifier "^2.0.0"
+    micromark-util-resolve-all "^2.0.0"
+    micromark-util-subtokenize "^2.0.0"
+    micromark-util-symbol "^2.0.0"
+    micromark-util-types "^2.0.0"
+
+micromark-extension-gfm-autolink-literal@^2.0.0:
+  version "2.1.0"
+  resolved "https://registry.npmjs.org/micromark-extension-gfm-autolink-literal/-/micromark-extension-gfm-autolink-literal-2.1.0.tgz"
+  integrity sha512-oOg7knzhicgQ3t4QCjCWgTmfNhvQbDDnJeVu9v81r7NltNCVmhPy1fJRX27pISafdjL+SVc4d3l48Gb6pbRypw==
+  dependencies:
+    micromark-util-character "^2.0.0"
+    micromark-util-sanitize-uri "^2.0.0"
+    micromark-util-symbol "^2.0.0"
+    micromark-util-types "^2.0.0"
+
+micromark-extension-gfm-footnote@^2.0.0:
+  version "2.1.0"
+  resolved "https://registry.npmjs.org/micromark-extension-gfm-footnote/-/micromark-extension-gfm-footnote-2.1.0.tgz"
+  integrity sha512-/yPhxI1ntnDNsiHtzLKYnE3vf9JZ6cAisqVDauhp4CEHxlb4uoOTxOCJ+9s51bIB8U1N1FJ1RXOKTIlD5B/gqw==
+  dependencies:
+    devlop "^1.0.0"
+    micromark-core-commonmark "^2.0.0"
+    micromark-factory-space "^2.0.0"
+    micromark-util-character "^2.0.0"
+    micromark-util-normalize-identifier "^2.0.0"
+    micromark-util-sanitize-uri "^2.0.0"
+    micromark-util-symbol "^2.0.0"
+    micromark-util-types "^2.0.0"
+
+micromark-extension-gfm-strikethrough@^2.0.0:
+  version "2.1.0"
+  resolved "https://registry.npmjs.org/micromark-extension-gfm-strikethrough/-/micromark-extension-gfm-strikethrough-2.1.0.tgz"
+  integrity sha512-ADVjpOOkjz1hhkZLlBiYA9cR2Anf8F4HqZUO6e5eDcPQd0Txw5fxLzzxnEkSkfnD0wziSGiv7sYhk/ktvbf1uw==
+  dependencies:
+    devlop "^1.0.0"
+    micromark-util-chunked "^2.0.0"
+    micromark-util-classify-character "^2.0.0"
+    micromark-util-resolve-all "^2.0.0"
+    micromark-util-symbol "^2.0.0"
+    micromark-util-types "^2.0.0"
+
+micromark-extension-gfm-table@^2.0.0:
+  version "2.1.1"
+  resolved "https://registry.npmjs.org/micromark-extension-gfm-table/-/micromark-extension-gfm-table-2.1.1.tgz"
+  integrity sha512-t2OU/dXXioARrC6yWfJ4hqB7rct14e8f7m0cbI5hUmDyyIlwv5vEtooptH8INkbLzOatzKuVbQmAYcbWoyz6Dg==
+  dependencies:
+    devlop "^1.0.0"
+    micromark-factory-space "^2.0.0"
+    micromark-util-character "^2.0.0"
+    micromark-util-symbol "^2.0.0"
+    micromark-util-types "^2.0.0"
+
+micromark-extension-gfm-tagfilter@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.npmjs.org/micromark-extension-gfm-tagfilter/-/micromark-extension-gfm-tagfilter-2.0.0.tgz"
+  integrity sha512-xHlTOmuCSotIA8TW1mDIM6X2O1SiX5P9IuDtqGonFhEK0qgRI4yeC6vMxEV2dgyr2TiD+2PQ10o+cOhdVAcwfg==
+  dependencies:
+    micromark-util-types "^2.0.0"
+
+micromark-extension-gfm-task-list-item@^2.0.0:
+  version "2.1.0"
+  resolved "https://registry.npmjs.org/micromark-extension-gfm-task-list-item/-/micromark-extension-gfm-task-list-item-2.1.0.tgz"
+  integrity sha512-qIBZhqxqI6fjLDYFTBIa4eivDMnP+OZqsNwmQ3xNLE4Cxwc+zfQEfbs6tzAo2Hjq+bh6q5F+Z8/cksrLFYWQQw==
+  dependencies:
+    devlop "^1.0.0"
+    micromark-factory-space "^2.0.0"
+    micromark-util-character "^2.0.0"
+    micromark-util-symbol "^2.0.0"
+    micromark-util-types "^2.0.0"
+
+micromark-extension-gfm@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.npmjs.org/micromark-extension-gfm/-/micromark-extension-gfm-3.0.0.tgz"
+  integrity sha512-vsKArQsicm7t0z2GugkCKtZehqUm31oeGBV/KVSorWSy8ZlNAv7ytjFhvaryUiCUJYqs+NoE6AFhpQvBTM6Q4w==
+  dependencies:
+    micromark-extension-gfm-autolink-literal "^2.0.0"
+    micromark-extension-gfm-footnote "^2.0.0"
+    micromark-extension-gfm-strikethrough "^2.0.0"
+    micromark-extension-gfm-table "^2.0.0"
+    micromark-extension-gfm-tagfilter "^2.0.0"
+    micromark-extension-gfm-task-list-item "^2.0.0"
+    micromark-util-combine-extensions "^2.0.0"
+    micromark-util-types "^2.0.0"
+
+micromark-factory-destination@^2.0.0:
+  version "2.0.1"
+  resolved "https://registry.npmjs.org/micromark-factory-destination/-/micromark-factory-destination-2.0.1.tgz"
+  integrity sha512-Xe6rDdJlkmbFRExpTOmRj9N3MaWmbAgdpSrBQvCFqhezUn4AHqJHbaEnfbVYYiexVSs//tqOdY/DxhjdCiJnIA==
+  dependencies:
+    micromark-util-character "^2.0.0"
+    micromark-util-symbol "^2.0.0"
+    micromark-util-types "^2.0.0"
+
+micromark-factory-label@^2.0.0:
+  version "2.0.1"
+  resolved "https://registry.npmjs.org/micromark-factory-label/-/micromark-factory-label-2.0.1.tgz"
+  integrity sha512-VFMekyQExqIW7xIChcXn4ok29YE3rnuyveW3wZQWWqF4Nv9Wk5rgJ99KzPvHjkmPXF93FXIbBp6YdW3t71/7Vg==
+  dependencies:
+    devlop "^1.0.0"
+    micromark-util-character "^2.0.0"
+    micromark-util-symbol "^2.0.0"
+    micromark-util-types "^2.0.0"
+
+micromark-factory-space@^2.0.0:
+  version "2.0.1"
+  resolved "https://registry.npmjs.org/micromark-factory-space/-/micromark-factory-space-2.0.1.tgz"
+  integrity sha512-zRkxjtBxxLd2Sc0d+fbnEunsTj46SWXgXciZmHq0kDYGnck/ZSGj9/wULTV95uoeYiK5hRXP2mJ98Uo4cq/LQg==
+  dependencies:
+    micromark-util-character "^2.0.0"
+    micromark-util-types "^2.0.0"
+
+micromark-factory-title@^2.0.0:
+  version "2.0.1"
+  resolved "https://registry.npmjs.org/micromark-factory-title/-/micromark-factory-title-2.0.1.tgz"
+  integrity sha512-5bZ+3CjhAd9eChYTHsjy6TGxpOFSKgKKJPJxr293jTbfry2KDoWkhBb6TcPVB4NmzaPhMs1Frm9AZH7OD4Cjzw==
+  dependencies:
+    micromark-factory-space "^2.0.0"
+    micromark-util-character "^2.0.0"
+    micromark-util-symbol "^2.0.0"
+    micromark-util-types "^2.0.0"
+
+micromark-factory-whitespace@^2.0.0:
+  version "2.0.1"
+  resolved "https://registry.npmjs.org/micromark-factory-whitespace/-/micromark-factory-whitespace-2.0.1.tgz"
+  integrity sha512-Ob0nuZ3PKt/n0hORHyvoD9uZhr+Za8sFoP+OnMcnWK5lngSzALgQYKMr9RJVOWLqQYuyn6ulqGWSXdwf6F80lQ==
+  dependencies:
+    micromark-factory-space "^2.0.0"
+    micromark-util-character "^2.0.0"
+    micromark-util-symbol "^2.0.0"
+    micromark-util-types "^2.0.0"
+
+micromark-util-character@^2.0.0:
+  version "2.1.1"
+  resolved "https://registry.npmjs.org/micromark-util-character/-/micromark-util-character-2.1.1.tgz"
+  integrity sha512-wv8tdUTJ3thSFFFJKtpYKOYiGP2+v96Hvk4Tu8KpCAsTMs6yi+nVmGh1syvSCsaxz45J6Jbw+9DD6g97+NV67Q==
+  dependencies:
+    micromark-util-symbol "^2.0.0"
+    micromark-util-types "^2.0.0"
+
+micromark-util-chunked@^2.0.0:
+  version "2.0.1"
+  resolved "https://registry.npmjs.org/micromark-util-chunked/-/micromark-util-chunked-2.0.1.tgz"
+  integrity sha512-QUNFEOPELfmvv+4xiNg2sRYeS/P84pTW0TCgP5zc9FpXetHY0ab7SxKyAQCNCc1eK0459uoLI1y5oO5Vc1dbhA==
+  dependencies:
+    micromark-util-symbol "^2.0.0"
+
+micromark-util-classify-character@^2.0.0:
+  version "2.0.1"
+  resolved "https://registry.npmjs.org/micromark-util-classify-character/-/micromark-util-classify-character-2.0.1.tgz"
+  integrity sha512-K0kHzM6afW/MbeWYWLjoHQv1sgg2Q9EccHEDzSkxiP/EaagNzCm7T/WMKZ3rjMbvIpvBiZgwR3dKMygtA4mG1Q==
+  dependencies:
+    micromark-util-character "^2.0.0"
+    micromark-util-symbol "^2.0.0"
+    micromark-util-types "^2.0.0"
+
+micromark-util-combine-extensions@^2.0.0:
+  version "2.0.1"
+  resolved "https://registry.npmjs.org/micromark-util-combine-extensions/-/micromark-util-combine-extensions-2.0.1.tgz"
+  integrity sha512-OnAnH8Ujmy59JcyZw8JSbK9cGpdVY44NKgSM7E9Eh7DiLS2E9RNQf0dONaGDzEG9yjEl5hcqeIsj4hfRkLH/Bg==
+  dependencies:
+    micromark-util-chunked "^2.0.0"
+    micromark-util-types "^2.0.0"
+
+micromark-util-decode-numeric-character-reference@^2.0.0:
+  version "2.0.2"
+  resolved "https://registry.npmjs.org/micromark-util-decode-numeric-character-reference/-/micromark-util-decode-numeric-character-reference-2.0.2.tgz"
+  integrity sha512-ccUbYk6CwVdkmCQMyr64dXz42EfHGkPQlBj5p7YVGzq8I7CtjXZJrubAYezf7Rp+bjPseiROqe7G6foFd+lEuw==
+  dependencies:
+    micromark-util-symbol "^2.0.0"
+
+micromark-util-decode-string@^2.0.0:
+  version "2.0.1"
+  resolved "https://registry.npmjs.org/micromark-util-decode-string/-/micromark-util-decode-string-2.0.1.tgz"
+  integrity sha512-nDV/77Fj6eH1ynwscYTOsbK7rR//Uj0bZXBwJZRfaLEJ1iGBR6kIfNmlNqaqJf649EP0F3NWNdeJi03elllNUQ==
+  dependencies:
+    decode-named-character-reference "^1.0.0"
+    micromark-util-character "^2.0.0"
+    micromark-util-decode-numeric-character-reference "^2.0.0"
+    micromark-util-symbol "^2.0.0"
+
+micromark-util-encode@^2.0.0:
+  version "2.0.1"
+  resolved "https://registry.npmjs.org/micromark-util-encode/-/micromark-util-encode-2.0.1.tgz"
+  integrity sha512-c3cVx2y4KqUnwopcO9b/SCdo2O67LwJJ/UyqGfbigahfegL9myoEFoDYZgkT7f36T0bLrM9hZTAaAyH+PCAXjw==
+
+micromark-util-html-tag-name@^2.0.0:
+  version "2.0.1"
+  resolved "https://registry.npmjs.org/micromark-util-html-tag-name/-/micromark-util-html-tag-name-2.0.1.tgz"
+  integrity sha512-2cNEiYDhCWKI+Gs9T0Tiysk136SnR13hhO8yW6BGNyhOC4qYFnwF1nKfD3HFAIXA5c45RrIG1ub11GiXeYd1xA==
+
+micromark-util-normalize-identifier@^2.0.0:
+  version "2.0.1"
+  resolved "https://registry.npmjs.org/micromark-util-normalize-identifier/-/micromark-util-normalize-identifier-2.0.1.tgz"
+  integrity sha512-sxPqmo70LyARJs0w2UclACPUUEqltCkJ6PhKdMIDuJ3gSf/Q+/GIe3WKl0Ijb/GyH9lOpUkRAO2wp0GVkLvS9Q==
+  dependencies:
+    micromark-util-symbol "^2.0.0"
+
+micromark-util-resolve-all@^2.0.0:
+  version "2.0.1"
+  resolved "https://registry.npmjs.org/micromark-util-resolve-all/-/micromark-util-resolve-all-2.0.1.tgz"
+  integrity sha512-VdQyxFWFT2/FGJgwQnJYbe1jjQoNTS4RjglmSjTUlpUMa95Htx9NHeYW4rGDJzbjvCsl9eLjMQwGeElsqmzcHg==
+  dependencies:
+    micromark-util-types "^2.0.0"
+
+micromark-util-sanitize-uri@^2.0.0:
+  version "2.0.1"
+  resolved "https://registry.npmjs.org/micromark-util-sanitize-uri/-/micromark-util-sanitize-uri-2.0.1.tgz"
+  integrity sha512-9N9IomZ/YuGGZZmQec1MbgxtlgougxTodVwDzzEouPKo3qFWvymFHWcnDi2vzV1ff6kas9ucW+o3yzJK9YB1AQ==
+  dependencies:
+    micromark-util-character "^2.0.0"
+    micromark-util-encode "^2.0.0"
+    micromark-util-symbol "^2.0.0"
+
+micromark-util-subtokenize@^2.0.0:
+  version "2.1.0"
+  resolved "https://registry.npmjs.org/micromark-util-subtokenize/-/micromark-util-subtokenize-2.1.0.tgz"
+  integrity sha512-XQLu552iSctvnEcgXw6+Sx75GflAPNED1qx7eBJ+wydBb2KCbRZe+NwvIEEMM83uml1+2WSXpBAcp9IUCgCYWA==
+  dependencies:
+    devlop "^1.0.0"
+    micromark-util-chunked "^2.0.0"
+    micromark-util-symbol "^2.0.0"
+    micromark-util-types "^2.0.0"
+
+micromark-util-symbol@^2.0.0:
+  version "2.0.1"
+  resolved "https://registry.npmjs.org/micromark-util-symbol/-/micromark-util-symbol-2.0.1.tgz"
+  integrity sha512-vs5t8Apaud9N28kgCrRUdEed4UJ+wWNvicHLPxCa9ENlYuAY31M0ETy5y1vA33YoNPDFTghEbnh6efaE8h4x0Q==
+
+micromark-util-types@^2.0.0:
+  version "2.0.2"
+  resolved "https://registry.npmjs.org/micromark-util-types/-/micromark-util-types-2.0.2.tgz"
+  integrity sha512-Yw0ECSpJoViF1qTU4DC6NwtC4aWGt1EkzaQB8KPPyCRR8z9TWeV0HbEFGTO+ZY1wB22zmxnJqhPyTpOVCpeHTA==
+
+micromark@^4.0.0:
+  version "4.0.2"
+  resolved "https://registry.npmjs.org/micromark/-/micromark-4.0.2.tgz"
+  integrity sha512-zpe98Q6kvavpCr1NPVSCMebCKfD7CA2NqZ+rykeNhONIJBpc1tFKt9hucLGwha3jNTNI8lHpctWJWoimVF4PfA==
+  dependencies:
+    "@types/debug" "^4.0.0"
+    debug "^4.0.0"
+    decode-named-character-reference "^1.0.0"
+    devlop "^1.0.0"
+    micromark-core-commonmark "^2.0.0"
+    micromark-factory-space "^2.0.0"
+    micromark-util-character "^2.0.0"
+    micromark-util-chunked "^2.0.0"
+    micromark-util-combine-extensions "^2.0.0"
+    micromark-util-decode-numeric-character-reference "^2.0.0"
+    micromark-util-encode "^2.0.0"
+    micromark-util-normalize-identifier "^2.0.0"
+    micromark-util-resolve-all "^2.0.0"
+    micromark-util-sanitize-uri "^2.0.0"
+    micromark-util-subtokenize "^2.0.0"
+    micromark-util-symbol "^2.0.0"
+    micromark-util-types "^2.0.0"
 
 micromatch@^4.0.5, micromatch@^4.0.8:
   version "4.0.8"
@@ -4594,6 +6119,11 @@ pretty-format@30.0.5:
     ansi-styles "^5.2.0"
     react-is "^18.3.1"
 
+property-information@^7.0.0:
+  version "7.1.0"
+  resolved "https://registry.npmjs.org/property-information/-/property-information-7.1.0.tgz"
+  integrity sha512-TwEZ+X+yCJmYfL7TPUOcvBZ4QfoT5YenQiJuX//0th53DE6w0xxLEtfK3iyryQFddXuvkIk51EEgrJQ0WJkOmQ==
+
 punycode@^2.1.0, punycode@^2.3.1:
   version "2.3.1"
   resolved "https://registry.npmjs.org/punycode/-/punycode-2.3.1.tgz"
@@ -4686,6 +6216,94 @@ regjsparser@^0.12.0:
   integrity sha512-cnE+y8bz4NhMjISKbgeVJtqNbtf5QpjZP+Bslo+UqkIt9QPnX9q095eiRRASJG1/tz6dlNr6Z5NsBiWYokp6EQ==
   dependencies:
     jsesc "~3.0.2"
+
+rehype-dom-parse@5.0.2:
+  version "5.0.2"
+  resolved "https://registry.npmjs.org/rehype-dom-parse/-/rehype-dom-parse-5.0.2.tgz"
+  integrity sha512-8CqP11KaqvtWsMqVEC2yM3cZWZsDNqqpr8nPvogjraLuh45stabgcpXadCAxu1n6JaUNJ/Xr3GIqXP7okbNqLg==
+  dependencies:
+    "@types/hast" "^3.0.0"
+    hast-util-from-dom "^5.0.0"
+    unified "^11.0.0"
+
+rehype-dom-stringify@4.0.2:
+  version "4.0.2"
+  resolved "https://registry.npmjs.org/rehype-dom-stringify/-/rehype-dom-stringify-4.0.2.tgz"
+  integrity sha512-2HVFYbtmm5W3C2j8QsV9lcHdIMc2Yn/ytlPKcSC85/tRx2haZbU8V67Wxyh8STT38ZClvKlZ993Me/Hw8g88Aw==
+  dependencies:
+    "@types/hast" "^3.0.0"
+    hast-util-to-dom "^4.0.0"
+    unified "^11.0.0"
+
+rehype-minify-whitespace@^6.0.0:
+  version "6.0.2"
+  resolved "https://registry.npmjs.org/rehype-minify-whitespace/-/rehype-minify-whitespace-6.0.2.tgz"
+  integrity sha512-Zk0pyQ06A3Lyxhe9vGtOtzz3Z0+qZ5+7icZ/PL/2x1SHPbKao5oB/g/rlc6BCTajqBb33JcOe71Ye1oFsuYbnw==
+  dependencies:
+    "@types/hast" "^3.0.0"
+    hast-util-minify-whitespace "^1.0.0"
+
+rehype-remark@10.0.1:
+  version "10.0.1"
+  resolved "https://registry.npmjs.org/rehype-remark/-/rehype-remark-10.0.1.tgz"
+  integrity sha512-EmDndlb5NVwXGfUa4c9GPK+lXeItTilLhE6ADSaQuHr4JUlKw9MidzGzx4HpqZrNCt6vnHmEifXQiiA+CEnjYQ==
+  dependencies:
+    "@types/hast" "^3.0.0"
+    "@types/mdast" "^4.0.0"
+    hast-util-to-mdast "^10.0.0"
+    unified "^11.0.0"
+    vfile "^6.0.0"
+
+remark-breaks@4.0.0:
+  version "4.0.0"
+  resolved "https://registry.npmjs.org/remark-breaks/-/remark-breaks-4.0.0.tgz"
+  integrity sha512-IjEjJOkH4FuJvHZVIW0QCDWxcG96kCq7An/KVH2NfJe6rKZU2AsHeB3OEjPNRxi4QC34Xdx7I2KGYn6IpT7gxQ==
+  dependencies:
+    "@types/mdast" "^4.0.0"
+    mdast-util-newline-to-break "^2.0.0"
+    unified "^11.0.0"
+
+remark-gfm@4.0.1:
+  version "4.0.1"
+  resolved "https://registry.npmjs.org/remark-gfm/-/remark-gfm-4.0.1.tgz"
+  integrity sha512-1quofZ2RQ9EWdeN34S79+KExV1764+wCUGop5CPL1WGdD0ocPpu91lzPGbwWMECpEpd42kJGQwzRfyov9j4yNg==
+  dependencies:
+    "@types/mdast" "^4.0.0"
+    mdast-util-gfm "^3.0.0"
+    micromark-extension-gfm "^3.0.0"
+    remark-parse "^11.0.0"
+    remark-stringify "^11.0.0"
+    unified "^11.0.0"
+
+remark-parse@^11.0.0, remark-parse@11.0.0:
+  version "11.0.0"
+  resolved "https://registry.npmjs.org/remark-parse/-/remark-parse-11.0.0.tgz"
+  integrity sha512-FCxlKLNGknS5ba/1lmpYijMUzX2esxW5xQqjWxw2eHFfS2MSdaHVINFmhjo+qN1WhZhNimq0dZATN9pH0IDrpA==
+  dependencies:
+    "@types/mdast" "^4.0.0"
+    mdast-util-from-markdown "^2.0.0"
+    micromark-util-types "^2.0.0"
+    unified "^11.0.0"
+
+remark-rehype@11.1.2:
+  version "11.1.2"
+  resolved "https://registry.npmjs.org/remark-rehype/-/remark-rehype-11.1.2.tgz"
+  integrity sha512-Dh7l57ianaEoIpzbp0PC9UKAdCSVklD8E5Rpw7ETfbTl3FqcOOgq5q2LVDhgGCkaBv7p24JXikPdvhhmHvKMsw==
+  dependencies:
+    "@types/hast" "^3.0.0"
+    "@types/mdast" "^4.0.0"
+    mdast-util-to-hast "^13.0.0"
+    unified "^11.0.0"
+    vfile "^6.0.0"
+
+remark-stringify@^11.0.0, remark-stringify@11.0.0:
+  version "11.0.0"
+  resolved "https://registry.npmjs.org/remark-stringify/-/remark-stringify-11.0.0.tgz"
+  integrity sha512-1OSmLd3awB/t8qdoEOMazZkNsfVTeY4fTsgzcQFdXNq8ToTN4ZGwrMnlda4K6smTFKD+GRV6O48i6Z4iKgPPpw==
+  dependencies:
+    "@types/mdast" "^4.0.0"
+    mdast-util-to-markdown "^2.0.0"
+    unified "^11.0.0"
 
 renderkid@^3.0.0:
   version "3.0.0"
@@ -4901,6 +6519,11 @@ source-map@^0.6.0, source-map@0.6.1:
   resolved "https://registry.npmjs.org/source-map/-/source-map-0.6.1.tgz"
   integrity sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g==
 
+space-separated-tokens@^2.0.0:
+  version "2.0.2"
+  resolved "https://registry.npmjs.org/space-separated-tokens/-/space-separated-tokens-2.0.2.tgz"
+  integrity sha512-PEGlAwrG8yXGXRjW32fGbg66JAlOAwbObuqVoJpv/mRgoWDQfgH1wDPvtzWyUSNAXBGSk8h755YDbbcEy3SH2Q==
+
 sprintf-js@~1.0.2:
   version "1.0.3"
   resolved "https://registry.npmjs.org/sprintf-js/-/sprintf-js-1.0.3.tgz"
@@ -4961,6 +6584,14 @@ string-width@^5.1.2:
     eastasianwidth "^0.2.0"
     emoji-regex "^9.2.2"
     strip-ansi "^7.0.1"
+
+stringify-entities@^4.0.0:
+  version "4.0.4"
+  resolved "https://registry.npmjs.org/stringify-entities/-/stringify-entities-4.0.4.tgz"
+  integrity sha512-IwfBptatlO+QCJUo19AqvrPNqlVMpW9YEL2LIVY+Rpv2qsjCGxaDLNRgeGsQWJhfItebuJhsGSLjaBbNSQ+ieg==
+  dependencies:
+    character-entities-html4 "^2.0.0"
+    character-entities-legacy "^3.0.0"
 
 "strip-ansi-cjs@npm:strip-ansi@^6.0.1":
   version "6.0.1"
@@ -5159,6 +6790,21 @@ tr46@^5.1.0:
   dependencies:
     punycode "^2.3.1"
 
+trim-lines@^3.0.0:
+  version "3.0.1"
+  resolved "https://registry.npmjs.org/trim-lines/-/trim-lines-3.0.1.tgz"
+  integrity sha512-kRj8B+YHZCc9kQYdWfJB2/oUl9rA99qbowYYBtr4ui4mZyAQ2JpvVBd/6U2YloATfqBhBTSMhTpgBHtU0Mf3Rg==
+
+trim-trailing-lines@^2.0.0:
+  version "2.1.0"
+  resolved "https://registry.npmjs.org/trim-trailing-lines/-/trim-trailing-lines-2.1.0.tgz"
+  integrity sha512-5UR5Biq4VlVOtzqkm2AZlgvSlDJtME46uV0br0gENbwN4l5+mMKT4b9gJKqWtuL2zAIqajGJGuvbCbcAJUZqBg==
+
+trough@^2.0.0:
+  version "2.2.0"
+  resolved "https://registry.npmjs.org/trough/-/trough-2.2.0.tgz"
+  integrity sha512-tmMpK00BjZiUyVyvrBK7knerNgmgvcV/KLVyuma/SC+TQN167GrMRciANTz09+k3zW8L8t60jWO1GpfkZdjTaw==
+
 type-check@^0.4.0, type-check@~0.4.0:
   version "0.4.0"
   resolved "https://registry.npmjs.org/type-check/-/type-check-0.4.0.tgz"
@@ -5203,6 +6849,65 @@ unicode-property-aliases-ecmascript@^2.0.0:
   version "2.1.0"
   resolved "https://registry.npmjs.org/unicode-property-aliases-ecmascript/-/unicode-property-aliases-ecmascript-2.1.0.tgz"
   integrity sha512-6t3foTQI9qne+OZoVQB/8x8rk2k1eVy1gRXhV3oFQ5T6R1dqQ1xtin3XqSlx3+ATBkliTaR/hHyJBm+LVPNM8w==
+
+unified@^11.0.0, unified@11.0.5:
+  version "11.0.5"
+  resolved "https://registry.npmjs.org/unified/-/unified-11.0.5.tgz"
+  integrity sha512-xKvGhPWw3k84Qjh8bI3ZeJjqnyadK+GEFtazSfZv/rKeTkTjOJho6mFqh2SM96iIcZokxiOpg78GazTSg8+KHA==
+  dependencies:
+    "@types/unist" "^3.0.0"
+    bail "^2.0.0"
+    devlop "^1.0.0"
+    extend "^3.0.0"
+    is-plain-obj "^4.0.0"
+    trough "^2.0.0"
+    vfile "^6.0.0"
+
+unist-util-find-after@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.npmjs.org/unist-util-find-after/-/unist-util-find-after-5.0.0.tgz"
+  integrity sha512-amQa0Ep2m6hE2g72AugUItjbuM8X8cGQnFoHk0pGfrFeT9GZhzN5SW8nRsiGKK7Aif4CrACPENkA6P/Lw6fHGQ==
+  dependencies:
+    "@types/unist" "^3.0.0"
+    unist-util-is "^6.0.0"
+
+unist-util-is@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.npmjs.org/unist-util-is/-/unist-util-is-6.0.0.tgz"
+  integrity sha512-2qCTHimwdxLfz+YzdGfkqNlH0tLi9xjTnHddPmJwtIG9MGsdbutfTc4P+haPD7l7Cjxf/WZj+we5qfVPvvxfYw==
+  dependencies:
+    "@types/unist" "^3.0.0"
+
+unist-util-position@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.npmjs.org/unist-util-position/-/unist-util-position-5.0.0.tgz"
+  integrity sha512-fucsC7HjXvkB5R3kTCO7kUjRdrS0BJt3M/FPxmHMBOm8JQi2BsHAHFsy27E0EolP8rp0NzXsJ+jNPyDWvOJZPA==
+  dependencies:
+    "@types/unist" "^3.0.0"
+
+unist-util-stringify-position@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.npmjs.org/unist-util-stringify-position/-/unist-util-stringify-position-4.0.0.tgz"
+  integrity sha512-0ASV06AAoKCDkS2+xw5RXJywruurpbC4JZSm7nr7MOt1ojAzvyyaO+UxZf18j8FCF6kmzCZKcAgN/yu2gm2XgQ==
+  dependencies:
+    "@types/unist" "^3.0.0"
+
+unist-util-visit-parents@^6.0.0:
+  version "6.0.1"
+  resolved "https://registry.npmjs.org/unist-util-visit-parents/-/unist-util-visit-parents-6.0.1.tgz"
+  integrity sha512-L/PqWzfTP9lzzEa6CKs0k2nARxTdZduw3zyh8d2NVBnsyvHjSX4TWse388YrrQKbvI8w20fGjGlhgT96WwKykw==
+  dependencies:
+    "@types/unist" "^3.0.0"
+    unist-util-is "^6.0.0"
+
+unist-util-visit@^5.0.0, unist-util-visit@5.0.0:
+  version "5.0.0"
+  resolved "https://registry.npmjs.org/unist-util-visit/-/unist-util-visit-5.0.0.tgz"
+  integrity sha512-MR04uvD+07cwl/yhVuVWAtw+3GOR/knlL55Nd/wAdblk27GCVt3lqpTivy/tkJcZoNPzTwS1Y+KMojlLDhoTzg==
+  dependencies:
+    "@types/unist" "^3.0.0"
+    unist-util-is "^6.0.0"
+    unist-util-visit-parents "^6.0.0"
 
 unrs-resolver@^1.7.11:
   version "1.11.1"
@@ -5265,6 +6970,27 @@ v8-to-istanbul@^9.0.1:
     "@types/istanbul-lib-coverage" "^2.0.1"
     convert-source-map "^2.0.0"
 
+vanilla-colorful@0.7.2:
+  version "0.7.2"
+  resolved "https://registry.npmjs.org/vanilla-colorful/-/vanilla-colorful-0.7.2.tgz"
+  integrity sha512-z2YZusTFC6KnLERx1cgoIRX2CjPRP0W75N+3CC6gbvdX5Ch47rZkEMGO2Xnf+IEmi3RiFLxS18gayMA27iU7Kg==
+
+vfile-message@^4.0.0:
+  version "4.0.3"
+  resolved "https://registry.npmjs.org/vfile-message/-/vfile-message-4.0.3.tgz"
+  integrity sha512-QTHzsGd1EhbZs4AsQ20JX1rC3cOlt/IWJruk893DfLRr57lcnOeMaWG4K0JrRta4mIJZKth2Au3mM3u03/JWKw==
+  dependencies:
+    "@types/unist" "^3.0.0"
+    unist-util-stringify-position "^4.0.0"
+
+vfile@^6.0.0:
+  version "6.0.3"
+  resolved "https://registry.npmjs.org/vfile/-/vfile-6.0.3.tgz"
+  integrity sha512-KzIbH/9tXat2u30jf+smMwFCsno4wHVdNmzFyL+T/L3UGqqk6JKfVqOFOZEpZSHADH1k40ab6NUIXZq422ov3Q==
+  dependencies:
+    "@types/unist" "^3.0.0"
+    vfile-message "^4.0.0"
+
 w3c-xmlserializer@^5.0.0:
   version "5.0.0"
   resolved "https://registry.npmjs.org/w3c-xmlserializer/-/w3c-xmlserializer-5.0.0.tgz"
@@ -5286,6 +7012,11 @@ watchpack@^2.4.1:
   dependencies:
     glob-to-regexp "^0.4.1"
     graceful-fs "^4.1.2"
+
+web-namespaces@^2.0.0:
+  version "2.0.1"
+  resolved "https://registry.npmjs.org/web-namespaces/-/web-namespaces-2.0.1.tgz"
+  integrity sha512-bKr1DkiNa2krS7qxNtdrtHAmzuYGFQLiQ13TsorsdT6ULTkPLKuu5+GsFpDlg6JFjUTwX2DyhMPG2be8uPrqsQ==
 
 webidl-conversions@^7.0.0:
   version "7.0.0"
@@ -5484,3 +7215,8 @@ yocto-queue@^1.0.0:
   version "1.2.1"
   resolved "https://registry.npmjs.org/yocto-queue/-/yocto-queue-1.2.1.tgz"
   integrity sha512-AyeEbWOu/TAXdxlV9wmGcR0+yh2j3vYPGOECcIj2S7MkrLyC7ne+oye2BKTItt0ii2PHk4cDy+95+LshzbXnGg==
+
+zwitch@^2.0.0, zwitch@^2.0.4:
+  version "2.0.4"
+  resolved "https://registry.npmjs.org/zwitch/-/zwitch-2.0.4.tgz"
+  integrity sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==
