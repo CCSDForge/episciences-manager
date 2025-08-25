@@ -85,12 +85,12 @@ jobs:
           set -e  # Exit on any error
           echo "📊 Checking JavaScript..."
           echo "🔍 Running ESLint with detailed output..."
-          npm run lint -- --format=compact || (
+          npm run lint || (
             echo "❌ ESLint failed. Running with verbose output for debugging:"
             echo "Files that ESLint will process:"
             npx eslint --print-config assets/app.js 2>/dev/null | head -10 || echo "Cannot print config"
             echo "ESLint command that's being executed:"
-            npm run lint -- --format=compact --debug 2>&1 | head -30
+            npm run lint -- --debug 2>&1 | head -30
             exit 1
           )
           echo "🎨 Checking JavaScript formatting with Prettier..."
