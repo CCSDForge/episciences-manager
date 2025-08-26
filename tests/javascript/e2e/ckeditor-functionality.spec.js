@@ -103,7 +103,7 @@ test.describe('CKEditor Functionality Tests', () => {
                 }
               }
             }
-          } catch (e) {
+          } catch {
             // Skip stylesheets that can't be accessed (CORS)
             continue;
           }
@@ -194,7 +194,7 @@ test.describe('CKEditor Functionality Tests', () => {
       document.body.appendChild(container);
 
       // Modern formatting functions without execCommand
-      function applyBold(element) {
+      function applyBold() {
         const selection = window.getSelection();
         if (selection.rangeCount > 0) {
           const range = selection.getRangeAt(0);
@@ -217,7 +217,7 @@ test.describe('CKEditor Functionality Tests', () => {
         return false;
       }
 
-      function applyItalic(element) {
+      function applyItalic() {
         const selection = window.getSelection();
         if (selection.rangeCount > 0) {
           const range = selection.getRangeAt(0);
