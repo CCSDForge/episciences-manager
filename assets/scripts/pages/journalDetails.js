@@ -129,7 +129,6 @@ const fallbackTranslations = {
   enterContent: 'Saisissez le contenu ici...',
   cancel: 'Annuler',
   save: 'Sauvegarder',
-  selectPageFirst: 'Veuillez sélectionner une page',
   welcomeBackoffice: 'Bienvenue dans le backoffice de gestion du journal',
   missingPageInfo: 'Informations de page manquantes',
   saveSuccess: 'Sauvegardé avec succès',
@@ -194,6 +193,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
   console.log('Found links:', pageLinks.length);
   console.log('Page content element:', pageContent);
+
+  // Hide edit button initially (no page selected) and ensure it's aligned right
+  if (editButton) {
+    editButton.style.display = 'none';
+    // Ensure the parent card-footer is right-aligned using flexbox
+    const cardFooter = editButton.closest('.card-footer');
+    if (cardFooter) {
+      cardFooter.classList.add('d-flex', 'justify-content-end');
+      cardFooter.style.display = 'flex';
+      cardFooter.style.justifyContent = 'flex-end';
+    }
+  }
 
   pageLinks.forEach(link => {
     link.addEventListener('click', function (e) {
@@ -272,6 +283,11 @@ document.addEventListener('DOMContentLoaded', function () {
             pageBody.innerHTML = contentToShow;
           }
           pageContent.style.display = 'block';
+
+          // Show edit button when page is loaded
+          if (editButton) {
+            editButton.style.display = 'block';
+          }
         })
         .catch(error => {
           console.error('Fetch error:', error);
@@ -309,6 +325,11 @@ document.addEventListener('DOMContentLoaded', function () {
         </div>
       `;
       pageContent.style.display = 'block';
+
+      // Hide edit button when returning to home
+      if (editButton) {
+        editButton.style.display = 'none';
+      }
     });
   }
 
@@ -316,6 +337,12 @@ document.addEventListener('DOMContentLoaded', function () {
   editButton.addEventListener('click', function (e) {
     e.preventDefault();
     console.log('Edit button clicked - launching inline edit');
+
+    // Prevent multiple edit modes
+    if (isInlineEdit) {
+      console.log('Already in edit mode - ignoring click');
+      return;
+    }
 
     switchToInlineEdit();
   });
@@ -326,12 +353,13 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log('currentPageCode:', currentPageCode);
     console.log('currentJournalCode:', currentJournalCode);
 
-    if (!currentPageCode || !currentJournalCode) {
-      console.log('Missing page info - showing alert');
-      alert(
-        window.translations?.selectPageFirst || 'Please select a page first',
-      );
-      return;
+    // Update URL to include ?mode=edit for edit mode detection
+    const currentUrl = window.location.href;
+    const urlObj = new URL(currentUrl);
+    if (urlObj.searchParams.get('mode') !== 'edit') {
+      urlObj.searchParams.set('mode', 'edit');
+      history.pushState({ editMode: true }, '', urlObj.toString());
+      console.log('URL updated to edit mode:', urlObj.toString());
     }
 
     // Get current page title and content
@@ -415,6 +443,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Function to exit inline edit mode
   function exitInlineEdit() {
+    // Restore original URL by removing ?mode=edit parameter
+    const currentUrl = window.location.href;
+    const urlObj = new URL(currentUrl);
+    if (urlObj.searchParams.has('mode')) {
+      urlObj.searchParams.delete('mode');
+      history.pushState({ editMode: false }, '', urlObj.toString());
+      console.log('URL restored from edit mode:', urlObj.toString());
+    }
+
     // Destroy CKEditor instance
     destroyEditor().then(() => {
       const fallbackTextarea = document.getElementById('page-content-fallback');
