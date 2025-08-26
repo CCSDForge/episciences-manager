@@ -13,7 +13,7 @@ import { defineConfig, devices } from '@playwright/test';
  * @see https://playwright.dev/docs/test-configuration
  */
 export default defineConfig({
-  testDir: './tests/e2e',
+  testDir: './tests/javascript/e2e',
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -72,11 +72,11 @@ export default defineConfig({
   ],
 
   /* Run your local dev server before starting the tests */
-  webServer: {
-    command: 'docker compose up -d && sleep 30',
-    url: 'http://localhost:80',
-    reuseExistingServer: !process.env.CI,
-    timeout: 180 * 1000, // 3 minutes timeout
-  },
+  // webServer: {
+  //   command: 'docker compose up -d && sleep 30',
+  //   url: 'http://localhost:80',
+  //   reuseExistingServer: !process.env.CI,
+  //   timeout: 180 * 1000, // 3 minutes timeout
+  // },
 });
 

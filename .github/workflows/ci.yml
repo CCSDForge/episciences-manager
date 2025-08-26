@@ -142,63 +142,12 @@ jobs:
             echo "ℹ️ No JavaScript tests configured yet (tests/javascript/setup.js not found)"
           fi
 
-      - name: 🐳 Setup Docker for E2E tests
+      # E2E tests disabled for security - avoid connecting to preprod database
+      - name: 🌐 E2E Tests (Disabled)
         run: |
-          echo "🐳 Setting up Docker environment for E2E tests..."
-          echo "🔍 Available Docker Compose files:"
-          ls -la docker-compose*.yaml || echo "No Docker Compose files found"
-          
-          echo "🔧 Starting Docker services..."
-          if docker compose up -d; then
-            echo "✅ Docker services started successfully"
-            echo "⏱️ Waiting for services to be ready..."
-            sleep 30
-            echo "🔍 Testing application availability..."
-            curl -I http://localhost:80/ || echo "Application might still be starting"
-          else
-            DOCKER_EXIT_CODE=$?
-            echo "❌ Failed to start Docker services with exit code: $DOCKER_EXIT_CODE"
-            exit $DOCKER_EXIT_CODE
-          fi
-
-      - name: 🌐 Run E2E tests
-        run: |
-          echo "🌐 Starting E2E tests..."
-          echo "🔍 Checking for Playwright configuration..."
-          if [ -f "playwright.config.js" ]; then
-            echo "✅ Found Playwright config: playwright.config.js"
-            echo "🔍 Available test files:"
-            find tests/e2e/ -name "*.spec.js" -o -name "*.test.js" 2>/dev/null | head -10 || echo "No E2E test files found"
-            
-            echo "🔧 Installing Playwright browsers..."
-            if npx playwright install --with-deps chromium; then
-              echo "✅ Playwright browsers installed successfully"
-            else
-              INSTALL_EXIT_CODE=$?
-              echo "❌ Playwright browser installation failed with exit code: $INSTALL_EXIT_CODE"
-              exit $INSTALL_EXIT_CODE
-            fi
-            
-            echo "🧪 Running E2E tests (chromium only)..."
-            if npx playwright test --project=chromium; then
-              echo "✅ E2E tests passed"
-            else
-              E2E_EXIT_CODE=$?
-              echo "❌ E2E tests failed with exit code: $E2E_EXIT_CODE"
-              echo "🔍 Test results should be available in artifacts"
-              echo "🔍 Docker logs for debugging:"
-              docker compose logs --tail=50 || echo "Cannot retrieve Docker logs"
-              exit $E2E_EXIT_CODE
-            fi
-          else
-            echo "ℹ️ No E2E tests configured (playwright.config.js not found)"
-          fi
-
-      - name: 🧹 Cleanup Docker
-        if: always()
-        run: |
-          echo "🧹 Cleaning up Docker services..."
-          docker compose down || echo "Docker cleanup completed"
+          echo "🌐 E2E tests are disabled in CI for security reasons"
+          echo "ℹ️ E2E tests can be run locally with: npm run test:e2e"
+          echo "✅ Skipping E2E tests to protect user data"
 
       - name: 📊 Upload test results
         uses: actions/upload-artifact@v4
