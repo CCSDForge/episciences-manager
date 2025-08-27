@@ -19,7 +19,7 @@ module.exports = [
       'semi': ['error', 'always'],
       'quotes': ['error', 'single'],
       'no-trailing-spaces': 'error',
-      'indent': ['error', 2],
+      // 'indent': ['error', 2], // Disabled - let Prettier handle indentation
       'comma-dangle': ['error', 'always-multiline'],
     },
   },
