@@ -166,9 +166,9 @@ function getFallbackTranslations(locale) {
       missingPageInfo: 'Información de página faltante',
       saveSuccess: 'Guardado exitosamente',
       saveError: 'Error al guardar: ',
-    }
+    },
   };
-  
+
   return translations[locale] || translations.en;
 }
 
