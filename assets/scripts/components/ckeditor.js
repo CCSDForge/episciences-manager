@@ -12,19 +12,19 @@ import {
   Undo,
   Indent,
   // Équivalents des groupes CKEditor 4
-  Alignment,       // paragraph > align
-  FindAndReplace,  // editing > find
-  RemoveFormat,    // basicstyles > cleanup
-  FontSize,        // styles
-  FontFamily,      // styles
-  FontColor,       // colors
+  Alignment, // paragraph > align
+  FindAndReplace, // editing > find
+  RemoveFormat, // basicstyles > cleanup
+  FontSize, // styles
+  FontFamily, // styles
+  FontColor, // colors
   FontBackgroundColor, // colors
-  SpecialCharacters,   // insert
-  HorizontalLine,      // insert
-  Image,               // insert
-  ImageToolbar,        // insert
-  ImageUpload,         // insert
-  CodeBlock,            // insert
+  SpecialCharacters, // insert
+  HorizontalLine, // insert
+  Image, // insert
+  ImageToolbar, // insert
+  ImageUpload, // insert
+  CodeBlock, // insert
   // Note: SourceEditing n'est pas disponible dans cette version
 } from 'ckeditor5';
 
@@ -39,244 +39,243 @@ export function initializeCKEditor(elementId, placeholder = '') {
     return null;
   }
 
-  return ClassicEditor
-    .create(element, {
-      licenseKey: 'GPL', //Free key for open source use
-      plugins: [
-        Essentials,// Core
-        Paragraph,
-        Heading,
-        Undo,
+  return ClassicEditor.create(element, {
+    licenseKey: 'GPL', //Free key for open source use
+    plugins: [
+      Essentials, // Core
+      Paragraph,
+      Heading,
+      Undo,
 
-        // Basic styles (basicstyles group)
-        Bold,
-        Italic,
-        RemoveFormat,
+      // Basic styles (basicstyles group)
+      Bold,
+      Italic,
+      RemoveFormat,
 
-        // Paragraph formatting (paragraph group)
-        List,
-        Indent,
-        Alignment,
+      // Paragraph formatting (paragraph group)
+      List,
+      Indent,
+      Alignment,
 
-        // Links (links group)
-        Link,
+      // Links (links group)
+      Link,
 
-        // Insert (insert group)
-        BlockQuote,
-        Table,
-        HorizontalLine,
-        SpecialCharacters,
-        Image,
-        ImageToolbar,
-        ImageUpload,
-        CodeBlock,
+      // Insert (insert group)
+      BlockQuote,
+      Table,
+      HorizontalLine,
+      SpecialCharacters,
+      Image,
+      ImageToolbar,
+      ImageUpload,
+      CodeBlock,
 
-        // Styles (styles group)
-        FontSize,
-        FontFamily,
+      // Styles (styles group)
+      FontSize,
+      FontFamily,
 
-        // Colors (colors group)
-        FontColor,
-        FontBackgroundColor,
+      // Colors (colors group)
+      FontColor,
+      FontBackgroundColor,
 
-        // Editing (editing group)
-        FindAndReplace,
+      // Editing (editing group)
+      FindAndReplace,
+    ],
+    toolbar: {
+      items: [
+        // Document/Mode
+        'findAndReplace',
+        '|',
+
+        // Basic styles
+        'heading',
+        'fontSize',
+        'fontFamily',
+        '|',
+        'bold',
+        'italic',
+        'removeFormat',
+        '|',
+
+        // Colors
+        'fontColor',
+        'fontBackgroundColor',
+        '|',
+
+        // Paragraph
+        'alignment',
+        'bulletedList',
+        'numberedList',
+        'outdent',
+        'indent',
+        '|',
+
+        // Links & Insert
+        'link',
+        'uploadImage',
+        'insertTable',
+        'blockQuote',
+        'codeBlock',
+        'horizontalLine',
+        'specialCharacters',
+        '|',
+
+        // Clipboard/Undo
+        'undo',
+        'redo',
       ],
-      toolbar: {
-        items: [
-          // Document/Mode
-          'findAndReplace',
-          '|',
+    },
 
-          // Basic styles
-          'heading',
-          'fontSize',
-          'fontFamily',
-          '|',
-          'bold',
-          'italic',
-          'removeFormat',
-          '|',
+    // Configuration des images
+    image: {
+      toolbar: [
+        'imageTextAlternative',
+        '|',
+        'imageStyle:alignLeft',
+        'imageStyle:alignCenter',
+        'imageStyle:alignRight',
+      ],
+    },
 
-          // Colors
-          'fontColor',
-          'fontBackgroundColor',
-          '|',
+    // Configuration des couleurs
+    fontColor: {
+      colors: [
+        {
+          color: 'hsl(0, 0%, 0%)',
+          label: 'Black',
+        },
+        {
+          color: 'hsl(0, 0%, 30%)',
+          label: 'Dim grey',
+        },
+        {
+          color: 'hsl(0, 0%, 60%)',
+          label: 'Grey',
+        },
+        {
+          color: 'hsl(0, 0%, 90%)',
+          label: 'Light grey',
+        },
+        {
+          color: 'hsl(0, 0%, 100%)',
+          label: 'White',
+          hasBorder: true,
+        },
+        {
+          color: 'hsl(0, 75%, 60%)',
+          label: 'Red',
+        },
+        {
+          color: 'hsl(30, 75%, 60%)',
+          label: 'Orange',
+        },
+        {
+          color: 'hsl(60, 75%, 60%)',
+          label: 'Yellow',
+        },
+        {
+          color: 'hsl(90, 75%, 60%)',
+          label: 'Light green',
+        },
+        {
+          color: 'hsl(120, 75%, 60%)',
+          label: 'Green',
+        },
+        {
+          color: 'hsl(150, 75%, 60%)',
+          label: 'Aquamarine',
+        },
+        {
+          color: 'hsl(180, 75%, 60%)',
+          label: 'Turquoise',
+        },
+        {
+          color: 'hsl(210, 75%, 60%)',
+          label: 'Light blue',
+        },
+        {
+          color: 'hsl(240, 75%, 60%)',
+          label: 'Blue',
+        },
+        {
+          color: 'hsl(270, 75%, 60%)',
+          label: 'Purple',
+        },
+      ],
+      columns: 5,
+      documentColors: 10,
+    },
 
-          // Paragraph
-          'alignment',
-          'bulletedList',
-          'numberedList',
-          'outdent',
-          'indent',
-          '|',
+    fontBackgroundColor: {
+      colors: [
+        {
+          color: 'hsl(0, 0%, 0%)',
+          label: 'Black',
+        },
+        {
+          color: 'hsl(0, 0%, 30%)',
+          label: 'Dim grey',
+        },
+        {
+          color: 'hsl(0, 0%, 60%)',
+          label: 'Grey',
+        },
+        {
+          color: 'hsl(0, 0%, 90%)',
+          label: 'Light grey',
+        },
+        {
+          color: 'hsl(0, 0%, 100%)',
+          label: 'White',
+          hasBorder: true,
+        },
+        {
+          color: 'hsl(0, 75%, 60%)',
+          label: 'Red',
+        },
+        {
+          color: 'hsl(30, 75%, 60%)',
+          label: 'Orange',
+        },
+        {
+          color: 'hsl(60, 75%, 60%)',
+          label: 'Yellow',
+        },
+        {
+          color: 'hsl(90, 75%, 60%)',
+          label: 'Light green',
+        },
+        {
+          color: 'hsl(120, 75%, 60%)',
+          label: 'Green',
+        },
+        {
+          color: 'hsl(150, 75%, 60%)',
+          label: 'Aquamarine',
+        },
+        {
+          color: 'hsl(180, 75%, 60%)',
+          label: 'Turquoise',
+        },
+        {
+          color: 'hsl(210, 75%, 60%)',
+          label: 'Light blue',
+        },
+        {
+          color: 'hsl(240, 75%, 60%)',
+          label: 'Blue',
+        },
+        {
+          color: 'hsl(270, 75%, 60%)',
+          label: 'Purple',
+        },
+      ],
+      columns: 5,
+      documentColors: 10,
+    },
 
-          // Links & Insert
-          'link',
-          'uploadImage',
-          'insertTable',
-          'blockQuote',
-          'codeBlock',
-          'horizontalLine',
-          'specialCharacters',
-          '|',
-
-          // Clipboard/Undo
-          'undo',
-          'redo',
-        ],
-      },
-
-      // Configuration des images
-      image: {
-        toolbar: [
-          'imageTextAlternative',
-          '|',
-          'imageStyle:alignLeft',
-          'imageStyle:alignCenter',
-          'imageStyle:alignRight',
-        ],
-      },
-
-      // Configuration des couleurs
-      fontColor: {
-        colors: [
-          {
-            color: 'hsl(0, 0%, 0%)',
-            label: 'Black',
-          },
-          {
-            color: 'hsl(0, 0%, 30%)',
-            label: 'Dim grey',
-          },
-          {
-            color: 'hsl(0, 0%, 60%)',
-            label: 'Grey',
-          },
-          {
-            color: 'hsl(0, 0%, 90%)',
-            label: 'Light grey',
-          },
-          {
-            color: 'hsl(0, 0%, 100%)',
-            label: 'White',
-            hasBorder: true,
-          },
-          {
-            color: 'hsl(0, 75%, 60%)',
-            label: 'Red',
-          },
-          {
-            color: 'hsl(30, 75%, 60%)',
-            label: 'Orange',
-          },
-          {
-            color: 'hsl(60, 75%, 60%)',
-            label: 'Yellow',
-          },
-          {
-            color: 'hsl(90, 75%, 60%)',
-            label: 'Light green',
-          },
-          {
-            color: 'hsl(120, 75%, 60%)',
-            label: 'Green',
-          },
-          {
-            color: 'hsl(150, 75%, 60%)',
-            label: 'Aquamarine',
-          },
-          {
-            color: 'hsl(180, 75%, 60%)',
-            label: 'Turquoise',
-          },
-          {
-            color: 'hsl(210, 75%, 60%)',
-            label: 'Light blue',
-          },
-          {
-            color: 'hsl(240, 75%, 60%)',
-            label: 'Blue',
-          },
-          {
-            color: 'hsl(270, 75%, 60%)',
-            label: 'Purple',
-          },
-        ],
-        columns: 5,
-        documentColors: 10,
-      },
-
-      fontBackgroundColor: {
-        colors: [
-          {
-            color: 'hsl(0, 0%, 0%)',
-            label: 'Black',
-          },
-          {
-            color: 'hsl(0, 0%, 30%)',
-            label: 'Dim grey',
-          },
-          {
-            color: 'hsl(0, 0%, 60%)',
-            label: 'Grey',
-          },
-          {
-            color: 'hsl(0, 0%, 90%)',
-            label: 'Light grey',
-          },
-          {
-            color: 'hsl(0, 0%, 100%)',
-            label: 'White',
-            hasBorder: true,
-          },
-          {
-            color: 'hsl(0, 75%, 60%)',
-            label: 'Red',
-          },
-          {
-            color: 'hsl(30, 75%, 60%)',
-            label: 'Orange',
-          },
-          {
-            color: 'hsl(60, 75%, 60%)',
-            label: 'Yellow',
-          },
-          {
-            color: 'hsl(90, 75%, 60%)',
-            label: 'Light green',
-          },
-          {
-            color: 'hsl(120, 75%, 60%)',
-            label: 'Green',
-          },
-          {
-            color: 'hsl(150, 75%, 60%)',
-            label: 'Aquamarine',
-          },
-          {
-            color: 'hsl(180, 75%, 60%)',
-            label: 'Turquoise',
-          },
-          {
-            color: 'hsl(210, 75%, 60%)',
-            label: 'Light blue',
-          },
-          {
-            color: 'hsl(240, 75%, 60%)',
-            label: 'Blue',
-          },
-          {
-            color: 'hsl(270, 75%, 60%)',
-            label: 'Purple',
-          },
-        ],
-        columns: 5,
-        documentColors: 10,
-      },
-
-      placeholder: placeholder,
-    })
+    placeholder: placeholder,
+  })
     .then(editor => {
       editorInstance = editor;
       console.log('CKEditor 5 initialized successfully');
@@ -309,7 +308,8 @@ export function setEditorContent(content) {
 
 export function destroyEditor() {
   if (editorInstance) {
-    return editorInstance.destroy()
+    return editorInstance
+      .destroy()
       .then(() => {
         editorInstance = null;
         console.log('CKEditor destroyed');
@@ -326,4 +326,3 @@ export function focusEditor() {
     editorInstance.focus();
   }
 }
-
