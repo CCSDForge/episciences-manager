@@ -1,4 +1,10 @@
-import { initializeCKEditor, getEditorContent, setEditorContent, destroyEditor, focusEditor } from '../components/ckeditor.js';
+import {
+  initializeCKEditor,
+  getEditorContent,
+  setEditorContent,
+  destroyEditor,
+  focusEditor,
+} from '../components/ckeditor.js';
 
 // Function to update inline edit translations dynamically
 function updateInlineEditTranslations() {
@@ -28,28 +34,50 @@ function updateInlineEditTranslations() {
   const inlineEditTitle = document.querySelector('#inline-edit-content h5');
   console.log('Inline edit title found:', !!inlineEditTitle);
   if (inlineEditTitle && window.translations.editPageContent) {
-    console.log('Updating inline edit title:', window.translations.editPageContent);
+    console.log(
+      'Updating inline edit title:',
+      window.translations.editPageContent,
+    );
     const oldContent = inlineEditTitle.innerHTML;
     inlineEditTitle.innerHTML =
       '<i class="fas fa-edit me-2"></i>' +
       window.translations.editPageContent +
       '<i class="fas fa-file-alt ms-2"></i>';
-    console.log('Title updated from:', oldContent, 'to:', inlineEditTitle.innerHTML);
+    console.log(
+      'Title updated from:',
+      oldContent,
+      'to:',
+      inlineEditTitle.innerHTML,
+    );
   }
 
   // Update page title label (inline edit)
-  const pageTitleLabel = document.querySelector('label[for="page-title-inline"]');
+  const pageTitleLabel = document.querySelector(
+    'label[for="page-title-inline"]',
+  );
   console.log('Page title label found:', !!pageTitleLabel);
   if (pageTitleLabel && window.translations.pageTitle) {
-    console.log('Updating page title label from:', pageTitleLabel.textContent, 'to:', window.translations.pageTitle);
+    console.log(
+      'Updating page title label from:',
+      pageTitleLabel.textContent,
+      'to:',
+      window.translations.pageTitle,
+    );
     pageTitleLabel.textContent = window.translations.pageTitle;
   }
 
   // Update content label (inline edit)
-  const contentLabel = document.querySelector('label[for="page-content-inline"]');
+  const contentLabel = document.querySelector(
+    'label[for="page-content-inline"]',
+  );
   console.log('Content label found:', !!contentLabel);
   if (contentLabel && window.translations.content) {
-    console.log('Updating content label from:', contentLabel.textContent, 'to:', window.translations.content);
+    console.log(
+      'Updating content label from:',
+      contentLabel.textContent,
+      'to:',
+      window.translations.content,
+    );
     contentLabel.textContent = window.translations.content;
   }
 
@@ -57,7 +85,12 @@ function updateInlineEditTranslations() {
   const textarea = document.getElementById('page-content-inline');
   console.log('Textarea found:', !!textarea);
   if (textarea && window.translations.enterContent) {
-    console.log('Updating textarea placeholder from:', textarea.placeholder, 'to:', window.translations.enterContent);
+    console.log(
+      'Updating textarea placeholder from:',
+      textarea.placeholder,
+      'to:',
+      window.translations.enterContent,
+    );
     textarea.placeholder = window.translations.enterContent;
   }
 
@@ -127,9 +160,10 @@ async function loadTranslations(locale) {
 
 // Initialize with current page locale (no API call yet)
 function initializeTranslations() {
-  const currentLocale = document.documentElement.lang ||
-                       window.location.pathname.split('/')[1] ||
-                       'en';
+  const currentLocale =
+    document.documentElement.lang ||
+    window.location.pathname.split('/')[1] ||
+    'en';
 
   // Start with fallback, load via API only when language changes
   window.translations = fallbackTranslations;
@@ -220,15 +254,19 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .then(data => {
           console.log('Data received:', JSON.stringify(data, null, 2));
-          console.log('Raw content from server:', JSON.stringify(data.content, null, 2));
+          console.log(
+            'Raw content from server:',
+            JSON.stringify(data.content, null, 2),
+          );
           console.log('Current locale:', locale);
           if (data.error) {
             pageBody.innerHTML = '<p class="text-danger">Page not found</p>';
           } else {
             // Use the locale extracted from the URL
-            const contentToShow = data.content[locale] ||
-                                 data.content['en'] ||
-                                 'No content available';
+            const contentToShow =
+              data.content[locale] ||
+              data.content['en'] ||
+              'No content available';
             console.log('Content to show:', contentToShow);
             //the content is HTML converted from markdown, so it's safe to use innerHTML
             pageBody.innerHTML = contentToShow;
@@ -282,7 +320,6 @@ document.addEventListener('DOMContentLoaded', function () {
     switchToInlineEdit();
   });
 
-
   // Function to switch to inline edit mode
   function switchToInlineEdit() {
     console.log('switchToInlineEdit called');
@@ -291,13 +328,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (!currentPageCode || !currentJournalCode) {
       console.log('Missing page info - showing alert');
-      alert(window.translations?.selectPageFirst || 'Please select a page first');
+      alert(
+        window.translations?.selectPageFirst || 'Please select a page first',
+      );
       return;
     }
 
     // Get current page title and content
     const activeLink = document.querySelector('.page-nav-link.active');
-    const pageTitle = activeLink ? activeLink.textContent.trim() : currentPageCode;
+    const pageTitle = activeLink
+      ? activeLink.textContent.trim()
+      : currentPageCode;
     const currentContent = pageBody.innerHTML || '';
 
     // Populate inline edit form
@@ -308,12 +349,19 @@ document.addEventListener('DOMContentLoaded', function () {
     inlineEditContent.style.display = 'block';
 
     // Initialize CKEditor
-    const placeholder = window.translations?.enterContent || 'Enter the content here...';
+    const placeholder =
+      window.translations?.enterContent || 'Enter the content here...';
     console.log('About to initialize CKEditor with placeholder:', placeholder);
-    console.log('Target element:', document.getElementById('page-content-inline'));
+    console.log(
+      'Target element:',
+      document.getElementById('page-content-inline'),
+    );
 
     try {
-      const editorPromise = initializeCKEditor('page-content-inline', placeholder);
+      const editorPromise = initializeCKEditor(
+        'page-content-inline',
+        placeholder,
+      );
       console.log('initializeCKEditor returned:', editorPromise);
 
       if (editorPromise) {
@@ -321,7 +369,9 @@ document.addEventListener('DOMContentLoaded', function () {
           .then(() => {
             console.log('CKEditor initialized successfully');
             // Convert the HTML into cleaner content for the editor
-            const cleanContent = currentContent.replace(/<div class="text-center[^>]*>[\s\S]*?<\/div>/g, '').trim();
+            const cleanContent = currentContent
+              .replace(/<div class="text-center[^>]*>[\s\S]*?<\/div>/g, '')
+              .trim();
             setEditorContent(cleanContent || '');
 
             // Focus on the editor after a short delay
@@ -332,7 +382,9 @@ document.addEventListener('DOMContentLoaded', function () {
           .catch(error => {
             console.error('Failed to initialize CKEditor:', error);
             // Fallback: create a simple textarea
-            const editorElement = document.getElementById('page-content-inline');
+            const editorElement = document.getElementById(
+              'page-content-inline',
+            );
             const parentElement = editorElement.parentNode;
             const textarea = document.createElement('textarea');
             textarea.className = 'form-control';
@@ -370,7 +422,10 @@ document.addEventListener('DOMContentLoaded', function () {
         const parentElement = fallbackTextarea.parentNode;
         const originalDiv = document.createElement('div');
         originalDiv.id = 'page-content-inline';
-        originalDiv.setAttribute('data-placeholder', window.translations?.enterContent || 'Enter the content here...');
+        originalDiv.setAttribute(
+          'data-placeholder',
+          window.translations?.enterContent || 'Enter the content here...',
+        );
         parentElement.replaceChild(originalDiv, fallbackTextarea);
       }
 
@@ -387,26 +442,30 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-
   // Cancel inline edit handler
   if (cancelInlineButton) {
-    cancelInlineButton.addEventListener('click', function() {
+    cancelInlineButton.addEventListener('click', function () {
       exitInlineEdit();
     });
   }
 
   // Save inline edit handler
   if (saveInlineButton) {
-    saveInlineButton.addEventListener('click', function() {
+    saveInlineButton.addEventListener('click', function () {
       if (!currentPageCode || !currentJournalCode) {
-        alert(window.translations?.missingPageInfo || 'Missing page information');
+        alert(
+          window.translations?.missingPageInfo || 'Missing page information',
+        );
         return;
       }
 
       //const newContent = pageContentInline.value;
       const newContent = getEditorContent();
       const newTitle = pageTitleInline.value;
-      let locale = document.documentElement.lang || window.location.pathname.split('/')[1] || 'en';
+      let locale =
+        document.documentElement.lang ||
+        window.location.pathname.split('/')[1] ||
+        'en';
 
       if (locale !== 'en' && locale !== 'fr') {
         locale = 'en';
@@ -452,12 +511,17 @@ document.addEventListener('DOMContentLoaded', function () {
             // Show success message
             alert(window.translations?.saveSuccess || 'Saved successfully');
           } else {
-            alert((window.translations?.saveError || 'Save error: ') + (data.message || 'Unknown error'));
+            alert(
+              (window.translations?.saveError || 'Save error: ') +
+                (data.message || 'Unknown error'),
+            );
           }
         })
         .catch(error => {
           console.error('Save error:', error);
-          alert((window.translations?.saveError || 'Save error: ') + error.message);
+          alert(
+            (window.translations?.saveError || 'Save error: ') + error.message,
+          );
         });
     });
   }
