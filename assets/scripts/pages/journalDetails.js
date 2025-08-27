@@ -121,20 +121,56 @@ window.loadTranslations = loadTranslations;
 
 // Translation cache and management
 const translationCache = new Map();
-const fallbackTranslations = {
-  edit: 'Éditer',
-  editPageContent: 'Éditer le contenu de la page',
-  pageTitle: 'Titre de la page',
-  content: 'Contenu',
-  enterContent: 'Saisissez le contenu ici...',
-  cancel: 'Annuler',
-  save: 'Sauvegarder',
-  selectPageFirst: 'Veuillez sélectionner une page',
-  welcomeBackoffice: 'Bienvenue dans le backoffice de gestion du journal',
-  missingPageInfo: 'Informations de page manquantes',
-  saveSuccess: 'Sauvegardé avec succès',
-  saveError: 'Erreur de sauvegarde: ',
-};
+
+// Multi-language fallback translations
+function getFallbackTranslations(locale) {
+  const translations = {
+    fr: {
+      edit: 'Éditer',
+      editPageContent: 'Éditer le contenu de la page',
+      pageTitle: 'Titre de la page',
+      content: 'Contenu',
+      enterContent: 'Saisissez le contenu ici...',
+      cancel: 'Annuler',
+      save: 'Sauvegarder',
+      selectPageFirst: 'Veuillez sélectionner une page',
+      welcomeBackoffice: 'Bienvenue dans le backoffice de gestion du journal',
+      missingPageInfo: 'Informations de page manquantes',
+      saveSuccess: 'Sauvegardé avec succès',
+      saveError: 'Erreur de sauvegarde: ',
+    },
+    en: {
+      edit: 'Edit',
+      editPageContent: 'Edit page content',
+      pageTitle: 'Page title',
+      content: 'Content',
+      enterContent: 'Enter content here...',
+      cancel: 'Cancel',
+      save: 'Save',
+      selectPageFirst: 'Please select a page first',
+      welcomeBackoffice: 'Welcome to the journal management backoffice',
+      missingPageInfo: 'Missing page information',
+      saveSuccess: 'Saved successfully',
+      saveError: 'Save error: ',
+    },
+    es: {
+      edit: 'Editar',
+      editPageContent: 'Editar contenido de la página',
+      pageTitle: 'Título de la página',
+      content: 'Contenido',
+      enterContent: 'Ingrese el contenido aquí...',
+      cancel: 'Cancelar',
+      save: 'Guardar',
+      selectPageFirst: 'Por favor seleccione una página primero',
+      welcomeBackoffice: 'Bienvenido al backoffice de gestión de la revista',
+      missingPageInfo: 'Información de página faltante',
+      saveSuccess: 'Guardado exitosamente',
+      saveError: 'Error al guardar: ',
+    }
+  };
+  
+  return translations[locale] || translations.en;
+}
 
 // Lazy load translations only when needed
 async function loadTranslations(locale) {
@@ -154,7 +190,7 @@ async function loadTranslations(locale) {
     return translations;
   } catch (error) {
     console.error(`Error loading translations for ${locale}:`, error);
-    return fallbackTranslations;
+    return getFallbackTranslations(locale);
   }
 }
 
@@ -165,8 +201,8 @@ function initializeTranslations() {
     window.location.pathname.split('/')[1] ||
     'en';
 
-  // Start with fallback, load via API only when language changes
-  window.translations = fallbackTranslations;
+  // Start with fallback translations based on current locale
+  window.translations = getFallbackTranslations(currentLocale);
   window.currentLocale = currentLocale;
 }
 
