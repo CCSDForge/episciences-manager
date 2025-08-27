@@ -45,6 +45,8 @@ jobs:
         run: |
           npm ci
           echo "✅ Node dependencies installed"
+          echo "🔍 JavaScript files to be linted:"
+          find assets/ tests/javascript/ -name "*.js" -type f 2>/dev/null | head -10 || echo "No JS files found yet"
 
       - name: 🔍 Lint YAML files
         run: |
@@ -65,37 +67,87 @@ jobs:
           ls -la public/build/ || echo "Build folder created"
           echo "✅ Assets built successfully"
 
+      - name: 🔍 Debug files before linting
+        run: |
+          echo "🔍 Debugging file state before linting..."
+          echo "Current working directory: $(pwd)"
+          echo "Git status:"
+          git status --porcelain || echo "No git changes"
+          echo "Modified JavaScript files in last commit:"
+          git show --name-only --pretty=format: HEAD | grep '\.js$' || echo "No JS files in last commit"
+          echo "ESLint configuration:"
+          ls -la eslint.config.js .eslintrc* 2>/dev/null || echo "No ESLint config found"
+          echo "Prettier configuration:"
+          ls -la .prettierrc* prettier.config.js 2>/dev/null || echo "No Prettier config found"
+
       - name: 📊 JavaScript linting & formatting
         run: |
-          echo "📊 Checking JavaScript..."
-          npm run lint || echo "⚠️ JS issues found but continuing"
-          echo "🎨 Checking JavaScript formatting with Prettier..."
-          npm run format:check || echo "⚠️ Formatting issues found but continuing"
-          echo "✅ JavaScript check completed"
+          echo "📊 Starting JavaScript linting & formatting checks..."
+          echo "🔍 Current working directory: $(pwd)"
+          echo "🔍 Available memory: $(free -h | head -2)"
+          echo "🔍 Disk space: $(df -h . | tail -1)"
+          
+          echo "🔍 Running ESLint..."
+          if npm run lint; then
+            ESLINT_EXIT_CODE=0
+            echo "✅ ESLint passed (exit code: $ESLINT_EXIT_CODE)"
+          else
+            ESLINT_EXIT_CODE=$?
+            echo "❌ ESLint failed with exit code: $ESLINT_EXIT_CODE"
+            echo "🔍 ESLint debug information:"
+            echo "Files that would be linted:"
+            find assets/ tests/javascript/ -name "*.js" -type f 2>/dev/null | head -10 || echo "No JS files found"
+            echo "ESLint version:"
+            npx eslint --version || echo "Cannot get ESLint version"
+            echo "Running ESLint with debug output (first 50 lines):"
+            npm run lint -- --debug 2>&1 | head -50 || echo "Debug failed"
+            exit $ESLINT_EXIT_CODE
+          fi
+          
+          echo "🎨 Running Prettier format check..."
+          if npm run format:check; then
+            PRETTIER_EXIT_CODE=0
+            echo "✅ Prettier check passed (exit code: $PRETTIER_EXIT_CODE)"
+          else
+            PRETTIER_EXIT_CODE=$?
+            echo "❌ Prettier check failed with exit code: $PRETTIER_EXIT_CODE"
+            echo "🔍 Files that need formatting:"
+            npm run format:check -- --list-different 2>&1 || echo "Cannot list different files"
+            exit $PRETTIER_EXIT_CODE
+          fi
+          
+          echo "✅ All JavaScript checks completed successfully"
 
       - name: 🧪 Run JavaScript unit tests
         run: |
-          echo "🧪 Running JavaScript unit tests..."
+          echo "🧪 Starting JavaScript unit tests..."
+          echo "🔍 Checking for test setup file..."
           if [ -f "tests/javascript/setup.js" ]; then
-            npm test
-            echo "✅ JavaScript unit tests completed"
+            echo "✅ Found test setup file: tests/javascript/setup.js"
+            echo "🔍 Jest/test configuration:"
+            ls -la jest.config.js package.json 2>/dev/null || echo "No Jest config found"
+            echo "🔍 Test files available:"
+            find tests/javascript/ -name "*.test.js" -o -name "*.spec.js" 2>/dev/null | head -10 || echo "No test files found"
+          
+            echo "🧪 Executing npm test..."
+            if npm test; then
+              echo "✅ JavaScript unit tests passed"
+            else
+              TEST_EXIT_CODE=$?
+              echo "❌ JavaScript unit tests failed with exit code: $TEST_EXIT_CODE"
+              echo "🔍 Test output above should show the failure details"
+              exit $TEST_EXIT_CODE
+            fi
           else
-            echo "ℹ️ No JavaScript tests configured yet"
+            echo "ℹ️ No JavaScript tests configured yet (tests/javascript/setup.js not found)"
           fi
 
-      - name: 🌐 Run E2E tests
+      # E2E tests disabled for security - avoid connecting to preprod database
+      - name: 🌐 E2E Tests (Disabled)
         run: |
-          echo "🌐 Running E2E tests..."
-          if [ -f "playwright.config.js" ]; then
-            # Install Playwright browsers with system dependencies
-            npx playwright install --with-deps chromium
-            
-            # Run E2E tests (chromium only for faster CI)
-            npx playwright test --project=chromium
-            echo "✅ E2E tests completed"
-          else
-            echo "ℹ️ No E2E tests configured yet"
-          fi
+          echo "🌐 E2E tests are disabled in CI for security reasons"
+          echo "ℹ️ E2E tests can be run locally with: npm run test:e2e"
+          echo "✅ Skipping E2E tests to protect user data"
 
       - name: 📊 Upload test results
         uses: actions/upload-artifact@v4
@@ -109,14 +161,47 @@ jobs:
 
       - name: 🧪 Run Pest PHP tests
         run: |
-          echo "🧪 Running PHP tests with Pest..."
+          echo "🧪 Starting PHP tests..."
+          echo "🔍 Checking PHP test framework availability..."
+          echo "🔍 Current PHP version: $(php --version | head -1)"
+          echo "🔍 Available memory: $(php -r 'echo ini_get("memory_limit");')"
+          
           if [ -f "vendor/bin/pest" ]; then
-            vendor/bin/pest || echo "⚠️ Some tests failed but continuing"
+            echo "✅ Found Pest testing framework"
+            echo "🔍 Pest version:"
+            vendor/bin/pest --version || echo "Cannot get Pest version"
+            echo "🔍 Available PHP test files:"
+            find tests/ -name "*.php" -type f 2>/dev/null | head -10 || echo "No PHP test files found"
+          
+            echo "🧪 Executing Pest tests..."
+            if vendor/bin/pest; then
+              echo "✅ PHP tests passed with Pest"
+            else
+              PEST_EXIT_CODE=$?
+              echo "❌ Pest tests failed with exit code: $PEST_EXIT_CODE"
+              echo "🔍 Test output above should show failure details"
+              exit $PEST_EXIT_CODE
+            fi
           else
-            echo "ℹ️ Pest not configured - running PHPUnit fallback"
-            vendor/bin/phpunit --testdox || echo "⚠️ Some tests failed but continuing"
+            echo "ℹ️ Pest not found, trying PHPUnit fallback..."
+            if [ -f "vendor/bin/phpunit" ]; then
+              echo "✅ Found PHPUnit"
+              echo "🔍 PHPUnit version:"
+              vendor/bin/phpunit --version || echo "Cannot get PHPUnit version"
+          
+              echo "🧪 Executing PHPUnit tests..."
+              if vendor/bin/phpunit --testdox --verbose; then
+                echo "✅ PHP tests passed with PHPUnit"
+              else
+                PHPUNIT_EXIT_CODE=$?
+                echo "❌ PHPUnit tests failed with exit code: $PHPUNIT_EXIT_CODE"
+                exit $PHPUNIT_EXIT_CODE
+              fi
+            else
+              echo "❌ Neither Pest nor PHPUnit found in vendor/bin/"
+              exit 1
+            fi
           fi
-          echo "✅ PHP tests completed"
 
       - name: 🔧 Symfony Console check
         run: |
