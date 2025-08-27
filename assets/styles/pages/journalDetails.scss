@@ -58,7 +58,9 @@
 // Expand icon styles
 .expand-icon {
   cursor: pointer;
-  transition: color 0.2s ease, transform 0.2s ease;
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
   opacity: 0.7;
 
   &:hover {
@@ -68,19 +70,18 @@
   }
 }
 
-
 // Base styles for content areas - stable size that grows with content
 .card-body {
   min-height: 700px; // Stable zone increased
   height: auto; // Allow natural growth with content
   padding: 1.5rem;
-  
+
   // Responsive adjustments
   @media (max-width: 768px) {
     min-height: 500px; // More compact on mobile
     padding: 1rem;
   }
-  
+
   @media (min-width: 1200px) {
     min-height: 800px; // More generous on large screen
   }
@@ -89,7 +90,7 @@
 #page-content {
   min-height: 600px; // Stable zone for display
   height: auto; // Grows with content
-  
+
   @media (max-width: 768px) {
     min-height: 400px; // Compact on mobile
   }
@@ -100,22 +101,22 @@
   min-height: 700px; // Stable zone same size as card-body
   height: auto; // Grows naturally with content
   padding: 1.5rem;
-  
+
   // Responsive adjustments
   @media (max-width: 768px) {
     min-height: 500px; // More compact on mobile
     padding: 1rem;
   }
-  
+
   @media (min-width: 1200px) {
     min-height: 800px; // More generous on large screen
   }
-  
+
   // Ensure it takes full available space
   .d-flex {
     margin-bottom: 1.5rem;
   }
-  
+
   #page-content-inline {
     min-height: 500px; // More generous stable zone for textarea
     height: 500px; // Fixed base height to start
@@ -129,11 +130,13 @@
     border: 2px solid #e2e8f0;
     border-radius: 0.5rem;
     padding: 1rem;
-    transition: border-color 0.2s ease, height 0.2s ease;
-    
+    transition:
+      border-color 0.2s ease,
+      height 0.2s ease;
+
     // Auto-expand behavior with smart limit
     box-sizing: border-box;
-    
+
     // Responsive textarea sizing
     @media (max-width: 768px) {
       min-height: 350px; // More compact on mobile
@@ -142,71 +145,71 @@
       font-size: 13px;
       padding: 0.75rem;
     }
-    
+
     @media (min-width: 1200px) {
       min-height: 600px; // More generous on large screen
       height: 600px; // Large screen base height
       max-height: 85vh; // More generous on large screen
       font-size: 15px;
     }
-    
+
     &:focus {
       border-color: $primary-color;
       outline: none;
       box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
     }
-    
+
     // Visual indicator when in internal scroll
     &::-webkit-scrollbar {
       width: 8px;
     }
-    
+
     &::-webkit-scrollbar-track {
       background: #f1f1f1;
       border-radius: 4px;
     }
-    
+
     &::-webkit-scrollbar-thumb {
       background: #c1c1c1;
       border-radius: 4px;
-      
+
       &:hover {
         background: #a8a8a8;
       }
     }
   }
-  
+
   #page-title-inline {
     width: 100%;
     margin-bottom: 1rem;
   }
-  
+
   .form-label {
     font-weight: 600;
     color: $primary-color;
     margin-bottom: 0.5rem;
   }
-  
+
   .btn {
     transition: all 0.2s ease;
-    
+
     &:hover {
       transform: translateY(-1px);
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
   }
-  
+
   // Make the form flexible but maintain structure
   #inline-edit-form {
     display: flex;
     flex-direction: column;
     min-height: 500px; // Base stable height
-    
+
     .mb-3 {
       &:last-child {
         display: flex;
         flex-direction: column;
-        
+
         #page-content-inline {
           min-height: 400px;
         }
