@@ -33,6 +33,21 @@ final class FileManagerController extends AbstractController
         ]);
     }
 
+    #[Route('/journal/{code}/public', name: 'journal_public_resources', requirements: ['code' => '[\w\-]+'])]
+    public function publicResources(Request $request, string $code): Response
+    {
+        // Compatible avec l'ancienne logique Zend
+        if ($request->isMethod('POST')) {
+            return $this->handleLegacyPost($request, $code);
+        }
+
+        $files = $this->getFilesForJournal($code);
+        return $this->render('file_manager/public.html.twig', [
+            'files' => $files,
+            'journal_code' => $code,
+        ]);
+    }
+
     #[Route('/journal/{code}/files/upload', name: 'app_file_upload', methods: ['POST'], requirements: ['code' => '[\w\-]+'])]
     public function upload(Request $request, string $code, SluggerInterface $slugger): JsonResponse
     {
@@ -143,7 +158,7 @@ final class FileManagerController extends AbstractController
 
     private function getUploadDirectory(string $journalCode): string
     {
-        $directory = $this->getParameter('kernel.project_dir') . '/data/' . $journalCode . '/public';
+        $directory = $this->getParameter('kernel.project_dir') . '/var/uploads/' . $journalCode . '/public';
         
         // Create directory if it doesn't exist
         if (!is_dir($directory)) {
