@@ -201,9 +201,6 @@ final class ResourcesController extends AbstractController
 
     private function generatePublicUrl(string $journalCode, string $filename): string
     {
-        return $this->generateUrl('app_resources_serve', [
-            'code' => $journalCode,
-            'filename' => $filename,
-        ]);
+        return '/' . $journalCode . '/resources/' . $filename;
     }
 }
