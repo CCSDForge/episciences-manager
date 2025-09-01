@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const uploadProgress = document.getElementById('uploadProgress');
   const uploadMessages = document.getElementById('uploadMessages');
   const filesTable = document.getElementById('filesTable');
-  const deleteConfirmModal = new bootstrap.Modal(
+  const deleteConfirmModal = new window.bootstrap.Modal(
     document.getElementById('deleteConfirmModal'),
   );
   const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
@@ -168,7 +168,7 @@ document.addEventListener('DOMContentLoaded', function () {
       try {
         document.execCommand('copy');
         showMessage(window.resourcesData.translations.copySuccess, 'success');
-      } catch (fallbackError) {
+      } catch {
         showMessage(window.resourcesData.translations.copyError, 'danger');
       }
 
@@ -313,7 +313,7 @@ document.addEventListener('DOMContentLoaded', function () {
       '<': '&lt;',
       '>': '&gt;',
       '"': '&quot;',
-      "'": '&#039;',
+      '\'': '&#039;',
     };
 
     return text.replace(/[&<>"']/g, function (m) {
