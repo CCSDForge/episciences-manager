@@ -25,7 +25,7 @@ Encore
   .addEntry('headerJs', './assets/scripts/partials/_header.js')
   .addEntry('home', './assets/scripts/pages/index.js')
   .addEntry('journalDetailsJs', './assets/scripts/pages/journalDetails.js')
-  .addEntry('fileManager', './assets/scripts/pages/fileManager.js')
+  .addEntry('resources', './assets/scripts/pages/resources.js')
 
   .addStyleEntry('main', './assets/styles/app.scss')
   .addStyleEntry('navbar', './assets/styles/partials/_navbar.scss')
