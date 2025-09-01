@@ -157,7 +157,7 @@ document.addEventListener('DOMContentLoaded', function () {
     try {
       await navigator.clipboard.writeText(text);
       showMessage(window.resourcesData.translations.copySuccess, 'success');
-    } catch (error) {
+    } catch {
       // Fallback for older browsers
       const textArea = document.createElement('textarea');
       textArea.value = text;
