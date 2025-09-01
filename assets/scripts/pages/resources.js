@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
             showProgress(true);
             clearMessages();
 
-            const response = await fetch(window.fileManagerData.uploadUrl, {
+            const response = await fetch(window.resourcesData.uploadUrl, {
                 method: 'POST',
                 body: formData
             });
@@ -37,16 +37,16 @@ document.addEventListener('DOMContentLoaded', function() {
             showProgress(false);
 
             if (result.success) {
-                showMessage(window.fileManagerData.translations.uploadSuccess, 'success');
+                showMessage(window.resourcesData.translations.uploadSuccess, 'success');
                 fileInput.value = ''; // Clear the file input
                 document.getElementById('overwriteFile').checked = false;
                 await refreshFileList();
             } else {
-                showMessage(`${window.fileManagerData.translations.uploadError}: ${result.message}`, 'danger');
+                showMessage(`${window.resourcesData.translations.uploadError}: ${result.message}`, 'danger');
             }
         } catch (error) {
             showProgress(false);
-            showMessage(`${window.fileManagerData.translations.uploadError}: ${error.message}`, 'danger');
+            showMessage(`${window.resourcesData.translations.uploadError}: ${error.message}`, 'danger');
         }
     });
 
@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!fileToDeleteName) return;
 
         try {
-            const deleteUrl = window.fileManagerData.deleteUrl.replace('__FILENAME__', encodeURIComponent(fileToDeleteName));
+            const deleteUrl = window.resourcesData.deleteUrl.replace('__FILENAME__', encodeURIComponent(fileToDeleteName));
             
             const response = await fetch(deleteUrl, {
                 method: 'DELETE'
@@ -85,14 +85,14 @@ document.addEventListener('DOMContentLoaded', function() {
             const result = await response.json();
 
             if (result.success) {
-                showMessage(window.fileManagerData.translations.deleteSuccess, 'success');
+                showMessage(window.resourcesData.translations.deleteSuccess, 'success');
                 deleteConfirmModal.hide();
                 await refreshFileList();
             } else {
-                showMessage(`${window.fileManagerData.translations.deleteError}: ${result.message}`, 'danger');
+                showMessage(`${window.resourcesData.translations.deleteError}: ${result.message}`, 'danger');
             }
         } catch (error) {
-            showMessage(`${window.fileManagerData.translations.deleteError}: ${error.message}`, 'danger');
+            showMessage(`${window.resourcesData.translations.deleteError}: ${error.message}`, 'danger');
         }
 
         fileToDeleteName = null;
@@ -136,7 +136,7 @@ document.addEventListener('DOMContentLoaded', function() {
     async function copyToClipboard(text) {
         try {
             await navigator.clipboard.writeText(text);
-            showMessage(window.fileManagerData.translations.copySuccess, 'success');
+            showMessage(window.resourcesData.translations.copySuccess, 'success');
         } catch (error) {
             // Fallback for older browsers
             const textArea = document.createElement('textarea');
@@ -147,9 +147,9 @@ document.addEventListener('DOMContentLoaded', function() {
             
             try {
                 document.execCommand('copy');
-                showMessage(window.fileManagerData.translations.copySuccess, 'success');
+                showMessage(window.resourcesData.translations.copySuccess, 'success');
             } catch (fallbackError) {
-                showMessage(window.fileManagerData.translations.copyError, 'danger');
+                showMessage(window.resourcesData.translations.copyError, 'danger');
             }
             
             document.body.removeChild(textArea);
@@ -158,7 +158,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     async function refreshFileList() {
         try {
-            const response = await fetch(window.fileManagerData.listUrl);
+            const response = await fetch(window.resourcesData.listUrl);
             const result = await response.json();
             
             if (result.success) {

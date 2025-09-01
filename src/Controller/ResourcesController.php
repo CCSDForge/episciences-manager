@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
-final class FileManagerController extends AbstractController
+final class ResourcesController extends AbstractController
 {
     private const ALLOWED_EXTENSIONS = [
         'png', 'jpg', 'jpeg', 'gif', 'tif', 'tiff', 'zip', 'gz', '7z', 'rar', 
@@ -22,40 +22,31 @@ final class FileManagerController extends AbstractController
 
     private const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
-    #[Route('/journal/{code}/files', name: 'app_file_manager', requirements: ['code' => '[\w\-]+'])]
+    #[Route('/journal/{code}/resources', name: 'app_resources_manager', requirements: ['code' => '[\w\-]+'])]
     public function index(string $code): Response
     {
         $files = $this->getFilesForJournal($code);
 
-        return $this->render('file_manager/index.html.twig', [
+        return $this->render('resources/index.html.twig', [
             'files' => $files,
             'journal_code' => $code,
         ]);
     }
 
-    #[Route('/journal/{code}/public', name: 'journal_public_resources', requirements: ['code' => '[\w\-]+'])]
-    public function publicResources(Request $request, string $code): Response
-    {
-        // Compatible avec l'ancienne logique Zend
-        if ($request->isMethod('POST')) {
-            return $this->handleLegacyPost($request, $code);
-        }
-
-        $files = $this->getFilesForJournal($code);
-        return $this->render('file_manager/public.html.twig', [
-            'files' => $files,
-            'journal_code' => $code,
-        ]);
-    }
-
-    #[Route('/journal/{code}/files/upload', name: 'app_file_upload', methods: ['POST'], requirements: ['code' => '[\w\-]+'])]
+    #[Route('/journal/{code}/resources/upload', name: 'app_resources_upload', methods: ['POST'], requirements: ['code' => '[\w\-]+'])]
     public function upload(Request $request, string $code, SluggerInterface $slugger): JsonResponse
     {
+        // Debug logging
+        error_log('Upload request received for journal: ' . $code);
+        error_log('Files in request: ' . print_r($_FILES, true));
+        error_log('Post data: ' . print_r($_POST, true));
+
         /** @var UploadedFile $uploadedFile */
         $uploadedFile = $request->files->get('file');
         $overwrite = $request->request->getBoolean('overwrite', false);
 
         if (!$uploadedFile) {
+            error_log('No file uploaded in request');
             return new JsonResponse([
                 'success' => false, 
                 'message' => 'No file uploaded'
@@ -117,7 +108,7 @@ final class FileManagerController extends AbstractController
         }
     }
 
-    #[Route('/journal/{code}/files/{filename}/delete', name: 'app_file_delete', methods: ['DELETE'], requirements: ['code' => '[\w\-]+'])]
+    #[Route('/journal/{code}/resources/{filename}/delete', name: 'app_resources_delete', methods: ['DELETE'], requirements: ['code' => '[\w\-]+'])]
     public function delete(string $code, string $filename): JsonResponse
     {
         $filePath = $this->getUploadDirectory($code) . '/' . $filename;
@@ -145,7 +136,7 @@ final class FileManagerController extends AbstractController
         }
     }
 
-    #[Route('/journal/{code}/files/list', name: 'app_file_list', methods: ['GET'], requirements: ['code' => '[\w\-]+'])]
+    #[Route('/journal/{code}/resources/list', name: 'app_resources_list', methods: ['GET'], requirements: ['code' => '[\w\-]+'])]
     public function list(string $code): JsonResponse
     {
         $files = $this->getFilesForJournal($code);
