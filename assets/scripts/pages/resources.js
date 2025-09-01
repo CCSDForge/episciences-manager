@@ -1,20 +1,57 @@
 document.addEventListener('DOMContentLoaded', function () {
+  console.log('Resources script loaded, looking for upload form...');
+  console.log('DOM content loaded, document ready state:', document.readyState);
+  
   const uploadForm = document.getElementById('uploadForm');
+  console.log('Upload form element:', uploadForm);
+  
   const fileInput = document.getElementById('fileInput');
+  console.log('File input element:', fileInput);
+  
   const uploadProgress = document.getElementById('uploadProgress');
   const uploadMessages = document.getElementById('uploadMessages');
   const filesTable = document.getElementById('filesTable');
-  const deleteConfirmModal = new window.bootstrap.Modal(
-    document.getElementById('deleteConfirmModal'),
-  );
+  
+  console.log('Looking for deleteConfirmModal...');
+  const modalElement = document.getElementById('deleteConfirmModal');
+  console.log('Modal element found:', modalElement);
+  
+  let deleteConfirmModal = null;
+  try {
+    deleteConfirmModal = modalElement ? new window.bootstrap.Modal(modalElement) : null;
+    console.log('Modal initialized successfully');
+  } catch (error) {
+    console.error('Error initializing modal:', error);
+  }
+  
   const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
   const fileToDelete = document.getElementById('fileToDelete');
 
   let fileToDeleteName = null;
 
+  // Check window.resourcesData availability
+  console.log('Checking window.resourcesData:', window.resourcesData);
+  
   // Upload form handler
-  uploadForm.addEventListener('submit', async function (e) {
-    e.preventDefault();
+  if (uploadForm) {
+    console.log('Upload form found, adding event listener...');
+    console.log('Upload form element:', uploadForm);
+    console.log('Window resourcesData:', window.resourcesData);
+    
+    uploadForm.addEventListener('submit', async function (e) {
+      console.log('Upload form submitted');
+      e.preventDefault();
+      e.stopPropagation();
+      await handleUpload(e);
+    });
+    
+    console.log('Event listeners attached successfully');
+  } else {
+    console.error('Upload form not found!');
+  }
+  
+  async function handleUpload(e) {
+    console.log('handleUpload function called');
 
     const file = fileInput.files[0];
     if (!file) {
@@ -43,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
       if (result.success) {
         showMessage(window.resourcesData.translations.uploadSuccess, 'success');
-        fileInput.value = ''; // Clear the file input
+        fileInput.value = '';
         document.getElementById('overwriteFile').checked = false;
         await refreshFileList();
       } else {
@@ -59,7 +96,7 @@ document.addEventListener('DOMContentLoaded', function () {
         'danger',
       );
     }
-  });
+  }
 
   // Copy URL buttons
   document.addEventListener('click', function (e) {

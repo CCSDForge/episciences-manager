@@ -5,9 +5,12 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use App\Service\UploadDirectoryService;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
@@ -23,9 +26,9 @@ final class ResourcesController extends AbstractController
     private const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
     #[Route('/journal/{code}/resources', name: 'app_resources_manager', requirements: ['code' => '[\w\-]+'])]
-    public function index(string $code): Response
+    public function index(string $code, UploadDirectoryService $dirs): Response
     {
-        $files = $this->getFilesForJournal($code);
+        $files = $this->getFilesForJournal($code, $dirs);
 
         return $this->render('resources/index.html.twig', [
             'files' => $files,
@@ -34,14 +37,14 @@ final class ResourcesController extends AbstractController
     }
 
     #[Route('/journal/{code}/resources/upload', name: 'app_resources_upload', methods: ['POST'], requirements: ['code' => '[\w\-]+'])]
-    public function upload(Request $request, string $code, SluggerInterface $slugger): JsonResponse
+    public function upload(Request $request, string $code, SluggerInterface $slugger, UploadDirectoryService $dirs): JsonResponse
     {
         // Debug logging
         error_log('Upload request received for journal: ' . $code);
         error_log('Files in request: ' . print_r($_FILES, true));
         error_log('Post data: ' . print_r($_POST, true));
 
-        /** @var UploadedFile $uploadedFile */
+        /** @var UploadedFile|null $uploadedFile */
         $uploadedFile = $request->files->get('file');
         $overwrite = $request->request->getBoolean('overwrite', false);
 
@@ -73,11 +76,11 @@ final class ResourcesController extends AbstractController
         }
 
         // Generate safe filename
-        $safeFilename = $slugger->slug($originalFilename);
+        $safeFilename = (string) $slugger->slug($originalFilename);
         $newFilename = $safeFilename . '.' . $extension;
 
         // Check if file already exists and handle accordingly
-        $uploadDirectory = $this->getUploadDirectory($code);
+        $uploadDirectory = $dirs->getUploadDirectory($code);
         $destinationPath = $uploadDirectory . '/' . $newFilename;
 
         if (file_exists($destinationPath) && !$overwrite) {
@@ -109,9 +112,9 @@ final class ResourcesController extends AbstractController
     }
 
     #[Route('/journal/{code}/resources/{filename}/delete', name: 'app_resources_delete', methods: ['DELETE'], requirements: ['code' => '[\w\-]+'])]
-    public function delete(string $code, string $filename): JsonResponse
+    public function delete(string $code, string $filename, UploadDirectoryService $dirs): JsonResponse
     {
-        $filePath = $this->getUploadDirectory($code) . '/' . $filename;
+        $filePath = $dirs->getUploadDirectory($code) . '/' . $filename;
 
         if (!file_exists($filePath)) {
             return new JsonResponse([
@@ -137,9 +140,9 @@ final class ResourcesController extends AbstractController
     }
 
     #[Route('/journal/{code}/resources/list', name: 'app_resources_list', methods: ['GET'], requirements: ['code' => '[\w\-]+'])]
-    public function list(string $code): JsonResponse
+    public function list(string $code, UploadDirectoryService $dirs): JsonResponse
     {
-        $files = $this->getFilesForJournal($code);
+        $files = $this->getFilesForJournal($code, $dirs);
         
         return new JsonResponse([
             'success' => true,
@@ -147,21 +150,24 @@ final class ResourcesController extends AbstractController
         ]);
     }
 
-    private function getUploadDirectory(string $journalCode): string
+    #[Route('/{code}/resources/{filename}', name: 'app_resources_serve', requirements: ['code' => '[\w\-]+', 'filename' => '.+'])]
+    public function serve(string $code, string $filename, UploadDirectoryService $dirs): Response
     {
-        $directory = $this->getParameter('kernel.project_dir') . '/var/uploads/' . $journalCode . '/public';
-        
-        // Create directory if it doesn't exist
-        if (!is_dir($directory)) {
-            mkdir($directory, 0755, true);
+        $filePath = $dirs->getUploadDirectory($code) . '/' . $filename;
+
+        if (!file_exists($filePath)) {
+            throw $this->createNotFoundException('File not found');
         }
+
+        $response = new BinaryFileResponse($filePath);
+        $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_INLINE, $filename);
         
-        return $directory;
+        return $response;
     }
 
-    private function getFilesForJournal(string $journalCode): array
+    private function getFilesForJournal(string $journalCode, UploadDirectoryService $dirs): array
     {
-        $directory = $this->getUploadDirectory($journalCode);
+        $directory = $dirs->getUploadDirectory($journalCode);
         $files = [];
 
         if (!is_dir($directory)) {
@@ -195,6 +201,9 @@ final class ResourcesController extends AbstractController
 
     private function generatePublicUrl(string $journalCode, string $filename): string
     {
-        return '/' . $journalCode . '/resources/' . $filename;
+        return $this->generateUrl('app_resources_serve', [
+            'code' => $journalCode,
+            'filename' => $filename,
+        ]);
     }
 }
