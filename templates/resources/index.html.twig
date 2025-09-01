@@ -157,27 +157,27 @@
     </div>
 </div>
 
-<script>
-// Pass data to JavaScript
-window.resourcesData = {
-    journalCode: '{{ journal_code }}',
-    uploadUrl: '{{ path('app_resources_upload', {'code': journal_code}) }}',
-    deleteUrl: '{{ path('app_resources_delete', {'code': journal_code, 'filename': '__FILENAME__'}) }}',
-    listUrl: '{{ path('app_resources_list', {'code': journal_code}) }}',
-    translations: {
-        uploadSuccess: '{{ 'resources.uploadSuccess'|trans }}',
-        uploadError: '{{ 'resources.uploadError'|trans }}',
-        deleteSuccess: '{{ 'resources.deleteSuccess'|trans }}',
-        deleteError: '{{ 'resources.deleteError'|trans }}',
-        copySuccess: '{{ 'resources.copySuccess'|trans }}',
-        copyError: '{{ 'resources.copyError'|trans }}'
-    }
-};
-</script>
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
+    <script>
+    // Pass data to JavaScript
+    window.resourcesData = {
+        journalCode: '{{ journal_code }}',
+        uploadUrl: '{{ path('app_resources_upload', {'code': journal_code}) }}',
+        deleteUrl: '{{ path('app_resources_delete', {'code': journal_code, 'filename': '__FILENAME__'}) }}',
+        listUrl: '{{ path('app_resources_list', {'code': journal_code}) }}',
+        translations: {
+            uploadSuccess: '{{ 'resources.uploadSuccess'|trans }}',
+            uploadError: '{{ 'resources.uploadError'|trans }}',
+            deleteSuccess: '{{ 'resources.deleteSuccess'|trans }}',
+            deleteError: '{{ 'resources.deleteError'|trans }}',
+            copySuccess: '{{ 'resources.copySuccess'|trans }}',
+            copyError: '{{ 'resources.copyError'|trans }}'
+        }
+    };
+    </script>
     {{ encore_entry_script_tags('resources') }}
 {% endblock %}
 
