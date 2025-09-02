@@ -312,9 +312,9 @@ export function initializeCKEditor(elementId, placeholder = '') {
   })
     .then(editor => {
       editorInstance = editor;
-      console.log('CKEditor 5 initialisé avec succès');
+      console.log('CKEditor 5 initialized successfully');
 
-      // Redimensionnement automatique
+      // Auto-resize
       const editingView = editor.editing.view;
       editingView.document.on('change', () => {
         const editable = editingView.document.getRoot();
@@ -325,7 +325,7 @@ export function initializeCKEditor(elementId, placeholder = '') {
       return editor;
     })
     .catch(error => {
-      console.error("Erreur lors de l'initialisation de CKEditor:", error);
+      console.error('Error initializing CKEditor:', error);
       throw error;
     });
 }
@@ -346,10 +346,10 @@ export function destroyEditor() {
       .destroy()
       .then(() => {
         editorInstance = null;
-        console.log('CKEditor détruit');
+        console.log('CKEditor destroyed');
       })
       .catch(error => {
-        console.error('Erreur lors de la destruction de CKEditor:', error);
+        console.error('Error destroying CKEditor:', error);
       });
   }
   return Promise.resolve();
