@@ -325,7 +325,7 @@ export function initializeCKEditor(elementId, placeholder = '') {
       return editor;
     })
     .catch(error => {
-      console.error('Erreur lors de l\'initialisation de CKEditor:', error);
+      console.error("Erreur lors de l'initialisation de CKEditor:", error);
       throw error;
     });
 }
