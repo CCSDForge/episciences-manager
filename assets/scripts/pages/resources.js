@@ -1,29 +1,31 @@
 document.addEventListener('DOMContentLoaded', function () {
   console.log('Resources script loaded, looking for upload form...');
   console.log('DOM content loaded, document ready state:', document.readyState);
-  
+
   const uploadForm = document.getElementById('uploadForm');
   console.log('Upload form element:', uploadForm);
-  
+
   const fileInput = document.getElementById('fileInput');
   console.log('File input element:', fileInput);
-  
+
   const uploadProgress = document.getElementById('uploadProgress');
   const uploadMessages = document.getElementById('uploadMessages');
   const filesTable = document.getElementById('filesTable');
-  
+
   console.log('Looking for deleteConfirmModal...');
   const modalElement = document.getElementById('deleteConfirmModal');
   console.log('Modal element found:', modalElement);
-  
+
   let deleteConfirmModal = null;
   try {
-    deleteConfirmModal = modalElement ? new window.bootstrap.Modal(modalElement) : null;
+    deleteConfirmModal = modalElement
+      ? new window.bootstrap.Modal(modalElement)
+      : null;
     console.log('Modal initialized successfully');
   } catch (error) {
     console.error('Error initializing modal:', error);
   }
-  
+
   const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
   const fileToDelete = document.getElementById('fileToDelete');
 
@@ -31,26 +33,26 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Check window.resourcesData availability
   console.log('Checking window.resourcesData:', window.resourcesData);
-  
+
   // Upload form handler
   if (uploadForm) {
     console.log('Upload form found, adding event listener...');
     console.log('Upload form element:', uploadForm);
     console.log('Window resourcesData:', window.resourcesData);
-    
+
     uploadForm.addEventListener('submit', async function (e) {
       console.log('Upload form submitted');
       e.preventDefault();
       e.stopPropagation();
-      await handleUpload(e);
+      await handleUpload();
     });
-    
+
     console.log('Event listeners attached successfully');
   } else {
     console.error('Upload form not found!');
   }
-  
-  async function handleUpload(e) {
+
+  async function handleUpload() {
     console.log('handleUpload function called');
 
     const file = fileInput.files[0];
@@ -350,7 +352,7 @@ document.addEventListener('DOMContentLoaded', function () {
       '<': '&lt;',
       '>': '&gt;',
       '"': '&quot;',
-      '\'': '&#039;',
+      "'": '&#039;',
     };
 
     return text.replace(/[&<>"']/g, function (m) {
