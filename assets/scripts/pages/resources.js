@@ -352,7 +352,7 @@ document.addEventListener('DOMContentLoaded', function () {
       '<': '&lt;',
       '>': '&gt;',
       '"': '&quot;',
-      "'": '&#039;',
+      '\'': '&#039;',
     };
 
     return text.replace(/[&<>"']/g, function (m) {
