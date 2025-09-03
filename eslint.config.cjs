@@ -4,30 +4,31 @@ const globals = require('globals');
 module.exports = [
     js.configs.recommended,
     {
+        files: ['**/*.{js,cjs,mjs}'],
         languageOptions: {
-            ecmaVersion: 2021, // or "latest"
+            ecmaVersion: 2021,
             sourceType: 'module',
             globals: { ...globals.browser, ...globals.node, ...globals.jest },
         },
         rules: {
-            // Quality rules
+            // Quality
             'no-unused-vars': 'warn',
             'no-console': 'off',
 
             // Match Prettier
             semi: ['error', 'always'],
-            quotes: ['error', 'single'],
+            quotes: ['error', 'single', { avoidEscape: true, allowTemplateLiterals: true }],
             'comma-dangle': ['error', {
                 arrays: 'always-multiline',
                 objects: 'always-multiline',
                 imports: 'always-multiline',
                 exports: 'always-multiline',
-                functions: 'always-multiline', // aligns with Prettier trailingComma: 'all'
+                functions: 'never',
             }],
-            'arrow-parens': ['error', 'as-needed'],   // aligns with arrowParens: 'avoid'
-            'quote-props': ['error', 'as-needed'],    // aligns with quoteProps: 'as-needed'
+            'arrow-parens': ['error', 'as-needed'],
+            'quote-props': ['error', 'as-needed'],
 
-            // Turn off formatting-only rules (handled by Prettier)
+            // Let Prettier handle pure formatting
             indent: 'off',
             'max-len': 'off',
             'object-curly-spacing': 'off',
@@ -40,11 +41,17 @@ module.exports = [
         },
     },
     {
+        files: ['tests/javascript/**/*.js'],
+        languageOptions: { globals: { ...globals.jest } },
+    },
+
+    {
         ignores: [
             'node_modules/**',
             'public/build/**',
             'vendor/**',
             'assets/vendor/**',
+            '**/*.json', // Ignore JSON files
         ],
     },
 ];
