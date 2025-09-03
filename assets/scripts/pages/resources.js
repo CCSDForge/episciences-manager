@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function () {
     formData.append('file', file);
     formData.append(
       'overwrite',
-      document.getElementById('overwriteFile').checked,
+      document.getElementById('overwriteFile').checked
     );
 
     try {
@@ -88,14 +88,14 @@ document.addEventListener('DOMContentLoaded', function () {
       } else {
         showMessage(
           `${window.resourcesData.translations.uploadError}: ${result.message}`,
-          'danger',
+          'danger'
         );
       }
     } catch (error) {
       showProgress(false);
       showMessage(
         `${window.resourcesData.translations.uploadError}: ${error.message}`,
-        'danger',
+        'danger'
       );
     }
   }
@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', function () {
     try {
       const deleteUrl = window.resourcesData.deleteUrl.replace(
         '__FILENAME__',
-        encodeURIComponent(fileToDeleteName),
+        encodeURIComponent(fileToDeleteName)
       );
 
       const response = await fetch(deleteUrl, {
@@ -144,13 +144,13 @@ document.addEventListener('DOMContentLoaded', function () {
       } else {
         showMessage(
           `${window.resourcesData.translations.deleteError}: ${result.message}`,
-          'danger',
+          'danger'
         );
       }
     } catch (error) {
       showMessage(
         `${window.resourcesData.translations.deleteError}: ${error.message}`,
-        'danger',
+        'danger'
       );
     }
 
@@ -352,7 +352,7 @@ document.addEventListener('DOMContentLoaded', function () {
       '<': '&lt;',
       '>': '&gt;',
       '"': '&quot;',
-      "'": '&#039;',
+      ["'"]: '&#039;',
     };
 
     return text.replace(/[&<>"']/g, function (m) {
