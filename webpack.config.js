@@ -1,4 +1,5 @@
 const Encore = require('@symfony/webpack-encore');
+const ESLintPlugin = require('eslint-webpack-plugin');
 
 // Manually configure the runtime environment if not already configured yet by the "encore" command.
 // It's useful when you use tools that rely on webpack.config.js file.
@@ -25,6 +26,7 @@ Encore
   .addEntry('headerJs', './assets/scripts/partials/_header.js')
   .addEntry('home', './assets/scripts/pages/index.js')
   .addEntry('journalDetailsJs', './assets/scripts/pages/journalDetails.js')
+  .addEntry('resources', './assets/scripts/pages/resources.js')
 
   .addStyleEntry('main', './assets/styles/app.scss')
   .addStyleEntry('navbar', './assets/styles/partials/_navbar.scss')
@@ -33,6 +35,18 @@ Encore
   .addStyleEntry('journal', './assets/styles/pages/journal.scss')
   .addStyleEntry('journalDetails', './assets/styles/pages/journalDetails.scss')
   .addStyleEntry('header', './assets/styles/partials/_header.scss')
+
+  // Add ESLint to the Webpack/Encore pipeline
+  .addPlugin(
+    new ESLintPlugin({
+      extensions: ['js'], // add 'ts' if you use TypeScript
+      files: ['assets/**/*.{js}', 'tests/javascript/**/*.js', '*.js'], // limit the lint scope
+      emitWarning: !Encore.isProduction(), // in dev: show warnings without breaking the build
+      failOnError: Encore.isProduction(), // in prod/CI: fail the build on ESLint errors
+      lintDirtyModulesOnly: true, // in watch mode: lint only changed files (faster)
+      fix: !Encore.isProduction(), // in dev: auto-fix fixable problems
+    })
+  )
 
   // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
   .enableStimulusBridge('./assets/controllers.json')

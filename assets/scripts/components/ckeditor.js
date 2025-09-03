@@ -12,19 +12,20 @@ import {
   Undo,
   Indent,
   // Équivalents des groupes CKEditor 4
-  Alignment, // paragraph > align
-  FindAndReplace, // editing > find
-  RemoveFormat, // basicstyles > cleanup
-  FontSize, // styles
-  FontFamily, // styles
-  FontColor, // colors
-  FontBackgroundColor, // colors
-  SpecialCharacters, // insert
-  HorizontalLine, // insert
-  Image, // insert
-  ImageToolbar, // insert
-  ImageUpload, // insert
-  CodeBlock, // insert
+  Alignment, // paragraphe > alignement
+  FindAndReplace, // édition > rechercher
+  RemoveFormat, // styles de base > nettoyer
+  FontSize, // styles > taille de police
+  FontFamily, // styles > famille de police
+  SpecialCharacters, // insertion > caractères spéciaux
+  HorizontalLine, // insertion > ligne horizontale
+  Image, // insertion > image
+  ImageToolbar, // insertion > barre d'outils d'image
+  //ImageUpload, // insertion > téléchargement d'image
+  ImageInsert, // insertion > insérer image par URL
+  ImageResize, // redimensionnement d'image
+  ImageStyle, // styles et bordures d'image
+  CodeBlock, // insertion > bloc de code
   // Note: SourceEditing n'est pas disponible dans cette version
 } from 'ckeditor5';
 
@@ -40,45 +41,44 @@ export function initializeCKEditor(elementId, placeholder = '') {
   }
 
   return ClassicEditor.create(element, {
-    licenseKey: 'GPL', //Free key for open source use
+    licenseKey: 'GPL', // Clé gratuite pour usage open source
     plugins: [
-      Essentials, // Core
+      Essentials, // Essentiels
       Paragraph,
       Heading,
       Undo,
 
-      // Basic styles (basicstyles group)
+      // Styles de base (groupe basicstyles)
       Bold,
       Italic,
       RemoveFormat,
 
-      // Paragraph formatting (paragraph group)
+      // Formatage de paragraphe (groupe paragraph)
       List,
       Indent,
       Alignment,
 
-      // Links (links group)
+      // Liens (groupe links)
       Link,
 
-      // Insert (insert group)
+      // Insertion (groupe insert)
       BlockQuote,
       Table,
       HorizontalLine,
       SpecialCharacters,
       Image,
       ImageToolbar,
-      ImageUpload,
+      //ImageUpload,
+      ImageInsert,
+      ImageResize,
+      ImageStyle,
       CodeBlock,
 
-      // Styles (styles group)
+      // Styles (groupe styles)
       FontSize,
       FontFamily,
 
-      // Colors (colors group)
-      FontColor,
-      FontBackgroundColor,
-
-      // Editing (editing group)
+      // Édition (groupe editing)
       FindAndReplace,
     ],
     toolbar: {
@@ -87,7 +87,7 @@ export function initializeCKEditor(elementId, placeholder = '') {
         'findAndReplace',
         '|',
 
-        // Basic styles
+        // Styles de base
         'heading',
         'fontSize',
         'fontFamily',
@@ -97,12 +97,7 @@ export function initializeCKEditor(elementId, placeholder = '') {
         'removeFormat',
         '|',
 
-        // Colors
-        'fontColor',
-        'fontBackgroundColor',
-        '|',
-
-        // Paragraph
+        // Paragraphe
         'alignment',
         'bulletedList',
         'numberedList',
@@ -110,9 +105,10 @@ export function initializeCKEditor(elementId, placeholder = '') {
         'indent',
         '|',
 
-        // Links & Insert
+        // Liens et insertion
         'link',
-        'uploadImage',
+        'insertImage',
+        //'uploadImage',
         'insertTable',
         'blockQuote',
         'codeBlock',
@@ -120,7 +116,7 @@ export function initializeCKEditor(elementId, placeholder = '') {
         'specialCharacters',
         '|',
 
-        // Clipboard/Undo
+        // Presse-papiers/Annuler
         'undo',
         'redo',
       ],
@@ -129,149 +125,39 @@ export function initializeCKEditor(elementId, placeholder = '') {
     // Configuration des images
     image: {
       toolbar: [
-        'imageTextAlternative',
+        'imageTextAlternative', // Description alternative (alt)
         '|',
-        'imageStyle:alignLeft',
-        'imageStyle:alignCenter',
-        'imageStyle:alignRight',
+        'imageStyle:alignLeft', // Alignement gauche
+        'imageStyle:alignCenter', // Alignement centre
+        'imageStyle:alignRight', // Alignement droite
+        '|',
+        'resizeImage', // Redimensionnement
       ],
-    },
-
-    // Configuration des couleurs
-    fontColor: {
-      colors: [
+      resizeOptions: [
         {
-          color: 'hsl(0, 0%, 0%)',
-          label: 'Black',
+          name: 'resizeImage:original',
+          value: null,
+          label: 'Taille originale',
         },
         {
-          color: 'hsl(0, 0%, 30%)',
-          label: 'Dim grey',
+          name: 'resizeImage:25',
+          value: '25',
+          label: '25%',
         },
         {
-          color: 'hsl(0, 0%, 60%)',
-          label: 'Grey',
+          name: 'resizeImage:50',
+          value: '50',
+          label: '50%',
         },
         {
-          color: 'hsl(0, 0%, 90%)',
-          label: 'Light grey',
-        },
-        {
-          color: 'hsl(0, 0%, 100%)',
-          label: 'White',
-          hasBorder: true,
-        },
-        {
-          color: 'hsl(0, 75%, 60%)',
-          label: 'Red',
-        },
-        {
-          color: 'hsl(30, 75%, 60%)',
-          label: 'Orange',
-        },
-        {
-          color: 'hsl(60, 75%, 60%)',
-          label: 'Yellow',
-        },
-        {
-          color: 'hsl(90, 75%, 60%)',
-          label: 'Light green',
-        },
-        {
-          color: 'hsl(120, 75%, 60%)',
-          label: 'Green',
-        },
-        {
-          color: 'hsl(150, 75%, 60%)',
-          label: 'Aquamarine',
-        },
-        {
-          color: 'hsl(180, 75%, 60%)',
-          label: 'Turquoise',
-        },
-        {
-          color: 'hsl(210, 75%, 60%)',
-          label: 'Light blue',
-        },
-        {
-          color: 'hsl(240, 75%, 60%)',
-          label: 'Blue',
-        },
-        {
-          color: 'hsl(270, 75%, 60%)',
-          label: 'Purple',
+          name: 'resizeImage:75',
+          value: '75',
+          label: '75%',
         },
       ],
-      columns: 5,
-      documentColors: 10,
-    },
-
-    fontBackgroundColor: {
-      colors: [
-        {
-          color: 'hsl(0, 0%, 0%)',
-          label: 'Black',
-        },
-        {
-          color: 'hsl(0, 0%, 30%)',
-          label: 'Dim grey',
-        },
-        {
-          color: 'hsl(0, 0%, 60%)',
-          label: 'Grey',
-        },
-        {
-          color: 'hsl(0, 0%, 90%)',
-          label: 'Light grey',
-        },
-        {
-          color: 'hsl(0, 0%, 100%)',
-          label: 'White',
-          hasBorder: true,
-        },
-        {
-          color: 'hsl(0, 75%, 60%)',
-          label: 'Red',
-        },
-        {
-          color: 'hsl(30, 75%, 60%)',
-          label: 'Orange',
-        },
-        {
-          color: 'hsl(60, 75%, 60%)',
-          label: 'Yellow',
-        },
-        {
-          color: 'hsl(90, 75%, 60%)',
-          label: 'Light green',
-        },
-        {
-          color: 'hsl(120, 75%, 60%)',
-          label: 'Green',
-        },
-        {
-          color: 'hsl(150, 75%, 60%)',
-          label: 'Aquamarine',
-        },
-        {
-          color: 'hsl(180, 75%, 60%)',
-          label: 'Turquoise',
-        },
-        {
-          color: 'hsl(210, 75%, 60%)',
-          label: 'Light blue',
-        },
-        {
-          color: 'hsl(240, 75%, 60%)',
-          label: 'Blue',
-        },
-        {
-          color: 'hsl(270, 75%, 60%)',
-          label: 'Purple',
-        },
-      ],
-      columns: 5,
-      documentColors: 10,
+      insert: {
+        integrations: ['url'],
+      },
     },
 
     placeholder: placeholder,
