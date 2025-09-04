@@ -36,7 +36,9 @@
                                             </a>
                                         {% endfor %}
                                         <a class="nav-link me-2 mb-2" 
-                                           href="{{ path('app_resources_manager', {'code': code}) }}">
+                                           href="{{ path('app_resources_manager', {'code': code}) }}" 
+                                           target="_blank" 
+                                           rel="noopener noreferrer">
                                             <i class="fas fa-folder-open me-1"></i>
                                             {{ 'resources.title'|trans }}
                                         </a>
