@@ -11,26 +11,26 @@ import {
   Table,
   Undo,
   Indent,
-  // Équivalents des groupes CKEditor 4
-  Alignment, // paragraphe > alignement
-  FindAndReplace, // édition > rechercher
-  RemoveFormat, // styles de base > nettoyer
-  FontSize, // styles > taille de police
-  FontFamily, // styles > famille de police
-  SpecialCharacters, // insertion > caractères spéciaux
-  HorizontalLine, // insertion > ligne horizontale
-  Image, // insertion > image
-  ImageBlock, // image en tant que bloc
-  ImageInline, // image inline
-  ImageToolbar, // insertion > barre d'outils d'image
-  //ImageUpload, // insertion > téléchargement d'image
-  ImageInsert, // insertion > insérer image par URL
-  ImageInsertViaUrl, // insertion > insérer image par URL (nouveau plugin)
+  // CKEditor 4 group equivalents
+  Alignment, // paragraph > alignment
+  FindAndReplace, // editing > find and replace
+  RemoveFormat, // basic styles > remove format
+  FontSize, // styles > font size
+  FontFamily, // styles > font family
+  SpecialCharacters, // insert > special characters
+  HorizontalLine, // insert > horizontal line
+  Image, // insert > image
+  ImageBlock, // image as block element
+  ImageInline, // inline image
+  ImageToolbar, // insert > image toolbar
+  //ImageUpload, // insert > image upload
+  ImageInsert, // insert > insert image via URL
+  ImageInsertViaUrl, // insert > insert image via URL (new plugin)
   ImageTextAlternative,
-  ImageResize, // redimensionnement d'image
-  ImageStyle, // styles et bordures d'image
-  CodeBlock, // insertion > bloc de code
-  // Note: SourceEditing n'est pas disponible dans cette version
+  ImageResize, // image resizing
+  ImageStyle, // image styles and borders
+  CodeBlock, // insert > code block
+  // Note: SourceEditing is not available in this version
 } from 'ckeditor5';
 
 import 'ckeditor5/ckeditor5.css';
@@ -45,27 +45,27 @@ export function initializeCKEditor(elementId, placeholder = '') {
   }
 
   return ClassicEditor.create(element, {
-    licenseKey: 'GPL', // Clé gratuite pour usage open source
+    licenseKey: 'GPL', // Free license for open source usage
     plugins: [
-      Essentials, // Essentiels
+      Essentials, // Essential plugins
       Paragraph,
       Heading,
       Undo,
 
-      // Styles de base (groupe basicstyles)
+      // Basic styles (basicstyles group)
       Bold,
       Italic,
       RemoveFormat,
 
-      // Formatage de paragraphe (groupe paragraph)
+      // Paragraph formatting (paragraph group)
       List,
       Indent,
       Alignment,
 
-      // Liens (groupe links)
+      // Links (links group)
       Link,
 
-      // Insertion (groupe insert)
+      // Insert (insert group)
       BlockQuote,
       Table,
       HorizontalLine,
@@ -82,11 +82,11 @@ export function initializeCKEditor(elementId, placeholder = '') {
       ImageStyle,
       CodeBlock,
 
-      // Styles (groupe styles)
+      // Styles (styles group)
       FontSize,
       FontFamily,
 
-      // Édition (groupe editing)
+      // Editing (editing group)
       FindAndReplace,
     ],
     toolbar: {
@@ -95,7 +95,7 @@ export function initializeCKEditor(elementId, placeholder = '') {
         'findAndReplace',
         '|',
 
-        // Styles de base
+        // Basic styles
         'heading',
         'fontSize',
         'fontFamily',
@@ -105,7 +105,7 @@ export function initializeCKEditor(elementId, placeholder = '') {
         'removeFormat',
         '|',
 
-        // Paragraphe
+        // Paragraph
         'alignment',
         'bulletedList',
         'numberedList',
@@ -113,7 +113,7 @@ export function initializeCKEditor(elementId, placeholder = '') {
         'indent',
         '|',
 
-        // Liens et insertion
+        // Links and insertion
         'link',
         'insertImageViaUrl',
         //'uploadImage',
@@ -124,28 +124,28 @@ export function initializeCKEditor(elementId, placeholder = '') {
         'specialCharacters',
         '|',
 
-        // Presse-papiers/Annuler
+        // Clipboard/Undo
         'undo',
         'redo',
       ],
     },
 
-    // Configuration des images
+    // Image configuration
     image: {
       toolbar: [
-        'imageTextAlternative', // Description alternative (alt)
+        'imageTextAlternative', // Alternative text (alt)
         '|',
-        'imageStyle:alignLeft', // Alignement gauche
-        'imageStyle:alignCenter', // Alignement centre
-        'imageStyle:alignRight', // Alignement droite
+        'imageStyle:alignLeft', // Left alignment
+        'imageStyle:alignCenter', // Center alignment
+        'imageStyle:alignRight', // Right alignment
         '|',
-        'resizeImage', // Redimensionnement
+        'resizeImage', // Resizing
       ],
       resizeOptions: [
         {
           name: 'resizeImage:original',
           value: null,
-          label: 'Taille originale',
+          label: 'Original size',
         },
         {
           name: 'resizeImage:25',
@@ -180,7 +180,7 @@ export function initializeCKEditor(elementId, placeholder = '') {
     };
 
     editor.editing.view.document.on('change', updateMinHeight);
-    // Premier ajustement
+    // Initial adjustment
     setTimeout(updateMinHeight, 0);
 
     return editor;
