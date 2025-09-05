@@ -169,27 +169,37 @@ export function initializeCKEditor(elementId, placeholder = '') {
     },
 
     placeholder: placeholder,
-  })
-      .then(editor => {
-          editorInstance = editor;
+  }).then(editor => {
+    editorInstance = editor;
 
-          const editableEl = editor.ui.view.editable.element;
-          const updateMinHeight = () => {
-              if (!editableEl) return;
-              const h = Math.max(200, editableEl.scrollHeight || 0);
-              editableEl.style.minHeight = h + 'px';
-          };
+    const editableEl = editor.ui.view.editable.element;
+    const updateMinHeight = () => {
+      if (!editableEl) return;
+      const h = Math.max(200, editableEl.scrollHeight || 0);
+      editableEl.style.minHeight = h + 'px';
+    };
 
-          editor.editing.view.document.on('change', updateMinHeight);
-          // Premier ajustement
-          setTimeout(updateMinHeight, 0);
+    editor.editing.view.document.on('change', updateMinHeight);
+    // Premier ajustement
+    setTimeout(updateMinHeight, 0);
 
-          return editor;
-      });
+    return editor;
+  });
 }
 
 export function getEditorContent() {
-  return editorInstance ? editorInstance.getData() : '';
+  console.log('=== getEditorContent called ===');
+  console.log('Editor instance exists:', !!editorInstance);
+
+  if (editorInstance) {
+    const content = editorInstance.getData();
+    console.log('Raw editor data:', content);
+    console.log('Content length:', content?.length || 0);
+    return content;
+  }
+
+  console.log('No editor instance, returning empty string');
+  return '';
 }
 
 export function setEditorContent(content) {
@@ -219,79 +229,84 @@ export function focusEditor() {
   }
 }
 export function insertImageIntoEditor(imageUrl, altText = '') {
-    if (!editorInstance || !imageUrl) return;
+  if (!editorInstance || !imageUrl) return;
 
-    // 1) Normalize to absolute URL (handles /path, //host, relative paths)
-    const toAbsoluteUrl = (url) => {
-        try {
-            // new URL resolves relative paths against window.location.href
-            return new URL(url, window.location.href).href;
-        } catch {
-            return url;
-        }
-    };
-
-    const fullImageUrl = toAbsoluteUrl(imageUrl);
-
-    // 2) Security check: allow only http(s) URLs
-    if (!/^https?:\/\//i.test(fullImageUrl)) {
-        console.warn('Blocked non-http(s) URL:', fullImageUrl);
-        return;
-    }
-
-    // 3) Insert image directly using model API - most reliable method
+  // 1) Normalize to absolute URL (handles /path, //host, relative paths)
+  const toAbsoluteUrl = url => {
     try {
-        editorInstance.model.change(writer => {
-            // Create the image element with proper attributes
-            const imageElement = writer.createElement('imageBlock', {
-                src: fullImageUrl,
-                alt: altText || 'Image'
-            });
-            
-            // Insert at current cursor position
-            const insertPosition = editorInstance.model.document.selection.getFirstPosition();
-            editorInstance.model.insertContent(imageElement, insertPosition);
-        });
-    } catch (e) {
-        console.error('Direct model insertion failed, trying command method:', e);
-        
-        // Fallback: Try the insertImage command
-        try {
-            editorInstance.execute('insertImage', {
-                source: fullImageUrl
-            });
-        } catch (commandError) {
-            console.error('insertImage command failed, trying HTML insertion:', commandError);
-            
-            // Final fallback: Insert as HTML and convert to model
-            try {
-                const imageHtml = `<img src="${fullImageUrl}" alt="${altText || 'Image'}" />`;
-                const viewFragment = editorInstance.data.processor.toView(imageHtml);
-                const modelFragment = editorInstance.data.toModel(viewFragment);
-                
-                editorInstance.model.change(writer => {
-                    const insertPosition = editorInstance.model.document.selection.getFirstPosition();
-                    editorInstance.model.insertContent(modelFragment, insertPosition);
-                });
-            } catch (finalError) {
-                console.error('All image insertion methods failed:', finalError);
-            }
-        }
+      // new URL resolves relative paths against window.location.href
+      return new URL(url, window.location.href).href;
+    } catch {
+      return url;
     }
+  };
+
+  const fullImageUrl = toAbsoluteUrl(imageUrl);
+
+  // 2) Security check: allow only http(s) URLs
+  if (!/^https?:\/\//i.test(fullImageUrl)) {
+    console.warn('Blocked non-http(s) URL:', fullImageUrl);
+    return;
+  }
+
+  // 3) Insert image directly using model API - most reliable method
+  try {
+    editorInstance.model.change(writer => {
+      // Create the image element with proper attributes
+      const imageElement = writer.createElement('imageBlock', {
+        src: fullImageUrl,
+        alt: altText || 'Image',
+      });
+
+      // Insert at current cursor position
+      const insertPosition =
+        editorInstance.model.document.selection.getFirstPosition();
+      editorInstance.model.insertContent(imageElement, insertPosition);
+    });
+  } catch (e) {
+    console.error('Direct model insertion failed, trying command method:', e);
+
+    // Fallback: Try the insertImage command
+    try {
+      editorInstance.execute('insertImage', {
+        source: fullImageUrl,
+      });
+    } catch (commandError) {
+      console.error(
+        'insertImage command failed, trying HTML insertion:',
+        commandError,
+      );
+
+      // Final fallback: Insert as HTML and convert to model
+      try {
+        const imageHtml = `<img src="${fullImageUrl}" alt="${altText || 'Image'}" />`;
+        const viewFragment = editorInstance.data.processor.toView(imageHtml);
+        const modelFragment = editorInstance.data.toModel(viewFragment);
+
+        editorInstance.model.change(() => {
+          const insertPosition =
+            editorInstance.model.document.selection.getFirstPosition();
+          editorInstance.model.insertContent(modelFragment, insertPosition);
+        });
+      } catch (finalError) {
+        console.error('All image insertion methods failed:', finalError);
+      }
+    }
+  }
 }
 
 // Global function to be called from other scripts
 window.insertImageIntoEditor = insertImageIntoEditor;
 
 // Listen for messages from resources page
-window.addEventListener('message', function(event) {
+window.addEventListener('message', function (event) {
   if (event.data && event.data.type === 'insertImage') {
     insertImageIntoEditor(event.data.url, event.data.alt);
   }
 });
 
 // Listen for localStorage changes (for cross-tab communication)
-window.addEventListener('storage', function(event) {
+window.addEventListener('storage', function (event) {
   if (event.key === 'pendingImageInsert' && event.newValue) {
     console.log('Storage event received:', event.newValue);
     try {
@@ -309,11 +324,11 @@ window.addEventListener('storage', function(event) {
 });
 
 // Also check for pending images on page load/focus
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   checkForPendingImageInsert();
 });
 
-window.addEventListener('focus', function() {
+window.addEventListener('focus', function () {
   checkForPendingImageInsert();
 });
 
