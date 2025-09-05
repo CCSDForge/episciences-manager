@@ -2,8 +2,10 @@
 
 namespace App\Service;
 
-use Parsedown;
 use League\HTMLToMarkdown\HtmlConverter;
+use Parsedown;
+use League\HTMLToMarkdown\Converter\ConverterInterface;
+use League\HTMLToMarkdown\ElementInterface;
 
 class MarkdownService
 {
@@ -13,16 +15,65 @@ class MarkdownService
     public function __construct()
     {
         $this->parsedown = new Parsedown();
-        $this->parsedown->setSafeMode(false); // Allow HTML tags for colors and styling
-        $this->parsedown->setMarkupEscaped(false); // Don't escape HTML markup
+        $this->parsedown->setSafeMode(false);      // allow HTML tags
+        $this->parsedown->setMarkupEscaped(false); // do not escape HTML
+
         $this->htmlConverter = new HtmlConverter([
-            'strip_tags' => false,  // Keep HTML tags that have no Markdown equivalent
+            'strip_tags' => false,       // keep <figure>/<img> so custom converters can handle them
             'preserve_comments' => false,
-            'remove_nodes' => 'script iframe object embed',  // Remove dangerous tags
-            'hard_break' => true,
-            'strip_placeholder_links' => true
+            'hard_break' => true
         ]);
+
+        // Strategy: Pre-process HTML to replace figures with placeholders, then post-process
+        
+        // Converter for <figure> - need to work with already processed children
+        $this->htmlConverter->getEnvironment()->addConverter(new class implements \League\HTMLToMarkdown\Converter\ConverterInterface {
+            public function convert(\League\HTMLToMarkdown\ElementInterface $element): string
+            {
+                $captionMd = '';
+                
+                // The figure's value is already processed (img converted to markdown)
+                $processedContent = $element->getValue();
+                
+                // Look for markdown image pattern in the processed content
+                if (preg_match('/!\[([^\]]*)\]\(([^)]+)\)/', $processedContent, $matches)) {
+                    $alt = $matches[1];
+                    $src = $matches[2];
+                    $imgMd = '![' . $alt . '](' . $src . ')';
+                    
+                    // Extract figcaption if present in original HTML (need to use a different approach)
+                    // For now, just return the image markdown
+                    return $imgMd . "\n\n";
+                }
+
+                return $processedContent . "\n\n";
+            }
+
+            public function getSupportedTags(): array { return ['figure']; }
+        });
+
+        // Converter for standalone <img> tags
+        $this->htmlConverter->getEnvironment()->addConverter(new class implements \League\HTMLToMarkdown\Converter\ConverterInterface {
+            public function convert(\League\HTMLToMarkdown\ElementInterface $element): string
+            {
+                $src = trim($element->getAttribute('src') ?? '');
+                if ($src === '') return '';
+
+                $alt = $element->getAttribute('alt') ?? '';
+                if ($alt === '') {
+                    // fallback: use filename if alt is empty
+                    $path = parse_url($src, PHP_URL_PATH) ?? '';
+                    $basename = $path ? basename($path) : '';
+                    $alt = $basename ?: 'image';
+                }
+
+                return '![' . $alt . '](' . $src . ')';
+            }
+
+            public function getSupportedTags(): array { return ['img']; }
+        });
     }
+
 
     /**
      * Convert markdown text to HTML
@@ -38,13 +89,7 @@ class MarkdownService
      */
     public function convertContentArray(array $content): array
     {
-        $convertedContent = [];
-        
-        foreach ($content as $locale => $markdownText) {
-            $convertedContent[$locale] = $this->toHtml($markdownText);
-        }
-        
-        return $convertedContent;
+        return array_map([$this, 'toHtml'], $content);
     }
 
     /**
@@ -61,12 +106,6 @@ class MarkdownService
      */
     public function convertContentArrayToMarkdown(array $htmlContent): array
     {
-        $convertedContent = [];
-
-        foreach ($htmlContent as $locale => $htmlText) {
-            $convertedContent[$locale] = $this->toMarkdown($htmlText);
-        }
-
-        return $convertedContent;
+        return array_map([$this, 'toMarkdown'], $htmlContent);
     }
 }

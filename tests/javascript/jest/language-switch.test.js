@@ -39,7 +39,7 @@ describe('Language Switch System', () => {
       expect(mockPathBuilder('fr', '/')).toBe('/fr');
       expect(mockPathBuilder('fr', '/en/journal')).toBe('/fr/journal');
       expect(mockPathBuilder('en', '/fr/journal/test')).toBe(
-        '/en/journal/test'
+        '/en/journal/test',
       );
     });
 
@@ -54,7 +54,7 @@ describe('Language Switch System', () => {
 
       expect(mockPathBuilder('fr', '/journal')).toBe('/fr/journal');
       expect(mockPathBuilder('en', '/journal/details')).toBe(
-        '/en/journal/details'
+        '/en/journal/details',
       );
     });
   });
