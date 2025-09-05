@@ -27,6 +27,7 @@ import {
   ImageInsert, // insert > insert image via URL
   ImageInsertViaUrl, // insert > insert image via URL (new plugin)
   ImageTextAlternative,
+  ImageCaption, // image captions
   ImageResize, // image resizing
   ImageStyle, // image styles and borders
   CodeBlock, // insert > code block
@@ -78,6 +79,7 @@ export function initializeCKEditor(elementId, placeholder = '') {
       ImageInsert,
       ImageInsertViaUrl,
       ImageTextAlternative,
+      ImageCaption,
       ImageResize,
       ImageStyle,
       CodeBlock,
@@ -274,7 +276,7 @@ export function insertImageIntoEditor(imageUrl, altText = '') {
     } catch (commandError) {
       console.error(
         'insertImage command failed, trying HTML insertion:',
-        commandError,
+        commandError
       );
 
       // Final fallback: Insert as HTML and convert to model

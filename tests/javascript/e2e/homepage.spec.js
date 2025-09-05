@@ -61,7 +61,7 @@ test.describe('Homepage E2E Tests', () => {
     } else {
       // If no journals, verify message
       await expect(page.locator('.alert-info')).toContainText(
-        'No journals available',
+        'No journals available'
       );
     }
   });
@@ -117,7 +117,7 @@ test.describe('Homepage E2E Tests', () => {
       // URL should contain either /login or CAS server
       const currentUrl = page.url();
       expect(
-        currentUrl.includes('/login') || currentUrl.includes('cas'),
+        currentUrl.includes('/login') || currentUrl.includes('cas')
       ).toBeTruthy();
     }
   });
