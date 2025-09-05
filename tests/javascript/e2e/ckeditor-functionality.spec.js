@@ -35,7 +35,7 @@ test.describe('CKEditor Functionality Tests', () => {
                   'bulletedList',
                   'numberedList',
                 ],
-              },
+              }
             );
             console.log('Test CKEditor initialized successfully');
             window.testEditor = editor;
@@ -320,7 +320,7 @@ test.describe('CKEditor Functionality Tests', () => {
     // Verify italic button state
     await expect(italicButton).toHaveCSS(
       'background-color',
-      'rgb(0, 123, 255)',
+      'rgb(0, 123, 255)'
     );
 
     // Check if formatting was actually applied by checking for HTML tags
