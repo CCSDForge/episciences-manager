@@ -488,7 +488,13 @@ document.addEventListener('DOMContentLoaded', function () {
   // Save inline edit handler
   if (saveInlineButton) {
     saveInlineButton.addEventListener('click', function () {
+      console.log('=== SAVE BUTTON CLICKED ===');
+
       if (!currentPageCode || !currentJournalCode) {
+        console.log('ERROR: Missing page info:', {
+          currentPageCode,
+          currentJournalCode,
+        });
         alert(
           window.translations?.missingPageInfo || 'Missing page information'
         );
@@ -498,6 +504,10 @@ document.addEventListener('DOMContentLoaded', function () {
       //const newContent = pageContentInline.value;
       const newContent = getEditorContent();
       const newTitle = pageTitleInline.value;
+
+      console.log('Content from editor:', newContent);
+      console.log('Title from input:', newTitle);
+      console.log('Editor content length:', newContent?.length || 0);
       let locale =
         document.documentElement.lang ||
         window.location.pathname.split('/')[1] ||
@@ -514,6 +524,20 @@ document.addEventListener('DOMContentLoaded', function () {
       console.log('Locale:', locale);
 
       // Save via AJAX
+      console.log('=== SENDING FETCH REQUEST ===');
+      console.log(
+        'Request body:',
+        JSON.stringify(
+          {
+            content: newContent,
+            title: newTitle,
+            locale: locale,
+          },
+          null,
+          2
+        )
+      );
+
       fetch(saveUrl, {
         method: 'POST',
         headers: {
@@ -526,10 +550,29 @@ document.addEventListener('DOMContentLoaded', function () {
           locale: locale,
         }),
       })
-        .then(response => response.json())
+        .then(response => {
+          console.log('=== FETCH RESPONSE RECEIVED ===');
+          console.log('Status:', response.status);
+          console.log('Status Text:', response.statusText);
+          console.log('OK:', response.ok);
+          console.log('Headers:', [...response.headers.entries()]);
+
+          return response.json();
+        })
         .then(data => {
           console.log('Save response received:', data);
           console.log('HTML content received:', data.htmlContent);
+
+          // TEMPORARY DEBUG: Log all response data
+          if (data.debug) {
+            console.log('=== DEBUG CONVERSION RESULTS ===');
+            console.log('Original HTML:', data.original_html);
+            console.log('Converted Markdown:', data.converted_markdown);
+            console.log('Back to HTML:', data.back_to_html);
+            console.log('Actual content preview:', data.actual_content);
+            console.log('=== END DEBUG ===');
+            return; // Stop here for debug
+          }
 
           if (data.success) {
             // Update page content

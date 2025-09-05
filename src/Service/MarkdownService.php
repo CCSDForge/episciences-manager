@@ -2,8 +2,10 @@
 
 namespace App\Service;
 
-use Parsedown;
 use League\HTMLToMarkdown\HtmlConverter;
+use Parsedown;
+use League\HTMLToMarkdown\Converter\ConverterInterface;
+use League\HTMLToMarkdown\ElementInterface;
 
 class MarkdownService
 {
@@ -13,16 +15,140 @@ class MarkdownService
     public function __construct()
     {
         $this->parsedown = new Parsedown();
-        $this->parsedown->setSafeMode(false); // Allow HTML tags for colors and styling
-        $this->parsedown->setMarkupEscaped(false); // Don't escape HTML markup
+        $this->parsedown->setSafeMode(false);      // allow HTML tags
+        $this->parsedown->setMarkupEscaped(false); // do not escape HTML
+
         $this->htmlConverter = new HtmlConverter([
-            'strip_tags' => false,  // Keep HTML tags that have no Markdown equivalent
+            'strip_tags' => false,       // keep <figure>/<img> so custom converters can handle them
             'preserve_comments' => false,
-            'remove_nodes' => 'script iframe object embed',  // Remove dangerous tags
-            'hard_break' => true,
-            'strip_placeholder_links' => true
+            'hard_break' => true
         ]);
+
+        // Strategy: Pre-process HTML to replace figures with placeholders, then post-process
+        
+        // Converter for <figure> - preserve HTML to maintain styling and dimensions
+        $this->htmlConverter->getEnvironment()->addConverter(new class implements \League\HTMLToMarkdown\Converter\ConverterInterface {
+            public function convert(\League\HTMLToMarkdown\ElementInterface $element): string
+            {
+                // Preserve the entire figure as HTML to maintain all styling
+                // This includes width, height, alignment, and other CSS properties
+                
+                // Get all attributes from the figure element
+                $attributes = [];
+                if ($element->getAttribute('class')) {
+                    $attributes[] = 'class="' . htmlspecialchars($element->getAttribute('class')) . '"';
+                }
+                if ($element->getAttribute('style')) {
+                    $attributes[] = 'style="' . htmlspecialchars($element->getAttribute('style')) . '"';
+                }
+                
+                $attributeString = $attributes ? ' ' . implode(' ', $attributes) : '';
+                
+                // Get the inner content - this might be processed or raw HTML
+                $innerContent = $element->getValue();
+                
+                // If inner content looks like markdown (contains ![...]), 
+                // we need to get the original HTML instead
+                if (preg_match('/!\[([^\]]*)\]\(([^)]+)\)/', $innerContent)) {
+                    // The content was processed to markdown, but we want to preserve original HTML
+                    // We'll need to reconstruct or use a different approach
+                    // For now, let's preserve what we have as HTML
+                    $figureHtml = '<figure' . $attributeString . '>' . $innerContent . '</figure>';
+                } else {
+                    // Content is still HTML, preserve it
+                    $figureHtml = '<figure' . $attributeString . '>' . $innerContent . '</figure>';
+                }
+                
+                return $figureHtml . "\n\n";
+            }
+
+            public function getSupportedTags(): array { return ['figure']; }
+        });
+
+        // Converter for standalone <img> tags (not inside figures)
+        $this->htmlConverter->getEnvironment()->addConverter(new class implements \League\HTMLToMarkdown\Converter\ConverterInterface {
+            public function convert(\League\HTMLToMarkdown\ElementInterface $element): string
+            {
+                // Check if this img is inside a figure - if so, skip it (let figure converter handle it)
+                $parent = $element->getParent();
+                if ($parent && strtolower($parent->getTagName() ?? '') === 'figure') {
+                    // Return the original HTML to be preserved by the figure converter
+                    $attributes = [];
+                    if ($element->getAttribute('src')) {
+                        $attributes[] = 'src="' . htmlspecialchars($element->getAttribute('src')) . '"';
+                    }
+                    if ($element->getAttribute('alt')) {
+                        $attributes[] = 'alt="' . htmlspecialchars($element->getAttribute('alt')) . '"';
+                    }
+                    if ($element->getAttribute('style')) {
+                        $attributes[] = 'style="' . htmlspecialchars($element->getAttribute('style')) . '"';
+                    }
+                    if ($element->getAttribute('width')) {
+                        $attributes[] = 'width="' . htmlspecialchars($element->getAttribute('width')) . '"';
+                    }
+                    if ($element->getAttribute('height')) {
+                        $attributes[] = 'height="' . htmlspecialchars($element->getAttribute('height')) . '"';
+                    }
+                    
+                    return '<img ' . implode(' ', $attributes) . '>';
+                }
+                
+                // Standalone image - check if it has sizing attributes/styles
+                $src = trim($element->getAttribute('src') ?? '');
+                if ($src === '') return '';
+
+                $alt = $element->getAttribute('alt') ?? '';
+                if ($alt === '') {
+                    // fallback: use filename if alt is empty
+                    $path = parse_url($src, PHP_URL_PATH) ?? '';
+                    $basename = $path ? basename($path) : '';
+                    $alt = $basename ?: 'image';
+                }
+
+                // Check if image has resizing attributes or is styled (from CKEditor)
+                $hasResizing = false;
+                $class = $element->getAttribute('class') ?? '';
+                $style = $element->getAttribute('style') ?? '';
+                $width = $element->getAttribute('width') ?? '';
+                $height = $element->getAttribute('height') ?? '';
+                
+                // If image has sizing info (class image_resized, width/height attrs, or sizing styles)
+                if (strpos($class, 'image_resized') !== false || 
+                    !empty($width) || !empty($height) || 
+                    (strpos($style, 'width') !== false || strpos($style, 'aspect-ratio') !== false)) {
+                    $hasResizing = true;
+                }
+                
+                if ($hasResizing) {
+                    // Preserve as HTML to maintain all sizing information
+                    $attributes = [];
+                    if (!empty($class)) {
+                        $attributes[] = 'class="' . htmlspecialchars($class) . '"';
+                    }
+                    if (!empty($style)) {
+                        $attributes[] = 'style="' . htmlspecialchars($style) . '"';
+                    }
+                    if (!empty($width)) {
+                        $attributes[] = 'width="' . htmlspecialchars($width) . '"';
+                    }
+                    if (!empty($height)) {
+                        $attributes[] = 'height="' . htmlspecialchars($height) . '"';
+                    }
+                    
+                    $attributes[] = 'src="' . htmlspecialchars($src) . '"';
+                    $attributes[] = 'alt="' . htmlspecialchars($alt) . '"';
+                    
+                    return '<img ' . implode(' ', $attributes) . '>';
+                }
+
+                // Simple image without sizing - convert to markdown
+                return '![' . $alt . '](' . $src . ')';
+            }
+
+            public function getSupportedTags(): array { return ['img']; }
+        });
     }
+
 
     /**
      * Convert markdown text to HTML
@@ -38,13 +164,7 @@ class MarkdownService
      */
     public function convertContentArray(array $content): array
     {
-        $convertedContent = [];
-        
-        foreach ($content as $locale => $markdownText) {
-            $convertedContent[$locale] = $this->toHtml($markdownText);
-        }
-        
-        return $convertedContent;
+        return array_map([$this, 'toHtml'], $content);
     }
 
     /**
@@ -61,12 +181,6 @@ class MarkdownService
      */
     public function convertContentArrayToMarkdown(array $htmlContent): array
     {
-        $convertedContent = [];
-
-        foreach ($htmlContent as $locale => $htmlText) {
-            $convertedContent[$locale] = $this->toMarkdown($htmlText);
-        }
-
-        return $convertedContent;
+        return array_map([$this, 'toMarkdown'], $htmlContent);
     }
 }

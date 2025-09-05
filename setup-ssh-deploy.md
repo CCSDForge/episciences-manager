@@ -36,6 +36,7 @@ ssh -i ~/.ssh/deploy_episciences ton_user@epimanager.episciences.org
 SSH_PRIVATE_KEY = contenu de ~/.ssh/deploy_episciences (clé privée complète)
 SSH_USER = ton_user  
 SSH_HOST = epimanager.episciences.org
+
 DEPLOY_PATH = /var/www/episciences-manager (ou le bon chemin)
 ```
 

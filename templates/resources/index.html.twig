@@ -110,6 +110,19 @@
                                                             title="{{ 'resources.copyUrl'|trans }}">
                                                         <i class="fas fa-copy"></i>
                                                     </button>
+                                                    <button class="btn btn-outline-info copy-full-url-btn" type="button" 
+                                                            data-url="{{ file.url }}" 
+                                                            title="{{ 'resources.copyFullUrl'|trans }}">
+                                                        <i class="fas fa-link"></i>
+                                                    </button>
+                                                    {% if file.name|split('.')|last|lower in ['png', 'jpg', 'jpeg', 'gif', 'svg', 'webp'] %}
+                                                    <button class="btn btn-outline-primary insert-image-btn" type="button"
+                                                            data-url="{{ file.url }}" 
+                                                            data-filename="{{ file.name }}"
+                                                            title="{{ 'resources.insertInEditor'|trans }}">
+                                                        <i class="fas fa-plus"></i>
+                                                    </button>
+                                                    {% endif %}
                                                 </div>
                                             </td>
                                             <td>{{ file.modified|date('Y-m-d H:i') }}</td>

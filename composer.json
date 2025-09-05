@@ -11,7 +11,7 @@
     "doctrine/doctrine-bundle": "^2.15.1",
     "doctrine/doctrine-migrations-bundle": "^3.4.2",
     "doctrine/orm": "^3.5.2",
-    "erusev/parsedown": "^1.7.4",
+    "erusev/parsedown": "^1.7",
     "knplabs/knp-paginator-bundle": "^6.9.1",
     "l3/cas-guard-bundle": "^1.1.16",
     "league/html-to-markdown": "^5.1",

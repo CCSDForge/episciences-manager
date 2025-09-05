@@ -109,6 +109,29 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
+  // Copy full URL buttons
+  document.addEventListener('click', function (e) {
+    if (e.target.closest('.copy-full-url-btn')) {
+      const button = e.target.closest('.copy-full-url-btn');
+      const relativeUrl = button.getAttribute('data-url');
+      const fullUrl = new URL(relativeUrl, window.location.origin).href;
+      copyToClipboard(fullUrl);
+    }
+  });
+
+  // Insert image in CKEditor buttons
+  document.addEventListener('click', function (e) {
+    console.log('Click detected on:', e.target);
+    if (e.target.closest('.insert-image-btn')) {
+      console.log('Insert image button clicked!');
+      const button = e.target.closest('.insert-image-btn');
+      const url = button.getAttribute('data-url');
+      const filename = button.getAttribute('data-filename');
+      console.log('Image URL:', url, 'Filename:', filename);
+      insertImageInCKEditor(url, filename);
+    }
+  });
+
   // Delete file buttons
   document.addEventListener('click', function (e) {
     if (e.target.closest('.delete-file-btn')) {
@@ -272,6 +295,23 @@ document.addEventListener('DOMContentLoaded', function () {
                                 title="Copy URL">
                             <i class="fas fa-copy"></i>
                         </button>
+                        <button class="btn btn-outline-info copy-full-url-btn" type="button" 
+                                data-url="${escapeHtml(file.url)}" 
+                                title="Copy Full URL">
+                            <i class="fas fa-link"></i>
+                        </button>
+                        ${
+                          isImageFile(file.name)
+                            ? `
+                        <button class="btn btn-outline-primary insert-image-btn" type="button"
+                                data-url="${escapeHtml(file.url)}" 
+                                data-filename="${escapeHtml(file.name)}"
+                                title="Insert in Editor">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                        `
+                            : ''
+                        }
                     </div>
                 </td>
                 <td>${modifiedDate}</td>
@@ -344,6 +384,96 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     return iconMap[extension] || 'fa-file';
+  }
+
+  function isImageFile(filename) {
+    const extension = filename.split('.').pop().toLowerCase();
+    return ['png', 'jpg', 'jpeg', 'gif', 'svg', 'webp'].includes(extension);
+  }
+
+  function insertImageInCKEditor(url, filename) {
+    console.log('insertImageInCKEditor called with:', url, filename);
+    console.log('window.parent !== window:', window.parent !== window);
+    console.log(
+      'typeof window.insertImageIntoEditor:',
+      typeof window.insertImageIntoEditor
+    );
+
+    // Try to communicate with CKEditor using postMessage
+    if (window.parent !== window) {
+      console.log('Sending postMessage to parent window');
+      // We're in an iframe, send message to parent
+      window.parent.postMessage(
+        {
+          type: 'insertImage',
+          url: url,
+          alt: filename,
+        },
+        '*'
+      );
+    } else {
+      // Try to find CKEditor instance on the current page
+      if (typeof window.insertImageIntoEditor === 'function') {
+        console.log('Calling window.insertImageIntoEditor');
+        window.insertImageIntoEditor(url, filename);
+      } else {
+        console.log(
+          'CKEditor not found on current page, trying to communicate with opener window'
+        );
+        console.log('window.opener:', window.opener);
+        console.log('window.opener exists:', !!window.opener);
+        console.log(
+          'window.opener.closed:',
+          window.opener ? window.opener.closed : 'N/A'
+        );
+
+        // Try to send message to opener window (if this was opened from another page)
+        if (window.opener && !window.opener.closed) {
+          console.log('Sending message to opener window');
+          window.opener.postMessage(
+            {
+              type: 'insertImage',
+              url: url,
+              alt: filename,
+            },
+            '*'
+          );
+          showMessage(
+            `Image sent to editor! You can close this window.`,
+            'success'
+          );
+        } else {
+          console.log(
+            'No opener window available. Trying localStorage communication'
+          );
+
+          // Store the image data in localStorage for the editor to pick up
+          const imageData = {
+            type: 'insertImage',
+            url: url,
+            alt: filename,
+            timestamp: Date.now(),
+          };
+
+          localStorage.setItem('pendingImageInsert', JSON.stringify(imageData));
+          console.log('Image data stored in localStorage:', imageData);
+          showMessage(
+            `Image ready for editor! Return to the editor tab.`,
+            'success'
+          );
+
+          // Also try to trigger a storage event
+          window.dispatchEvent(
+            new StorageEvent('storage', {
+              key: 'pendingImageInsert',
+              newValue: JSON.stringify(imageData),
+              oldValue: null,
+              storageArea: localStorage,
+            })
+          );
+        }
+      }
+    }
   }
 
   function escapeHtml(text) {

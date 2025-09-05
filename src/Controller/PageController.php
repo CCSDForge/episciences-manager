@@ -47,10 +47,10 @@ final class PageController extends AbstractController
 
     #[Route('/journal/{code}/page/{pageTitle}/edit', name: 'app_page_edit', methods: ['POST'])]
     public function editPage(
-        string $code, 
-        string $pageTitle, 
-        Request $request, 
-        PageRepository $pageRepository, 
+        string $code,
+        string $pageTitle,
+        Request $request,
+        PageRepository $pageRepository,
         EntityManagerInterface $entityManager,
         MarkdownService $markdownService
     ): JsonResponse {
@@ -64,28 +64,30 @@ final class PageController extends AbstractController
         }
 
         $data = json_decode($request->getContent(), true);
-        
-        if (!isset($data['content']) || !isset($data['locale'])) {
+
+        if (!isset($data['content'], $data['locale'])) {
             return new JsonResponse(['success' => false, 'message' => 'Missing content or locale'], 400);
         }
 
-        $htmlContent = $data['content']; // CKEditor gives HTML
-        $locale = $data['locale'];
-        $title = $data['title'] ?? null;
-        
-        // Debug: log what we received
-        error_log('Received data: ' . json_encode($data));
-        error_log('Title received: ' . ($title ?? 'null'));
+        $htmlContent = (string) $data['content']; // CKEditor HTML
+        $locale      = (string) $data['locale'];
+        $title       = isset($data['title']) ? (string) $data['title'] : null;
 
-        // Convert HTML to Markdown before saving
-        $markdownContent = $markdownService->toMarkdown($htmlContent);
+        // Convert HTML -> Markdown
+        try {
+            $markdownContent = $markdownService->toMarkdown($htmlContent);
+        } catch (\Throwable $e) {
+            return new JsonResponse([
+                'success' => false,
+                'message' => 'Error converting content: ' . $e->getMessage()
+            ], 500);
+        }
 
-        // Update the content for the specific locale (save as Markdown)
+        // Save markdown per locale
         $currentContent = $page->getContent() ?? [];
         $currentContent[$locale] = $markdownContent;
         $page->setContent($currentContent);
-        
-        // Update the title if provided
+
         if ($title !== null) {
             $currentTitle = $page->getTitle() ?? [];
             $currentTitle[$locale] = $title;
@@ -94,20 +96,25 @@ final class PageController extends AbstractController
 
         try {
             $entityManager->flush();
-            
-            // Convert the new content to HTML and return it
-            $htmlContent = $markdownService->convertContentArray($page->getContent());
-            
+
+            // Return fresh HTML for the locale (MD -> HTML)
+            $htmlByLocale = $markdownService->convertContentArray($page->getContent());
+            $htmlForLocale = $htmlByLocale[$locale] ?? '';
+
             return new JsonResponse([
-                'success' => true, 
-                'message' => 'Page updated successfully',
-                'htmlContent' => $htmlContent[$locale] ?? '',
-                'updatedTitle' => $title ? $page->getTitle()[$locale] ?? '' : null
+                'success'      => true,
+                'message'      => 'Page updated successfully',
+                'htmlContent'  => $htmlForLocale,
+                'updatedTitle' => $title !== null ? ($page->getTitle()[$locale] ?? '') : null
             ]);
-        } catch (\Exception $e) {
-            return new JsonResponse(['success' => false, 'message' => 'Error saving page: ' . $e->getMessage()], 500);
+        } catch (\Throwable $e) {
+            return new JsonResponse([
+                'success' => false,
+                'message' => 'Error saving page: ' . $e->getMessage()
+            ], 500);
         }
     }
+
 
     #[Route('/api/translations/{locale}', name: 'app_translations', methods: ['GET'])]
     public function getTranslations(string $locale, TranslatorInterface $translator, Request $request): JsonResponse
