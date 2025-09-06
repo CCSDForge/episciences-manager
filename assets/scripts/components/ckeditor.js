@@ -276,7 +276,7 @@ export function insertImageIntoEditor(imageUrl, altText = '') {
     } catch (commandError) {
       console.error(
         'insertImage command failed, trying HTML insertion:',
-        commandError
+        commandError,
       );
 
       // Final fallback: Insert as HTML and convert to model

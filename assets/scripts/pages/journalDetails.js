@@ -13,7 +13,7 @@ function updateInlineEditTranslations() {
     'translations available:',
     !!window.translations,
     'keys:',
-    window.translations ? Object.keys(window.translations) : 'none'
+    window.translations ? Object.keys(window.translations) : 'none',
   );
 
   if (!window.translations) {
@@ -36,7 +36,7 @@ function updateInlineEditTranslations() {
   if (inlineEditTitle && window.translations.editPageContent) {
     console.log(
       'Updating inline edit title:',
-      window.translations.editPageContent
+      window.translations.editPageContent,
     );
     const oldContent = inlineEditTitle.innerHTML;
     inlineEditTitle.innerHTML =
@@ -47,13 +47,13 @@ function updateInlineEditTranslations() {
       'Title updated from:',
       oldContent,
       'to:',
-      inlineEditTitle.innerHTML
+      inlineEditTitle.innerHTML,
     );
   }
 
   // Update page title label (inline edit)
   const pageTitleLabel = document.querySelector(
-    'label[for="page-title-inline"]'
+    'label[for="page-title-inline"]',
   );
   console.log('Page title label found:', !!pageTitleLabel);
   if (pageTitleLabel && window.translations.pageTitle) {
@@ -61,14 +61,14 @@ function updateInlineEditTranslations() {
       'Updating page title label from:',
       pageTitleLabel.textContent,
       'to:',
-      window.translations.pageTitle
+      window.translations.pageTitle,
     );
     pageTitleLabel.textContent = window.translations.pageTitle;
   }
 
   // Update content label (inline edit)
   const contentLabel = document.querySelector(
-    'label[for="page-content-inline"]'
+    'label[for="page-content-inline"]',
   );
   console.log('Content label found:', !!contentLabel);
   if (contentLabel && window.translations.content) {
@@ -76,7 +76,7 @@ function updateInlineEditTranslations() {
       'Updating content label from:',
       contentLabel.textContent,
       'to:',
-      window.translations.content
+      window.translations.content,
     );
     contentLabel.textContent = window.translations.content;
   }
@@ -89,7 +89,7 @@ function updateInlineEditTranslations() {
       'Updating textarea placeholder from:',
       textarea.placeholder,
       'to:',
-      window.translations.enterContent
+      window.translations.enterContent,
     );
     textarea.placeholder = window.translations.enterContent;
   }
@@ -292,7 +292,7 @@ document.addEventListener('DOMContentLoaded', function () {
           console.log('Data received:', JSON.stringify(data, null, 2));
           console.log(
             'Raw content from server:',
-            JSON.stringify(data.content, null, 2)
+            JSON.stringify(data.content, null, 2),
           );
           console.log('Current locale:', locale);
           if (data.error) {
@@ -365,7 +365,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!currentPageCode || !currentJournalCode) {
       console.log('Missing page info - showing alert');
       alert(
-        window.translations?.selectPageFirst || 'Please select a page first'
+        window.translations?.selectPageFirst || 'Please select a page first',
       );
       return;
     }
@@ -390,13 +390,13 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log('About to initialize CKEditor with placeholder:', placeholder);
     console.log(
       'Target element:',
-      document.getElementById('page-content-inline')
+      document.getElementById('page-content-inline'),
     );
 
     try {
       const editorPromise = initializeCKEditor(
         'page-content-inline',
-        placeholder
+        placeholder,
       );
       console.log('initializeCKEditor returned:', editorPromise);
 
@@ -419,7 +419,7 @@ document.addEventListener('DOMContentLoaded', function () {
             console.error('Failed to initialize CKEditor:', error);
             // Fallback: create a simple textarea
             const editorElement = document.getElementById(
-              'page-content-inline'
+              'page-content-inline',
             );
             const parentElement = editorElement.parentNode;
             const textarea = document.createElement('textarea');
@@ -460,7 +460,7 @@ document.addEventListener('DOMContentLoaded', function () {
         originalDiv.id = 'page-content-inline';
         originalDiv.setAttribute(
           'data-placeholder',
-          window.translations?.enterContent || 'Enter the content here...'
+          window.translations?.enterContent || 'Enter the content here...',
         );
         parentElement.replaceChild(originalDiv, fallbackTextarea);
       }
@@ -496,7 +496,7 @@ document.addEventListener('DOMContentLoaded', function () {
           currentJournalCode,
         });
         alert(
-          window.translations?.missingPageInfo || 'Missing page information'
+          window.translations?.missingPageInfo || 'Missing page information',
         );
         return;
       }
@@ -534,8 +534,8 @@ document.addEventListener('DOMContentLoaded', function () {
             locale: locale,
           },
           null,
-          2
-        )
+          2,
+        ),
       );
 
       fetch(saveUrl, {
@@ -592,14 +592,14 @@ document.addEventListener('DOMContentLoaded', function () {
           } else {
             alert(
               (window.translations?.saveError || 'Save error: ') +
-                (data.message || 'Unknown error')
+                (data.message || 'Unknown error'),
             );
           }
         })
         .catch(error => {
           console.error('Save error:', error);
           alert(
-            (window.translations?.saveError || 'Save error: ') + error.message
+            (window.translations?.saveError || 'Save error: ') + error.message,
           );
         });
     });
