@@ -31,7 +31,7 @@ export function generateCsrfToken(formElement) {
       String.fromCharCode.apply(
         null,
         (window.crypto || window.msCrypto).getRandomValues(new Uint8Array(18)),
-      )
+      ),
     );
     csrfField.dispatchEvent(new Event('change', { bubbles: true }));
   }
