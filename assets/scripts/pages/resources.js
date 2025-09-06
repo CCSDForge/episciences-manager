@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function () {
     formData.append('file', file);
     formData.append(
       'overwrite',
-      document.getElementById('overwriteFile').checked,
+      document.getElementById('overwriteFile').checked
     );
 
     try {
@@ -88,14 +88,14 @@ document.addEventListener('DOMContentLoaded', function () {
       } else {
         showMessage(
           `${window.resourcesData.translations.uploadError}: ${result.message}`,
-          'danger',
+          'danger'
         );
       }
     } catch (error) {
       showProgress(false);
       showMessage(
         `${window.resourcesData.translations.uploadError}: ${error.message}`,
-        'danger',
+        'danger'
       );
     }
   }
@@ -151,7 +151,7 @@ document.addEventListener('DOMContentLoaded', function () {
     try {
       const deleteUrl = window.resourcesData.deleteUrl.replace(
         '__FILENAME__',
-        encodeURIComponent(fileToDeleteName),
+        encodeURIComponent(fileToDeleteName)
       );
 
       const response = await fetch(deleteUrl, {
@@ -167,13 +167,13 @@ document.addEventListener('DOMContentLoaded', function () {
       } else {
         showMessage(
           `${window.resourcesData.translations.deleteError}: ${result.message}`,
-          'danger',
+          'danger'
         );
       }
     } catch (error) {
       showMessage(
         `${window.resourcesData.translations.deleteError}: ${error.message}`,
-        'danger',
+        'danger'
       );
     }
 
@@ -396,7 +396,7 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log('window.parent !== window:', window.parent !== window);
     console.log(
       'typeof window.insertImageIntoEditor:',
-      typeof window.insertImageIntoEditor,
+      typeof window.insertImageIntoEditor
     );
 
     // Try to communicate with CKEditor using postMessage
@@ -409,7 +409,7 @@ document.addEventListener('DOMContentLoaded', function () {
           url: url,
           alt: filename,
         },
-        '*',
+        '*'
       );
     } else {
       // Try to find CKEditor instance on the current page
@@ -418,13 +418,13 @@ document.addEventListener('DOMContentLoaded', function () {
         window.insertImageIntoEditor(url, filename);
       } else {
         console.log(
-          'CKEditor not found on current page, trying to communicate with opener window',
+          'CKEditor not found on current page, trying to communicate with opener window'
         );
         console.log('window.opener:', window.opener);
         console.log('window.opener exists:', !!window.opener);
         console.log(
           'window.opener.closed:',
-          window.opener ? window.opener.closed : 'N/A',
+          window.opener ? window.opener.closed : 'N/A'
         );
 
         // Try to send message to opener window (if this was opened from another page)
@@ -436,15 +436,15 @@ document.addEventListener('DOMContentLoaded', function () {
               url: url,
               alt: filename,
             },
-            '*',
+            '*'
           );
           showMessage(
             `Image sent to editor! You can close this window.`,
-            'success',
+            'success'
           );
         } else {
           console.log(
-            'No opener window available. Trying localStorage communication',
+            'No opener window available. Trying localStorage communication'
           );
 
           // Store the image data in localStorage for the editor to pick up
@@ -459,7 +459,7 @@ document.addEventListener('DOMContentLoaded', function () {
           console.log('Image data stored in localStorage:', imageData);
           showMessage(
             `Image ready for editor! Return to the editor tab.`,
-            'success',
+            'success'
           );
 
           // Also try to trigger a storage event
@@ -469,7 +469,7 @@ document.addEventListener('DOMContentLoaded', function () {
               newValue: JSON.stringify(imageData),
               oldValue: null,
               storageArea: localStorage,
-            }),
+            })
           );
         }
       }

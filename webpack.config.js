@@ -45,7 +45,7 @@ Encore
       failOnError: Encore.isProduction(), // in prod/CI: fail the build on ESLint errors
       lintDirtyModulesOnly: true, // in watch mode: lint only changed files (faster)
       fix: !Encore.isProduction(), // in dev: auto-fix fixable problems
-    }),
+    })
   )
 
   // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)

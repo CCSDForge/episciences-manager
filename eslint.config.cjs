@@ -23,8 +23,7 @@ module.exports = [
                 objects: 'always-multiline',
                 imports: 'always-multiline',
                 exports: 'always-multiline',
-                functions: 'always-multiline',// ← match "all"
-                //functions: 'never',
+                functions: 'never', // match "es5"
             }],
             'arrow-parens': ['error', 'as-needed'],
             'quote-props': ['error', 'as-needed'],
