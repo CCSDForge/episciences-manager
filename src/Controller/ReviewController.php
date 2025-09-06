@@ -81,7 +81,7 @@ final class ReviewController extends AbstractController
 
         return $this->render('review/journalDetails.html.twig', [
             'review' => $review,
-            'code' => $code,
+            'rvcode' => $code,
             'pages' => $pages,
         ]);
     }

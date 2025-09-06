@@ -178,9 +178,9 @@
     // Pass data to JavaScript
     window.resourcesData = {
         journalCode: '{{ journal_code }}',
-        uploadUrl: '{{ path('app_resources_upload', {'code': journal_code}) }}',
-        deleteUrl: '{{ path('app_resources_delete', {'code': journal_code, 'filename': '__FILENAME__'}) }}',
-        listUrl: '{{ path('app_resources_list', {'code': journal_code}) }}',
+        uploadUrl: '{{ path('app_resources_upload', {'rvcode': journal_code}) }}',
+        deleteUrl: '{{ path('app_resources_delete', {'rvcode': journal_code, 'filename': '__FILENAME__'}) }}',
+        listUrl: '{{ path('app_resources_list', {'rvcode': journal_code}) }}',
         translations: {
             uploadSuccess: '{{ 'resources.uploadSuccess'|trans }}',
             uploadError: '{{ 'resources.uploadError'|trans }}',

@@ -26,22 +26,22 @@ final class ResourcesController extends AbstractController
 
     private const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
-    #[Route('/journal/{code}/resources', name: 'app_resources_manager', requirements: ['code' => '[\w\-]+'])]
-    public function index(string $code, UploadDirectoryService $dirs): Response
+    #[Route('/journal/{rvcode}/resources', name: 'app_resources_manager', requirements: ['rvcode' => '[\w\-]+'])]
+    public function index(string $rvcode, UploadDirectoryService $dirs): Response
     {
-        $files = $this->getFilesForJournal($code, $dirs);
+        $files = $this->getFilesForJournal($rvcode, $dirs);
 
         return $this->render('resources/index.html.twig', [
             'files' => $files,
-            'journal_code' => $code,
+            'journal_code' => $rvcode,
         ]);
     }
 
-    #[Route('/journal/{code}/resources/upload', name: 'app_resources_upload', methods: ['POST'], requirements: ['code' => '[\w\-]+'])]
-    public function upload(Request $request, string $code, SluggerInterface $slugger, UploadDirectoryService $dirs): JsonResponse
+    #[Route('/journal/{rvcode}/resources/upload', name: 'app_resources_upload', methods: ['POST'], requirements: ['rvcode' => '[\w\-]+'])]
+    public function upload(Request $request, string $rvcode, SluggerInterface $slugger, UploadDirectoryService $dirs): JsonResponse
     {
         // Debug logging
-        error_log('Upload request received for journal: ' . $code);
+        error_log('Upload request received for journal: ' . $rvcode);
         error_log('Files in request: ' . print_r($_FILES, true));
         error_log('Post data: ' . print_r($_POST, true));
 
@@ -81,7 +81,7 @@ final class ResourcesController extends AbstractController
         $newFilename = $safeFilename . '.' . $extension;
 
         // Check if file already exists and handle accordingly
-        $uploadDirectory = $dirs->getUploadDirectory($code);
+        $uploadDirectory = $dirs->getUploadDirectory($rvcode);
         $destinationPath = $uploadDirectory . '/' . $newFilename;
 
         if (file_exists($destinationPath) && !$overwrite) {
@@ -101,7 +101,7 @@ final class ResourcesController extends AbstractController
                 'success' => true,
                 'message' => 'File uploaded successfully',
                 'filename' => $newFilename,
-                'url' => $this->generatePublicUrl($code, $newFilename)
+                'url' => $this->generatePublicUrl($rvcode, $newFilename)
             ]);
 
         } catch (FileException $e) {
@@ -112,10 +112,10 @@ final class ResourcesController extends AbstractController
         }
     }
 
-    #[Route('/journal/{code}/resources/{filename}/delete', name: 'app_resources_delete', methods: ['DELETE'], requirements: ['code' => '[\w\-]+'])]
-    public function delete(string $code, string $filename, UploadDirectoryService $dirs): JsonResponse
+    #[Route('/journal/{rvcode}/resources/{filename}/delete', name: 'app_resources_delete', methods: ['DELETE'], requirements: ['rvcode' => '[\w\-]+'])]
+    public function delete(string $rvcode, string $filename, UploadDirectoryService $dirs): JsonResponse
     {
-        $filePath = $dirs->getUploadDirectory($code) . '/' . $filename;
+        $filePath = $dirs->getUploadDirectory($rvcode) . '/' . $filename;
 
         if (!file_exists($filePath)) {
             return new JsonResponse([
@@ -140,10 +140,10 @@ final class ResourcesController extends AbstractController
         }
     }
 
-    #[Route('/journal/{code}/resources/list', name: 'app_resources_list', methods: ['GET'], requirements: ['code' => '[\w\-]+'])]
-    public function list(string $code, UploadDirectoryService $dirs): JsonResponse
+    #[Route('/journal/{rvcode}/resources/list', name: 'app_resources_list', methods: ['GET'], requirements: ['rvcode' => '[\w\-]+'])]
+    public function list(string $rvcode, UploadDirectoryService $dirs): JsonResponse
     {
-        $files = $this->getFilesForJournal($code, $dirs);
+        $files = $this->getFilesForJournal($rvcode, $dirs);
         
         return new JsonResponse([
             'success' => true,
@@ -151,10 +151,10 @@ final class ResourcesController extends AbstractController
         ]);
     }
 
-    #[Route('/{code}/resources/{filename}', name: 'app_resources_serve', requirements: ['code' => '[\w\-]+', 'filename' => '.+'])]
-    public function serve(string $code, string $filename, UploadDirectoryService $dirs): Response
+    #[Route('/{rvcode}/resources/{filename}', name: 'app_resources_serve', requirements: ['rvcode' => '[\w\-]+', 'filename' => '.+'])]
+    public function serve(string $rvcode, string $filename, UploadDirectoryService $dirs): Response
     {
-        $filePath = $dirs->getUploadDirectory($code) . '/' . $filename;
+        $filePath = $dirs->getUploadDirectory($rvcode) . '/' . $filename;
 
         if (!file_exists($filePath)) {
             throw $this->createNotFoundException('File not found');
@@ -166,9 +166,9 @@ final class ResourcesController extends AbstractController
         return $response;
     }
 
-    private function getFilesForJournal(string $journalCode, UploadDirectoryService $dirs): array
+    private function getFilesForJournal(string $rvcode, UploadDirectoryService $dirs): array
     {
-        $directory = $dirs->getUploadDirectory($journalCode);
+        $directory = $dirs->getUploadDirectory($rvcode);
         $files = [];
 
         if (!is_dir($directory)) {
@@ -186,7 +186,7 @@ final class ResourcesController extends AbstractController
                     'name' => $fileInfo->getFilename(),
                     'size' => $fileInfo->getSize(),
                     'modified' => $fileInfo->getMTime(),
-                    'url' => $this->generatePublicUrl($journalCode, $fileInfo->getFilename())
+                    'url' => $this->generatePublicUrl($rvcode, $fileInfo->getFilename())
                 ];
             }
         }
@@ -200,11 +200,8 @@ final class ResourcesController extends AbstractController
     }
 
 
-    private function generatePublicUrl(string $journalCode, string $filename): string
+    private function generatePublicUrl(string $rvcode, string $filename): string
     {
-        return $this->generateUrl('app_resources_serve', [
-            'code' => $journalCode,
-            'filename' => $filename
-        ]);
+        return "/{$rvcode}/resources/{$filename}";
     }
 }

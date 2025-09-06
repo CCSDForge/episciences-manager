@@ -24,19 +24,19 @@
                                 <div class="container-fluid">
                                     <div class="navbar-nav d-flex flex-wrap">
                                         <a class="nav-link me-2 mb-2" 
-                                           href="{{ path('app_journal_detail', {'code': code, '_locale': app.request.locale}) }}">
+                                           href="{{ path('app_journal_detail', {'code': rvcode, '_locale': app.request.locale}) }}">
                                             {{ 'journalDetails.home' | trans }}
                                         </a>
                                         {% for page in pages %}
                                             <a class="nav-link page-nav-link me-2 mb-2" 
                                                href="#"
                                                data-page-code="{{ page.pageCode }}"
-                                               data-journal-code="{{ code }}">
+                                               data-journal-code="{{ rvcode }}">
                                                 {{ page.title[app.request.locale] ?? page.title['en'] ?? page.pageCode }}
                                             </a>
                                         {% endfor %}
                                         <a class="nav-link me-2 mb-2" 
-                                           href="{{ path('app_resources_manager', {'code': code}) }}" 
+                                           href="{{ path('app_resources_manager', {'rvcode': rvcode}) }}" 
                                            target="_blank" 
                                            rel="noopener noreferrer">
                                             <i class="fas fa-folder-open me-1"></i>
