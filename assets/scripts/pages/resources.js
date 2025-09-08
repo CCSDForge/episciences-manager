@@ -1,3 +1,5 @@
+import { Modal } from 'bootstrap';
+
 document.addEventListener('DOMContentLoaded', function () {
   console.log('Resources script loaded, looking for upload form...');
   console.log('DOM content loaded, document ready state:', document.readyState);
@@ -18,10 +20,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
   let deleteConfirmModal = null;
   try {
-    deleteConfirmModal = modalElement
-      ? new window.bootstrap.Modal(modalElement)
-      : null;
-    console.log('Modal initialized successfully');
+    console.log('Checking Bootstrap Modal availability:', typeof Modal);
+    console.log('Modal element exists:', !!modalElement);
+    
+    if (modalElement && Modal) {
+      deleteConfirmModal = new Modal(modalElement);
+      console.log('Modal initialized successfully:', deleteConfirmModal);
+    } else {
+      console.error('Cannot initialize modal - missing requirements:', {
+        modalElement: !!modalElement,
+        Modal: !!Modal
+      });
+    }
   } catch (error) {
     console.error('Error initializing modal:', error);
   }
@@ -134,19 +144,31 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Delete file buttons
   document.addEventListener('click', function (e) {
-    if (e.target.closest('.delete-file-btn')) {
-      const button = e.target.closest('.delete-file-btn');
-      const filename = button.getAttribute('data-filename');
+    console.log('Click detected on delete area:', e.target);
+    const deleteBtn = e.target.closest('.delete-file-btn');
+    console.log('Delete button found:', deleteBtn);
+    
+    if (deleteBtn) {
+      const filename = deleteBtn.getAttribute('data-filename');
+      console.log('Filename to delete:', filename);
 
       fileToDeleteName = filename;
-      fileToDelete.textContent = filename;
-      deleteConfirmModal.show();
+      if (fileToDelete) {
+        fileToDelete.textContent = filename;
+      }
+      if (deleteConfirmModal) {
+        console.log('Showing modal for file:', filename);
+        deleteConfirmModal.show();
+      } else {
+        console.error('Modal not initialized');
+      }
     }
   });
 
   // Confirm delete handler
-  confirmDeleteBtn.addEventListener('click', async function () {
-    if (!fileToDeleteName) return;
+  if (confirmDeleteBtn) {
+    confirmDeleteBtn.addEventListener('click', async function () {
+      if (!fileToDeleteName) return;
 
     try {
       const deleteUrl = window.resourcesData.deleteUrl.replace(
@@ -162,7 +184,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
       if (result.success) {
         showMessage(window.resourcesData.translations.deleteSuccess, 'success');
-        deleteConfirmModal.hide();
+        if (deleteConfirmModal) {
+          deleteConfirmModal.hide();
+        }
         await refreshFileList();
       } else {
         showMessage(
@@ -178,7 +202,8 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     fileToDeleteName = null;
-  });
+    });
+  }
 
   // Helper functions
   function showProgress(show) {
