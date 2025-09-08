@@ -22,14 +22,14 @@ document.addEventListener('DOMContentLoaded', function () {
   try {
     console.log('Checking Bootstrap Modal availability:', typeof Modal);
     console.log('Modal element exists:', !!modalElement);
-    
+
     if (modalElement && Modal) {
       deleteConfirmModal = new Modal(modalElement);
       console.log('Modal initialized successfully:', deleteConfirmModal);
     } else {
       console.error('Cannot initialize modal - missing requirements:', {
         modalElement: !!modalElement,
-        Modal: !!Modal
+        Modal: !!Modal,
       });
     }
   } catch (error) {
@@ -147,7 +147,7 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log('Click detected on delete area:', e.target);
     const deleteBtn = e.target.closest('.delete-file-btn');
     console.log('Delete button found:', deleteBtn);
-    
+
     if (deleteBtn) {
       const filename = deleteBtn.getAttribute('data-filename');
       console.log('Filename to delete:', filename);
@@ -170,38 +170,41 @@ document.addEventListener('DOMContentLoaded', function () {
     confirmDeleteBtn.addEventListener('click', async function () {
       if (!fileToDeleteName) return;
 
-    try {
-      const deleteUrl = window.resourcesData.deleteUrl.replace(
-        '__FILENAME__',
-        encodeURIComponent(fileToDeleteName)
-      );
+      try {
+        const deleteUrl = window.resourcesData.deleteUrl.replace(
+          '__FILENAME__',
+          encodeURIComponent(fileToDeleteName)
+        );
 
-      const response = await fetch(deleteUrl, {
-        method: 'DELETE',
-      });
+        const response = await fetch(deleteUrl, {
+          method: 'DELETE',
+        });
 
-      const result = await response.json();
+        const result = await response.json();
 
-      if (result.success) {
-        showMessage(window.resourcesData.translations.deleteSuccess, 'success');
-        if (deleteConfirmModal) {
-          deleteConfirmModal.hide();
+        if (result.success) {
+          showMessage(
+            window.resourcesData.translations.deleteSuccess,
+            'success'
+          );
+          if (deleteConfirmModal) {
+            deleteConfirmModal.hide();
+          }
+          await refreshFileList();
+        } else {
+          showMessage(
+            `${window.resourcesData.translations.deleteError}: ${result.message}`,
+            'danger'
+          );
         }
-        await refreshFileList();
-      } else {
+      } catch (error) {
         showMessage(
-          `${window.resourcesData.translations.deleteError}: ${result.message}`,
+          `${window.resourcesData.translations.deleteError}: ${error.message}`,
           'danger'
         );
       }
-    } catch (error) {
-      showMessage(
-        `${window.resourcesData.translations.deleteError}: ${error.message}`,
-        'danger'
-      );
-    }
 
-    fileToDeleteName = null;
+      fileToDeleteName = null;
     });
   }
 
