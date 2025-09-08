@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   let deleteConfirmModal = null;
   let imageInsertModal = null;
+  let fileConflictModal = null;
 
   try {
     console.log('Checking Bootstrap Modal availability:', typeof Modal);
@@ -41,12 +42,21 @@ document.addEventListener('DOMContentLoaded', function () {
       imageInsertModal = new Modal(imageModalElement);
       console.log('Image insert modal initialized successfully');
     }
+
+    // Initialize file conflict modal
+    const conflictModalElement = document.getElementById('fileConflictModal');
+    if (conflictModalElement && Modal) {
+      fileConflictModal = new Modal(conflictModalElement);
+      console.log('File conflict modal initialized successfully');
+    }
   } catch (error) {
     console.error('Error initializing modal:', error);
   }
 
   const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
   const fileToDelete = document.getElementById('fileToDelete');
+  const replaceFileBtn = document.getElementById('replaceFileBtn');
+  const renameFileBtn = document.getElementById('renameFileBtn');
 
   let fileToDeleteName = null;
 
@@ -71,8 +81,8 @@ document.addEventListener('DOMContentLoaded', function () {
     console.error('Upload form not found!');
   }
 
-  async function handleUpload() {
-    console.log('handleUpload function called');
+  async function handleUpload(action = null) {
+    console.log('handleUpload function called with action:', action);
 
     const file = fileInput.files[0];
     if (!file) {
@@ -86,6 +96,11 @@ document.addEventListener('DOMContentLoaded', function () {
       'overwrite',
       document.getElementById('overwriteFile').checked
     );
+
+    // Add action parameter if specified
+    if (action) {
+      formData.append('action', action);
+    }
 
     try {
       showProgress(true);
@@ -104,6 +119,9 @@ document.addEventListener('DOMContentLoaded', function () {
         fileInput.value = '';
         document.getElementById('overwriteFile').checked = false;
         await refreshFileList();
+      } else if (result.conflict) {
+        // File conflict detected - show modal
+        showFileConflictModal(result.existingFile);
       } else {
         showMessage(
           `${window.resourcesData.translations.uploadError}: ${result.message}`,
@@ -116,6 +134,39 @@ document.addEventListener('DOMContentLoaded', function () {
         `${window.resourcesData.translations.uploadError}: ${error.message}`,
         'danger'
       );
+    }
+  }
+
+  function showFileConflictModal(existingFileName) {
+    const conflictFileNameElement = document.getElementById('conflictFileName');
+    if (conflictFileNameElement) {
+      conflictFileNameElement.textContent = existingFileName;
+    }
+
+    // Extract extension and set it in the modal
+    const extension = existingFileName.split('.').pop();
+    const fileExtensionElement = document.getElementById('fileExtension');
+    if (fileExtensionElement) {
+      fileExtensionElement.textContent = '.' + extension;
+    }
+
+    // Set default custom name (without extension)
+    const customFileNameInput = document.getElementById('customFileName');
+    if (customFileNameInput) {
+      const nameWithoutExt = existingFileName.replace('.' + extension, '');
+      customFileNameInput.value = nameWithoutExt + '_copy';
+    }
+
+    // Hide custom rename section initially
+    const customRenameSection = document.getElementById('customRenameSection');
+    if (customRenameSection) {
+      customRenameSection.style.display = 'none';
+    }
+
+    if (fileConflictModal) {
+      fileConflictModal.show();
+    } else {
+      console.error('File conflict modal not initialized');
     }
   }
 
@@ -205,6 +256,92 @@ document.addEventListener('DOMContentLoaded', function () {
 
       fileToDeleteName = null;
     });
+  }
+
+  // File conflict modal handlers
+  if (replaceFileBtn) {
+    replaceFileBtn.addEventListener('click', async function () {
+      if (fileConflictModal) {
+        fileConflictModal.hide();
+      }
+      await handleUpload('replace');
+    });
+  }
+
+  if (renameFileBtn) {
+    renameFileBtn.addEventListener('click', function () {
+      // Show custom rename section when user clicks rename
+      const customRenameSection = document.getElementById('customRenameSection');
+      if (customRenameSection) {
+        if (customRenameSection.style.display === 'none') {
+          customRenameSection.style.display = 'block';
+          // Focus on input field
+          const customFileNameInput = document.getElementById('customFileName');
+          if (customFileNameInput) {
+            setTimeout(() => customFileNameInput.focus(), 100);
+          }
+          // Change button text to confirm
+          renameFileBtn.innerHTML = '<i class="fas fa-check me-2"></i>Confirmer le nom';
+        } else {
+          // User confirmed, proceed with upload
+          const customFileName = document.getElementById('customFileName').value.trim();
+          const fileExtension = document.getElementById('fileExtension').textContent;
+
+          if (!customFileName) {
+            showMessage('Veuillez saisir un nom de fichier', 'danger');
+            return;
+          }
+
+          // Hide modal and upload with custom name
+          if (fileConflictModal) {
+            fileConflictModal.hide();
+          }
+
+          handleUploadWithCustomName(customFileName + fileExtension);
+        }
+      }
+    });
+  }
+
+  async function handleUploadWithCustomName(customFileName) {
+    const file = fileInput.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('action', 'custom');
+    formData.append('customFileName', customFileName);
+
+    try {
+      showProgress(true);
+      clearMessages();
+
+      const response = await fetch(window.resourcesData.uploadUrl, {
+        method: 'POST',
+        body: formData,
+      });
+
+      const result = await response.json();
+      showProgress(false);
+
+      if (result.success) {
+        showMessage(window.resourcesData.translations.uploadSuccess, 'success');
+        fileInput.value = '';
+        document.getElementById('overwriteFile').checked = false;
+        await refreshFileList();
+      } else {
+        showMessage(
+          `${window.resourcesData.translations.uploadError}: ${result.message}`,
+          'danger'
+        );
+      }
+    } catch (error) {
+      showProgress(false);
+      showMessage(
+        `${window.resourcesData.translations.uploadError}: ${error.message}`,
+        'danger'
+      );
+    }
   }
 
   // Helper functions
