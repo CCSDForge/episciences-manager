@@ -19,6 +19,8 @@ document.addEventListener('DOMContentLoaded', function () {
   console.log('Modal element found:', modalElement);
 
   let deleteConfirmModal = null;
+  let imageInsertModal = null;
+
   try {
     console.log('Checking Bootstrap Modal availability:', typeof Modal);
     console.log('Modal element exists:', !!modalElement);
@@ -31,6 +33,13 @@ document.addEventListener('DOMContentLoaded', function () {
         modalElement: !!modalElement,
         Modal: !!Modal,
       });
+    }
+
+    // Initialize image insert modal
+    const imageModalElement = document.getElementById('imageInsertModal');
+    if (imageModalElement && Modal) {
+      imageInsertModal = new Modal(imageModalElement);
+      console.log('Image insert modal initialized successfully');
     }
   } catch (error) {
     console.error('Error initializing modal:', error);
@@ -116,16 +125,6 @@ document.addEventListener('DOMContentLoaded', function () {
       const button = e.target.closest('.copy-url-btn');
       const url = button.getAttribute('data-url');
       copyToClipboard(url);
-    }
-  });
-
-  // Copy full URL buttons
-  document.addEventListener('click', function (e) {
-    if (e.target.closest('.copy-full-url-btn')) {
-      const button = e.target.closest('.copy-full-url-btn');
-      const relativeUrl = button.getAttribute('data-url');
-      const fullUrl = new URL(relativeUrl, window.location.origin).href;
-      copyToClipboard(fullUrl);
     }
   });
 
@@ -323,11 +322,6 @@ document.addEventListener('DOMContentLoaded', function () {
                                 title="Copy URL">
                             <i class="fas fa-copy"></i>
                         </button>
-                        <button class="btn btn-outline-info copy-full-url-btn" type="button" 
-                                data-url="${escapeHtml(file.url)}" 
-                                title="Copy Full URL">
-                            <i class="fas fa-link"></i>
-                        </button>
                         ${
                           isImageFile(file.name)
                             ? `
@@ -466,10 +460,7 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             '*'
           );
-          showMessage(
-            `Image sent to editor! You can close this window.`,
-            'success'
-          );
+          showImageInsertModal(filename);
         } else {
           console.log(
             'No opener window available. Trying localStorage communication'
@@ -485,10 +476,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
           localStorage.setItem('pendingImageInsert', JSON.stringify(imageData));
           console.log('Image data stored in localStorage:', imageData);
-          showMessage(
-            `Image ready for editor! Return to the editor tab.`,
-            'success'
-          );
+          showImageInsertModal(filename);
 
           // Also try to trigger a storage event
           window.dispatchEvent(
@@ -501,6 +489,21 @@ document.addEventListener('DOMContentLoaded', function () {
           );
         }
       }
+    }
+  }
+
+  function showImageInsertModal(filename) {
+    // Update modal content with filename
+    const imageNameElement = document.getElementById('insertedImageName');
+    if (imageNameElement) {
+      imageNameElement.textContent = filename;
+    }
+
+    // Show the modal
+    if (imageInsertModal) {
+      imageInsertModal.show();
+    } else {
+      console.error('Image insert modal not initialized');
     }
   }
 
