@@ -48,6 +48,8 @@ final class ResourcesController extends AbstractController
         /** @var UploadedFile|null $uploadedFile */
         $uploadedFile = $request->files->get('file');
         $overwrite = $request->request->getBoolean('overwrite', false);
+        $action = $request->request->get('action', null); // 'replace', 'rename', or 'custom'
+        $customFileName = $request->request->get('customFileName', null);
 
         if (!$uploadedFile) {
             error_log('No file uploaded in request');
@@ -76,22 +78,65 @@ final class ResourcesController extends AbstractController
             ], 400);
         }
 
-        // Generate safe filename
-        $safeFilename = (string) $slugger->slug($originalFilename);
-        $newFilename = $safeFilename . '.' . $extension;
+        // Handle custom filename
+        if ($action === 'custom' && $customFileName) {
+            // Extract filename without extension from custom name
+            $customNameParts = pathinfo($customFileName);
+            $customBaseName = $customNameParts['filename'];
+            
+            // Use custom name but keep original extension
+            $safeFilename = (string) $slugger->slug($customBaseName);
+            $newFilename = $safeFilename . '.' . $extension;
+        } else {
+            // Generate safe filename from original
+            $safeFilename = (string) $slugger->slug($originalFilename);
+            $newFilename = $safeFilename . '.' . $extension;
+        }
 
         // Check if file already exists and handle accordingly
         $uploadDirectory = $dirs->getUploadDirectory($rvcode);
         $destinationPath = $uploadDirectory . '/' . $newFilename;
 
-        if (file_exists($destinationPath) && !$overwrite) {
-            // Generate unique filename
-            $counter = 1;
-            do {
-                $newFilename = $safeFilename . '_' . $counter . '.' . $extension;
-                $destinationPath = $uploadDirectory . '/' . $newFilename;
-                $counter++;
-            } while (file_exists($destinationPath));
+        // Ensure the directory is writable
+        if (!is_writable($uploadDirectory)) {
+            return new JsonResponse([
+                'success' => false,
+                'message' => 'Upload directory is not writable: ' . $uploadDirectory
+            ], 500);
+        }
+
+        if (file_exists($destinationPath)) {
+            // If no action is specified, ask the user what to do
+            if (!$action && !$overwrite) {
+                return new JsonResponse([
+                    'success' => false,
+                    'conflict' => true,
+                    'message' => 'File already exists',
+                    'existingFile' => $newFilename,
+                    'originalName' => $uploadedFile->getClientOriginalName()
+                ], 409); // 409 Conflict status code
+            }
+            
+            // Handle user's choice
+            if ($action === 'rename' || (!$overwrite && !$action)) {
+                // Generate unique filename
+                $counter = 1;
+                do {
+                    $newFilename = $safeFilename . '_' . $counter . '.' . $extension;
+                    $destinationPath = $uploadDirectory . '/' . $newFilename;
+                    $counter++;
+                } while (file_exists($destinationPath));
+            } elseif ($action === 'replace' || $overwrite) {
+                // Delete the existing file before uploading the new one
+                try {
+                    unlink($destinationPath);
+                } catch (\Exception $e) {
+                    return new JsonResponse([
+                        'success' => false,
+                        'message' => 'Failed to delete existing file: ' . $e->getMessage()
+                    ], 500);
+                }
+            }
         }
 
         try {
