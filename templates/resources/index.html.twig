@@ -165,6 +165,84 @@
     </div>
 </div>
 
+<!-- File Conflict Modal -->
+<div class="modal fade" id="fileConflictModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                    {{ 'resources.fileConflictTitle'|trans }}
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-warning">
+                    <i class="fas fa-info-circle me-2"></i>
+                    {{ 'resources.fileConflictMessage'|trans }}
+                </div>
+                <p class="mb-2">{{ 'resources.existingFile'|trans }}: <strong id="conflictFileName"></strong></p>
+                <p class="text-muted mb-4">{{ 'resources.chooseAction'|trans }}</p>
+                
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <i class="fas fa-undo fa-2x text-primary mb-2"></i>
+                                <h6>{{ 'resources.replaceFile'|trans }}</h6>
+                                <p class="text-muted small">{{ 'resources.replaceFileDesc'|trans }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <i class="fas fa-edit fa-2x text-success mb-2"></i>
+                                <h6>{{ 'resources.renameFile'|trans }}</h6>
+                                <p class="text-muted small">{{ 'resources.renameFileDesc'|trans }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Custom rename section -->
+                <div id="customRenameSection" class="mt-4" style="display: none;">
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <h6 class="card-title">
+                                <i class="fas fa-edit me-2"></i>
+                                {{ 'resources.customFileName'|trans }}
+                            </h6>
+                            <div class="mb-3">
+                                <label for="customFileName" class="form-label">{{ 'resources.newFileName'|trans }}</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="customFileName" placeholder="{{ 'resources.enterFileName'|trans }}">
+                                    <span class="input-group-text" id="fileExtension">.jpg</span>
+                                </div>
+                                <div class="form-text">{{ 'resources.fileNameHint'|trans }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>
+                    {{ 'resources.cancel'|trans }}
+                </button>
+                <button type="button" class="btn btn-primary" id="renameFileBtn">
+                    <i class="fas fa-copy me-2"></i>
+                    {{ 'resources.renameFile'|trans }}
+                </button>
+                <button type="button" class="btn btn-warning" id="replaceFileBtn">
+                    <i class="fas fa-undo me-2"></i>
+                    {{ 'resources.replaceFile'|trans }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Image Insert Success Modal -->
 <div class="modal fade" id="imageInsertModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
