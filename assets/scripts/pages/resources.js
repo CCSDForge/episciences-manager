@@ -271,7 +271,9 @@ document.addEventListener('DOMContentLoaded', function () {
   if (renameFileBtn) {
     renameFileBtn.addEventListener('click', function () {
       // Show custom rename section when user clicks rename
-      const customRenameSection = document.getElementById('customRenameSection');
+      const customRenameSection = document.getElementById(
+        'customRenameSection'
+      );
       if (customRenameSection) {
         if (customRenameSection.style.display === 'none') {
           customRenameSection.style.display = 'block';
@@ -281,11 +283,15 @@ document.addEventListener('DOMContentLoaded', function () {
             setTimeout(() => customFileNameInput.focus(), 100);
           }
           // Change button text to confirm
-          renameFileBtn.innerHTML = '<i class="fas fa-check me-2"></i>Confirmer le nom';
+          renameFileBtn.innerHTML =
+            '<i class="fas fa-check me-2"></i>Confirmer le nom';
         } else {
           // User confirmed, proceed with upload
-          const customFileName = document.getElementById('customFileName').value.trim();
-          const fileExtension = document.getElementById('fileExtension').textContent;
+          const customFileName = document
+            .getElementById('customFileName')
+            .value.trim();
+          const fileExtension =
+            document.getElementById('fileExtension').textContent;
 
           if (!customFileName) {
             showMessage('Veuillez saisir un nom de fichier', 'danger');
