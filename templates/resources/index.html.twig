@@ -32,19 +32,18 @@
                 <div class="card-body">
                     <form id="uploadForm" enctype="multipart/form-data">
                         <div class="row g-3">
-                            <div class="col-md-6">
+                            <div class="col-md-9">
                                 <label for="fileInput" class="form-label">{{ 'resources.selectFile'|trans }}</label>
-                                <input type="file" class="form-control" id="fileInput" name="file" required>
+                                <div class="input-group">
+                                    <input type="file" class="form-control" id="fileInput" name="file" required style="display: none;">
+                                    <input type="text" class="form-control" id="fileInputDisplay" placeholder="{{ 'resources.noFileSelected'|trans }}" readonly>
+                                    <button class="btn btn-outline-secondary" type="button" id="fileInputBtn">
+                                        <i class="fas fa-folder-open me-2"></i>
+                                        {{ 'resources.browseFiles'|trans }}
+                                    </button>
+                                </div>
                                 <div class="form-text">
                                     {{ 'resources.allowedTypes'|trans }}: PNG, JPG, JPEG, GIF, PDF, DOC, DOCX, TXT, MD, ZIP, etc.
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-check mt-4">
-                                    <input class="form-check-input" type="checkbox" id="overwriteFile" name="overwrite">
-                                    <label class="form-check-label" for="overwriteFile">
-                                        {{ 'resources.overwriteExisting'|trans }}
-                                    </label>
                                 </div>
                             </div>
                             <div class="col-md-3">
@@ -179,14 +178,13 @@
             <div class="modal-body">
                 <div class="alert alert-warning">
                     <i class="fas fa-info-circle me-2"></i>
-                    {{ 'resources.fileConflictMessage'|trans }}
+                    {{ 'resources.fileExists'|trans }}
                 </div>
-                <p class="mb-2">{{ 'resources.existingFile'|trans }}: <strong id="conflictFileName"></strong></p>
-                <p class="text-muted mb-4">{{ 'resources.chooseAction'|trans }}</p>
+                <p class="mb-4">{{ 'resources.existingFile'|trans }}: <strong id="conflictFileName"></strong></p>
                 
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <div class="card">
+                        <div class="card action-card" data-action="replace" style="cursor: pointer;">
                             <div class="card-body text-center">
                                 <i class="fas fa-undo fa-2x text-primary mb-2"></i>
                                 <h6>{{ 'resources.replaceFile'|trans }}</h6>
@@ -195,7 +193,7 @@
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="card">
+                        <div class="card action-card" data-action="rename" style="cursor: pointer;">
                             <div class="card-body text-center">
                                 <i class="fas fa-edit fa-2x text-success mb-2"></i>
                                 <h6>{{ 'resources.renameFile'|trans }}</h6>
@@ -230,13 +228,9 @@
                     <i class="fas fa-times me-2"></i>
                     {{ 'resources.cancel'|trans }}
                 </button>
-                <button type="button" class="btn btn-primary" id="renameFileBtn">
-                    <i class="fas fa-copy me-2"></i>
-                    {{ 'resources.renameFile'|trans }}
-                </button>
-                <button type="button" class="btn btn-warning" id="replaceFileBtn">
-                    <i class="fas fa-undo me-2"></i>
-                    {{ 'resources.replaceFile'|trans }}
+                <button type="button" class="btn btn-primary" id="renameFileBtn" style="display: none;">
+                    <i class="fas fa-check me-2"></i>
+                    {{ 'resources.confirmRename'|trans }}
                 </button>
             </div>
         </div>
@@ -288,7 +282,9 @@
             deleteSuccess: '{{ 'resources.deleteSuccess'|trans }}',
             deleteError: '{{ 'resources.deleteError'|trans }}',
             copySuccess: '{{ 'resources.copySuccess'|trans }}',
-            copyError: '{{ 'resources.copyError'|trans }}'
+            copyError: '{{ 'resources.copyError'|trans }}',
+            confirmRename: '{{ 'resources.confirmRename'|trans }}',
+            pleaseEnterFileName: '{{ 'resources.pleaseEnterFileName'|trans }}'
         }
     };
     </script>
@@ -338,6 +334,34 @@
         .table th:nth-child(5),
         .table td:nth-child(5) {
             width: 5%;
+        }
+        
+        /* Action cards styling */
+        .action-card {
+            transition: all 0.2s ease-in-out;
+            border: 2px solid transparent;
+        }
+        
+        .action-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            border-color: #007bff;
+        }
+        
+        .action-card.selected {
+            border-color: #007bff;
+            background-color: #f8f9fa;
+        }
+        
+        .action-card[style*="not-allowed"] {
+            background-color: #f8f9fa !important;
+            border-color: #dee2e6 !important;
+        }
+        
+        .action-card[style*="not-allowed"]:hover {
+            transform: none !important;
+            box-shadow: none !important;
+            border-color: #dee2e6 !important;
         }
     </style>
 {% endblock %}

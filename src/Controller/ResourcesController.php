@@ -78,24 +78,55 @@ final class ResourcesController extends AbstractController
             ], 400);
         }
 
+        // Get upload directory first
+        $uploadDirectory = $dirs->getUploadDirectory($rvcode);
+
         // Handle custom filename
         if ($action === 'custom' && $customFileName) {
+            error_log("=== CUSTOM FILENAME DEBUG ===");
+            error_log("Original customFileName: " . $customFileName);
+            
             // Extract filename without extension from custom name
             $customNameParts = pathinfo($customFileName);
             $customBaseName = $customNameParts['filename'];
+            error_log("customBaseName after pathinfo: " . $customBaseName);
             
             // Use custom name but keep original extension
             $safeFilename = (string) $slugger->slug($customBaseName);
             $newFilename = $safeFilename . '.' . $extension;
+            error_log("safeFilename after slug: " . $safeFilename);
+            error_log("newFilename: " . $newFilename);
+            
+            // Check if the custom filename already exists
+            $destinationPath = $uploadDirectory . '/' . $newFilename;
+            error_log("destinationPath: " . $destinationPath);
+            error_log("file_exists check: " . (file_exists($destinationPath) ? 'TRUE' : 'FALSE'));
+            
+            // List all files in the directory for debugging
+            if (is_dir($uploadDirectory)) {
+                $files = scandir($uploadDirectory);
+                error_log("Files in directory: " . json_encode($files));
+            }
+            
+            if (file_exists($destinationPath)) {
+                error_log("CONFLICT DETECTED - returning 409");
+                return new JsonResponse([
+                    'success' => false,
+                    'conflict' => true,
+                    'message' => 'Custom filename already exists',
+                    'existingFile' => $newFilename,
+                    'originalName' => $uploadedFile->getClientOriginalName(),
+                    'isCustomName' => true
+                ], 409);
+            }
+            error_log("NO CONFLICT - proceeding with upload");
         } else {
             // Generate safe filename from original
             $safeFilename = (string) $slugger->slug($originalFilename);
             $newFilename = $safeFilename . '.' . $extension;
+            // Set destination path for non-custom filenames
+            $destinationPath = $uploadDirectory . '/' . $newFilename;
         }
-
-        // Check if file already exists and handle accordingly
-        $uploadDirectory = $dirs->getUploadDirectory($rvcode);
-        $destinationPath = $uploadDirectory . '/' . $newFilename;
 
         // Ensure the directory is writable
         if (!is_writable($uploadDirectory)) {
@@ -118,7 +149,7 @@ final class ResourcesController extends AbstractController
             }
             
             // Handle user's choice
-            if ($action === 'rename' || (!$overwrite && !$action)) {
+            if ($action === 'rename') {
                 // Generate unique filename
                 $counter = 1;
                 do {
@@ -136,6 +167,17 @@ final class ResourcesController extends AbstractController
                         'message' => 'Failed to delete existing file: ' . $e->getMessage()
                     ], 500);
                 }
+            } elseif ($action === 'custom') {
+                // Custom filename conflict should have been handled earlier
+                // If we reach here, something went wrong
+                return new JsonResponse([
+                    'success' => false,
+                    'conflict' => true,
+                    'message' => 'Custom filename already exists',
+                    'existingFile' => $newFilename,
+                    'originalName' => $uploadedFile->getClientOriginalName(),
+                    'isCustomName' => true
+                ], 409);
             }
         }
 
