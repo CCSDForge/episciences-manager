@@ -72,24 +72,17 @@ jobs:
           fromTag: ""
           toTag: "HEAD"
           
-      - name: Check for changes
-        id: changes
-        run: |
-          if [ ! -f CHANGELOG.md ] || [ "${{ steps.changelog.outputs.changelog }}" != "$(cat CHANGELOG.md 2>/dev/null || echo '')" ]; then
-            echo "has_changes=true" >> $GITHUB_OUTPUT
-          else
-            echo "has_changes=false" >> $GITHUB_OUTPUT
-          fi
-          
       - name: Save changelog
-        if: steps.changes.outputs.has_changes == 'true'
         run: echo "${{ steps.changelog.outputs.changelog }}" > CHANGELOG.md
           
-      - name: Commit changelog
-        if: steps.changes.outputs.has_changes == 'true'
+      - name: Check for changes and commit
         run: |
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add CHANGELOG.md
+          if git diff --staged --quiet; then
+            echo "No changes to commit - CHANGELOG.md is already up to date"
+            exit 0
+          fi
           git commit -m "docs: auto-update changelog [skip ci]"
           git push
