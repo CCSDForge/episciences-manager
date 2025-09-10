@@ -1,30 +1,74 @@
 name: Generate Changelog
 on:
   push:
-    branches: [develop]
+    branches:
+      - develop
+      - preprod
+      - main
   workflow_dispatch:
 
 jobs:
   changelog:
+    # avoid infinite loops if the last commit was made by the bot
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     permissions:
       contents: write
+
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      
+
+      # Find previous tag if any
+      - name: Get previous tag (if any)
+        id: prev_tag
+        run: |
+          if git describe --tags --abbrev=0 >/dev/null 2>&1; then
+            echo "tag=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
+          else
+            echo "tag=" >> $GITHUB_OUTPUT
+          fi
+
+      # Decide fromRef (last tag or first commit)
+      - name: Compute fromRef
+        id: fromref
+        run: |
+          if [ -n "${{ steps.prev_tag.outputs.tag }}" ]; then
+            echo "ref=${{ steps.prev_tag.outputs.tag }}" >> $GITHUB_OUTPUT
+          else
+            FIRST_COMMIT=$(git rev-list --max-parents=0 HEAD)
+            echo "ref=$FIRST_COMMIT" >> $GITHUB_OUTPUT
+          fi
+
+      # Build changelog (PR-based)
       - name: Generate changelog
-        uses: mikepenz/release-changelog-builder-action@v5
         id: changelog
+        uses: mikepenz/release-changelog-builder-action@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          fromTag: ""
-          toTag: "HEAD"
-          
-      - name: Save changelog
-        run: echo "${{ steps.changelog.outputs.changelog }}" > CHANGELOG.md
-          
+          fromTag: ${{ steps.fromref.outputs.ref }}
+          toTag: HEAD
+          configuration: ".github/release-changelog-builder-config.json"
+
+      # Prepend the new block to a single global CHANGELOG.md
+      - name: Save changelog (prepend to global file)
+        env:
+          BRANCH_NAME: ${{ github.ref_name }}
+        run: |
+          NEW_FILE=NEW_CHANGELOG.md
+          DATE_UTC=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          {
+            echo "## Update ($DATE_UTC) — branch: $BRANCH_NAME"
+            echo
+            echo "${{ steps.changelog.outputs.changelog }}"
+            echo
+          } > "$NEW_FILE"
+
+          if [ -f CHANGELOG.md ]; then
+            cat CHANGELOG.md >> "$NEW_FILE"
+          fi
+          mv "$NEW_FILE" CHANGELOG.md
 
       - name: Commit changelog
         run: |
@@ -35,5 +79,5 @@ jobs:
             echo "No changes to commit"
             exit 0
           fi
-          git commit -m "Auto-update changelog"
+          git commit -m "chore(changelog): auto-update [skip ci]"
           git push
