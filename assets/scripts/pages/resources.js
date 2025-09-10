@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   const uploadProgress = document.getElementById('uploadProgress');
   const uploadMessages = document.getElementById('uploadMessages');
-  const filesTable = document.getElementById('filesTable');
+  let filesTable = document.getElementById('filesTable');
 
   console.log('Looking for deleteConfirmModal...');
   const modalElement = document.getElementById('deleteConfirmModal');
@@ -645,12 +645,17 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   async function refreshFileList() {
+    console.log('refreshFileList called');
     try {
       const response = await fetch(window.resourcesData.listUrl);
       const result = await response.json();
+      console.log('File list response:', result);
 
       if (result.success) {
+        console.log('Files received from server:', result.files);
         updateFileTable(result.files);
+      } else {
+        console.error('Server returned error:', result);
       }
     } catch (error) {
       console.error('Error refreshing file list:', error);
@@ -658,76 +663,156 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function updateFileTable(files) {
-    const tbody = filesTable.querySelector('tbody');
+    try {
+      console.log('updateFileTable called with files:', files);
 
-    if (files.length === 0) {
-      // Show empty state
-      const card = document.querySelector('.card-body');
-      card.innerHTML = `
-                <div class="text-center py-4">
-                    <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
-                    <p class="text-muted">No files available at the moment</p>
-                </div>
-            `;
-      return;
+      // Find specifically the files table card (second card, not the upload card)
+      const allCards = document.querySelectorAll('.card');
+      const filesCard = allCards.length >= 2 ? allCards[1] : allCards[0];
+      const filesCardBody = filesCard
+        ? filesCard.querySelector('.card-body')
+        : null;
+
+      console.log('Files card found:', filesCard);
+      console.log('Files card body found:', filesCardBody);
+
+      if (files.length === 0) {
+        console.log('No files, showing empty state');
+        // Show empty state - replace only the files card body content
+        if (filesCardBody) {
+          filesCardBody.innerHTML = `
+                  <div class="text-center py-4">
+                      <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
+                      <p class="text-muted">${window.resourcesData?.translations?.noFiles || 'No files available at the moment'}</p>
+                  </div>
+              `;
+        }
+        return;
+      }
+
+      console.log('Files found, updating table');
+
+      // Check if table exists
+      let currentTable = document.getElementById('filesTable');
+      let tbody = currentTable ? currentTable.querySelector('tbody') : null;
+
+      // Rebuild table if it was replaced with empty state OR if no table exists at all
+      if (
+        !currentTable ||
+        !tbody ||
+        filesCardBody.querySelector('.text-center')
+      ) {
+        console.log(
+          'Recreating table structure - table missing or empty state detected'
+        );
+        // Recreate the table structure
+        if (filesCardBody) {
+          filesCardBody.innerHTML = `
+                  <div class="table-responsive">
+                      <table class="table table-striped" id="filesTable">
+                          <thead>
+                              <tr>
+                                  <th>${window.resourcesData?.translations?.fileName || 'File Name'}</th>
+                                  <th>${window.resourcesData?.translations?.publicUrl || 'Public URL'}</th>
+                                  <th>${window.resourcesData?.translations?.lastModified || 'Last Modified'}</th>
+                                  <th>${window.resourcesData?.translations?.fileSize || 'File Size'}</th>
+                                  <th class="text-center">${window.resourcesData?.translations?.actions || 'Actions'}</th>
+                              </tr>
+                          </thead>
+                          <tbody></tbody>
+                      </table>
+                  </div>
+              `;
+          // Update references to the new table
+          currentTable = document.getElementById('filesTable');
+          tbody = currentTable ? currentTable.querySelector('tbody') : null;
+          console.log('After recreation - currentTable:', currentTable);
+          console.log('After recreation - tbody:', tbody);
+          // Update the global filesTable variable if it exists
+          if (typeof window.filesTable !== 'undefined') {
+            window.filesTable = currentTable;
+          }
+          // Also update the local variable reference
+          if (currentTable) {
+            filesTable = currentTable;
+          }
+        }
+      }
+
+      console.log('About to check tbody validity...');
+
+      if (!tbody) {
+        console.error('Still no tbody found after recreation');
+        return;
+      }
+
+      console.log('tbody found successfully:', tbody);
+
+      // Clear existing rows
+      tbody.innerHTML = '';
+      console.log('Table cleared, adding', files.length, 'files');
+
+      console.log('Starting file loop...');
+      files.forEach((file, index) => {
+        console.log(`Processing file ${index + 1}/${files.length}:`, file.name);
+
+        const row = document.createElement('tr');
+        row.setAttribute('data-filename', file.name);
+
+        // Format date according to locale (matching the Twig template)
+        const modifiedDate = formatDateForLocale(
+          new Date(file.modified * 1000)
+        );
+        const fileSize = formatFileSize(file.size);
+        const fileIcon = getFileIcon(file.name);
+
+        row.innerHTML = `
+                  <td>
+                      <i class="fas ${fileIcon} me-2"></i>
+                      <strong>${escapeHtml(file.name)}</strong>
+                  </td>
+                  <td>
+                      <div class="input-group input-group-sm">
+                          <input type="text" class="form-control" value="${escapeHtml(file.url)}" readonly>
+                          <button class="btn btn-outline-secondary copy-url-btn" type="button" 
+                                  data-url="${escapeHtml(file.url)}" 
+                                  title="Copy URL">
+                              <i class="fas fa-copy"></i>
+                          </button>
+                          ${
+                            isImageFile(file.name)
+                              ? `
+                          <button class="btn btn-outline-primary insert-image-btn" type="button"
+                                  data-url="${escapeHtml(file.url)}" 
+                                  data-filename="${escapeHtml(file.name)}"
+                                  title="Insert in Editor">
+                              <i class="fas fa-plus"></i>
+                          </button>
+                          `
+                              : ''
+                          }
+                      </div>
+                  </td>
+                  <td>${modifiedDate}</td>
+                  <td>${fileSize}</td>
+                  <td class="text-center">
+                      <button class="btn btn-sm btn-danger delete-file-btn" 
+                              data-filename="${escapeHtml(file.name)}"
+                              title="Delete File">
+                          <i class="fas fa-trash"></i>
+                      </button>
+                  </td>
+              `;
+
+        tbody.appendChild(row);
+        console.log(`File ${file.name} added to table successfully`);
+      });
+
+      console.log('updateFileTable completed successfully!');
+    } catch (error) {
+      console.error('Error in updateFileTable:', error);
+      console.error('Error stack:', error.stack);
     }
-
-    // Rebuild table if it was replaced with empty state
-    if (!tbody) {
-      location.reload(); // Simple solution - reload the page
-      return;
-    }
-
-    tbody.innerHTML = '';
-
-    files.forEach(file => {
-      const row = document.createElement('tr');
-      row.setAttribute('data-filename', file.name);
-
-      const modifiedDate = new Date(file.modified * 1000).toLocaleString();
-      const fileSize = formatFileSize(file.size);
-      const fileIcon = getFileIcon(file.name);
-
-      row.innerHTML = `
-                <td>
-                    <i class="fas ${fileIcon} me-2"></i>
-                    <strong>${escapeHtml(file.name)}</strong>
-                </td>
-                <td>
-                    <div class="input-group input-group-sm">
-                        <input type="text" class="form-control" value="${escapeHtml(file.url)}" readonly>
-                        <button class="btn btn-outline-secondary copy-url-btn" type="button" 
-                                data-url="${escapeHtml(file.url)}" 
-                                title="Copy URL">
-                            <i class="fas fa-copy"></i>
-                        </button>
-                        ${
-                          isImageFile(file.name)
-                            ? `
-                        <button class="btn btn-outline-primary insert-image-btn" type="button"
-                                data-url="${escapeHtml(file.url)}" 
-                                data-filename="${escapeHtml(file.name)}"
-                                title="Insert in Editor">
-                            <i class="fas fa-plus"></i>
-                        </button>
-                        `
-                            : ''
-                        }
-                    </div>
-                </td>
-                <td>${modifiedDate}</td>
-                <td>${fileSize}</td>
-                <td class="text-center">
-                    <button class="btn btn-sm btn-danger delete-file-btn" 
-                            data-filename="${escapeHtml(file.name)}"
-                            title="Delete File">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </td>
-            `;
-
-      tbody.appendChild(row);
-    });
   }
 
   function formatFileSize(bytes) {
@@ -883,6 +968,51 @@ document.addEventListener('DOMContentLoaded', function () {
       imageInsertModal.show();
     } else {
       console.error('Image insert modal not initialized');
+    }
+  }
+
+  function formatDateForLocale(date) {
+    // Get the current locale from multiple sources
+    let locale = 'fr'; // default
+
+    // Try to get locale from HTML lang attribute
+    if (document.documentElement.lang) {
+      locale = document.documentElement.lang;
+    }
+    // Try to get from URL parameter
+    else if (window.location.search.includes('_locale=en')) {
+      locale = 'en';
+    }
+    // Try to get from Symfony app request locale if available
+    else if (window.resourcesData && window.resourcesData.locale) {
+      locale = window.resourcesData.locale;
+    }
+
+    console.log('Date formatting using locale:', locale);
+
+    if (locale === 'en') {
+      // English: 12-hour format with AM/PM - YYYY-MM-DD h:mm AM/PM
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+
+      let hours = date.getHours();
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+
+      hours = hours % 12;
+      hours = hours ? hours : 12; // 0 should be 12
+
+      return `${year}-${month}-${day} ${hours}:${minutes} ${ampm}`;
+    } else {
+      // French: 24-hour format - YYYY-MM-DD HH:mm
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+
+      return `${year}-${month}-${day} ${hours}:${minutes}`;
     }
   }
 
