@@ -1,7 +1,7 @@
 name: Generate Changelog
 on:
   push:
-    branches: [develop, develop_*]
+    branches: [develop]
   workflow_dispatch:
 
 jobs:
@@ -9,80 +9,31 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      pull-requests: read
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Generate changelog
         uses: mikepenz/release-changelog-builder-action@v5
         id: changelog
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          configuration: |
-            {
-              "categories": [
-                {
-                  "title": "## 🚀 Features",
-                  "labels": ["feature", "feat"]
-                },
-                {
-                  "title": "## 🐛 Fixes",
-                  "labels": ["fix", "bugfix"]
-                },
-                {
-                  "title": "## 🧪 Tests",
-                  "labels": ["test"]
-                },
-                {
-                  "title": "## 📚 Documentation",
-                  "labels": ["documentation", "docs"]
-                },
-                {
-                  "title": "## 🔧 Other",
-                  "labels": []
-                }
-              ],
-              "ignore_labels": ["ignore-for-release"],
-              "sort": "ASC",
-              "template": "#{{CHANGELOG}}",
-              "pr_template": "- #{{TITLE}} (##{{NUMBER}})",
-              "empty_template": "- No changes",
-              "label_extractor": [
-                {
-                  "pattern": "^(feat|feature):",
-                  "target": "feature"
-                },
-                {
-                  "pattern": "^fix:",
-                  "target": "fix"
-                },
-                {
-                  "pattern": "^test:",
-                  "target": "test"
-                },
-                {
-                  "pattern": "^docs?:",
-                  "target": "documentation"
-                }
-              ]
-            }
           fromTag: ""
           toTag: "HEAD"
           
       - name: Save changelog
         run: echo "${{ steps.changelog.outputs.changelog }}" > CHANGELOG.md
           
-      - name: Check for changes and commit
+
+      - name: Commit changelog
         run: |
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add CHANGELOG.md
           if git diff --staged --quiet; then
-            echo "No changes to commit - CHANGELOG.md is already up to date"
+            echo "No changes to commit"
             exit 0
           fi
-          git commit -m "docs: auto-update changelog [skip ci]"
+          git commit -m "Auto-update changelog"
           git push
