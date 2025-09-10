@@ -1,88 +1,94 @@
 name: Generate Changelog
 on:
   push:
-    branches: [develop, develop_*]
+    branches: [develop, preprod, main]
+    paths-ignore:
+      - 'CHANGELOG.md'
   workflow_dispatch:
+
+concurrency:
+  group: changelog-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   changelog:
+    # avoid infinite loops if the last commit was made by the bot
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     permissions:
       contents: write
       pull-requests: read
+
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
-      
+
+      # Find previous tag if any
+      - name: Get previous tag (if any)
+        id: prev_tag
+        run: |
+          if git describe --tags --abbrev=0 >/dev/null 2>&1; then
+            echo "tag=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
+          else
+            echo "tag=" >> $GITHUB_OUTPUT
+          fi
+
+      # Decide fromRef (last tag or first commit)
+      - name: Compute fromRef
+        id: fromref
+        run: |
+          if [ -n "${{ steps.prev_tag.outputs.tag }}" ]; then
+            echo "ref=${{ steps.prev_tag.outputs.tag }}" >> $GITHUB_OUTPUT
+          else
+            FIRST_COMMIT=$(git rev-list --max-parents=0 HEAD)
+            echo "ref=$FIRST_COMMIT" >> $GITHUB_OUTPUT
+          fi
+
+      # Build changelog (PR-based)
       - name: Generate changelog
-        uses: mikepenz/release-changelog-builder-action@v5
         id: changelog
+        uses: mikepenz/release-changelog-builder-action@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          configuration: |
-            {
-              "categories": [
-                {
-                  "title": "## 🚀 Features",
-                  "labels": ["feature", "feat"]
-                },
-                {
-                  "title": "## 🐛 Fixes",
-                  "labels": ["fix", "bugfix"]
-                },
-                {
-                  "title": "## 🧪 Tests",
-                  "labels": ["test"]
-                },
-                {
-                  "title": "## 📚 Documentation",
-                  "labels": ["documentation", "docs"]
-                },
-                {
-                  "title": "## 🔧 Other",
-                  "labels": []
-                }
-              ],
-              "ignore_labels": ["ignore-for-release"],
-              "sort": "ASC",
-              "template": "#{{CHANGELOG}}",
-              "pr_template": "- #{{TITLE}} (##{{NUMBER}})",
-              "empty_template": "- No changes",
-              "label_extractor": [
-                {
-                  "pattern": "^(feat|feature):",
-                  "target": "feature"
-                },
-                {
-                  "pattern": "^fix:",
-                  "target": "fix"
-                },
-                {
-                  "pattern": "^test:",
-                  "target": "test"
-                },
-                {
-                  "pattern": "^docs?:",
-                  "target": "documentation"
-                }
-              ]
-            }
-          fromTag: ""
-          toTag: "HEAD"
-          
-      - name: Save changelog
-        run: echo "${{ steps.changelog.outputs.changelog }}" > CHANGELOG.md
-          
-      - name: Check for changes and commit
+          fromTag: ${{ steps.fromref.outputs.ref }}
+          toTag: HEAD
+          configuration: ".github/release-changelog-builder-config.json"
+
+      # Skip if output is empty
+      - name: Skip if changelog is empty
+        run: |
+          if [ -z "${{ steps.changelog.outputs.changelog }}" ]; then
+            echo "Empty changelog; skipping."
+            exit 0
+          fi
+
+      # Prepend the new block to a single global CHANGELOG.md
+      - name: Save changelog (prepend to global file)
+        env:
+          BRANCH_NAME: ${{ github.ref_name }}
+        run: |
+          NEW_FILE=NEW_CHANGELOG.md
+          DATE_UTC=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          {
+            echo "## Update — ${DATE_UTC} (branch: ${BRANCH_NAME})"
+            echo
+            echo "${{ steps.changelog.outputs.changelog }}"
+            echo
+            echo "---"
+            echo
+          } > "$NEW_FILE"
+          [ -f CHANGELOG.md ] && cat CHANGELOG.md >> "$NEW_FILE"
+          mv "$NEW_FILE" CHANGELOG.md
+
+      - name: Commit changelog
         run: |
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add CHANGELOG.md
           if git diff --staged --quiet; then
-            echo "No changes to commit - CHANGELOG.md is already up to date"
+            echo "No changes to commit"
             exit 0
           fi
-          git commit -m "docs: auto-update changelog [skip ci]"
+          git commit -m "chore(changelog): auto-update [skip ci]"
           git push
