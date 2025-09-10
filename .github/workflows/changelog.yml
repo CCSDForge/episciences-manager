@@ -47,8 +47,8 @@ jobs:
               ],
               "ignore_labels": ["ignore-for-release"],
               "sort": "ASC",
-              "template": "${{CHANGELOG}}",
-              "pr_template": "- ${{TITLE}} (#${{NUMBER}})",
+              "template": "#{{CHANGELOG}}",
+              "pr_template": "- #{{TITLE}} (##{{NUMBER}})",
               "empty_template": "- No changes",
               "label_extractor": [
                 {
