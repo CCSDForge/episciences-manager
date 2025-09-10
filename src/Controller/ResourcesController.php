@@ -238,6 +238,37 @@ final class ResourcesController extends AbstractController
         ]);
     }
 
+    #[Route('/journal/{rvcode}/resources/check-exists', name: 'app_resources_check_exists', methods: ['POST'], requirements: ['rvcode' => '[\w\-]+'])]
+    public function checkExists(Request $request, string $rvcode, UploadDirectoryService $dirs, SluggerInterface $slugger): JsonResponse
+    {
+        $filename = $request->request->get('filename');
+        
+        if (!$filename) {
+            return new JsonResponse([
+                'success' => false,
+                'message' => 'Filename is required'
+            ], 400);
+        }
+
+        // Extract filename without extension from input
+        $filenameParts = pathinfo($filename);
+        $baseName = $filenameParts['filename'];
+        $extension = isset($filenameParts['extension']) ? $filenameParts['extension'] : '';
+        
+        // Apply the same slugging logic as in upload
+        $safeFilename = (string) $slugger->slug($baseName);
+        $finalFilename = $extension ? $safeFilename . '.' . $extension : $safeFilename;
+        
+        $uploadDirectory = $dirs->getUploadDirectory($rvcode);
+        $filePath = $uploadDirectory . '/' . $finalFilename;
+        
+        return new JsonResponse([
+            'success' => true,
+            'exists' => file_exists($filePath),
+            'filename' => $finalFilename
+        ]);
+    }
+
     #[Route('/{rvcode}/resources/{filename}', name: 'app_resources_serve', requirements: ['rvcode' => '[\w\-]+', 'filename' => '.+'])]
     public function serve(string $rvcode, string $filename, UploadDirectoryService $dirs): Response
     {

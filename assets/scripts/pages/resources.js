@@ -169,11 +169,46 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function showFileConflictModal(existingFileName, isCustomName = false) {
-    console.log('showFileConflictModal called with:', existingFileName, 'isCustomName:', isCustomName);
-    
-    const conflictFileNameElement = document.getElementById('conflictFileName');
-    if (conflictFileNameElement) {
-      conflictFileNameElement.textContent = existingFileName;
+    console.log(
+      'showFileConflictModal called with:',
+      existingFileName,
+      'isCustomName:',
+      isCustomName
+    );
+
+    // Show appropriate messages based on conflict type
+    const defaultMessage = document.getElementById('defaultConflictMessage');
+    const customMessage = document.getElementById('customConflictMessage');
+    const defaultText = document.getElementById('defaultConflictText');
+    const customText = document.getElementById('customConflictText');
+
+    if (isCustomName) {
+      // Show custom conflict messages
+      if (defaultMessage) defaultMessage.style.display = 'none';
+      if (customMessage) customMessage.style.display = 'block';
+      if (defaultText) defaultText.style.display = 'none';
+      if (customText) customText.style.display = 'block';
+
+      // Set custom filename
+      const conflictFileNameCustom = document.getElementById(
+        'conflictFileNameCustom'
+      );
+      if (conflictFileNameCustom) {
+        conflictFileNameCustom.textContent = existingFileName;
+      }
+    } else {
+      // Show default conflict messages
+      if (defaultMessage) defaultMessage.style.display = 'block';
+      if (customMessage) customMessage.style.display = 'none';
+      if (defaultText) defaultText.style.display = 'block';
+      if (customText) customText.style.display = 'none';
+
+      // Set default filename
+      const conflictFileNameElement =
+        document.getElementById('conflictFileName');
+      if (conflictFileNameElement) {
+        conflictFileNameElement.textContent = existingFileName;
+      }
     }
 
     // Extract extension and set it in the modal
@@ -190,7 +225,9 @@ document.addEventListener('DOMContentLoaded', function () {
       if (isCustomName) {
         // If it's a custom name conflict, clear the input so user can try again
         customFileNameInput.value = '';
-        customFileNameInput.placeholder = 'Veuillez choisir un autre nom';
+        customFileNameInput.placeholder =
+          window.resourcesData.translations?.chooseAnotherName ||
+          'Veuillez choisir un autre nom';
       } else {
         customFileNameInput.value = nameWithoutExt + '_copy';
         customFileNameInput.placeholder =
@@ -449,12 +486,50 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
+  async function checkFileExists(filename) {
+    try {
+      const formData = new FormData();
+      formData.append('filename', filename);
+
+      const response = await fetch(window.resourcesData.checkExistsUrl, {
+        method: 'POST',
+        body: formData,
+      });
+
+      const result = await response.json();
+      return result.success ? result.exists : false;
+    } catch (error) {
+      console.error('Error checking file existence:', error);
+      return false;
+    }
+  }
+
   async function handleUploadWithCustomName(customFileName) {
     console.log('handleUploadWithCustomName called with:', customFileName);
-    
+
     const file = fileInput.files[0];
     if (!file) {
       console.log('No file selected');
+      return;
+    }
+
+    // Check if the custom filename already exists before attempting upload
+    console.log('Checking if custom filename exists:', customFileName);
+    const fileExists = await checkFileExists(customFileName);
+    console.log('File exists check result:', fileExists);
+
+    if (fileExists) {
+      console.log('Custom filename already exists, showing conflict modal');
+      // Hide current modal first, then show new one
+      if (fileConflictModal) {
+        fileConflictModal.hide();
+        // Wait a bit for the modal to close completely before showing the new one
+        setTimeout(() => {
+          showFileConflictModal(customFileName, true);
+        }, 300);
+      } else {
+        showFileConflictModal(customFileName, true);
+      }
       return;
     }
 
@@ -466,7 +541,7 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log('Sending custom upload request:', {
       fileName: file.name,
       action: 'custom',
-      customFileName: customFileName
+      customFileName: customFileName,
     });
 
     try {

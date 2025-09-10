@@ -176,11 +176,16 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <div class="alert alert-warning">
+                <div class="alert alert-warning" id="defaultConflictMessage">
                     <i class="fas fa-info-circle me-2"></i>
                     {{ 'resources.fileExists'|trans }}
                 </div>
-                <p class="mb-4">{{ 'resources.existingFile'|trans }}: <strong id="conflictFileName"></strong></p>
+                <div class="alert alert-warning" id="customConflictMessage" style="display: none;">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    {{ 'resources.customNameExists'|trans }}
+                </div>
+                <p class="mb-4" id="defaultConflictText">{{ 'resources.existingFile'|trans }}: <strong id="conflictFileName"></strong></p>
+                <p class="mb-4" id="customConflictText" style="display: none;">{{ 'resources.customNameConflictText'|trans({'%filename%': '<strong id="conflictFileNameCustom"></strong>'}) | raw }}</p>
                 
                 <div class="row g-3">
                     <div class="col-md-6">
@@ -276,6 +281,7 @@
         uploadUrl: '{{ path('app_resources_upload', {'rvcode': journal_code}) }}',
         deleteUrl: '{{ path('app_resources_delete', {'rvcode': journal_code, 'filename': '__FILENAME__'}) }}',
         listUrl: '{{ path('app_resources_list', {'rvcode': journal_code}) }}',
+        checkExistsUrl: '{{ path('app_resources_check_exists', {'rvcode': journal_code}) }}',
         translations: {
             uploadSuccess: '{{ 'resources.uploadSuccess'|trans }}',
             uploadError: '{{ 'resources.uploadError'|trans }}',
@@ -284,7 +290,9 @@
             copySuccess: '{{ 'resources.copySuccess'|trans }}',
             copyError: '{{ 'resources.copyError'|trans }}',
             confirmRename: '{{ 'resources.confirmRename'|trans }}',
-            pleaseEnterFileName: '{{ 'resources.pleaseEnterFileName'|trans }}'
+            pleaseEnterFileName: '{{ 'resources.pleaseEnterFileName'|trans }}',
+            chooseAnotherName: '{{ 'resources.chooseAnotherName'|trans }}',
+            enterFileName: '{{ 'resources.enterFileName'|trans }}'
         }
     };
     </script>
