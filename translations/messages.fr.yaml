@@ -88,6 +88,29 @@ resources:
  deleteError: "Erreur lors de la suppression"
  copySuccess: "URL copiée dans le presse-papier"
  copyError: "Erreur lors de la copie de l'URL"
+ # Nouvelles traductions pour la gestion des conflits
+ fileConflictTitle: "Conflit de fichier"
+ fileConflictMessage: "Un fichier avec ce nom existe déjà sur le serveur."
+ existingFile: "Fichier existant"
+ chooseAction: "Veuillez choisir une action"
+ fileExists: "Le fichier existe déjà, voulez-vous le remplacer ou le renommer ?"
+ replaceFile: "Remplacer le fichier"
+ replaceFileDesc: "Supprimer l'ancien fichier et le remplacer par le nouveau"
+ renameFile: "Renommer le fichier"
+ renameFileDesc: "Donner un nouveau nom au fichier à téléverser"
+ customFileName: "Nom personnalisé"
+ newFileName: "Nouveau nom de fichier"
+ enterFileName: "Entrez le nom du fichier"
+ fileNameHint: "Seul le nom sera utilisé, l'extension sera conservée"
+ confirmRename: "Confirmer le nom"
+ pleaseEnterFileName: "Veuillez saisir un nom de fichier"
+ # Nouvelles traductions pour les messages de conflit personnalisés
+ customNameExists: "Ce nom existe déjà. Veuillez choisir un autre nom."
+ customNameConflictText: "Le nom %filename% est déjà utilisé."
+ chooseAnotherName: "Veuillez choisir un autre nom"
+ # Nouvelles traductions pour l'input file personnalisé
+ noFileSelected: "Aucun fichier sélectionné"
+ browseFiles: "Parcourir"
 
 footer:
  about_title: "À propos d'Episciences"

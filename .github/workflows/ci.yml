@@ -60,6 +60,12 @@ jobs:
           php bin/console lint:twig templates/ || echo "⚠️ Twig issues found but continuing"
           echo "✅ Twig check completed"
 
+      - name: 🐘 Lint PHP syntax
+        run: |
+          echo "🐘 Checking PHP syntax..."
+          make lint-php
+          echo "✅ PHP syntax check completed"
+
       - name: 🏗️ Build frontend assets
         run: |
           echo "🏗️ Building assets..."

@@ -8,6 +8,8 @@ document.addEventListener('DOMContentLoaded', function () {
   console.log('Upload form element:', uploadForm);
 
   const fileInput = document.getElementById('fileInput');
+  const fileInputDisplay = document.getElementById('fileInputDisplay');
+  const fileInputBtn = document.getElementById('fileInputBtn');
   console.log('File input element:', fileInput);
 
   const uploadProgress = document.getElementById('uploadProgress');
@@ -55,10 +57,38 @@ document.addEventListener('DOMContentLoaded', function () {
 
   const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
   const fileToDelete = document.getElementById('fileToDelete');
-  const replaceFileBtn = document.getElementById('replaceFileBtn');
   const renameFileBtn = document.getElementById('renameFileBtn');
 
   let fileToDeleteName = null;
+
+  // Custom file input handlers
+  if (fileInputBtn && fileInput && fileInputDisplay) {
+    // Handle click on browse button
+    fileInputBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      fileInput.click();
+    });
+
+    // Handle file selection
+    fileInput.addEventListener('change', function () {
+      const files = fileInput.files;
+      if (files.length > 0) {
+        fileInputDisplay.value = files[0].name;
+      } else {
+        fileInputDisplay.value = '';
+      }
+    });
+
+    // Reset display when form is reset
+    if (uploadForm) {
+      uploadForm.addEventListener('reset', function () {
+        setTimeout(() => {
+          fileInputDisplay.value = '';
+        }, 0);
+      });
+    }
+  }
 
   // Check window.resourcesData availability
   console.log('Checking window.resourcesData:', window.resourcesData);
@@ -92,10 +122,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const formData = new FormData();
     formData.append('file', file);
-    formData.append(
-      'overwrite',
-      document.getElementById('overwriteFile').checked
-    );
 
     // Add action parameter if specified
     if (action) {
@@ -117,11 +143,16 @@ document.addEventListener('DOMContentLoaded', function () {
       if (result.success) {
         showMessage(window.resourcesData.translations.uploadSuccess, 'success');
         fileInput.value = '';
-        document.getElementById('overwriteFile').checked = false;
+        if (fileInputDisplay) {
+          fileInputDisplay.value = '';
+        }
         await refreshFileList();
       } else if (result.conflict) {
         // File conflict detected - show modal
-        showFileConflictModal(result.existingFile);
+        showFileConflictModal(
+          result.existingFile,
+          result.isCustomName || false
+        );
       } else {
         showMessage(
           `${window.resourcesData.translations.uploadError}: ${result.message}`,
@@ -137,10 +168,47 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
-  function showFileConflictModal(existingFileName) {
-    const conflictFileNameElement = document.getElementById('conflictFileName');
-    if (conflictFileNameElement) {
-      conflictFileNameElement.textContent = existingFileName;
+  function showFileConflictModal(existingFileName, isCustomName = false) {
+    console.log(
+      'showFileConflictModal called with:',
+      existingFileName,
+      'isCustomName:',
+      isCustomName
+    );
+
+    // Show appropriate messages based on conflict type
+    const defaultMessage = document.getElementById('defaultConflictMessage');
+    const customMessage = document.getElementById('customConflictMessage');
+    const defaultText = document.getElementById('defaultConflictText');
+    const customText = document.getElementById('customConflictText');
+
+    if (isCustomName) {
+      // Show custom conflict messages
+      if (defaultMessage) defaultMessage.style.display = 'none';
+      if (customMessage) customMessage.style.display = 'block';
+      if (defaultText) defaultText.style.display = 'none';
+      if (customText) customText.style.display = 'block';
+
+      // Set custom filename
+      const conflictFileNameCustom = document.getElementById(
+        'conflictFileNameCustom'
+      );
+      if (conflictFileNameCustom) {
+        conflictFileNameCustom.textContent = existingFileName;
+      }
+    } else {
+      // Show default conflict messages
+      if (defaultMessage) defaultMessage.style.display = 'block';
+      if (customMessage) customMessage.style.display = 'none';
+      if (defaultText) defaultText.style.display = 'block';
+      if (customText) customText.style.display = 'none';
+
+      // Set default filename
+      const conflictFileNameElement =
+        document.getElementById('conflictFileName');
+      if (conflictFileNameElement) {
+        conflictFileNameElement.textContent = existingFileName;
+      }
     }
 
     // Extract extension and set it in the modal
@@ -154,13 +222,102 @@ document.addEventListener('DOMContentLoaded', function () {
     const customFileNameInput = document.getElementById('customFileName');
     if (customFileNameInput) {
       const nameWithoutExt = existingFileName.replace('.' + extension, '');
-      customFileNameInput.value = nameWithoutExt + '_copy';
+      if (isCustomName) {
+        // If it's a custom name conflict, clear the input so user can try again
+        customFileNameInput.value = '';
+        customFileNameInput.placeholder =
+          window.resourcesData.translations?.chooseAnotherName ||
+          'Veuillez choisir un autre nom';
+      } else {
+        customFileNameInput.value = nameWithoutExt + '_copy';
+        customFileNameInput.placeholder =
+          window.resourcesData.translations?.enterFileName ||
+          'Entrez le nom du fichier';
+      }
     }
 
-    // Hide custom rename section initially
+    // Reset modal state
     const customRenameSection = document.getElementById('customRenameSection');
     if (customRenameSection) {
-      customRenameSection.style.display = 'none';
+      if (isCustomName) {
+        // If it's a custom name conflict, show the rename section directly
+        customRenameSection.style.display = 'block';
+        setTimeout(() => customFileNameInput.focus(), 100);
+
+        // Add auto-generate option for custom name conflicts
+        const existingAutoBtn =
+          customRenameSection.querySelector('.auto-generate-btn');
+        if (!existingAutoBtn) {
+          const autoGenerateBtn = document.createElement('button');
+          autoGenerateBtn.className =
+            'btn btn-outline-secondary btn-sm mt-2 auto-generate-btn';
+          autoGenerateBtn.type = 'button';
+          autoGenerateBtn.innerHTML =
+            '<i class="fas fa-magic me-2"></i>Générer automatiquement';
+          autoGenerateBtn.addEventListener('click', function () {
+            if (fileConflictModal) {
+              fileConflictModal.hide();
+            }
+            handleUpload('rename'); // Use automatic rename
+          });
+          customRenameSection.appendChild(autoGenerateBtn);
+        }
+      } else {
+        customRenameSection.style.display = 'none';
+        // Remove auto-generate button if it exists
+        const existingAutoBtn =
+          customRenameSection.querySelector('.auto-generate-btn');
+        if (existingAutoBtn) {
+          existingAutoBtn.remove();
+        }
+      }
+    }
+
+    // Reset button states
+    const renameFileBtn = document.getElementById('renameFileBtn');
+    if (renameFileBtn) {
+      renameFileBtn.innerHTML =
+        '<i class="fas fa-check me-2"></i>' +
+        window.resourcesData.translations.confirmRename;
+      if (isCustomName) {
+        renameFileBtn.style.display = 'inline-block';
+      } else {
+        renameFileBtn.style.display = 'none';
+      }
+    }
+
+    // Remove selected class from all cards
+    document.querySelectorAll('.action-card').forEach(card => {
+      card.classList.remove('selected');
+    });
+
+    // If it's a custom name conflict, select the rename card and disable replace option
+    if (isCustomName) {
+      const renameCard = document.querySelector(
+        '.action-card[data-action="rename"]'
+      );
+      if (renameCard) {
+        renameCard.classList.add('selected');
+      }
+      // Disable the replace card for custom name conflicts
+      const replaceCard = document.querySelector(
+        '.action-card[data-action="replace"]'
+      );
+      if (replaceCard) {
+        replaceCard.style.opacity = '0.5';
+        replaceCard.style.pointerEvents = 'none';
+        replaceCard.style.cursor = 'not-allowed';
+      }
+    } else {
+      // For non-custom conflicts, ensure replace card is enabled
+      const replaceCard = document.querySelector(
+        '.action-card[data-action="replace"]'
+      );
+      if (replaceCard) {
+        replaceCard.style.opacity = '1';
+        replaceCard.style.pointerEvents = 'auto';
+        replaceCard.style.cursor = 'pointer';
+      }
     }
 
     if (fileConflictModal) {
@@ -258,65 +415,134 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // File conflict modal handlers
-  if (replaceFileBtn) {
-    replaceFileBtn.addEventListener('click', async function () {
-      if (fileConflictModal) {
-        fileConflictModal.hide();
-      }
-      await handleUpload('replace');
-    });
-  }
+  // Action card click handlers
+  document.addEventListener('click', function (e) {
+    const actionCard = e.target.closest('.action-card');
+    if (actionCard) {
+      const action = actionCard.getAttribute('data-action');
 
-  if (renameFileBtn) {
-    renameFileBtn.addEventListener('click', function () {
-      // Show custom rename section when user clicks rename
-      const customRenameSection = document.getElementById(
-        'customRenameSection'
-      );
-      if (customRenameSection) {
-        if (customRenameSection.style.display === 'none') {
+      // Remove selected class from all cards
+      document.querySelectorAll('.action-card').forEach(card => {
+        card.classList.remove('selected');
+      });
+
+      // Add selected class to clicked card
+      actionCard.classList.add('selected');
+
+      if (action === 'replace') {
+        // Hide modal and replace file
+        if (fileConflictModal) {
+          fileConflictModal.hide();
+        }
+        handleUpload('replace');
+      } else if (action === 'rename') {
+        // Show custom rename section
+        const customRenameSection = document.getElementById(
+          'customRenameSection'
+        );
+        if (customRenameSection) {
           customRenameSection.style.display = 'block';
           // Focus on input field
           const customFileNameInput = document.getElementById('customFileName');
           if (customFileNameInput) {
             setTimeout(() => customFileNameInput.focus(), 100);
           }
-          // Change button text to confirm
-          renameFileBtn.innerHTML =
-            '<i class="fas fa-check me-2"></i>Confirmer le nom';
-        } else {
-          // User confirmed, proceed with upload
-          const customFileName = document
-            .getElementById('customFileName')
-            .value.trim();
-          const fileExtension =
-            document.getElementById('fileExtension').textContent;
-
-          if (!customFileName) {
-            showMessage('Veuillez saisir un nom de fichier', 'danger');
-            return;
+          // Show the rename confirmation button
+          const renameFileBtn = document.getElementById('renameFileBtn');
+          if (renameFileBtn) {
+            renameFileBtn.innerHTML =
+              '<i class="fas fa-check me-2"></i>' +
+              window.resourcesData.translations.confirmRename;
+            renameFileBtn.style.display = 'inline-block';
           }
-
-          // Hide modal and upload with custom name
-          if (fileConflictModal) {
-            fileConflictModal.hide();
-          }
-
-          handleUploadWithCustomName(customFileName + fileExtension);
         }
       }
+    }
+  });
+
+  // Keep the confirm rename button handler
+  if (renameFileBtn) {
+    renameFileBtn.addEventListener('click', function () {
+      const customFileName = document
+        .getElementById('customFileName')
+        .value.trim();
+      const fileExtension =
+        document.getElementById('fileExtension').textContent;
+
+      if (!customFileName) {
+        showMessage(
+          window.resourcesData.translations.pleaseEnterFileName,
+          'danger'
+        );
+        return;
+      }
+
+      // Hide modal and upload with custom name
+      if (fileConflictModal) {
+        fileConflictModal.hide();
+      }
+
+      handleUploadWithCustomName(customFileName + fileExtension);
     });
   }
 
+  async function checkFileExists(filename) {
+    try {
+      const formData = new FormData();
+      formData.append('filename', filename);
+
+      const response = await fetch(window.resourcesData.checkExistsUrl, {
+        method: 'POST',
+        body: formData,
+      });
+
+      const result = await response.json();
+      return result.success ? result.exists : false;
+    } catch (error) {
+      console.error('Error checking file existence:', error);
+      return false;
+    }
+  }
+
   async function handleUploadWithCustomName(customFileName) {
+    console.log('handleUploadWithCustomName called with:', customFileName);
+
     const file = fileInput.files[0];
-    if (!file) return;
+    if (!file) {
+      console.log('No file selected');
+      return;
+    }
+
+    // Check if the custom filename already exists before attempting upload
+    console.log('Checking if custom filename exists:', customFileName);
+    const fileExists = await checkFileExists(customFileName);
+    console.log('File exists check result:', fileExists);
+
+    if (fileExists) {
+      console.log('Custom filename already exists, showing conflict modal');
+      // Hide current modal first, then show new one
+      if (fileConflictModal) {
+        fileConflictModal.hide();
+        // Wait a bit for the modal to close completely before showing the new one
+        setTimeout(() => {
+          showFileConflictModal(customFileName, true);
+        }, 300);
+      } else {
+        showFileConflictModal(customFileName, true);
+      }
+      return;
+    }
 
     const formData = new FormData();
     formData.append('file', file);
     formData.append('action', 'custom');
     formData.append('customFileName', customFileName);
+
+    console.log('Sending custom upload request:', {
+      fileName: file.name,
+      action: 'custom',
+      customFileName: customFileName,
+    });
 
     try {
       showProgress(true);
@@ -328,20 +554,30 @@ document.addEventListener('DOMContentLoaded', function () {
       });
 
       const result = await response.json();
+      console.log('Custom upload response:', result);
       showProgress(false);
 
       if (result.success) {
+        console.log('Upload successful');
         showMessage(window.resourcesData.translations.uploadSuccess, 'success');
         fileInput.value = '';
-        document.getElementById('overwriteFile').checked = false;
+        if (fileInputDisplay) {
+          fileInputDisplay.value = '';
+        }
         await refreshFileList();
+      } else if (result.conflict) {
+        console.log('Custom name conflict detected, showing modal again');
+        // Custom name conflict - show modal again with isCustomName flag
+        showFileConflictModal(result.existingFile, true);
       } else {
+        console.log('Upload failed:', result.message);
         showMessage(
           `${window.resourcesData.translations.uploadError}: ${result.message}`,
           'danger'
         );
       }
     } catch (error) {
+      console.error('Upload error:', error);
       showProgress(false);
       showMessage(
         `${window.resourcesData.translations.uploadError}: ${error.message}`,

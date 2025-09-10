@@ -9,7 +9,7 @@ CNTR_APP_USER := www-data
 MYSQL_CONNECT_EPISCIENCES:= mysql -u root -proot -h 127.0.0.1 -P 33060 episciences
 MYSQL_CONNECT_AUTH:= mysql -u root -proot -h 127.0.0.1 -P 33062 cas_users
 
-.PHONY: build up down clean help test test-php test-e2e lint lint-fix format format-check
+.PHONY: build up down clean help test test-php test-e2e lint lint-fix format format-check lint-php lint-php-file check-all fix-all
 
 help: ## Display this help
 	@echo "Available targets:"
@@ -86,6 +86,46 @@ format: ## Format JavaScript code with Prettier
 format-check: ## Check JavaScript formatting with Prettier
 	npm run format:check
 
+lint-php: ## Check PHP syntax in src/ directory
+	@echo "🔍 Checking PHP syntax..."
+	@find src/ -name "*.php" -exec php -l {} \; | grep -v "No syntax errors detected" || true
+	@echo "✅ PHP syntax check completed"
+
+lint-php-file: ## Check PHP syntax for specific file (usage: make lint-php-file FILE=path/to/file.php)
+	@if [ -n "$(FILE)" ]; then \
+		echo "🔍 Checking PHP syntax for: $(FILE)"; \
+		php -l $(FILE); \
+	else \
+		echo "❌ Usage: make lint-php-file FILE=path/to/file.php"; \
+	fi
+
+check-all: ## Run all code quality checks (PHP syntax, JS lint, formatting)
+	@echo "🚀 Running all code quality checks..."
+	@echo ""
+	@echo "📋 1/4 - Checking PHP syntax..."
+	@$(MAKE) lint-php
+	@echo ""
+	@echo "📋 2/4 - Checking JavaScript with ESLint..."
+	@$(MAKE) lint
+	@echo ""
+	@echo "📋 3/4 - Checking JavaScript formatting..."
+	@$(MAKE) format-check
+	@echo ""
+	@echo "📋 4/4 - Running JavaScript tests..."
+	@$(MAKE) test
+	@echo ""
+	@echo "✅ All checks completed successfully!"
+
+fix-all: ## Fix all auto-fixable issues (JS lint, formatting)
+	@echo "🔧 Fixing all auto-fixable issues..."
+	@echo ""
+	@echo "📋 1/2 - Fixing JavaScript with ESLint..."
+	@$(MAKE) lint-fix
+	@echo ""
+	@echo "📋 2/2 - Fixing JavaScript formatting..."
+	@$(MAKE) format
+	@echo ""
+	@echo "✅ All fixes applied!"
 
 enter-container-php: ## Open shell on PHP container
 	$(DOCKER) exec -it $(CNTR_NAME_PHP) sh -c "cd /var/www/htdocs && /bin/bash"

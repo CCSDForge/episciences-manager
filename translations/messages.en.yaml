@@ -89,6 +89,29 @@ resources:
   deleteError: "Error during deletion"
   copySuccess: "URL copied to clipboard"
   copyError: "Error copying URL"
+  # New translations for conflict management
+  fileConflictTitle: "File Conflict"
+  fileConflictMessage: "A file with this name already exists on the server."
+  existingFile: "Existing file"
+  chooseAction: "Please choose an action"
+  fileExists: "The file already exists, do you want to replace it or rename it?"
+  replaceFile: "Replace File"
+  replaceFileDesc: "Delete the old file and replace it with the new one"
+  renameFile: "Rename File"
+  renameFileDesc: "Give a new name to the file to upload"
+  customFileName: "Custom File Name"
+  newFileName: "New file name"
+  enterFileName: "Enter file name"
+  fileNameHint: "Only the name will be used, the extension will be preserved"
+  confirmRename: "Confirm Name"
+  pleaseEnterFileName: "Please enter a file name"
+  # New translations for custom conflict messages
+  customNameExists: "This name already exists. Please choose another name."
+  customNameConflictText: "The name %filename% is already taken."
+  chooseAnotherName: "Please choose another name"
+  # New translations for custom file input
+  noFileSelected: "No file selected"
+  browseFiles: "Browse"
 
 footer:
   about_title: "About Episciences"
