@@ -105,6 +105,10 @@ resources:
   fileNameHint: "Only the name will be used, the extension will be preserved"
   confirmRename: "Confirm Name"
   pleaseEnterFileName: "Please enter a file name"
+  # New translations for custom conflict messages
+  customNameExists: "This name already exists. Please choose another name."
+  customNameConflictText: "The name %filename% is already taken."
+  chooseAnotherName: "Please choose another name"
   # New translations for custom file input
   noFileSelected: "No file selected"
   browseFiles: "Browse"

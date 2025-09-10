@@ -104,6 +104,10 @@ resources:
  fileNameHint: "Seul le nom sera utilisé, l'extension sera conservée"
  confirmRename: "Confirmer le nom"
  pleaseEnterFileName: "Veuillez saisir un nom de fichier"
+ # Nouvelles traductions pour les messages de conflit personnalisés
+ customNameExists: "Ce nom existe déjà. Veuillez choisir un autre nom."
+ customNameConflictText: "Le nom %filename% est déjà utilisé."
+ chooseAnotherName: "Veuillez choisir un autre nom"
  # Nouvelles traductions pour l'input file personnalisé
  noFileSelected: "Aucun fichier sélectionné"
  browseFiles: "Parcourir"
