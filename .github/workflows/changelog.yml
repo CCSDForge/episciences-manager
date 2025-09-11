@@ -1,11 +1,14 @@
 name: Generate Changelog
 on:
   push:
-    branches:
-      - develop
-      - preprod
-      - main
+    branches: [develop, preprod, main]
+    paths-ignore:
+      - 'CHANGELOG.md'
   workflow_dispatch:
+
+concurrency:
+  group: changelog-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   changelog:
@@ -14,6 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pull-requests: read
 
     steps:
       - uses: actions/checkout@v4
@@ -51,6 +55,14 @@ jobs:
           toTag: HEAD
           configuration: ".github/release-changelog-builder-config.json"
 
+      # Skip if output is empty
+      - name: Skip if changelog is empty
+        run: |
+          if [ -z "${{ steps.changelog.outputs.changelog }}" ]; then
+            echo "Empty changelog; skipping."
+            exit 0
+          fi
+
       # Prepend the new block to a single global CHANGELOG.md
       - name: Save changelog (prepend to global file)
         env:
@@ -59,15 +71,14 @@ jobs:
           NEW_FILE=NEW_CHANGELOG.md
           DATE_UTC=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
           {
-            echo "## Update ($DATE_UTC) — branch: $BRANCH_NAME"
+            echo "## Update — ${DATE_UTC} (branch: ${BRANCH_NAME})"
             echo
             echo "${{ steps.changelog.outputs.changelog }}"
             echo
+            echo "---"
+            echo
           } > "$NEW_FILE"
-
-          if [ -f CHANGELOG.md ]; then
-            cat CHANGELOG.md >> "$NEW_FILE"
-          fi
+          [ -f CHANGELOG.md ] && cat CHANGELOG.md >> "$NEW_FILE"
           mv "$NEW_FILE" CHANGELOG.md
 
       - name: Commit changelog
