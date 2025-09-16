@@ -38,6 +38,9 @@ import 'ckeditor5/ckeditor5.css';
 
 let editorInstance = null;
 
+// Track processed inserts to prevent duplicates
+const processedInserts = new Set();
+
 export function initializeCKEditor(elementId, placeholder = '') {
   const element = document.getElementById(elementId);
   if (!element) {
@@ -297,20 +300,116 @@ export function insertImageIntoEditor(imageUrl, altText = '') {
   }
 }
 
-// Global function to be called from other scripts
+// Function to insert links into CKEditor
+export function insertLinkIntoEditor(linkUrl, linkText = '', insertId = null) {
+  if (!editorInstance || !linkUrl) {
+    console.warn('Cannot insert link: missing editor instance or URL');
+    return;
+  }
+
+  // Create unique insert ID if not provided
+  const uniqueInsertId =
+    insertId || `link_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+  // Check if this insert has already been processed
+  if (processedInserts.has(uniqueInsertId)) {
+    console.log('Link insert already processed, skipping:', uniqueInsertId);
+    return;
+  }
+
+  // Mark as processed
+  processedInserts.add(uniqueInsertId);
+
+  console.log(
+    'insertLinkIntoEditor called with:',
+    linkUrl,
+    linkText,
+    'insertId:',
+    uniqueInsertId
+  );
+
+  // 1) Normalize to absolute URL
+  const toAbsoluteUrl = url => {
+    try {
+      return new URL(url, window.location.href).href;
+    } catch {
+      return url;
+    }
+  };
+
+  const fullLinkUrl = toAbsoluteUrl(linkUrl);
+
+  // 2) Security check: allow only http(s) URLs
+  if (!/^https?:\/\//i.test(fullLinkUrl)) {
+    console.warn('Blocked non-http(s) URL:', fullLinkUrl);
+    return;
+  }
+
+  try {
+    // Get current selection or insert position
+    const selection = editorInstance.model.document.selection;
+    const position = selection.getFirstPosition();
+
+    // Use the link command which is more reliable
+    editorInstance.model.change(writer => {
+      // Create text element with link
+      const linkElement = writer.createText(linkText || fullLinkUrl, {
+        linkHref: fullLinkUrl,
+      });
+
+      // Insert the link at current position
+      editorInstance.model.insertContent(linkElement, position);
+    });
+
+    console.log('Link inserted successfully');
+  } catch (error) {
+    console.error('Failed to insert link:', error);
+
+    // Fallback: try using the link command
+    try {
+      // First insert the text
+      const textToInsert = linkText || fullLinkUrl;
+      editorInstance.model.change(writer => {
+        const textElement = writer.createText(textToInsert);
+        const position =
+          editorInstance.model.document.selection.getFirstPosition();
+        editorInstance.model.insertContent(textElement, position);
+
+        // Select the inserted text
+        const range = writer.createRange(
+          position,
+          position.getShiftedBy(textToInsert.length)
+        );
+        writer.setSelection(range);
+      });
+
+      // Then apply the link
+      editorInstance.execute('link', fullLinkUrl);
+      console.log('Link inserted using fallback method');
+    } catch (fallbackError) {
+      console.error('Fallback link insertion also failed:', fallbackError);
+    }
+  }
+}
+
+// Global functions to be called from other scripts
 window.insertImageIntoEditor = insertImageIntoEditor;
+window.insertLinkIntoEditor = insertLinkIntoEditor;
 
 // Listen for messages from resources page
 window.addEventListener('message', function (event) {
+  console.log('Received postMessage:', event.data);
   if (event.data && event.data.type === 'insertImage') {
     insertImageIntoEditor(event.data.url, event.data.alt);
+  } else if (event.data && event.data.type === 'insertLink') {
+    insertLinkIntoEditor(event.data.url, event.data.text, event.data.insertId);
   }
 });
 
 // Listen for localStorage changes (for cross-tab communication)
 window.addEventListener('storage', function (event) {
   if (event.key === 'pendingImageInsert' && event.newValue) {
-    console.log('Storage event received:', event.newValue);
+    console.log('Storage event received for image:', event.newValue);
     try {
       const imageData = JSON.parse(event.newValue);
       if (imageData && imageData.type === 'insertImage') {
@@ -322,24 +421,38 @@ window.addEventListener('storage', function (event) {
     } catch (error) {
       console.error('Error parsing storage event:', error);
     }
+  } else if (event.key === 'pendingLinkInsert' && event.newValue) {
+    console.log('Storage event received for link:', event.newValue);
+    try {
+      const linkData = JSON.parse(event.newValue);
+      if (linkData && linkData.type === 'insertLink') {
+        console.log('Inserting link from localStorage:', linkData);
+        insertLinkIntoEditor(linkData.url, linkData.text, linkData.insertId);
+        // Clear the localStorage item after use
+        localStorage.removeItem('pendingLinkInsert');
+      }
+    } catch (error) {
+      console.error('Error parsing link storage event:', error);
+    }
   }
 });
 
-// Also check for pending images on page load/focus
+// Also check for pending insertions on page load/focus
 document.addEventListener('DOMContentLoaded', function () {
-  checkForPendingImageInsert();
+  checkForPendingInserts();
 });
 
 window.addEventListener('focus', function () {
-  checkForPendingImageInsert();
+  checkForPendingInserts();
 });
 
-function checkForPendingImageInsert() {
-  const pendingData = localStorage.getItem('pendingImageInsert');
-  if (pendingData) {
-    console.log('Found pending image insert on focus/load:', pendingData);
+function checkForPendingInserts() {
+  // Check for pending images
+  const pendingImageData = localStorage.getItem('pendingImageInsert');
+  if (pendingImageData) {
+    console.log('Found pending image insert on focus/load:', pendingImageData);
     try {
-      const imageData = JSON.parse(pendingData);
+      const imageData = JSON.parse(pendingImageData);
       if (imageData && imageData.type === 'insertImage') {
         // Check if the data is recent (within 30 seconds)
         if (Date.now() - imageData.timestamp < 30000) {
@@ -350,6 +463,25 @@ function checkForPendingImageInsert() {
       }
     } catch (error) {
       console.error('Error parsing pending image data:', error);
+    }
+  }
+
+  // Check for pending links
+  const pendingLinkData = localStorage.getItem('pendingLinkInsert');
+  if (pendingLinkData) {
+    console.log('Found pending link insert on focus/load:', pendingLinkData);
+    try {
+      const linkData = JSON.parse(pendingLinkData);
+      if (linkData && linkData.type === 'insertLink') {
+        // Check if the data is recent (within 30 seconds)
+        if (Date.now() - linkData.timestamp < 30000) {
+          console.log('Inserting pending link:', linkData);
+          insertLinkIntoEditor(linkData.url, linkData.text, linkData.insertId);
+        }
+        localStorage.removeItem('pendingLinkInsert');
+      }
+    } catch (error) {
+      console.error('Error parsing pending link data:', error);
     }
   }
 }

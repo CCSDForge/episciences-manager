@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   let deleteConfirmModal = null;
   let imageInsertModal = null;
+  let linkInsertModal = null;
   let fileConflictModal = null;
 
   try {
@@ -42,6 +43,13 @@ document.addEventListener('DOMContentLoaded', function () {
     if (imageModalElement && Modal) {
       imageInsertModal = new Modal(imageModalElement);
       console.log('Image insert modal initialized successfully');
+    }
+
+    // Initialize link insert modal
+    const linkModalElement = document.getElementById('linkInsertModal');
+    if (linkModalElement && Modal) {
+      linkInsertModal = new Modal(linkModalElement);
+      console.log('Link insert modal initialized successfully');
     }
 
     // Initialize file conflict modal
@@ -345,6 +353,19 @@ document.addEventListener('DOMContentLoaded', function () {
       const filename = button.getAttribute('data-filename');
       console.log('Image URL:', url, 'Filename:', filename);
       insertImageInCKEditor(url, filename);
+    }
+  });
+
+  // Insert link for PDF files
+  document.addEventListener('click', function (e) {
+    console.log('Click detected on:', e.target);
+    if (e.target.closest('.insert-link-btn')) {
+      console.log('Insert link button clicked!');
+      const button = e.target.closest('.insert-link-btn');
+      const url = button.getAttribute('data-url');
+      const filename = button.getAttribute('data-filename');
+      console.log('PDF URL:', url, 'Filename:', filename);
+      insertLinkInCKEditor(url, filename);
     }
   });
 
@@ -778,13 +799,22 @@ document.addEventListener('DOMContentLoaded', function () {
                             isImageFile(file.name)
                               ? `
                           <button class="btn btn-outline-primary insert-image-btn" type="button"
-                                  data-url="${escapeHtml(file.url)}" 
+                                  data-url="${escapeHtml(file.url)}"
                                   data-filename="${escapeHtml(file.name)}"
                                   title="Insert in Editor">
                               <i class="fas fa-plus"></i>
                           </button>
                           `
-                              : ''
+                              : isPdfFile(file.name)
+                                ? `
+                          <button class="btn btn-outline-success insert-link-btn" type="button"
+                                  data-url="${escapeHtml(file.url)}"
+                                  data-filename="${escapeHtml(file.name)}"
+                                  title="${window.resourcesData?.translations?.insertLink || 'Insert Link'}">
+                              <i class="fas fa-link"></i>
+                          </button>
+                          `
+                                : ''
                           }
                       </div>
                   </td>
@@ -872,6 +902,11 @@ document.addEventListener('DOMContentLoaded', function () {
     return ['png', 'jpg', 'jpeg', 'gif', 'svg', 'webp'].includes(extension);
   }
 
+  function isPdfFile(filename) {
+    const extension = filename.split('.').pop().toLowerCase();
+    return extension === 'pdf';
+  }
+
   function insertImageInCKEditor(url, filename) {
     console.log('insertImageInCKEditor called with:', url, filename);
     console.log('window.parent !== window:', window.parent !== window);
@@ -948,6 +983,116 @@ document.addEventListener('DOMContentLoaded', function () {
           );
         }
       }
+    }
+  }
+
+  function insertLinkInCKEditor(url, filename) {
+    console.log('insertLinkInCKEditor called with:', url, filename);
+    console.log('Current window context:', {
+      hasParent: window.parent !== window,
+      hasOpener: !!window.opener,
+      openerClosed: window.opener ? window.opener.closed : 'N/A',
+      insertLinkIntoEditor: typeof window.insertLinkIntoEditor,
+      insertImageIntoEditor: typeof window.insertImageIntoEditor,
+    });
+
+    // Generate unique insert ID to prevent duplicates
+    const insertId = `link_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    console.log('Generated insert ID:', insertId);
+
+    // Create link HTML
+    const linkHtml = `<a href="${url}" target="_blank">${filename}</a>`;
+
+    // Try to communicate with CKEditor using postMessage
+    if (window.parent !== window) {
+      console.log('Sending link postMessage to parent window');
+      // We're in an iframe, send message to parent
+      window.parent.postMessage(
+        {
+          type: 'insertLink',
+          url: url,
+          text: filename,
+          html: linkHtml,
+          insertId: insertId,
+        },
+        '*'
+      );
+      showLinkInsertModal(filename);
+    } else {
+      // Try to find CKEditor instance on the current page
+      if (typeof window.insertLinkIntoEditor === 'function') {
+        console.log('Calling window.insertLinkIntoEditor');
+        window.insertLinkIntoEditor(url, filename, insertId);
+        showLinkInsertModal(filename);
+      } else if (typeof window.insertImageIntoEditor === 'function') {
+        console.log('Calling window.insertImageIntoEditor with link HTML');
+        // Fallback: try to insert as HTML using the existing function
+        window.insertImageIntoEditor(linkHtml, filename);
+        showLinkInsertModal(filename);
+      } else {
+        console.log(
+          'CKEditor not found on current page, trying to communicate with opener window'
+        );
+
+        // Try to send message to opener window (if this was opened from another page)
+        if (window.opener && !window.opener.closed) {
+          console.log('Sending link message to opener window');
+          window.opener.postMessage(
+            {
+              type: 'insertLink',
+              url: url,
+              text: filename,
+              html: linkHtml,
+              insertId: insertId,
+            },
+            '*'
+          );
+          showLinkInsertModal(filename);
+        } else {
+          console.log(
+            'No opener window available. Trying localStorage communication'
+          );
+
+          // Store the link data in localStorage for the editor to pick up
+          const linkData = {
+            type: 'insertLink',
+            url: url,
+            text: filename,
+            html: linkHtml,
+            insertId: insertId,
+            timestamp: Date.now(),
+          };
+
+          localStorage.setItem('pendingLinkInsert', JSON.stringify(linkData));
+          console.log('Link data stored in localStorage:', linkData);
+          showLinkInsertModal(filename);
+
+          // Also try to trigger a storage event
+          window.dispatchEvent(
+            new StorageEvent('storage', {
+              key: 'pendingLinkInsert',
+              newValue: JSON.stringify(linkData),
+              oldValue: null,
+              storageArea: localStorage,
+            })
+          );
+        }
+      }
+    }
+  }
+
+  function showLinkInsertModal(filename) {
+    // Update modal content with filename for the specific link modal
+    const linkNameElement = document.getElementById('insertedLinkName');
+    if (linkNameElement) {
+      linkNameElement.textContent = filename;
+    }
+
+    // Show the specific link modal
+    if (linkInsertModal) {
+      linkInsertModal.show();
+    } else {
+      console.error('Link insert modal not initialized');
     }
   }
 
