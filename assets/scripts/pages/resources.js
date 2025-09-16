@@ -14,7 +14,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
   const uploadProgress = document.getElementById('uploadProgress');
   const uploadMessages = document.getElementById('uploadMessages');
-  let filesTable = document.getElementById('filesTable');
 
   console.log('Looking for deleteConfirmModal...');
   const modalElement = document.getElementById('deleteConfirmModal');
@@ -731,10 +730,6 @@ document.addEventListener('DOMContentLoaded', function () {
           // Update the global filesTable variable if it exists
           if (typeof window.filesTable !== 'undefined') {
             window.filesTable = currentTable;
-          }
-          // Also update the local variable reference
-          if (currentTable) {
-            filesTable = currentTable;
           }
         }
       }
