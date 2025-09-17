@@ -17,27 +17,55 @@
                 </div>
 
                 <!-- Pages Navigation -->
-                {% if pages is defined and pages is not empty %}
+                {% if pages is defined and pages.main is not empty %}
                     <div class="row mt-5">
                         <div class="col-12">
                             <nav class="navbar navbar-expand-lg navbar-light bg-light rounded">
                                 <div class="container-fluid">
                                     <div class="navbar-nav d-flex flex-wrap">
-                                        <a class="nav-link me-2 mb-2" 
+                                        <a class="nav-link me-2 mb-2"
                                            href="{{ path('app_journal_detail', {'code': rvcode, '_locale': app.request.locale}) }}">
                                             {{ 'journalDetails.home' | trans }}
                                         </a>
-                                        {% for page in pages %}
-                                            <a class="nav-link page-nav-link me-2 mb-2" 
-                                               href="#"
-                                               data-page-code="{{ page.pageCode }}"
-                                               data-journal-code="{{ rvcode }}">
-                                                {{ page.title[app.request.locale] ?? page.title['en'] ?? page.pageCode }}
-                                            </a>
+
+                                        {% for page in pages.main %}
+                                            {% set hasSubPages = pages.sub[page.pageCode] is defined and pages.sub[page.pageCode] is not empty %}
+
+                                            <div class="nav-item{% if hasSubPages %} dropdown{% endif %}">
+                                                <a class="nav-link page-nav-link me-2 mb-2{% if hasSubPages %} dropdown-toggle{% endif %}"
+                                                   {% if hasSubPages %}
+                                                       href="#"
+                                                       data-bs-toggle="dropdown"
+                                                       role="button"
+                                                       aria-expanded="false"
+                                                   {% else %}
+                                                       href="#"
+                                                       data-page-code="{{ page.pageCode }}"
+                                                       data-journal-code="{{ rvcode }}"
+                                                   {% endif %}>
+                                                    {{ page.title[app.request.locale] ?? page.title['en'] ?? page.pageCode }}
+                                                </a>
+
+                                                {% if hasSubPages %}
+                                                    <ul class="dropdown-menu">
+                                                        {% for subPage in pages.sub[page.pageCode] %}
+                                                            <li>
+                                                                <a class="dropdown-item page-nav-link"
+                                                                   href="#"
+                                                                   data-page-code="{{ subPage.pageCode }}"
+                                                                   data-journal-code="{{ rvcode }}">
+                                                                    {{ subPage.title[app.request.locale] ?? subPage.title['en'] ?? subPage.pageCode }}
+                                                                </a>
+                                                            </li>
+                                                        {% endfor %}
+                                                    </ul>
+                                                {% endif %}
+                                            </div>
                                         {% endfor %}
-                                        <a class="nav-link me-2 mb-2" 
-                                           href="{{ path('app_resources_manager', {'rvcode': rvcode}) }}" 
-                                           target="_blank" 
+
+                                        <a class="nav-link me-2 mb-2"
+                                           href="{{ path('app_resources_manager', {'rvcode': rvcode}) }}"
+                                           target="_blank"
                                            rel="noopener noreferrer">
                                             <i class="fas fa-folder-open me-1"></i>
                                             {{ 'resources.title'|trans }}
