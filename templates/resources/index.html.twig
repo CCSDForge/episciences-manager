@@ -111,10 +111,17 @@
                                                     </button>
                                                     {% if file.name|split('.')|last|lower in ['png', 'jpg', 'jpeg', 'gif', 'svg', 'webp'] %}
                                                     <button class="btn btn-outline-primary insert-image-btn" type="button"
-                                                            data-url="{{ file.url }}" 
+                                                            data-url="{{ file.url }}"
                                                             data-filename="{{ file.name }}"
                                                             title="{{ 'resources.insertInEditor'|trans }}">
                                                         <i class="fas fa-plus"></i>
+                                                    </button>
+                                                    {% elseif file.name|split('.')|last|lower == 'pdf' %}
+                                                    <button class="btn btn-outline-success insert-link-btn" type="button"
+                                                            data-url="{{ file.url }}"
+                                                            data-filename="{{ file.name }}"
+                                                            title="{{ 'resources.insertLink'|trans }}">
+                                                        <i class="fas fa-link"></i>
                                                     </button>
                                                     {% endif %}
                                                 </div>
@@ -270,6 +277,34 @@
     </div>
 </div>
 
+<!-- Link Insert Success Modal -->
+<div class="modal fade" id="linkInsertModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-check-circle text-success me-2"></i>
+                    {{ 'resources.linkReadyTitle'|trans }}
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <div class="mb-3">
+                    <i class="fas fa-link fa-3x text-success mb-3"></i>
+                </div>
+                <p class="mb-2"><strong id="insertedLinkName"></strong></p>
+                <p class="text-muted">{{ 'resources.linkReadyMessage'|trans }}</p>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+                    <i class="fas fa-arrow-left me-2"></i>
+                    {{ 'resources.returnToEditor'|trans }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
 
 {% block javascripts %}
@@ -298,7 +333,8 @@
             lastModified: '{{ 'resources.lastModified'|trans }}',
             fileSize: '{{ 'resources.fileSize'|trans }}',
             actions: '{{ 'resources.actions'|trans }}',
-            noFiles: '{{ 'resources.noFiles'|trans }}'
+            noFiles: '{{ 'resources.noFiles'|trans }}',
+            insertLink: '{{ 'resources.insertLink'|trans }}'
         }
     };
     </script>
