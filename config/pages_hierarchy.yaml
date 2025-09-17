@@ -1,0 +1,35 @@
+# Generic page hierarchy configuration
+# This configuration applies to all journals by default
+page_hierarchies:
+
+  # Default configuration for all journals
+  default:
+    main_pages:
+      - code: "about"
+        order: 1
+      - code: "editorial-board"
+        order: 2
+        children:
+          - "scientific-advisory-board"
+          - "technical-board"
+          - "former-members"
+      - code: "ethical-charter"
+        order: 3
+        children:
+          - "editorial-workflow"
+          - "prepare-submission"
+      - code: "credits"
+        order: 4
+      - code: "journal-indexing"
+        order: 5
+      - code: "custom-page"
+        order: 6
+
+  # Specific configuration for a particular journal (optional)
+  # If a journal needs a different structure, add it here
+  # example_special_journal:
+  #   main_pages:
+  #     - code: "home"
+  #       order: 1
+  #     - code: "editorial"
+  #       order: 2
