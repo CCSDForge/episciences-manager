@@ -140,4 +140,18 @@ class Page
 
         return $this;
     }
+
+    // Propriété virtuelle pour stocker PARENT_PAGEID depuis la jointure
+    private ?int $parentPageId = null;
+
+    public function getParentPageId(): ?int
+    {
+        return $this->parentPageId;
+    }
+
+    public function setParentPageId(?int $parentPageId): static
+    {
+        $this->parentPageId = $parentPageId;
+        return $this;
+    }
 }

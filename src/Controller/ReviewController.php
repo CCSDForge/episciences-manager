@@ -74,10 +74,8 @@ final class ReviewController extends AbstractController
         // Check if user has permission to view this specific review
         $this->denyAccessUnlessGranted('REVIEW_VIEW', $review);
 
-        //Retrieve the journal pages
-        $pages = $pageRepository->findBy([
-            'rvcode' => $code
-        ]);
+        //Retrieve the journal pages with hierarchy
+        $pages = $pageRepository->findPagesWithHierarchy($code);
 
         return $this->render('review/journalDetails.html.twig', [
             'review' => $review,

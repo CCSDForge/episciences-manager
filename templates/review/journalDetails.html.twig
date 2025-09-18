@@ -23,21 +23,71 @@
                             <nav class="navbar navbar-expand-lg navbar-light bg-light rounded">
                                 <div class="container-fluid">
                                     <div class="navbar-nav d-flex flex-wrap">
-                                        <a class="nav-link me-2 mb-2" 
+                                        <a class="nav-link me-2 mb-2"
                                            href="{{ path('app_journal_detail', {'code': rvcode, '_locale': app.request.locale}) }}">
                                             {{ 'journalDetails.home' | trans }}
                                         </a>
+
+                                        {# Menus principaux (PARENT_PAGEID = 0) #}
                                         {% for page in pages %}
-                                            <a class="nav-link page-nav-link me-2 mb-2" 
-                                               href="#"
-                                               data-page-code="{{ page.pageCode }}"
-                                               data-journal-code="{{ rvcode }}">
-                                                {{ page.title[app.request.locale] ?? page.title['en'] ?? page.pageCode }}
-                                            </a>
+                                            {% if page.parentPageId == 0 %}
+                                                {# Vérifier s'il y a des sous-menus pour cette page #}
+                                                {% set hasSubmenus = false %}
+                                                {% for subpage in pages %}
+                                                    {% if subpage.parentPageId == page.id %}
+                                                        {% set hasSubmenus = true %}
+                                                    {% endif %}
+                                                {% endfor %}
+
+                                                {% if hasSubmenus %}
+                                                    {# Afficher comme dropdown si il y a des sous-menus #}
+                                                    <div class="dropdown me-2 mb-2">
+                                                        <a class="nav-link dropdown-toggle page-nav-link" href="#" role="button" data-bs-toggle="dropdown"
+                                                           data-page-code="{{ page.pageCode }}"
+                                                           data-journal-code="{{ rvcode }}">
+                                                            {{ page.title[app.request.locale] ?? page.title['en'] ?? page.pageCode }}
+                                                        </a>
+
+                                                        {# Sous-menus #}
+                                                        <ul class="dropdown-menu">
+                                                            {% for subpage in pages %}
+                                                                {% if subpage.parentPageId == page.id %}
+                                                                    <li><a class="dropdown-item page-nav-link" href="#"
+                                                                           data-page-code="{{ subpage.pageCode }}"
+                                                                           data-journal-code="{{ rvcode }}">
+                                                                        {{ subpage.title[app.request.locale] ?? subpage.title['en'] ?? subpage.pageCode }}
+                                                                    </a></li>
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        </ul>
+                                                    </div>
+                                                {% else %}
+                                                    {# Afficher comme lien simple si pas de sous-menus #}
+                                                    <a class="nav-link page-nav-link me-2 mb-2"
+                                                       href="#"
+                                                       data-page-code="{{ page.pageCode }}"
+                                                       data-journal-code="{{ rvcode }}">
+                                                        {{ page.title[app.request.locale] ?? page.title['en'] ?? page.pageCode }}
+                                                    </a>
+                                                {% endif %}
+                                            {% endif %}
                                         {% endfor %}
-                                        <a class="nav-link me-2 mb-2" 
-                                           href="{{ path('app_resources_manager', {'rvcode': rvcode}) }}" 
-                                           target="_blank" 
+
+                                        {# Pages orphelines (sans PARENT_PAGEID) affichées à plat #}
+                                        {% for page in pages %}
+                                            {% if page.parentPageId is null %}
+                                                <a class="nav-link page-nav-link me-2 mb-2"
+                                                   href="#"
+                                                   data-page-code="{{ page.pageCode }}"
+                                                   data-journal-code="{{ rvcode }}">
+                                                    {{ page.title[app.request.locale] ?? page.title['en'] ?? page.pageCode }}
+                                                </a>
+                                            {% endif %}
+                                        {% endfor %}
+
+                                        <a class="nav-link me-2 mb-2"
+                                           href="{{ path('app_resources_manager', {'rvcode': rvcode}) }}"
+                                           target="_blank"
                                            rel="noopener noreferrer">
                                             <i class="fas fa-folder-open me-1"></i>
                                             {{ 'resources.title'|trans }}
