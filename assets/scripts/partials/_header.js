@@ -218,6 +218,11 @@ document.addEventListener('DOMContentLoaded', function () {
         window.updateInlineEditTranslations();
       }
 
+      // Update container titles if the function exists
+      if (typeof window.updateContainerTitles === 'function') {
+        window.updateContainerTitles(newLocale);
+      }
+
       // Update header translations
       updateHeaderTranslations(translations);
     } catch (error) {

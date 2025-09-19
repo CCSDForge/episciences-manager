@@ -11,8 +11,7 @@ page_hierarchies:
         type: "container"
         order: 1
         children:
-          - "the-journal"
-          - "news"
+          - "about"
       - title:
           en: "Home Page"
           fr: "Répertoire"
@@ -43,6 +42,8 @@ page_hierarchies:
         order: 5
       - code: "custom-page"
         order: 6
+      - code: "News"
+        order: 7
 
 
   # Specific configuration for a particular journal (optional)
