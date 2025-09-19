@@ -114,6 +114,14 @@ resources:
  # Nouvelles traductions pour l'input file personnalisé
  noFileSelected: "Aucun fichier sélectionné"
  browseFiles: "Parcourir"
+ # Nouvelles traductions pour la vérification d'usage des ressources
+ fileInUseWarning: "Fichier en cours d'utilisation"
+ fileInUseMessage: "Ce fichier est actuellement utilisé dans les pages suivantes. Le supprimer pourrait casser l'affichage de ces pages."
+ checkingUsage: "Vérification de l'usage en cours..."
+ pagesUsingFile: "Pages utilisant ce fichier :"
+ deleteAnyway: "Supprimer quand même"
+ fileNotInUse: "Ce fichier n'est utilisé dans aucune page"
+ safeToDelete: "Il peut être supprimé en toute sécurité"
 
 footer:
  about_title: "À propos d'Episciences"

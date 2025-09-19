@@ -1,0 +1,162 @@
+<?php
+
+namespace App\Service;
+
+use App\Repository\PageRepository;
+use Doctrine\ORM\EntityManagerInterface;
+
+class ResourceUsageService
+{
+    public function __construct(
+        private readonly EntityManagerInterface $entityManager,
+        private readonly PageRepository $pageRepository
+    ) {
+    }
+
+    /**
+     * Find pages that use a specific resource file
+     *
+     * @param string $filename The resource filename to search for
+     * @param string $rvcode The journal code
+     * @return array Array of pages using the resource with their details
+     */
+    public function findResourceUsage(string $filename, string $rvcode): array
+    {
+        $usage = [];
+
+        // Search in page content for references to the resource
+        $pages = $this->pageRepository->findBy(['rvcode' => $rvcode]);
+
+        foreach ($pages as $page) {
+            $foundInContent = $this->searchInPageContent($page, $filename, $rvcode);
+
+            if (!empty($foundInContent)) {
+                $usage[] = [
+                    'page_code' => $page->getPageCode(),
+                    'title' => $page->getTitle(),
+                    'locations' => $foundInContent
+                ];
+            }
+        }
+
+        return $usage;
+    }
+
+    /**
+     * Search for resource references in page content
+     *
+     * @param \App\Entity\Page $page
+     * @param string $filename
+     * @param string $rvcode
+     * @return array
+     */
+    private function searchInPageContent($page, string $filename, string $rvcode): array
+    {
+        $locations = [];
+        $content = $page->getContent();
+
+        // Search patterns for different ways resources can be referenced
+        $patterns = [
+            // Direct resource URLs: /journal_code/resources/filename
+            "/{$rvcode}\/resources\/{$filename}/i",
+            // Relative resource URLs: resources/filename
+            "/resources\/{$filename}/i",
+            // HTML img src attributes
+            "/src=[\"']{$rvcode}\/resources\/{$filename}[\"']/i",
+            "/src=[\"']resources\/{$filename}[\"']/i",
+            // HTML href attributes for links
+            "/href=[\"']{$rvcode}\/resources\/{$filename}[\"']/i",
+            "/href=[\"']resources\/{$filename}[\"']/i",
+            // Markdown image syntax
+            "/!\[.*?\]\([^)]*{$filename}[^)]*\)/i",
+            // Markdown link syntax
+            "/\[.*?\]\([^)]*{$filename}[^)]*\)/i",
+            // Just the filename itself (loose match)
+            "/{$filename}/i"
+        ];
+
+        foreach ($content as $locale => $contentData) {
+            if (is_string($contentData)) {
+                $htmlContent = $contentData;
+            } elseif (is_array($contentData) && isset($contentData['html'])) {
+                $htmlContent = $contentData['html'];
+            } else {
+                continue;
+            }
+
+            foreach ($patterns as $index => $pattern) {
+                if (preg_match($pattern, $htmlContent, $matches)) {
+                    $patternType = $this->getPatternDescription($index);
+                    $locations[] = [
+                        'locale' => $locale,
+                        'type' => $patternType,
+                        'match' => $matches[0] ?? $filename
+                    ];
+                    break; // Only count one match per locale to avoid duplicates
+                }
+            }
+        }
+
+        return $locations;
+    }
+
+    /**
+     * Get a human-readable description of the pattern type
+     *
+     * @param int $patternIndex
+     * @return string
+     */
+    private function getPatternDescription(int $patternIndex): string
+    {
+        $descriptions = [
+            0 => 'Direct URL reference',
+            1 => 'Relative URL reference',
+            2 => 'HTML image src (absolute)',
+            3 => 'HTML image src (relative)',
+            4 => 'HTML link href (absolute)',
+            5 => 'HTML link href (relative)',
+            6 => 'Markdown image',
+            7 => 'Markdown link',
+            8 => 'Filename reference'
+        ];
+
+        return $descriptions[$patternIndex] ?? 'Unknown reference';
+    }
+
+    /**
+     * Check if a resource is in use (simple boolean check)
+     *
+     * @param string $filename
+     * @param string $rvcode
+     * @return bool
+     */
+    public function isResourceInUse(string $filename, string $rvcode): bool
+    {
+        $usage = $this->findResourceUsage($filename, $rvcode);
+        return !empty($usage);
+    }
+
+    /**
+     * Get a summary of resource usage
+     *
+     * @param string $filename
+     * @param string $rvcode
+     * @return array
+     */
+    public function getResourceUsageSummary(string $filename, string $rvcode): array
+    {
+        $usage = $this->findResourceUsage($filename, $rvcode);
+
+        return [
+            'inUse' => !empty($usage),
+            'pageCount' => count($usage),
+            'pages' => array_map(function($page) {
+                return [
+                    'page_code' => $page['page_code'],
+                    'title' => $page['title'],
+                    'locationCount' => count($page['locations'])
+                ];
+            }, $usage)
+        ];
+    }
+}

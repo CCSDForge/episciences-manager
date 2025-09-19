@@ -370,7 +370,7 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   // Delete file buttons
-  document.addEventListener('click', function (e) {
+  document.addEventListener('click', async function (e) {
     console.log('Click detected on delete area:', e.target);
     const deleteBtn = e.target.closest('.delete-file-btn');
     console.log('Delete button found:', deleteBtn);
@@ -383,9 +383,14 @@ document.addEventListener('DOMContentLoaded', function () {
       if (fileToDelete) {
         fileToDelete.textContent = filename;
       }
+
+      // Show modal immediately but start checking usage
       if (deleteConfirmModal) {
         console.log('Showing modal for file:', filename);
         deleteConfirmModal.show();
+
+        // Check resource usage
+        await checkResourceUsageAndUpdateModal(filename);
       } else {
         console.error('Modal not initialized');
       }
@@ -1168,5 +1173,143 @@ document.addEventListener('DOMContentLoaded', function () {
     return text.replace(/[&<>"']/g, function (m) {
       return map[m];
     });
+  }
+
+  // Check resource usage and update modal
+  async function checkResourceUsageAndUpdateModal(filename) {
+    console.log('Checking resource usage for:', filename);
+
+    // Show loading indicator
+    const loadingElement = document.getElementById('usageCheckLoading');
+    const warningSection = document.getElementById('usageWarningSection');
+    const safeToDeleteSection = document.getElementById('safeToDeleteSection');
+    const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+
+    if (loadingElement) {
+      loadingElement.style.display = 'block';
+    }
+    if (warningSection) {
+      warningSection.style.display = 'none';
+    }
+    if (safeToDeleteSection) {
+      safeToDeleteSection.style.display = 'none';
+    }
+
+    try {
+      const checkUrl = window.resourcesData.checkUsageUrl.replace(
+        '__FILENAME__',
+        encodeURIComponent(filename)
+      );
+
+      const response = await fetch(checkUrl, {
+        method: 'GET',
+      });
+
+      const result = await response.json();
+      console.log('Usage check result:', result);
+
+      // Hide loading
+      if (loadingElement) {
+        loadingElement.style.display = 'none';
+      }
+
+      if (result.success && result.inUse) {
+        // File is in use - show warning
+        showResourceUsageWarning(result.pages);
+
+        // Change button text to indicate warning
+        if (confirmDeleteBtn) {
+          const deleteAnywayText =
+            window.resourcesData?.translations?.deleteAnyway || 'Delete anyway';
+          confirmDeleteBtn.innerHTML = `<i class="fas fa-exclamation-triangle me-2"></i>${deleteAnywayText}`;
+          confirmDeleteBtn.className = 'btn btn-warning';
+        }
+      } else {
+        // File is not in use - show safe to delete message
+        console.log('File is not in use, safe to delete');
+
+        // Show safe to delete message
+        if (safeToDeleteSection) {
+          safeToDeleteSection.style.display = 'block';
+        }
+
+        // Ensure button is normal
+        if (confirmDeleteBtn) {
+          const deleteText =
+            window.resourcesData?.translations?.delete || 'Delete';
+          confirmDeleteBtn.innerHTML = `<i class="fas fa-trash me-2"></i>${deleteText}`;
+          confirmDeleteBtn.className = 'btn btn-danger';
+        }
+      }
+    } catch (error) {
+      console.error('Error checking resource usage:', error);
+
+      // Hide loading and proceed normally on error
+      if (loadingElement) {
+        loadingElement.style.display = 'none';
+      }
+
+      // Keep button normal on error
+      if (confirmDeleteBtn) {
+        const deleteText =
+          window.resourcesData?.translations?.delete || 'Delete';
+        confirmDeleteBtn.innerHTML = `<i class="fas fa-trash me-2"></i>${deleteText}`;
+        confirmDeleteBtn.className = 'btn btn-danger';
+      }
+    }
+  }
+
+  // Show resource usage warning in modal
+  function showResourceUsageWarning(pages) {
+    console.log('Showing usage warning for pages:', pages);
+
+    const warningSection = document.getElementById('usageWarningSection');
+    const usageDetailsList = document.getElementById('usageDetailsList');
+
+    if (!warningSection || !usageDetailsList) {
+      console.error('Warning elements not found');
+      return;
+    }
+
+    // Build the list of pages
+    const pagesUsingFileText =
+      window.resourcesData?.translations?.pagesUsingFile ||
+      'Pages using this file:';
+    let pagesHtml = `<div class="mt-3"><strong>${pagesUsingFileText}</strong><ul class="mt-2">`;
+
+    pages.forEach(page => {
+      // Get page title for current locale or fallback
+      let pageTitle = page.page_code;
+      if (page.title) {
+        const currentLocale = getCurrentLocale();
+        pageTitle =
+          page.title[currentLocale] ||
+          page.title.en ||
+          page.title.fr ||
+          page.page_code;
+      }
+
+      pagesHtml += `<li><strong>${escapeHtml(pageTitle)}</strong> (${escapeHtml(page.page_code)})`;
+      if (page.locationCount > 1) {
+        pagesHtml += ` - ${page.locationCount} references`;
+      }
+      pagesHtml += '</li>';
+    });
+
+    pagesHtml += '</ul></div>';
+
+    usageDetailsList.innerHTML = pagesHtml;
+    warningSection.style.display = 'block';
+  }
+
+  // Get current locale (copied from other part of the code)
+  function getCurrentLocale() {
+    const locale =
+      document.documentElement.lang ||
+      window.location.pathname.split('/')[1] ||
+      'en';
+
+    // Validate the locale (only EN and FR are supported)
+    return ['en', 'fr'].includes(locale) ? locale : 'en';
   }
 });
