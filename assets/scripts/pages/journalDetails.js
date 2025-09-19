@@ -347,9 +347,10 @@ async function loadTranslations(locale) {
 
 // Helper function to get current locale consistently
 function getCurrentLocale() {
-  const locale = document.documentElement.lang ||
-                 window.location.pathname.split('/')[1] ||
-                 'en';
+  const locale =
+    document.documentElement.lang ||
+    window.location.pathname.split('/')[1] ||
+    'en';
 
   // Validate the locale (only EN and FR are supported)
   return ['en', 'fr'].includes(locale) ? locale : 'en';
@@ -819,15 +820,9 @@ document.addEventListener('DOMContentLoaded', function () {
               const currentLocale = getCurrentLocale();
 
               if (currentLocale === 'fr') {
-                activeLink.setAttribute(
-                  'data-current-title-fr',
-                  updatedTitle
-                );
+                activeLink.setAttribute('data-current-title-fr', updatedTitle);
               } else {
-                activeLink.setAttribute(
-                  'data-current-title-en',
-                  updatedTitle
-                );
+                activeLink.setAttribute('data-current-title-en', updatedTitle);
               }
 
               // Update breadcrumb immediately if it's visible
