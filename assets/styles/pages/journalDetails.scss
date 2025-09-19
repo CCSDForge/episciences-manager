@@ -237,6 +237,52 @@
   }
 }
 
+// Breadcrumb styles
+.breadcrumb-container {
+  background-color: #f8f9fa;
+  border-radius: 0.375rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid #dee2e6;
+
+  .breadcrumb {
+    background: none;
+    padding: 0;
+    margin: 0;
+
+    .breadcrumb-item {
+      font-size: 0.9rem;
+
+      &.active {
+        color: $primary-color;
+        font-weight: 600;
+      }
+
+      a {
+        color: #6c757d;
+        text-decoration: none;
+        transition: color 0.2s ease;
+
+        &:hover {
+          color: $primary-color;
+          text-decoration: underline;
+        }
+      }
+
+      + .breadcrumb-item::before {
+        content: '>';
+        color: #6c757d;
+        font-weight: bold;
+        padding: 0 0.5rem;
+      }
+
+      .fas {
+        margin-right: 0.25rem;
+        font-size: 0.8rem;
+      }
+    }
+  }
+}
+
 // Responsive
 @media (max-width: 768px) {
   .ck.ck-editor .ck-editor__editable {

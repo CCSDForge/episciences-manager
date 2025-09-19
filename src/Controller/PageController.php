@@ -5,6 +5,8 @@ namespace App\Controller;
 
 use App\Repository\PageRepository;
 use App\Service\MarkdownService;
+use App\Service\ReviewManager;
+use App\Service\PageHierarchyService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -16,7 +18,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 final class PageController extends AbstractController
 {
     #[Route('/journal/{code}/page/{pageTitle}', name: 'app_page_show', methods: ['GET'])]
-    public function showPage(string $code, string $pageTitle, PageRepository $pageRepository, MarkdownService $markdownService, Request $request): Response
+    public function showPage(string $code, string $pageTitle, PageRepository $pageRepository, MarkdownService $markdownService, ReviewManager $reviewManager, PageHierarchyService $hierarchyService, Request $request): Response
     {
         // Find the page directly - no more container redirection needed
         $page = $pageRepository->findOneBy([
@@ -40,10 +42,26 @@ final class PageController extends AbstractController
             ]);
         }
 
-        // For direct access, redirect to the main journal page
-        return $this->redirectToRoute('app_journal_detail', [
-            'code' => $code
-        ], 301);
+        // For direct access, render the journal page with the current page preselected
+        // Get review and organize pages like in ReviewController
+        $review = $reviewManager->getReviewByCode($code);
+        if (!$review) {
+            throw $this->createNotFoundException('Review not found');
+        }
+
+        // Check permissions
+        $this->denyAccessUnlessGranted('REVIEW_VIEW', $review);
+
+        // Get all pages for the journal
+        $allPages = $pageRepository->findBy(['rvcode' => $code]);
+        $organizedPages = $hierarchyService->organizePages($allPages, $code);
+
+        return $this->render('review/journalDetails.html.twig', [
+            'review' => $review,
+            'rvcode' => $code,
+            'pages' => $organizedPages,
+            'currentPageCode' => $pageTitle, // Pass the current page code to the template
+        ]);
     }
 
     #[Route('/journal/{code}/page/{pageTitle}/edit', name: 'app_page_edit', methods: ['POST'])]
