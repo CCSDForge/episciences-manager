@@ -18,6 +18,7 @@ final class PageController extends AbstractController
     #[Route('/journal/{code}/page/{pageTitle}', name: 'app_page_show', methods: ['GET'])]
     public function showPage(string $code, string $pageTitle, PageRepository $pageRepository, MarkdownService $markdownService, Request $request): Response
     {
+        // Find the page directly - no more container redirection needed
         $page = $pageRepository->findOneBy([
             'rvcode' => $code,
             'page_code' => $pageTitle
@@ -146,4 +147,5 @@ final class PageController extends AbstractController
 
         return new JsonResponse($translations);
     }
+
 }

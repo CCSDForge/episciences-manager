@@ -29,7 +29,9 @@
                                         </a>
 
                                         {% for page in pages.main %}
-                                            {% set hasSubPages = pages.sub[page.pageCode] is defined and pages.sub[page.pageCode] is not empty %}
+                                            {% set isContainer = page.type is defined and page.type == 'container' %}
+                                            {% set pageKey = isContainer ? (page.title.en ?? page.title) : page.pageCode %}
+                                            {% set hasSubPages = pages.sub[pageKey] is defined and pages.sub[pageKey] is not empty %}
 
                                             <div class="nav-item{% if hasSubPages %} dropdown{% endif %}">
                                                 <a class="nav-link page-nav-link me-2 mb-2{% if hasSubPages %} dropdown-toggle{% endif %}"
@@ -38,17 +40,23 @@
                                                        data-bs-toggle="dropdown"
                                                        role="button"
                                                        aria-expanded="false"
-                                                   {% else %}
+                                                   {% elseif not isContainer %}
                                                        href="#"
                                                        data-page-code="{{ page.pageCode }}"
                                                        data-journal-code="{{ rvcode }}"
+                                                   {% else %}
+                                                       href="#"
                                                    {% endif %}>
-                                                    {{ page.title[app.request.locale] ?? page.title['en'] ?? page.pageCode }}
+                                                    {% if isContainer %}
+                                                        {{ page.title[app.request.locale] ?? page.title['en'] ?? page.title }}
+                                                    {% else %}
+                                                        {{ page.title[app.request.locale] ?? page.title['en'] ?? page.pageCode }}
+                                                    {% endif %}
                                                 </a>
 
                                                 {% if hasSubPages %}
                                                     <ul class="dropdown-menu">
-                                                        {% for subPage in pages.sub[page.pageCode] %}
+                                                        {% for subPage in pages.sub[pageKey] %}
                                                             <li>
                                                                 <a class="dropdown-item page-nav-link"
                                                                    href="#"
