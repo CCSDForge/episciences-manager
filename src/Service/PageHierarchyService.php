@@ -6,11 +6,12 @@ use Symfony\Component\Yaml\Yaml;
 
 class PageHierarchyService
 {
-    private array $config;
+    private readonly array $config;
 
-    public function __construct(string $projectDir)
-    {
-        $configFile = $projectDir . '/config/pages_hierarchy.yaml';
+    public function __construct(
+        private readonly string $projectDir
+    ) {
+        $configFile = $this->projectDir . '/config/pages_hierarchy.yaml';
         $this->config = Yaml::parseFile($configFile)['page_hierarchies'] ?? [];
     }
 
@@ -34,17 +35,49 @@ class PageHierarchyService
 
         // Process according to configuration
         foreach ($journalConfig as $pageConfig) {
-            $pageCode = $pageConfig['code'];
-
-            // If page exists in database
-            if (isset($pagesByCode[$pageCode])) {
-                $organized['main'][] = $pagesByCode[$pageCode];
-
-                // Process children if any
+            // Handle container pages (without code)
+            if (isset($pageConfig['type']) && $pageConfig['type'] === 'container') {
+                // First, collect existing children
+                $existingChildren = [];
                 if (isset($pageConfig['children'])) {
                     foreach ($pageConfig['children'] as $childCode) {
                         if (isset($pagesByCode[$childCode])) {
-                            $organized['sub'][$pageCode][] = $pagesByCode[$childCode];
+                            $existingChildren[] = $pagesByCode[$childCode];
+                        }
+                    }
+                }
+
+                // Only create container if it has at least one existing child
+                if (!empty($existingChildren)) {
+                    // Create a virtual page object for the container
+                    $containerPage = new \stdClass();
+                    $containerPage->title = $pageConfig['title'] ?? 'Container';
+                    $containerPage->type = 'container';
+                    // No more default_child needed!
+
+                    $organized['main'][] = $containerPage;
+
+                    // Add existing children to sub-pages
+                    $containerKey = is_array($pageConfig['title']) ?
+                        ($pageConfig['title']['en'] ?? 'container') :
+                        ($pageConfig['title'] ?? 'container');
+                    $organized['sub'][$containerKey] = $existingChildren;
+                }
+                // If no existing children, container is not displayed at all
+            } else {
+                // Handle normal pages with code
+                $pageCode = $pageConfig['code'];
+
+                // If page exists in database
+                if (isset($pagesByCode[$pageCode])) {
+                    $organized['main'][] = $pagesByCode[$pageCode];
+
+                    // Process children if any
+                    if (isset($pageConfig['children'])) {
+                        foreach ($pageConfig['children'] as $childCode) {
+                            if (isset($pagesByCode[$childCode])) {
+                                $organized['sub'][$pageCode][] = $pagesByCode[$childCode];
+                            }
                         }
                     }
                 }
@@ -62,16 +95,21 @@ class PageHierarchyService
         return $organized;
     }
 
+
     private function getAllConfiguredCodes(array $config): array
     {
         $codes = [];
         foreach ($config as $pageConfig) {
-            $codes[] = $pageConfig['code'];
+            // Only add code if it's not a container
+            if (!isset($pageConfig['type']) || $pageConfig['type'] !== 'container') {
+                $codes[] = $pageConfig['code'];
+            }
             if (isset($pageConfig['children'])) {
                 $codes = array_merge($codes, $pageConfig['children']);
             }
         }
         return $codes;
     }
+
 
 }
