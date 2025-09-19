@@ -41,3 +41,8 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    # Configuration of the Page Hierarchy Service
+    App\Service\PageHierarchyService:
+        arguments:
+            $projectDir: '%kernel.project_dir%'

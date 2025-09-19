@@ -115,8 +115,173 @@ function updateInlineEditTranslations() {
   console.log('=== updateInlineEditTranslations completed ===');
 }
 
+// Function to update container titles when language changes
+function updateContainerTitles(locale) {
+  console.log('=== updateContainerTitles called ===', 'locale:', locale);
+
+  // Update all container navigation links
+  const containerLinks = document.querySelectorAll(
+    '.page-nav-link[data-is-container="true"]'
+  );
+  console.log('Found container links:', containerLinks.length);
+
+  containerLinks.forEach(link => {
+    const titleEn = link.getAttribute('data-title-en');
+    const titleFr = link.getAttribute('data-title-fr');
+
+    if (titleEn && titleFr) {
+      const newTitle = locale === 'fr' ? titleFr : titleEn;
+      console.log(
+        'Updating container title from:',
+        link.textContent.trim(),
+        'to:',
+        newTitle
+      );
+      link.textContent = newTitle;
+    }
+  });
+
+  // Update all sub-page navigation links
+  updateSubPageLinks(locale);
+
+  // Update Home links in navigation and breadcrumb
+  updateHomeLinks(locale);
+
+  // Update breadcrumb if it's currently visible
+  updateBreadcrumbLanguage(locale);
+}
+
+// Function to update sub-page links
+function updateSubPageLinks(locale) {
+  console.log('=== updateSubPageLinks called ===', 'locale:', locale);
+
+  // Find all sub-page links (those with data-current-title-en but not data-is-container)
+  const subPageLinks = document.querySelectorAll(
+    '.page-nav-link[data-current-title-en]:not([data-is-container])'
+  );
+  console.log('Found sub-page links:', subPageLinks.length);
+
+  subPageLinks.forEach(link => {
+    const currentTitleEn = link.getAttribute('data-current-title-en');
+    const currentTitleFr = link.getAttribute('data-current-title-fr');
+
+    if (currentTitleEn && currentTitleFr) {
+      const newTitle = locale === 'fr' ? currentTitleFr : currentTitleEn;
+      console.log(
+        'Updating sub-page title from:',
+        link.textContent.trim(),
+        'to:',
+        newTitle
+      );
+      link.textContent = newTitle;
+    }
+  });
+}
+
+// Function to update Home links
+function updateHomeLinks(locale) {
+  console.log('=== updateHomeLinks called ===', 'locale:', locale);
+
+  // Update home navigation link
+  const homeNavLink = document.querySelector('.home-nav-link');
+  if (homeNavLink) {
+    const homeTextEn = homeNavLink.getAttribute('data-home-text-en');
+    const homeTextFr = homeNavLink.getAttribute('data-home-text-fr');
+
+    if (homeTextEn && homeTextFr) {
+      const newHomeText = locale === 'fr' ? homeTextFr : homeTextEn;
+      console.log(
+        'Updating home nav link from:',
+        homeNavLink.textContent.trim(),
+        'to:',
+        newHomeText
+      );
+      homeNavLink.textContent = newHomeText;
+    }
+  }
+
+  // Update breadcrumb home link
+  const breadcrumbHome = document.querySelector('.breadcrumb-home');
+  if (breadcrumbHome) {
+    const homeTextEn = breadcrumbHome.getAttribute('data-home-text-en');
+    const homeTextFr = breadcrumbHome.getAttribute('data-home-text-fr');
+
+    if (homeTextEn && homeTextFr) {
+      const newHomeText = locale === 'fr' ? homeTextFr : homeTextEn;
+      const icon = breadcrumbHome.querySelector('i.fas.fa-home');
+      console.log(
+        'Updating breadcrumb home link from:',
+        breadcrumbHome.textContent.trim(),
+        'to:',
+        newHomeText
+      );
+
+      if (icon) {
+        breadcrumbHome.innerHTML = icon.outerHTML + ' ' + newHomeText;
+      } else {
+        breadcrumbHome.innerHTML =
+          '<i class="fas fa-home me-1"></i> ' + newHomeText;
+      }
+    }
+  }
+}
+
+// Function to update breadcrumb language
+function updateBreadcrumbLanguage(locale) {
+  console.log('=== updateBreadcrumbLanguage called ===', 'locale:', locale);
+
+  const breadcrumbNav = document.getElementById('breadcrumb-nav');
+  if (!breadcrumbNav || breadcrumbNav.style.display === 'none') {
+    console.log('Breadcrumb not visible, skipping update');
+    return;
+  }
+
+  // Get the currently active page link to extract language data
+  const activeLink = document.querySelector('.page-nav-link.active');
+  if (!activeLink) {
+    console.log('No active link found, skipping breadcrumb update');
+    return;
+  }
+
+  const parentText = document.querySelector('.breadcrumb-parent-text');
+  const currentText = document.querySelector('.breadcrumb-current-text');
+
+  // Update parent title if it exists
+  const parentTitleEn = activeLink.getAttribute('data-parent-title-en');
+  const parentTitleFr = activeLink.getAttribute('data-parent-title-fr');
+
+  if (parentText && parentTitleEn) {
+    const newParentTitle =
+      locale === 'fr' && parentTitleFr ? parentTitleFr : parentTitleEn;
+    console.log(
+      'Updating breadcrumb parent from:',
+      parentText.textContent,
+      'to:',
+      newParentTitle
+    );
+    parentText.textContent = newParentTitle;
+  }
+
+  // Update current title
+  const currentTitleEn = activeLink.getAttribute('data-current-title-en');
+  const currentTitleFr = activeLink.getAttribute('data-current-title-fr');
+
+  if (currentText && currentTitleEn) {
+    const newCurrentTitle =
+      locale === 'fr' && currentTitleFr ? currentTitleFr : currentTitleEn;
+    console.log(
+      'Updating breadcrumb current from:',
+      currentText.textContent,
+      'to:',
+      newCurrentTitle
+    );
+    currentText.textContent = newCurrentTitle;
+  }
+}
+
 // Make functions globally available for the header script
 window.updateInlineEditTranslations = updateInlineEditTranslations;
+window.updateContainerTitles = updateContainerTitles;
 window.loadTranslations = loadTranslations;
 
 // Translation cache and management
@@ -153,20 +318,6 @@ function getFallbackTranslations(locale) {
       saveSuccess: 'Saved successfully',
       saveError: 'Save error: ',
     },
-    es: {
-      edit: 'Editar',
-      editPageContent: 'Editar contenido de la página',
-      pageTitle: 'Título de la página',
-      content: 'Contenido',
-      enterContent: 'Ingrese el contenido aquí...',
-      cancel: 'Cancelar',
-      save: 'Guardar',
-      selectPageFirst: 'Por favor seleccione una página primero',
-      welcomeBackoffice: 'Bienvenido al backoffice de gestión de la revista',
-      missingPageInfo: 'Información de página faltante',
-      saveSuccess: 'Guardado exitosamente',
-      saveError: 'Error al guardar: ',
-    },
   };
 
   return translations[locale] || translations.en;
@@ -194,12 +345,20 @@ async function loadTranslations(locale) {
   }
 }
 
-// Initialize with current page locale (no API call yet)
-function initializeTranslations() {
-  const currentLocale =
+// Helper function to get current locale consistently
+function getCurrentLocale() {
+  const locale =
     document.documentElement.lang ||
     window.location.pathname.split('/')[1] ||
     'en';
+
+  // Validate the locale (only EN and FR are supported)
+  return ['en', 'fr'].includes(locale) ? locale : 'en';
+}
+
+// Initialize with current page locale (no API call yet)
+function initializeTranslations() {
+  const currentLocale = getCurrentLocale();
 
   // Start with fallback translations based on current locale
   window.translations = getFallbackTranslations(currentLocale);
@@ -231,6 +390,110 @@ document.addEventListener('DOMContentLoaded', function () {
   console.log('Found links:', pageLinks.length);
   console.log('Page content element:', pageContent);
 
+  // Check if we're on a specific page route on page load
+  function initializeCurrentPage() {
+    const currentPath = window.location.pathname;
+    const pathSegments = currentPath
+      .split('/')
+      .filter(segment => segment !== '');
+
+    // Check if we're on a page route: /locale/journal/journalCode/page/pageCode
+    if (
+      pathSegments.length >= 5 &&
+      pathSegments[1] === 'journal' &&
+      pathSegments[3] === 'page'
+    ) {
+      const locale = pathSegments[0];
+      const journalCode = pathSegments[2];
+      const pageCode = pathSegments[4];
+
+      console.log('Detected current page on load:', {
+        locale,
+        journalCode,
+        pageCode,
+      });
+
+      // Find and activate the corresponding navigation link
+      const correspondingLink = Array.from(pageLinks).find(
+        link =>
+          link.getAttribute('data-page-code') === pageCode &&
+          link.getAttribute('data-journal-code') === journalCode
+      );
+
+      if (correspondingLink) {
+        // Set current page info
+        currentPageCode = pageCode;
+        currentJournalCode = journalCode;
+
+        // Activate the link
+        pageLinks.forEach(l => l.classList.remove('active'));
+        correspondingLink.classList.add('active');
+
+        // Update breadcrumb
+        updateBreadcrumb(correspondingLink);
+
+        // Load the page content
+        loadCurrentPageContent(locale, journalCode, pageCode);
+      }
+    }
+  }
+
+  // Function to load current page content
+  function loadCurrentPageContent(locale, journalCode, pageCode) {
+    const pageUrl = `/${locale}/journal/${journalCode}/page/${pageCode}`;
+
+    fetch(pageUrl, {
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+      },
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          pageBody.innerHTML = '<p class="text-danger">Page not found</p>';
+        } else {
+          pageBody.innerHTML =
+            data.content[locale] ||
+            data.content['en'] ||
+            'No content available';
+        }
+        pageContent.style.display = 'block';
+      })
+      .catch(error => {
+        console.error('Error loading current page content:', error);
+        pageBody.innerHTML = '<p class="text-danger">Error loading content</p>';
+        pageContent.style.display = 'block';
+      });
+  }
+
+  // Function to reset to home state
+  function resetToHomeState() {
+    // Exit inline edit mode if active
+    if (isInlineEdit) {
+      exitInlineEdit();
+    }
+
+    // Clear current page info
+    currentPageCode = null;
+    currentJournalCode = null;
+
+    // Remove active class from all page links
+    pageLinks.forEach(l => l.classList.remove('active'));
+
+    // Show default home content
+    pageBody.innerHTML = `
+      <div class="text-center py-5">
+        <i class="fas fa-home fa-3x text-primary mb-3"></i>
+        <h3>${window.translations?.welcomeBackoffice || 'Welcome to the journal management backoffice'}</h3>
+        <p class="text-muted">${window.translations?.selectPageFirst || 'Please select a page to edit first'}</p>
+      </div>
+    `;
+    pageContent.style.display = 'block';
+  }
+
+  // Initialize current page if we're on a page route
+  initializeCurrentPage();
+
   pageLinks.forEach(link => {
     link.addEventListener('click', function (e) {
       e.preventDefault();
@@ -260,15 +523,11 @@ document.addEventListener('DOMContentLoaded', function () {
       pageLinks.forEach(l => l.classList.remove('active'));
       // Add active class to clicked link
       this.classList.add('active');
+
+      // Update breadcrumb
+      updateBreadcrumb(this);
       // Extract the locale from the URL, or use the document's locale if it has been changed
-      let locale =
-        document.documentElement.lang ||
-        window.location.pathname.split('/')[1] ||
-        'en';
-      // Validate the locale
-      if (locale !== 'en' && locale !== 'fr') {
-        locale = 'en';
-      }
+      let locale = getCurrentLocale();
       const pageUrl = `/${locale}/journal/${journalCode}/page/${pageCode}`;
       console.log('Fetching:', pageUrl);
 
@@ -299,13 +558,12 @@ document.addEventListener('DOMContentLoaded', function () {
             pageBody.innerHTML = '<p class="text-danger">Page not found</p>';
           } else {
             // Use the locale extracted from the URL
-            const contentToShow =
+            pageBody.innerHTML =
               data.content[locale] ||
               data.content['en'] ||
               'No content available';
-            console.log('Content to show:', contentToShow);
+            console.log('Content to show:', pageBody.innerHTML);
             //the content is HTML converted from markdown, so it's safe to use innerHTML
-            pageBody.innerHTML = contentToShow;
           }
           pageContent.style.display = 'block';
         })
@@ -324,27 +582,7 @@ document.addEventListener('DOMContentLoaded', function () {
       e.preventDefault();
       console.log('Home link clicked');
 
-      // Exit inline edit mode if active
-      if (isInlineEdit) {
-        exitInlineEdit();
-      }
-
-      // Clear current page info
-      currentPageCode = null;
-      currentJournalCode = null;
-
-      // Remove active class from all page links
-      pageLinks.forEach(l => l.classList.remove('active'));
-
-      // Show default home content
-      pageBody.innerHTML = `
-        <div class="text-center py-5">
-          <i class="fas fa-home fa-3x text-primary mb-3"></i>
-          <h3>${window.translations?.welcomeBackoffice || 'Welcome to the journal management backoffice'}</h3>
-          <p class="text-muted">${window.translations?.selectPageFirst || 'Please select a page to edit first'}</p>
-        </div>
-      `;
-      pageContent.style.display = 'block';
+      resetToHomeState();
     });
   }
 
@@ -508,14 +746,7 @@ document.addEventListener('DOMContentLoaded', function () {
       console.log('Content from editor:', newContent);
       console.log('Title from input:', newTitle);
       console.log('Editor content length:', newContent?.length || 0);
-      let locale =
-        document.documentElement.lang ||
-        window.location.pathname.split('/')[1] ||
-        'en';
-
-      if (locale !== 'en' && locale !== 'fr') {
-        locale = 'en';
-      }
+      let locale = getCurrentLocale();
 
       const saveUrl = `/${locale}/journal/${currentJournalCode}/page/${currentPageCode}/edit`;
 
@@ -576,12 +807,26 @@ document.addEventListener('DOMContentLoaded', function () {
 
           if (data.success) {
             // Update page content
-            pageBody.innerHTML = data.htmlContent || newContent;
+            const { htmlContent, updatedTitle } = data;
+            pageBody.innerHTML = htmlContent || newContent;
 
-            // Update page title in navigation
+            // Update page title in navigation and breadcrumb data
             const activeLink = document.querySelector('.page-nav-link.active');
-            if (activeLink && data.updatedTitle) {
-              activeLink.textContent = data.updatedTitle;
+            if (activeLink && updatedTitle) {
+              // Update the visible text
+              activeLink.textContent = updatedTitle;
+
+              // Update the data attributes used by breadcrumb
+              const currentLocale = getCurrentLocale();
+
+              if (currentLocale === 'fr') {
+                activeLink.setAttribute('data-current-title-fr', updatedTitle);
+              } else {
+                activeLink.setAttribute('data-current-title-en', updatedTitle);
+              }
+
+              // Update breadcrumb immediately if it's visible
+              updateBreadcrumbLanguage(currentLocale);
             }
 
             // Exit inline edit mode
@@ -603,5 +848,68 @@ document.addEventListener('DOMContentLoaded', function () {
           );
         });
     });
+  }
+
+  // Function to update breadcrumb navigation
+  function updateBreadcrumb(clickedLink) {
+    const breadcrumbNav = document.getElementById('breadcrumb-nav');
+    const breadcrumbParent = document.getElementById('breadcrumb-parent');
+    const breadcrumbCurrent = document.getElementById('breadcrumb-current');
+    const parentText = document.querySelector('.breadcrumb-parent-text');
+    const currentText = document.querySelector('.breadcrumb-current-text');
+    const homeLink = document.querySelector('.breadcrumb-home');
+
+    // Get current locale
+    const currentLocale = getCurrentLocale();
+
+    // Get page info with locale support
+    const pageCode = clickedLink.getAttribute('data-page-code');
+
+    // Get multilingual titles
+    const parentTitleEn = clickedLink.getAttribute('data-parent-title-en');
+    const parentTitleFr = clickedLink.getAttribute('data-parent-title-fr');
+    const currentTitleEn = clickedLink.getAttribute('data-current-title-en');
+    const currentTitleFr = clickedLink.getAttribute('data-current-title-fr');
+
+    // Select title based on current locale
+    const parentTitle =
+      currentLocale === 'fr' && parentTitleFr ? parentTitleFr : parentTitleEn;
+    const currentTitle =
+      currentLocale === 'fr' && currentTitleFr
+        ? currentTitleFr
+        : currentTitleEn || clickedLink.textContent.trim();
+
+    console.log('Updating breadcrumb:', {
+      pageCode,
+      parentTitle,
+      currentTitle,
+      currentLocale,
+    });
+
+    // Reset breadcrumb visibility
+    breadcrumbParent.style.display = 'none';
+    breadcrumbCurrent.style.display = 'none';
+
+    // Handle home link click
+    homeLink.addEventListener('click', function (e) {
+      e.preventDefault();
+      breadcrumbNav.style.display = 'none';
+
+      resetToHomeState();
+    });
+
+    if (parentTitle) {
+      // Sub-page: Show breadcrumb with parent
+      parentText.textContent = parentTitle;
+      currentText.textContent = currentTitle;
+      breadcrumbParent.style.display = 'block';
+      breadcrumbCurrent.style.display = 'block';
+      breadcrumbNav.style.display = 'block';
+    } else {
+      // Main page: Show only current page
+      currentText.textContent = currentTitle;
+      breadcrumbCurrent.style.display = 'block';
+      breadcrumbNav.style.display = 'block';
+    }
   }
 });

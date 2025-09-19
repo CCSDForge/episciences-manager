@@ -1,0 +1,56 @@
+# Generic page hierarchy configuration
+# This configuration applies to all journals by default
+page_hierarchies:
+
+  # Default configuration for all journals
+  default:
+    main_pages:
+      - title:
+          en: "About"
+          fr: "À Propos"
+        type: "container"
+        order: 1
+        children:
+          - "about"
+      - title:
+          en: "Home Page"
+          fr: "Répertoire"
+        type: "container"
+        order: 2
+        children:
+          - "journal-indexing"
+      - title:
+          en: "Boards"
+          fr: "Comités"
+        type: "container"
+        order: 3
+        children:
+          - "editorial-board"
+          - "scientific-advisory-board"
+          - "technical-board"
+          - "former-members"
+      - title:
+          en: "For Authors"
+          fr: "Pour les Auteurs"
+        type: "container"
+        order: 4
+        children:
+          - "ethical-charter"
+          - "prepare-submission"
+          - "editorial-workflow"
+      - code: "credits"
+        order: 5
+      - code: "custom-page"
+        order: 6
+      - code: "News"
+        order: 7
+
+
+  # Specific configuration for a particular journal (optional)
+  # If a journal needs a different structure, add it here
+  # example_special_journal:
+  #   main_pages:
+  #     - code: "home"
+  #       order: 1
+  #     - code: "editorial"
+  #       order: 2

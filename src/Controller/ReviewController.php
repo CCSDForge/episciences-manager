@@ -5,6 +5,7 @@ namespace App\Controller;
 
 use App\Repository\PageRepository;
 use App\Service\ReviewManager;
+use App\Service\PageHierarchyService;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -53,36 +54,30 @@ final class ReviewController extends AbstractController
     }
 
     #[Route('/journal/{code}', name: 'app_journal_detail', requirements: ['code' => '[\w\-]+'])]
-    public function getJournal(string $code, ReviewManager $reviewManager, PageRepository $pageRepository): Response
+    public function getJournal(string $code, ReviewManager $reviewManager, PageRepository $pageRepository, PageHierarchyService $hierarchyService): Response
     {
-        // Récupérer la review par son code
+        // Get the review by its code
         $review = $reviewManager->getReviewByCode($code);
-
-        //dd($review);
 
         if (!$review) {
             throw $this->createNotFoundException('Review not found');
         }
 
-        //dd([
-            //'review_rvid' => $review['rvid'],
-            //'user_roles' => $this->getUser()->getRolesDetails(),
-            //'code' => $code,
-            //'full_review' => $review
-       // ]);
-
         // Check if user has permission to view this specific review
         $this->denyAccessUnlessGranted('REVIEW_VIEW', $review);
 
-        //Retrieve the journal pages
+        // Retrieve the journal pages
         $pages = $pageRepository->findBy([
             'rvcode' => $code
         ]);
 
+        // Organize pages according to configured hierarchy
+        $organizedPages = $hierarchyService->organizePages($pages, $code);
+
         return $this->render('review/journalDetails.html.twig', [
             'review' => $review,
             'rvcode' => $code,
-            'pages' => $pages,
+            'pages' => $organizedPages,
         ]);
     }
 

@@ -17,27 +17,78 @@
                 </div>
 
                 <!-- Pages Navigation -->
-                {% if pages is defined and pages is not empty %}
+                {% if pages is defined and pages.main is not empty %}
                     <div class="row mt-5">
                         <div class="col-12">
                             <nav class="navbar navbar-expand-lg navbar-light bg-light rounded">
                                 <div class="container-fluid">
                                     <div class="navbar-nav d-flex flex-wrap">
-                                        <a class="nav-link me-2 mb-2" 
-                                           href="{{ path('app_journal_detail', {'code': rvcode, '_locale': app.request.locale}) }}">
+                                        <a class="nav-link me-2 mb-2 home-nav-link"
+                                           href="{{ path('app_journal_detail', {'code': rvcode, '_locale': app.request.locale}) }}"
+                                           data-home-text-en="Home"
+                                           data-home-text-fr="Accueil">
                                             {{ 'journalDetails.home' | trans }}
                                         </a>
-                                        {% for page in pages %}
-                                            <a class="nav-link page-nav-link me-2 mb-2" 
-                                               href="#"
-                                               data-page-code="{{ page.pageCode }}"
-                                               data-journal-code="{{ rvcode }}">
-                                                {{ page.title[app.request.locale] ?? page.title['en'] ?? page.pageCode }}
-                                            </a>
+
+                                        {% for page in pages.main %}
+                                            {% set isContainer = page.type is defined and page.type == 'container' %}
+                                            {% set pageKey = isContainer ? (page.title.en ?? page.title) : page.pageCode %}
+                                            {% set hasSubPages = pages.sub[pageKey] is defined and pages.sub[pageKey] is not empty %}
+
+                                            <div class="nav-item{% if hasSubPages %} dropdown{% endif %}">
+                                                <a class="nav-link page-nav-link me-2 mb-2{% if hasSubPages %} dropdown-toggle{% endif %}"
+                                                   id="nav-{% if isContainer %}container-{{ pageKey|lower|replace({' ': '-', '.': '-', '&': 'and'}) }}{% else %}page-{{ page.pageCode }}{% endif %}"
+                                                   {% if isContainer %}
+                                                       data-title-en="{{ page.title.en ?? page.title }}"
+                                                       data-title-fr="{{ page.title.fr ?? page.title.en ?? page.title }}"
+                                                       data-is-container="true"
+                                                   {% endif %}
+                                                   {% if hasSubPages %}
+                                                       href="#"
+                                                       data-bs-toggle="dropdown"
+                                                       role="button"
+                                                       aria-expanded="false"
+                                                   {% elseif not isContainer %}
+                                                       href="#"
+                                                       data-page-code="{{ page.pageCode }}"
+                                                       data-journal-code="{{ rvcode }}"
+                                                       data-current-title-en="{{ page.title.en ?? page.pageCode }}"
+                                                       data-current-title-fr="{{ page.title.fr ?? page.title.en ?? page.pageCode }}"
+                                                   {% else %}
+                                                       href="#"
+                                                   {% endif %}>
+                                                    {% if isContainer %}
+                                                        {{ page.title[app.request.locale] ?? page.title['en'] ?? page.title }}
+                                                    {% else %}
+                                                        {{ page.title[app.request.locale] ?? page.title['en'] ?? page.pageCode }}
+                                                    {% endif %}
+                                                </a>
+
+                                                {% if hasSubPages %}
+                                                    <ul class="dropdown-menu">
+                                                        {% for subPage in pages.sub[pageKey] %}
+                                                            <li>
+                                                                <a class="dropdown-item page-nav-link"
+                                                                   id="nav-page-{{ subPage.pageCode }}"
+                                                                   href="#"
+                                                                   data-page-code="{{ subPage.pageCode }}"
+                                                                   data-journal-code="{{ rvcode }}"
+                                                                   data-parent-title-en="{% if isContainer %}{{ page.title.en ?? page.title }}{% else %}{{ page.title.en ?? page.pageCode }}{% endif %}"
+                                                                   data-parent-title-fr="{% if isContainer %}{{ page.title.fr ?? page.title.en ?? page.title }}{% else %}{{ page.title.fr ?? page.title.en ?? page.pageCode }}{% endif %}"
+                                                                   data-current-title-en="{{ subPage.title.en ?? subPage.pageCode }}"
+                                                                   data-current-title-fr="{{ subPage.title.fr ?? subPage.title.en ?? subPage.pageCode }}">
+                                                                    {{ subPage.title[app.request.locale] ?? subPage.title['en'] ?? subPage.pageCode }}
+                                                                </a>
+                                                            </li>
+                                                        {% endfor %}
+                                                    </ul>
+                                                {% endif %}
+                                            </div>
                                         {% endfor %}
-                                        <a class="nav-link me-2 mb-2" 
-                                           href="{{ path('app_resources_manager', {'rvcode': rvcode}) }}" 
-                                           target="_blank" 
+
+                                        <a class="nav-link me-2 mb-2"
+                                           href="{{ path('app_resources_manager', {'rvcode': rvcode}) }}"
+                                           target="_blank"
                                            rel="noopener noreferrer">
                                             <i class="fas fa-folder-open me-1"></i>
                                             {{ 'resources.title'|trans }}
@@ -48,6 +99,30 @@
                         </div>
                     </div>
                 {% endif %}
+
+                <!-- Breadcrumb Navigation -->
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <nav id="breadcrumb-nav" class="breadcrumb-container" style="display: none;">
+                            <ol class="breadcrumb mb-0">
+                                <li class="breadcrumb-item">
+                                    <a href="#" class="breadcrumb-home"
+                                       data-home-text-en="Home"
+                                       data-home-text-fr="Accueil">
+                                        <i class="fas fa-home me-1"></i>
+                                        {{ 'journalDetails.home' | trans }}
+                                    </a>
+                                </li>
+                                <li id="breadcrumb-parent" class="breadcrumb-item" style="display: none;">
+                                    <span class="breadcrumb-parent-text"></span>
+                                </li>
+                                <li id="breadcrumb-current" class="breadcrumb-item active" style="display: none;">
+                                    <span class="breadcrumb-current-text"></span>
+                                </li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
 
                 <!-- Page Content Display Area -->
                 <div class="row mt-4">
