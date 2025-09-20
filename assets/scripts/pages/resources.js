@@ -261,11 +261,12 @@ document.addEventListener('DOMContentLoaded', function () {
           autoGenerateBtn.type = 'button';
           autoGenerateBtn.innerHTML =
             '<i class="fas fa-magic me-2"></i>Générer automatiquement';
-          autoGenerateBtn.addEventListener('click', function () {
-            if (fileConflictModal) {
-              fileConflictModal.hide();
-            }
-            handleUpload('rename'); // Use automatic rename
+          autoGenerateBtn.addEventListener('click', async function () {
+            // Generate a unique name and show it in the input
+            await generateAndShowUniqueName(
+              customFileNameInput,
+              existingFileName
+            );
           });
           customRenameSection.appendChild(autoGenerateBtn);
         }
@@ -472,6 +473,7 @@ document.addEventListener('DOMContentLoaded', function () {
           if (customFileNameInput) {
             setTimeout(() => customFileNameInput.focus(), 100);
           }
+
           // Show the rename confirmation button
           const renameFileBtn = document.getElementById('renameFileBtn');
           if (renameFileBtn) {
@@ -1311,5 +1313,102 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Validate the locale (only EN and FR are supported)
     return ['en', 'fr'].includes(locale) ? locale : 'en';
+  }
+
+  // Generate and show a unique filename in the input field
+  async function generateAndShowUniqueName(inputElement, existingFileName) {
+    console.log('Generating unique name for:', existingFileName);
+
+    // Extract name and extension
+    const extension = existingFileName.split('.').pop();
+    const nameWithoutExt = existingFileName.replace('.' + extension, '');
+
+    // Show loading state on button
+    const autoBtn = document.querySelector('.auto-generate-btn');
+    if (autoBtn) {
+      autoBtn.innerHTML =
+        '<i class="fas fa-spinner fa-spin me-2"></i>Génération...';
+      autoBtn.disabled = true;
+    }
+
+    try {
+      // Try different patterns until we find a unique name
+      let uniqueName = null;
+      let counter = 1;
+      const maxAttempts = 50;
+
+      while (counter <= maxAttempts) {
+        // Generate different patterns
+        let testName;
+        if (counter === 1) {
+          testName = `${nameWithoutExt}_copy`;
+        } else if (counter <= 10) {
+          testName = `${nameWithoutExt}_copy_${counter}`;
+        } else if (counter <= 20) {
+          testName = `${nameWithoutExt}_${counter}`;
+        } else if (counter <= 30) {
+          testName = `${nameWithoutExt}_new_${counter - 20}`;
+        } else {
+          // Use timestamp for uniqueness
+          const timestamp = Date.now().toString().slice(-6);
+          testName = `${nameWithoutExt}_${timestamp}`;
+        }
+
+        const testFullName = `${testName}.${extension}`;
+        console.log(`Testing name ${counter}:`, testFullName);
+
+        // Check if this name exists
+        const exists = await checkFileExists(testFullName);
+        if (!exists) {
+          uniqueName = testName;
+          console.log('Found unique name:', testFullName);
+          break;
+        }
+
+        counter++;
+      }
+
+      // Update the input field with the generated name
+      if (uniqueName) {
+        inputElement.value = uniqueName;
+        inputElement.focus();
+        inputElement.select(); // Select the text so user can see it clearly
+
+        // Add visual feedback
+        inputElement.style.backgroundColor = '#d4edda'; // Light green
+        setTimeout(() => {
+          inputElement.style.backgroundColor = '';
+        }, 2000);
+
+        console.log('Generated unique name:', uniqueName);
+      } else {
+        // Fallback with timestamp if all attempts failed
+        const timestamp = Date.now();
+        const fallbackName = `${nameWithoutExt}_${timestamp}`;
+        inputElement.value = fallbackName;
+        inputElement.focus();
+        console.log('Used fallback name:', fallbackName);
+      }
+    } catch (error) {
+      console.error('Error generating unique name:', error);
+
+      // Fallback: simple timestamp-based name
+      const timestamp = Date.now();
+      const fallbackName = `${nameWithoutExt}_${timestamp}`;
+      inputElement.value = fallbackName;
+      inputElement.focus();
+
+      showMessage(
+        'Erreur lors de la génération. Nom par défaut utilisé.',
+        'warning'
+      );
+    } finally {
+      // Restore button state
+      if (autoBtn) {
+        autoBtn.innerHTML =
+          '<i class="fas fa-magic me-2"></i>Générer automatiquement';
+        autoBtn.disabled = false;
+      }
+    }
   }
 });

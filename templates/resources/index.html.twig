@@ -375,80 +375,10 @@
         }
     };
     </script>
-    {{ encore_entry_script_tags('resources') }}
+    {{ encore_entry_script_tags('resourcesJs') }}
 {% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
-    <style>
-        .copy-url-btn:hover {
-            background-color: #e9ecef;
-        }
-        
-        #uploadProgress .progress {
-            height: 6px;
-        }
-        
-        .table td {
-            vertical-align: middle;
-        }
-        
-        .table th:nth-child(1),
-        .table td:nth-child(1) {
-            padding-right: 1.5rem;
-        }
-        
-        .table th:nth-child(2),
-        .table td:nth-child(2) {
-            width: 35%;
-            padding-left: 1.5rem;
-            padding-right: 2rem;
-        }
-        
-        .table th:nth-child(3),
-        .table td:nth-child(3) {
-            width: 15%;
-            padding-left: 1.5rem;
-            padding-right: 0.25rem;
-        }
-        
-        .table th:nth-child(4),
-        .table td:nth-child(4) {
-            width: 10%;
-            padding-left: 0.25rem;
-            padding-right: 0.05rem;
-        }
-        .table th:nth-child(5),
-        .table td:nth-child(5) {
-            width: 8%;
-        }
-        
-        /* Action cards styling */
-        .action-card {
-            transition: all 0.2s ease-in-out;
-            border: 2px solid transparent;
-        }
-        
-        .action-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-            border-color: #007bff;
-        }
-        
-        .action-card.selected {
-            border-color: #007bff;
-            background-color: #f8f9fa;
-        }
-        
-        .action-card[style*="not-allowed"] {
-            background-color: #f8f9fa !important;
-            border-color: #dee2e6 !important;
-        }
-        
-        .action-card[style*="not-allowed"]:hover {
-            transform: none !important;
-            box-shadow: none !important;
-            border-color: #dee2e6 !important;
-        }
-    </style>
+    {{ encore_entry_link_tags('resources') }}
 {% endblock %}
