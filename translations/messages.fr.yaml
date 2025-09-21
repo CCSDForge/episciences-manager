@@ -122,6 +122,7 @@ resources:
  deleteAnyway: "Supprimer quand même"
  fileNotInUse: "Ce fichier n'est utilisé dans aucune page"
  safeToDelete: "Il peut être supprimé en toute sécurité"
+ generateAutomatically: "Générer automatiquement"
 
 footer:
  about_title: "À propos d'Episciences"

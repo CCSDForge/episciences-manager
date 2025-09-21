@@ -1,4 +1,4 @@
-import { Modal } from 'bootstrap';
+const { Modal } = window.bootstrap || {};
 
 document.addEventListener('DOMContentLoaded', function () {
   console.log('Resources script loaded, looking for upload form...');
@@ -139,10 +139,14 @@ document.addEventListener('DOMContentLoaded', function () {
       showProgress(true);
       clearMessages();
 
-      const response = await fetch(window.resourcesData.uploadUrl, {
+      const requestOptions = {
         method: 'POST',
         body: formData,
-      });
+      };
+      const response = await fetch(
+        window.resourcesData.uploadUrl,
+        requestOptions
+      );
 
       const result = await response.json();
       showProgress(false);
@@ -157,7 +161,7 @@ document.addEventListener('DOMContentLoaded', function () {
       } else if (result.conflict) {
         // File conflict detected - show modal
         showFileConflictModal(
-          result.existingFile,
+          result.existingFile || '',
           result.isCustomName || false
         );
       } else {
@@ -259,8 +263,10 @@ document.addEventListener('DOMContentLoaded', function () {
           autoGenerateBtn.className =
             'btn btn-outline-secondary btn-sm mt-2 auto-generate-btn';
           autoGenerateBtn.type = 'button';
-          autoGenerateBtn.innerHTML =
-            '<i class="fas fa-magic me-2"></i>Générer automatiquement';
+          const generateText =
+            window.resourcesData?.translations?.generateAutomatically ||
+            'Générer automatiquement';
+          autoGenerateBtn.innerHTML = `<i class="fas fa-magic me-2"></i>${generateText}`;
           autoGenerateBtn.addEventListener('click', async function () {
             // Generate a unique name and show it in the input
             await generateAndShowUniqueName(
@@ -575,10 +581,14 @@ document.addEventListener('DOMContentLoaded', function () {
       showProgress(true);
       clearMessages();
 
-      const response = await fetch(window.resourcesData.uploadUrl, {
+      const requestOptions = {
         method: 'POST',
         body: formData,
-      });
+      };
+      const response = await fetch(
+        window.resourcesData.uploadUrl,
+        requestOptions
+      );
 
       const result = await response.json();
       console.log('Custom upload response:', result);
@@ -595,7 +605,7 @@ document.addEventListener('DOMContentLoaded', function () {
       } else if (result.conflict) {
         console.log('Custom name conflict detected, showing modal again');
         // Custom name conflict - show modal again with isCustomName flag
-        showFileConflictModal(result.existingFile, true);
+        showFileConflictModal(result.existingFile || '', true);
       } else {
         console.log('Upload failed:', result.message);
         showMessage(
@@ -1394,8 +1404,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
       // Fallback: simple timestamp-based name
       const timestamp = Date.now();
-      const fallbackName = `${nameWithoutExt}_${timestamp}`;
-      inputElement.value = fallbackName;
+      inputElement.value = `${nameWithoutExt}_${timestamp}`;
       inputElement.focus();
 
       showMessage(
@@ -1405,8 +1414,10 @@ document.addEventListener('DOMContentLoaded', function () {
     } finally {
       // Restore button state
       if (autoBtn) {
-        autoBtn.innerHTML =
-          '<i class="fas fa-magic me-2"></i>Générer automatiquement';
+        const generateText =
+          window.resourcesData?.translations?.generateAutomatically ||
+          'Générer automatiquement';
+        autoBtn.innerHTML = `<i class="fas fa-magic me-2"></i>${generateText}`;
         autoBtn.disabled = false;
       }
     }

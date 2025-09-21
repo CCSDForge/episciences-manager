@@ -123,6 +123,7 @@ resources:
   deleteAnyway: "Delete anyway"
   fileNotInUse: "This file is not used in any page."
   safeToDelete: "It can be safely deleted."
+  generateAutomatically: "Generate automatically"
 
 footer:
   about_title: "About Episciences"
