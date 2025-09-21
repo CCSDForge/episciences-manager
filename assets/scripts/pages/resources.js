@@ -1,4 +1,4 @@
-const { Modal } = window.bootstrap || {};
+import { Modal } from 'bootstrap';
 
 document.addEventListener('DOMContentLoaded', function () {
   console.log('Resources script loaded, looking for upload form...');
