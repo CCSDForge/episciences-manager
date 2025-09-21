@@ -139,10 +139,14 @@ document.addEventListener('DOMContentLoaded', function () {
       showProgress(true);
       clearMessages();
 
-      const response = await fetch(window.resourcesData.uploadUrl, {
+      const requestOptions = {
         method: 'POST',
         body: formData,
-      });
+      };
+      const response = await fetch(
+        window.resourcesData.uploadUrl,
+        requestOptions
+      );
 
       const result = await response.json();
       showProgress(false);
@@ -157,7 +161,7 @@ document.addEventListener('DOMContentLoaded', function () {
       } else if (result.conflict) {
         // File conflict detected - show modal
         showFileConflictModal(
-          result.existingFile,
+          result.existingFile || '',
           result.isCustomName || false
         );
       } else {
@@ -259,13 +263,16 @@ document.addEventListener('DOMContentLoaded', function () {
           autoGenerateBtn.className =
             'btn btn-outline-secondary btn-sm mt-2 auto-generate-btn';
           autoGenerateBtn.type = 'button';
-          autoGenerateBtn.innerHTML =
-            '<i class="fas fa-magic me-2"></i>Générer automatiquement';
-          autoGenerateBtn.addEventListener('click', function () {
-            if (fileConflictModal) {
-              fileConflictModal.hide();
-            }
-            handleUpload('rename'); // Use automatic rename
+          const generateText =
+            window.resourcesData?.translations?.generateAutomatically ||
+            'Générer automatiquement';
+          autoGenerateBtn.innerHTML = `<i class="fas fa-magic me-2"></i>${generateText}`;
+          autoGenerateBtn.addEventListener('click', async function () {
+            // Generate a unique name and show it in the input
+            await generateAndShowUniqueName(
+              customFileNameInput,
+              existingFileName
+            );
           });
           customRenameSection.appendChild(autoGenerateBtn);
         }
@@ -370,7 +377,7 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   // Delete file buttons
-  document.addEventListener('click', function (e) {
+  document.addEventListener('click', async function (e) {
     console.log('Click detected on delete area:', e.target);
     const deleteBtn = e.target.closest('.delete-file-btn');
     console.log('Delete button found:', deleteBtn);
@@ -383,9 +390,14 @@ document.addEventListener('DOMContentLoaded', function () {
       if (fileToDelete) {
         fileToDelete.textContent = filename;
       }
+
+      // Show modal immediately but start checking usage
       if (deleteConfirmModal) {
         console.log('Showing modal for file:', filename);
         deleteConfirmModal.show();
+
+        // Check resource usage
+        await checkResourceUsageAndUpdateModal(filename);
       } else {
         console.error('Modal not initialized');
       }
@@ -467,6 +479,7 @@ document.addEventListener('DOMContentLoaded', function () {
           if (customFileNameInput) {
             setTimeout(() => customFileNameInput.focus(), 100);
           }
+
           // Show the rename confirmation button
           const renameFileBtn = document.getElementById('renameFileBtn');
           if (renameFileBtn) {
@@ -568,10 +581,14 @@ document.addEventListener('DOMContentLoaded', function () {
       showProgress(true);
       clearMessages();
 
-      const response = await fetch(window.resourcesData.uploadUrl, {
+      const requestOptions = {
         method: 'POST',
         body: formData,
-      });
+      };
+      const response = await fetch(
+        window.resourcesData.uploadUrl,
+        requestOptions
+      );
 
       const result = await response.json();
       console.log('Custom upload response:', result);
@@ -588,7 +605,7 @@ document.addEventListener('DOMContentLoaded', function () {
       } else if (result.conflict) {
         console.log('Custom name conflict detected, showing modal again');
         // Custom name conflict - show modal again with isCustomName flag
-        showFileConflictModal(result.existingFile, true);
+        showFileConflictModal(result.existingFile || '', true);
       } else {
         console.log('Upload failed:', result.message);
         showMessage(
@@ -1168,5 +1185,241 @@ document.addEventListener('DOMContentLoaded', function () {
     return text.replace(/[&<>"']/g, function (m) {
       return map[m];
     });
+  }
+
+  // Check resource usage and update modal
+  async function checkResourceUsageAndUpdateModal(filename) {
+    console.log('Checking resource usage for:', filename);
+
+    // Show loading indicator
+    const loadingElement = document.getElementById('usageCheckLoading');
+    const warningSection = document.getElementById('usageWarningSection');
+    const safeToDeleteSection = document.getElementById('safeToDeleteSection');
+    const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+
+    if (loadingElement) {
+      loadingElement.style.display = 'block';
+    }
+    if (warningSection) {
+      warningSection.style.display = 'none';
+    }
+    if (safeToDeleteSection) {
+      safeToDeleteSection.style.display = 'none';
+    }
+
+    try {
+      const checkUrl = window.resourcesData.checkUsageUrl.replace(
+        '__FILENAME__',
+        encodeURIComponent(filename)
+      );
+
+      const response = await fetch(checkUrl, {
+        method: 'GET',
+      });
+
+      const result = await response.json();
+      console.log('Usage check result:', result);
+
+      // Hide loading
+      if (loadingElement) {
+        loadingElement.style.display = 'none';
+      }
+
+      if (result.success && result.inUse) {
+        // File is in use - show warning
+        showResourceUsageWarning(result.pages);
+
+        // Change button text to indicate warning
+        if (confirmDeleteBtn) {
+          const deleteAnywayText =
+            window.resourcesData?.translations?.deleteAnyway || 'Delete anyway';
+          confirmDeleteBtn.innerHTML = `<i class="fas fa-exclamation-triangle me-2"></i>${deleteAnywayText}`;
+          confirmDeleteBtn.className = 'btn btn-warning';
+        }
+      } else {
+        // File is not in use - show safe to delete message
+        console.log('File is not in use, safe to delete');
+
+        // Show safe to delete message
+        if (safeToDeleteSection) {
+          safeToDeleteSection.style.display = 'block';
+        }
+
+        // Ensure button is normal
+        if (confirmDeleteBtn) {
+          const deleteText =
+            window.resourcesData?.translations?.delete || 'Delete';
+          confirmDeleteBtn.innerHTML = `<i class="fas fa-trash me-2"></i>${deleteText}`;
+          confirmDeleteBtn.className = 'btn btn-danger';
+        }
+      }
+    } catch (error) {
+      console.error('Error checking resource usage:', error);
+
+      // Hide loading and proceed normally on error
+      if (loadingElement) {
+        loadingElement.style.display = 'none';
+      }
+
+      // Keep button normal on error
+      if (confirmDeleteBtn) {
+        const deleteText =
+          window.resourcesData?.translations?.delete || 'Delete';
+        confirmDeleteBtn.innerHTML = `<i class="fas fa-trash me-2"></i>${deleteText}`;
+        confirmDeleteBtn.className = 'btn btn-danger';
+      }
+    }
+  }
+
+  // Show resource usage warning in modal
+  function showResourceUsageWarning(pages) {
+    console.log('Showing usage warning for pages:', pages);
+
+    const warningSection = document.getElementById('usageWarningSection');
+    const usageDetailsList = document.getElementById('usageDetailsList');
+
+    if (!warningSection || !usageDetailsList) {
+      console.error('Warning elements not found');
+      return;
+    }
+
+    // Build the list of pages
+    const pagesUsingFileText =
+      window.resourcesData?.translations?.pagesUsingFile ||
+      'Pages using this file:';
+    let pagesHtml = `<div class="mt-3"><strong>${pagesUsingFileText}</strong><ul class="mt-2">`;
+
+    pages.forEach(page => {
+      // Get page title for current locale or fallback
+      let pageTitle = page.page_code;
+      if (page.title) {
+        const currentLocale = getCurrentLocale();
+        pageTitle =
+          page.title[currentLocale] ||
+          page.title.en ||
+          page.title.fr ||
+          page.page_code;
+      }
+
+      pagesHtml += `<li><strong>${escapeHtml(pageTitle)}</strong> (${escapeHtml(page.page_code)})`;
+      if (page.locationCount > 1) {
+        pagesHtml += ` - ${page.locationCount} references`;
+      }
+      pagesHtml += '</li>';
+    });
+
+    pagesHtml += '</ul></div>';
+
+    usageDetailsList.innerHTML = pagesHtml;
+    warningSection.style.display = 'block';
+  }
+
+  // Get current locale (copied from other part of the code)
+  function getCurrentLocale() {
+    const locale =
+      document.documentElement.lang ||
+      window.location.pathname.split('/')[1] ||
+      'en';
+
+    // Validate the locale (only EN and FR are supported)
+    return ['en', 'fr'].includes(locale) ? locale : 'en';
+  }
+
+  // Generate and show a unique filename in the input field
+  async function generateAndShowUniqueName(inputElement, existingFileName) {
+    console.log('Generating unique name for:', existingFileName);
+
+    // Extract name and extension
+    const extension = existingFileName.split('.').pop();
+    const nameWithoutExt = existingFileName.replace('.' + extension, '');
+
+    // Show loading state on button
+    const autoBtn = document.querySelector('.auto-generate-btn');
+    if (autoBtn) {
+      autoBtn.innerHTML =
+        '<i class="fas fa-spinner fa-spin me-2"></i>Génération...';
+      autoBtn.disabled = true;
+    }
+
+    try {
+      // Try different patterns until we find a unique name
+      let uniqueName = null;
+      let counter = 1;
+      const maxAttempts = 50;
+
+      while (counter <= maxAttempts) {
+        // Generate different patterns
+        let testName;
+        if (counter === 1) {
+          testName = `${nameWithoutExt}_copy`;
+        } else if (counter <= 10) {
+          testName = `${nameWithoutExt}_copy_${counter}`;
+        } else if (counter <= 20) {
+          testName = `${nameWithoutExt}_${counter}`;
+        } else if (counter <= 30) {
+          testName = `${nameWithoutExt}_new_${counter - 20}`;
+        } else {
+          // Use timestamp for uniqueness
+          const timestamp = Date.now().toString().slice(-6);
+          testName = `${nameWithoutExt}_${timestamp}`;
+        }
+
+        const testFullName = `${testName}.${extension}`;
+        console.log(`Testing name ${counter}:`, testFullName);
+
+        // Check if this name exists
+        const exists = await checkFileExists(testFullName);
+        if (!exists) {
+          uniqueName = testName;
+          console.log('Found unique name:', testFullName);
+          break;
+        }
+
+        counter++;
+      }
+
+      // Update the input field with the generated name
+      if (uniqueName) {
+        inputElement.value = uniqueName;
+        inputElement.focus();
+        inputElement.select(); // Select the text so user can see it clearly
+
+        // Add visual feedback
+        inputElement.style.backgroundColor = '#d4edda'; // Light green
+        setTimeout(() => {
+          inputElement.style.backgroundColor = '';
+        }, 2000);
+
+        console.log('Generated unique name:', uniqueName);
+      } else {
+        // Fallback with timestamp if all attempts failed
+        const timestamp = Date.now();
+        const fallbackName = `${nameWithoutExt}_${timestamp}`;
+        inputElement.value = fallbackName;
+        inputElement.focus();
+        console.log('Used fallback name:', fallbackName);
+      }
+    } catch (error) {
+      console.error('Error generating unique name:', error);
+
+      // Fallback: simple timestamp-based name
+      const timestamp = Date.now();
+      inputElement.value = `${nameWithoutExt}_${timestamp}`;
+      inputElement.focus();
+
+      showMessage(
+        'Erreur lors de la génération. Nom par défaut utilisé.',
+        'warning'
+      );
+    } finally {
+      // Restore button state
+      if (autoBtn) {
+        const generateText =
+          window.resourcesData?.translations?.generateAutomatically ||
+          'Générer automatiquement';
+        autoBtn.innerHTML = `<i class="fas fa-magic me-2"></i>${generateText}`;
+        autoBtn.disabled = false;
+      }
+    }
   }
 });

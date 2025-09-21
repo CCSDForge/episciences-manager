@@ -115,6 +115,15 @@ resources:
   # New translations for custom file input
   noFileSelected: "No file selected"
   browseFiles: "Browse"
+  # New translations for resource usage checking
+  fileInUseWarning: "File currently in use"
+  fileInUseMessage: "This file is currently being used in the following pages. Deleting it may break the display of these pages."
+  checkingUsage: "Checking usage..."
+  pagesUsingFile: "Pages using this file:"
+  deleteAnyway: "Delete anyway"
+  fileNotInUse: "This file is not used in any page."
+  safeToDelete: "It can be safely deleted."
+  generateAutomatically: "Generate automatically"
 
 footer:
   about_title: "About Episciences"

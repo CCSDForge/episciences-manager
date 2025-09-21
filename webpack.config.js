@@ -26,7 +26,7 @@ Encore
   .addEntry('headerJs', './assets/scripts/partials/_header.js')
   .addEntry('home', './assets/scripts/pages/index.js')
   .addEntry('journalDetailsJs', './assets/scripts/pages/journalDetails.js')
-  .addEntry('resources', './assets/scripts/pages/resources.js')
+  .addEntry('resourcesJs', './assets/scripts/pages/resources.js')
 
   .addStyleEntry('main', './assets/styles/app.scss')
   .addStyleEntry('navbar', './assets/styles/partials/_navbar.scss')
@@ -35,6 +35,7 @@ Encore
   .addStyleEntry('journal', './assets/styles/pages/journal.scss')
   .addStyleEntry('journalDetails', './assets/styles/pages/journalDetails.scss')
   .addStyleEntry('header', './assets/styles/partials/_header.scss')
+  .addStyleEntry('resources', './assets/styles/resources.scss')
 
   // Add ESLint to the Webpack/Encore pipeline
   .addPlugin(

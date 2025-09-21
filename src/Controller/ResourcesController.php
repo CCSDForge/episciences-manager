@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use App\Service\ResourceUsageService;
 
 final class ResourcesController extends AbstractController
 {
@@ -267,6 +268,26 @@ final class ResourcesController extends AbstractController
             'exists' => file_exists($filePath),
             'filename' => $finalFilename
         ]);
+    }
+
+    #[Route('/journal/{rvcode}/resources/{filename}/check-usage', name: 'app_resources_check_usage', methods: ['GET'], requirements: ['rvcode' => '[\w\-]+'])]
+    public function checkUsage(string $rvcode, string $filename, ResourceUsageService $usageService): JsonResponse
+    {
+        try {
+            $usageSummary = $usageService->getResourceUsageSummary($filename, $rvcode);
+
+            return new JsonResponse([
+                'success' => true,
+                'inUse' => $usageSummary['inUse'],
+                'pageCount' => $usageSummary['pageCount'],
+                'pages' => $usageSummary['pages']
+            ]);
+        } catch (\Exception $e) {
+            return new JsonResponse([
+                'success' => false,
+                'message' => 'Error checking resource usage: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     #[Route('/{rvcode}/resources/{filename}', name: 'app_resources_serve', requirements: ['rvcode' => '[\w\-]+', 'filename' => '.+'])]
