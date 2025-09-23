@@ -121,7 +121,7 @@
     min-height: 500px; // More generous stable zone for textarea
     height: 500px; // Fixed base height to start
     max-height: 80vh; // Smart limit = 80% of screen height
-    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-family: $font-family-monospace;
     font-size: 14px;
     line-height: 1.6; // Improved line spacing
     resize: vertical; // Allow manual resize

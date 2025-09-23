@@ -13,9 +13,10 @@ $font-weight-bold: bold;
 // Typography
 $font-family-system: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 $font-family-base: $font-family-system;
+$font-family-monospace: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
 $line-height-base: 1.5;
 
-// Variables dérivées et complémentaires
+// Derived and complementary variables
 $white: #fff;
 $light-gray: #f8f9fa;
 $medium-gray: #e9ecef;
@@ -25,13 +26,13 @@ $gray-700: #4a5568;
 $gray-500: #a0aec0;
 $gray-200: #e2e8f0;
 
-// Couleurs avec transparence
+// Colors with transparency
 $glass-white: rgba(255, 255, 255, 0.95);
 $border-white: rgba(255, 255, 255, 0.2);
 $primary-light: rgba($primary-color, 0.1);
 $primary-lighter: rgba($primary-color, 0.05);
 
-// Espacements
+// Spacing
 $spacing-xs: 0.25rem;
 $spacing-sm: 0.5rem;
 $spacing-md: 1rem;

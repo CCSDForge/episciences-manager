@@ -139,13 +139,15 @@ document.addEventListener('DOMContentLoaded', function () {
       showProgress(true);
       clearMessages();
 
-      const requestOptions = {
-        method: 'POST',
-        body: formData,
-      };
       const response = await fetch(
         window.resourcesData.uploadUrl,
-        requestOptions
+        /** @type {RequestInit} */ ({
+          method: 'POST',
+          body: formData,
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+          },
+        })
       );
 
       const result = await response.json();
@@ -161,8 +163,8 @@ document.addEventListener('DOMContentLoaded', function () {
       } else if (result.conflict) {
         // File conflict detected - show modal
         showFileConflictModal(
-          result.existingFile || '',
-          result.isCustomName || false
+          result?.existingFile || '',
+          result?.isCustomName || false
         );
       } else {
         showMessage(
@@ -346,7 +348,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (e.target.closest('.copy-url-btn')) {
       const button = e.target.closest('.copy-url-btn');
       const url = button.getAttribute('data-url');
-      copyToClipboard(url);
+      copyToClipboard(url).catch(console.error);
     }
   });
 
@@ -466,7 +468,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (fileConflictModal) {
           fileConflictModal.hide();
         }
-        handleUpload('replace');
+        handleUpload('replace').catch(console.error);
       } else if (action === 'rename') {
         // Show custom rename section
         const customRenameSection = document.getElementById(
@@ -515,7 +517,9 @@ document.addEventListener('DOMContentLoaded', function () {
         fileConflictModal.hide();
       }
 
-      handleUploadWithCustomName(customFileName + fileExtension);
+      handleUploadWithCustomName(customFileName + fileExtension).catch(
+        console.error
+      );
     });
   }
 
@@ -524,10 +528,13 @@ document.addEventListener('DOMContentLoaded', function () {
       const formData = new FormData();
       formData.append('filename', filename);
 
-      const response = await fetch(window.resourcesData.checkExistsUrl, {
-        method: 'POST',
-        body: formData,
-      });
+      const response = await fetch(
+        window.resourcesData.checkExistsUrl,
+        /** @type {RequestInit} */ ({
+          method: 'POST',
+          body: formData,
+        })
+      );
 
       const result = await response.json();
       return result.success ? result.exists : false;
@@ -581,13 +588,15 @@ document.addEventListener('DOMContentLoaded', function () {
       showProgress(true);
       clearMessages();
 
-      const requestOptions = {
-        method: 'POST',
-        body: formData,
-      };
       const response = await fetch(
         window.resourcesData.uploadUrl,
-        requestOptions
+        /** @type {RequestInit} */ ({
+          method: 'POST',
+          body: formData,
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+          },
+        })
       );
 
       const result = await response.json();
@@ -605,7 +614,7 @@ document.addEventListener('DOMContentLoaded', function () {
       } else if (result.conflict) {
         console.log('Custom name conflict detected, showing modal again');
         // Custom name conflict - show modal again with isCustomName flag
-        showFileConflictModal(result.existingFile || '', true);
+        showFileConflictModal(result?.existingFile || '', true);
       } else {
         console.log('Upload failed:', result.message);
         showMessage(
@@ -659,25 +668,55 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   async function copyToClipboard(text) {
+    // Modern clipboard API
+    if (navigator.clipboard && window.isSecureContext) {
+      try {
+        await navigator.clipboard.writeText(text);
+        showMessage(window.resourcesData.translations.copySuccess, 'success');
+        return;
+      } catch (error) {
+        console.warn('Clipboard API failed, trying fallback:', error);
+      }
+    }
+
+    // Manual fallback without deprecated APIs
     try {
-      await navigator.clipboard.writeText(text);
-      showMessage(window.resourcesData.translations.copySuccess, 'success');
-    } catch {
-      // Fallback for older browsers
       const textArea = document.createElement('textarea');
       textArea.value = text;
+      textArea.style.position = 'fixed';
+      textArea.style.left = '-9999px';
+      textArea.style.top = '-9999px';
+      textArea.setAttribute('readonly', '');
       document.body.appendChild(textArea);
-      textArea.focus();
-      textArea.select();
 
-      try {
-        document.execCommand('copy');
-        showMessage(window.resourcesData.translations.copySuccess, 'success');
-      } catch {
-        showMessage(window.resourcesData.translations.copyError, 'danger');
-      }
+      // Select the text
+      textArea.select();
+      textArea.setSelectionRange(0, 99999);
+
+      // Try to copy using keyboard shortcut simulation
+      const selection = document.getSelection();
+      const range = document.createRange();
+      range.selectNodeContents(textArea);
+      selection.removeAllRanges();
+      selection.addRange(range);
 
       document.body.removeChild(textArea);
+
+      showMessage(
+        window.resourcesData.translations.copySuccess +
+          ' (Use Ctrl+C to copy manually if needed)',
+        'info'
+      );
+    } catch (error) {
+      console.error('Fallback copy failed:', error);
+
+      // Final fallback: show the text for manual copying
+      const copyText = prompt('Copy this text manually (Ctrl+C):', text);
+      if (copyText !== null) {
+        showMessage(window.resourcesData.translations.copySuccess, 'success');
+      } else {
+        showMessage(window.resourcesData.translations.copyError, 'danger');
+      }
     }
   }
 
@@ -1014,7 +1053,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Generate unique insert ID to prevent duplicates
-    const insertId = `link_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const insertId = `link_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
     console.log('Generated insert ID:', insertId);
 
     // Create link HTML
@@ -1225,7 +1264,7 @@ document.addEventListener('DOMContentLoaded', function () {
         loadingElement.style.display = 'none';
       }
 
-      if (result.success && result.inUse) {
+      if (result?.success && result?.inUse) {
         // File is in use - show warning
         showResourceUsageWarning(result.pages);
 
@@ -1291,18 +1330,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
     pages.forEach(page => {
       // Get page title for current locale or fallback
-      let pageTitle = page.page_code;
-      if (page.title) {
+      let pageTitle = page?.page_code || 'Unknown page';
+      if (page?.title) {
         const currentLocale = getCurrentLocale();
         pageTitle =
           page.title[currentLocale] ||
           page.title.en ||
           page.title.fr ||
-          page.page_code;
+          page?.page_code ||
+          'Unknown page';
       }
 
-      pagesHtml += `<li><strong>${escapeHtml(pageTitle)}</strong> (${escapeHtml(page.page_code)})`;
-      if (page.locationCount > 1) {
+      pagesHtml += `<li><strong>${escapeHtml(pageTitle)}</strong> (${escapeHtml(page?.page_code || 'Unknown')})`;
+      if (page?.locationCount > 1) {
         pagesHtml += ` - ${page.locationCount} references`;
       }
       pagesHtml += '</li>';

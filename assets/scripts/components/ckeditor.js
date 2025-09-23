@@ -94,84 +94,46 @@ export function initializeCKEditor(elementId, placeholder = '') {
       // Editing (editing group)
       FindAndReplace,
     ],
-    toolbar: {
-      items: [
-        // Document/Mode
-        'findAndReplace',
-        '|',
+    toolbar: [
+      // Document/Mode
+      'findAndReplace',
+      '|',
 
-        // Basic styles
-        'heading',
-        'fontSize',
-        'fontFamily',
-        '|',
-        'bold',
-        'italic',
-        'removeFormat',
-        '|',
+      // Basic styles
+      'heading',
+      'fontSize',
+      'fontFamily',
+      '|',
+      'bold',
+      'italic',
+      'removeFormat',
+      '|',
 
-        // Paragraph
-        'alignment',
-        'bulletedList',
-        'numberedList',
-        'outdent',
-        'indent',
-        '|',
+      // Paragraph
+      'alignment',
+      'bulletedList',
+      'numberedList',
+      'outdent',
+      'indent',
+      '|',
 
-        // Links and insertion
-        'link',
-        'insertImageViaUrl',
-        //'uploadImage',
-        'insertTable',
-        'blockQuote',
-        'codeBlock',
-        'horizontalLine',
-        'specialCharacters',
-        '|',
+      // Links and insertion
+      'link',
+      'insertImageViaUrl',
+      //'uploadImage',
+      'insertTable',
+      'blockQuote',
+      'codeBlock',
+      'horizontalLine',
+      'specialCharacters',
+      '|',
 
-        // Clipboard/Undo
-        'undo',
-        'redo',
-      ],
-    },
+      // Clipboard/Undo
+      'undo',
+      'redo',
+    ],
 
-    // Image configuration
-    image: {
-      toolbar: [
-        'imageTextAlternative', // Alternative text (alt)
-        '|',
-        'imageStyle:alignLeft', // Left alignment
-        'imageStyle:alignCenter', // Center alignment
-        'imageStyle:alignRight', // Right alignment
-        '|',
-        'resizeImage', // Resizing
-      ],
-      resizeOptions: [
-        {
-          name: 'resizeImage:original',
-          value: null,
-          label: 'Original size',
-        },
-        {
-          name: 'resizeImage:25',
-          value: '25',
-          label: '25%',
-        },
-        {
-          name: 'resizeImage:50',
-          value: '50',
-          label: '50%',
-        },
-        {
-          name: 'resizeImage:75',
-          value: '75',
-          label: '75%',
-        },
-      ],
-      insert: {
-        integrations: ['url'],
-      },
-    },
+    // Note: Image configuration moved to be handled by individual plugins
 
     placeholder: placeholder,
   }).then(editor => {
@@ -236,7 +198,7 @@ export function focusEditor() {
 export function insertImageIntoEditor(imageUrl, altText = '') {
   if (!editorInstance || !imageUrl) return;
 
-  // 1) Normalize to absolute URL (handles /path, //host, relative paths)
+  //Normalize to absolute URL (handles /path, //host, relative paths)
   const toAbsoluteUrl = url => {
     try {
       // new URL resolves relative paths against window.location.href
@@ -248,13 +210,13 @@ export function insertImageIntoEditor(imageUrl, altText = '') {
 
   const fullImageUrl = toAbsoluteUrl(imageUrl);
 
-  // 2) Security check: allow only http(s) URLs
+  //Security check: allow only http(s) URLs
   if (!/^https?:\/\//i.test(fullImageUrl)) {
     console.warn('Blocked non-http(s) URL:', fullImageUrl);
     return;
   }
 
-  // 3) Insert image directly using model API - most reliable method
+  //Insert image directly using model API - most reliable method
   try {
     editorInstance.model.change(writer => {
       // Create the image element with proper attributes
@@ -309,7 +271,8 @@ export function insertLinkIntoEditor(linkUrl, linkText = '', insertId = null) {
 
   // Create unique insert ID if not provided
   const uniqueInsertId =
-    insertId || `link_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    insertId ||
+    `link_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
 
   // Check if this insert has already been processed
   if (processedInserts.has(uniqueInsertId)) {
@@ -328,7 +291,7 @@ export function insertLinkIntoEditor(linkUrl, linkText = '', insertId = null) {
     uniqueInsertId
   );
 
-  // 1) Normalize to absolute URL
+  // Normalize to absolute URL
   const toAbsoluteUrl = url => {
     try {
       return new URL(url, window.location.href).href;
@@ -339,7 +302,7 @@ export function insertLinkIntoEditor(linkUrl, linkText = '', insertId = null) {
 
   const fullLinkUrl = toAbsoluteUrl(linkUrl);
 
-  // 2) Security check: allow only http(s) URLs
+  // Security check: allow only http(s) URLs
   if (!/^https?:\/\//i.test(fullLinkUrl)) {
     console.warn('Blocked non-http(s) URL:', fullLinkUrl);
     return;

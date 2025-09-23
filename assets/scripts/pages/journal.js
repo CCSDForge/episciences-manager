@@ -18,12 +18,12 @@ document.addEventListener('DOMContentLoaded', function () {
       if (isSearchActive) {
         searchButton.innerHTML = clearIcon;
         searchButton.title = clearSearchText;
-        searchButton.type = 'button';
+        searchButton.setAttribute('type', 'button');
         searchButton.classList.add('clear-mode');
       } else {
         searchButton.innerHTML = originalIcon;
         searchButton.title = searchText;
-        searchButton.type = 'submit';
+        searchButton.setAttribute('type', 'submit');
         searchButton.classList.remove('clear-mode');
       }
     }
@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function () {
           url.search = ''; // Clear all search params
         } else {
           // Fallback: just remove search params from current URL
-          url.search = url.searchParams.toString();
+          url.search = '';
         }
 
         window.location.href = url.toString();
