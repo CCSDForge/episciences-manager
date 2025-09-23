@@ -2,14 +2,13 @@
 
 namespace App\Service;
 
+use App\Entity\Page;
 use App\Repository\PageRepository;
-use Doctrine\ORM\EntityManagerInterface;
 
-class ResourceUsageService
+readonly class ResourceUsageService
 {
     public function __construct(
-        private readonly EntityManagerInterface $entityManager,
-        private readonly PageRepository $pageRepository
+        private PageRepository $pageRepository
     ) {
     }
 
@@ -45,12 +44,12 @@ class ResourceUsageService
     /**
      * Search for resource references in page content
      *
-     * @param \App\Entity\Page $page
+     * @param Page $page
      * @param string $filename
      * @param string $rvcode
      * @return array
      */
-    private function searchInPageContent($page, string $filename, string $rvcode): array
+    private function searchInPageContent(Page $page, string $filename, string $rvcode): array
     {
         $locations = [];
         $content = $page->getContent();
@@ -123,18 +122,6 @@ class ResourceUsageService
         return $descriptions[$patternIndex] ?? 'Unknown reference';
     }
 
-    /**
-     * Check if a resource is in use (simple boolean check)
-     *
-     * @param string $filename
-     * @param string $rvcode
-     * @return bool
-     */
-    public function isResourceInUse(string $filename, string $rvcode): bool
-    {
-        $usage = $this->findResourceUsage($filename, $rvcode);
-        return !empty($usage);
-    }
 
     /**
      * Get a summary of resource usage

@@ -1,5 +1,8 @@
 {% extends 'base.html.twig' %}
 
+{% block head %}
+    {{ parent() }}
+{% endblock %}
 
 {% block body %}
 
@@ -36,9 +39,9 @@
                                 <div class="stat-card p-4 rounded-3" style="background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);">
                                     <div class="text-center text-white">
                                         {% if pagination %}
-                                        {# Si pagination, on doit compter depuis toutes les reviews, pas seulement la page courante #}
-                                        {# Option 1: Calculer dans le contrôleur #}
-                                        <h3 class="display-8 fw-bold mb-2">{{ activeJournalsCount|default(0) }}</h3>
+                                            {# If pagination, we must count from all reviews, not only the current page #}
+                                            {# Calculate in the controller #}
+                                            <h3 class="display-8 fw-bold mb-2">{{ activeJournalsCount|default(0) }}</h3>
                                         {% else %}
                                             {% set activeCount = 0 %}
                                             {% for review in reviews %}
@@ -157,4 +160,18 @@
     {{ parent() }}
     {{ encore_entry_link_tags('journal') }}
     {{ encore_entry_link_tags('navbar') }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        // Pass data to JavaScript
+        window.journalData = {
+            translations: {
+                clearSearch: '{{ 'journal.clear_search'|trans }}',
+                searchPlaceholder: '{{ 'journal.search_placeholder'|trans }}'
+            }
+        };
+    </script>
+    {{ encore_entry_script_tags('journalJs') }}
 {% endblock %}
