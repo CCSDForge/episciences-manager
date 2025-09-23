@@ -32,7 +32,6 @@ class MarkdownService
             {
                 // Preserve the entire figure as HTML to maintain all styling
                 // This includes width, height, alignment, and other CSS properties
-                
                 // Get all attributes from the figure element
                 $attributes = [];
                 if ($element->getAttribute('class')) {

@@ -54,9 +54,7 @@ class PageHierarchyService
                     $containerPage->title = $pageConfig['title'] ?? 'Container';
                     $containerPage->type = 'container';
                     // No more default_child needed!
-
                     $organized['main'][] = $containerPage;
-
                     // Add existing children to sub-pages
                     $containerKey = is_array($pageConfig['title']) ?
                         ($pageConfig['title']['en'] ?? 'container') :
