@@ -9,7 +9,7 @@ CNTR_APP_USER := www-data
 MYSQL_CONNECT_EPISCIENCES:= mysql -u root -proot -h 127.0.0.1 -P 33060 episciences
 MYSQL_CONNECT_AUTH:= mysql -u root -proot -h 127.0.0.1 -P 33062 cas_users
 
-.PHONY: build up down clean help test test-php test-e2e lint lint-fix format format-check lint-php lint-php-file check-all fix-all
+.PHONY: build up down clean help test test-php test-e2e lint lint-fix format format-check lint-php lint-php-file check-all fix-all deploy-prod cache-clear cache-warmup composer-install-prod
 
 help: ## Display this help
 	@echo "Available targets:"
@@ -47,8 +47,11 @@ composer-install: ## Install composer dependencies
 composer-update: ## Update composer dependencies
 	$(DOCKER_COMPOSE) exec -w $(CNTR_APP_DIR) $(CNTR_NAME_PHP) composer update --no-interaction --prefer-dist --optimize-autoloader
 
-yarn-encore-production: ## yarn encore production
+yarn-encore-production: ## Build production assets (optimized, minified)
 	$(DOCKER_COMPOSE) exec -w $(CNTR_APP_DIR) $(CNTR_NAME_PHP) yarn install; yarn encore production
+
+npm-build: ## Build assets for development (fast build)
+	npm run build
 
 restart-httpd: ## Restart Apache httpd
 	$(DOCKER_COMPOSE) restart $(CNTR_NAME_HTTPD)
@@ -132,3 +135,39 @@ enter-container-php: ## Open shell on PHP container
 
 enter-container-httpd: ## Open shell on HTTPD container
 	$(DOCKER) exec -it $(CNTR_NAME_HTTPD) sh -c "cd /var/www/htdocs && /bin/bash"
+
+# Production commands
+composer-install-prod: ## Install production dependencies (no-dev, optimized)
+	$(DOCKER_COMPOSE) exec -w $(CNTR_APP_DIR) $(CNTR_NAME_PHP) composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --classmap-authoritative
+
+
+cache-clear: ## Clear Symfony cache
+	$(DOCKER_COMPOSE) exec -w $(CNTR_APP_DIR) $(CNTR_NAME_PHP) php bin/console cache:clear --env=prod --no-debug
+
+cache-warmup: ## Warm up Symfony cache
+	$(DOCKER_COMPOSE) exec -w $(CNTR_APP_DIR) $(CNTR_NAME_PHP) php bin/console cache:warmup --env=prod --no-debug
+
+deploy-prod: ## Complete production deployment
+	@echo "🚀 Starting production deployment..."
+	@echo ""
+	@echo "📋 1/6 - Installing production dependencies..."
+	@$(MAKE) composer-install-prod
+	@echo ""
+	@echo "📋 2/6 - Building production assets..."
+	@$(MAKE) yarn-encore-production
+	@echo ""
+	@echo "📋 3/6 - Running database migrations..."
+	$(DOCKER_COMPOSE) exec -w $(CNTR_APP_DIR) $(CNTR_NAME_PHP) php bin/console doctrine:migrations:migrate --no-interaction --env=prod
+	@echo ""
+	@echo "📋 4/6 - Clearing cache..."
+	@$(MAKE) cache-clear
+	@echo ""
+	@echo "📋 5/6 - Warming up cache..."
+	@$(MAKE) cache-warmup
+	@echo ""
+	@echo "📋 6/6 - Restarting services..."
+	@$(MAKE) restart-httpd
+	@$(MAKE) restart-php
+	@echo ""
+	@echo "✅ Production deployment completed successfully!"
+	@echo "🌐 Application ready at: http://epimanager.episciences.org/"

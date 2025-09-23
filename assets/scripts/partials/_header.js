@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function () {
       loadPageContentAjax(finalUrl, selectedLocale, hash);
     } else {
       // Update translations before navigating for non-AJAX routes
-      updateTranslations(selectedLocale);
+      updateTranslations(selectedLocale).catch(console.error);
       // For other routes, navigate normally
       window.location.href = finalUrl;
     }
@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', function () {
         updatePageNavLinks(selectedLocale);
 
         // Update translations and inline edit content
-        updateTranslations(selectedLocale);
+        updateTranslations(selectedLocale).catch(console.error);
       })
       .catch(error => {
         console.error('Error loading page content:', error);
@@ -236,26 +236,26 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Update welcome message
     const welcomeText = document.querySelector('.welcome-text');
-    if (welcomeText && translations.welcome) {
+    if (welcomeText && translations?.['welcome']) {
       const userIdentifier = welcomeText.querySelector('strong');
       if (userIdentifier) {
         const username = userIdentifier.textContent;
         welcomeText.innerHTML =
-          translations.welcome + ', <strong>' + username + '</strong>';
+          translations['welcome'] + ', <strong>' + username + '</strong>';
       }
     }
 
     // Update login button
     const loginButton = document.querySelector('a[href*="login"]');
-    if (loginButton && translations.login) {
-      loginButton.textContent = translations.login;
+    if (loginButton && translations?.['login']) {
+      loginButton.textContent = translations['login'];
     }
 
     // Update logout button
     const logoutButton = document.querySelector('a[href*="logout"]');
-    if (logoutButton && translations.logout) {
+    if (logoutButton && translations?.['logout']) {
       logoutButton.innerHTML =
-        '<i class="fas fa-sign-out-alt me-1"></i> ' + translations.logout;
+        '<i class="fas fa-sign-out-alt me-1"></i> ' + translations['logout'];
     }
   }
 
