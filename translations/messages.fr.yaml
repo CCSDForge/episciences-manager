@@ -38,6 +38,7 @@ journal:
  table_action: "Action"
  no_journals: "Aucun journal trouvé"
  search_placeholder: "Rechercher un journal par nom ou code"
+ clear_search: "Vider la recherche"
  see_details: "Voir les détails (epiadmin uniquement)"
 
 journalDetails:
