@@ -517,7 +517,9 @@ document.addEventListener('DOMContentLoaded', function () {
         fileConflictModal.hide();
       }
 
-      handleUploadWithCustomName(customFileName + fileExtension).catch(console.error);
+      handleUploadWithCustomName(customFileName + fileExtension).catch(
+        console.error
+      );
     });
   }
 
@@ -526,10 +528,13 @@ document.addEventListener('DOMContentLoaded', function () {
       const formData = new FormData();
       formData.append('filename', filename);
 
-      const response = await fetch(window.resourcesData.checkExistsUrl, /** @type {RequestInit} */ ({
-        method: 'POST',
-        body: formData,
-      }));
+      const response = await fetch(
+        window.resourcesData.checkExistsUrl,
+        /** @type {RequestInit} */ ({
+          method: 'POST',
+          body: formData,
+        })
+      );
 
       const result = await response.json();
       return result.success ? result.exists : false;
@@ -699,7 +704,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
       showMessage(
         window.resourcesData.translations.copySuccess +
-        ' (Use Ctrl+C to copy manually if needed)',
+          ' (Use Ctrl+C to copy manually if needed)',
         'info'
       );
     } catch (error) {
