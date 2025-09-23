@@ -792,15 +792,15 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .then(data => {
           console.log('Save response received:', data);
-          console.log('HTML content received:', data.htmlContent);
+          console.log('HTML content received:', data.htmlContent || 'No htmlContent');
 
           // TEMPORARY DEBUG: Log all response data
           if (data.debug) {
             console.log('=== DEBUG CONVERSION RESULTS ===');
-            console.log('Original HTML:', data.original_html);
-            console.log('Converted Markdown:', data.converted_markdown);
-            console.log('Back to HTML:', data.back_to_html);
-            console.log('Actual content preview:', data.actual_content);
+            console.log('Original HTML:', data.original_html || 'No original_html');
+            console.log('Converted Markdown:', data.converted_markdown || 'No converted_markdown');
+            console.log('Back to HTML:', data.back_to_html || 'No back_to_html');
+            console.log('Actual content preview:', data.actual_content || 'No actual_content');
             console.log('=== END DEBUG ===');
             return; // Stop here for debug
           }
