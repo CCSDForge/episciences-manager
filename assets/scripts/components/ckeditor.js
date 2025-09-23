@@ -271,7 +271,8 @@ export function insertLinkIntoEditor(linkUrl, linkText = '', insertId = null) {
 
   // Create unique insert ID if not provided
   const uniqueInsertId =
-    insertId || `link_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+    insertId ||
+    `link_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
 
   // Check if this insert has already been processed
   if (processedInserts.has(uniqueInsertId)) {
