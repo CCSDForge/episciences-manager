@@ -102,17 +102,18 @@ symfony server:start
 - `make yarn-encore-production` - Build production assets (optimized, minified)
 
 ### Database
-- `make load-db-manager` - Load episciences database
-- `make load-db-auth` - Load authentication database
+- `make load-db-manager` - Load episciences database (episciences.sql from ~/tmp/)
+- `make load-db-auth` - Load authentication database (cas_users.sql from ~/tmp/)
 
 ### Code Quality
 - `make lint` - Check JavaScript with ESLint
 - `make lint-fix` - Fix JavaScript issues automatically
 - `make format` - Format JavaScript with Prettier
 - `make format-check` - Check JavaScript formatting
-- `make lint-php` - Check PHP syntax
-- `make check-all` - Run all quality checks
-- `make fix-all` - Fix all auto-fixable issues
+- `make lint-php` - Check PHP syntax in src/ directory
+- `make lint-php-file FILE=path` - Check specific PHP file syntax
+- `make check-all` - Run all quality checks (PHP, JS, tests)
+- `make fix-all` - Fix all auto-fixable issues (ESLint + Prettier)
 
 ### Testing
 - `make test` - Run JavaScript unit tests
@@ -121,16 +122,29 @@ symfony server:start
 
 ### Production Deployment
 - `make deploy-prod` - Complete production deployment (recommended)
+- `make deploy` - Deploy current branch to production
+- `make deploy-branch BRANCH=feature` - Deploy specific branch to production
+- `make deploy-tag TAG=v1.0.0` - Deploy specific tag to production
 - `make composer-install-prod` - Install production dependencies (no-dev, optimized)
 - `make yarn-encore-production` - Build production assets and optimize
 - `make cache-clear` - Clear Symfony cache
 - `make cache-warmup` - Warm up Symfony cache
 
-### Utilities
+### SSL & Preproduction
+- `make ssl-certs` - Generate self-signed SSL certificates
+- `make ssl-clean` - Remove SSL certificates
+- `make preprod` - Start preprod containers with SSL
+- `make preprod-no-ssl` - Start preprod containers (HTTP only)
+- `make preprod-ci` - Start preprod with CI database and SSL
+- `make preprod-ci-no-ssl` - Start preprod with CI database (HTTP only)
+
+### Container Management
 - `make restart-httpd` - Restart Apache
 - `make restart-php` - Restart PHP-FPM
 - `make enter-container-php` - Open shell in PHP container
 - `make enter-container-httpd` - Open shell in Apache container
+
+### Utilities
 - `make can-i-use-update` - Update browserslist database
 
 ## Testing
@@ -164,7 +178,55 @@ make lint-fix       # Fix ESLint issues
 make format         # Apply Prettier formatting
 ```
 
+## Preproduction Environment
+
+### SSL Certificate Setup
+```bash
+# Generate SSL certificates for HTTPS development
+make ssl-certs
+
+# Clean up SSL certificates
+make ssl-clean
+```
+
+### Starting Preproduction Environment
+```bash
+# With SSL (HTTPS + HTTP)
+make preprod
+
+# HTTP only (no SSL)
+make preprod-no-ssl
+
+# CI environment with SSL
+make preprod-ci
+
+# CI environment HTTP only
+make preprod-ci-no-ssl
+```
+
+### Access Configuration
+Add to your `/etc/hosts` file:
+```
+127.0.0.1    epimanager-preprod.episciences.org
+```
+
+Then access:
+- HTTP: http://epimanager-preprod.episciences.org
+- HTTPS: https://epimanager-preprod.episciences.org (when SSL is enabled)
+
 ## Production Deployment
+
+### Git-based Deployment
+```bash
+# Deploy current branch
+make deploy
+
+# Deploy specific branch
+make deploy-branch BRANCH=feature-name
+
+# Deploy specific tag
+make deploy-tag TAG=v1.0.0
+```
 
 ### Quick Deployment
 ```bash
