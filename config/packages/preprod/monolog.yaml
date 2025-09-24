@@ -1,0 +1,18 @@
+monolog:
+  handlers:
+    main:
+      type: stream
+      path: "%kernel.logs_dir%/%kernel.environment%.log"
+      level: warning  # Hide debug and info, keep warning/error/critical
+      channels: ["!event", "!console"]
+
+    # Specific handler for critical errors
+    critical:
+      type: stream
+      path: "%kernel.logs_dir%/critical.log"
+      level: critical
+
+    # Completely disable Symfony dumps
+    dump:
+      type: 'null'
+      level: debug

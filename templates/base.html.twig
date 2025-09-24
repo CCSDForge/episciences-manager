@@ -40,7 +40,7 @@
             {{ encore_entry_script_tags('app') }}
         {% endblock %}
     </head>
-    <body>
+    <body data-env="{{ app.environment }}">
     {% block navbar %}
         {% include '/partials/_header.html.twig' %}
     {% endblock %}

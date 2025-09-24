@@ -46,3 +46,8 @@ services:
     App\Service\PageHierarchyService:
         arguments:
             $projectDir: '%kernel.project_dir%'
+
+    # Debug Helper Service
+    App\Service\DebugHelper:
+        arguments:
+            $environment: '%kernel.environment%'

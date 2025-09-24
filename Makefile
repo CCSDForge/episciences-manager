@@ -69,7 +69,7 @@ help: ## Display available commands list
 	| awk 'BEGIN {FS=":.*?## "}; {printf "  $(BOLD)%-22s$(NC) %s\n", $$1, $$2}'
 	@printf "\n"
 	@printf "$(RED)Deployment Commands:$(NC)\n"
-	@grep -E '^(deploy.*|composer-install-prod|cache-clear|cache-warmup|yarn-encore-production):.*?## .*$$' $(MAKEFILE_LIST) \
+	@grep -E '^(deploy.*|composer-install-prod|cache-clear|cache-warmup|yarn-encore-production|dump-env-.*):.*?## .*$$' $(MAKEFILE_LIST) \
 	| awk 'BEGIN {FS=":.*?## "}; {printf "  $(BOLD)%-22s$(NC) %s\n", $$1, $$2}'
 	@printf "\n"
 	@printf "$(BLUE)Composer/NPM Commands:$(NC)\n"
@@ -88,14 +88,14 @@ help: ## Display available commands list
 .PHONY: up down restart logs ps build clean
 up: ## Start all containers (in background)
 	$(DOCKER_COMPOSE) up -d
-	@echo "====================================================================="
-	@echo "Make sure you have this line in /etc/hosts:"
-	@echo "127.0.0.1 localhost epimanager.episciences.org"
-	@echo "Episciences Manager : http://epimanager.episciences.org/"
-	@echo "PhpMyAdmin          : http://localhost:8001/"
-	@echo "====================================================================="
-	@echo "SQL: place your dumps in ~/tmp/"
-	@echo "SQL: import '~/tmp/episciences.sql' with 'make load-db-manager'"
+	@printf "====================================================================="
+	@printf "Make sure you have this line in /etc/hosts:"
+	@printf "127.0.0.1 localhost epimanager.episciences.org"
+	@printf "Episciences Manager : http://epimanager.episciences.org/"
+	@printf "PhpMyAdmin          : http://localhost:8001/"
+	@printf "====================================================================="
+	@printf "SQL: place your dumps in ~/tmp/"
+	@printf "SQL: import '~/tmp/episciences.sql' with 'make load-db-manager'"
 
 down: ## Stop and remove containers, networks, orphan volumes
 	$(DOCKER_COMPOSE) down --remove-orphans
@@ -182,9 +182,9 @@ format-check: ## Check JS formatting with Prettier
 	npm run format:check
 
 lint-php: ## Check PHP syntax in src/
-	@echo "🔍 Checking PHP syntax..."
+	@printf "🔍 Checking PHP syntax..."
 	@find src/ -name "*.php" -print0 | xargs -0 -n1 php -l | grep -v "No syntax errors detected" || true
-	@echo "✅ PHP syntax check completed"
+	@printf "✅ PHP syntax check completed"
 
 lint-php-file: ## Check PHP syntax of a file (make lint-php-file FILE=src/file.php)
 	@if [ -n "$(FILE)" ]; then \
@@ -196,18 +196,18 @@ lint-php-file: ## Check PHP syntax of a file (make lint-php-file FILE=src/file.p
 	fi
 
 check-all: ## Run all checks (PHP, JS, tests)
-	@echo "🚀 Running all quality checks..."
-	@echo ""; echo "📋 1/4 - Checking PHP syntax..."; $(MAKE) lint-php
-	@echo ""; echo "📋 2/4 - Checking JavaScript with ESLint..."; $(MAKE) lint
-	@echo ""; echo "📋 3/4 - Checking JavaScript formatting..."; $(MAKE) format-check
-	@echo ""; echo "📋 4/4 - Running JavaScript tests..."; $(MAKE) test
-	@echo ""; echo "✅ All checks completed successfully!"
+	@printf "🚀 Running all quality checks..."
+	@printf ""; echo "📋 1/4 - Checking PHP syntax..."; $(MAKE) lint-php
+	@printf ""; echo "📋 2/4 - Checking JavaScript with ESLint..."; $(MAKE) lint
+	@printf ""; echo "📋 3/4 - Checking JavaScript formatting..."; $(MAKE) format-check
+	@printf ""; echo "📋 4/4 - Running JavaScript tests..."; $(MAKE) test
+	@printf ""; echo "✅ All checks completed successfully!"
 
 fix-all: ## Fix all (lint JS + Prettier)
-	@echo "🔧 Fixing all auto-fixable issues..."
-	@echo ""; echo "📋 1/2 - Fixing JavaScript with ESLint..."; $(MAKE) lint-fix
-	@echo ""; echo "📋 2/2 - Fixing JavaScript formatting..."; $(MAKE) format
-	@echo ""; echo "✅ All fixes applied!"
+	@printf "🔧 Fixing all auto-fixable issues..."
+	@printf ""; echo "📋 1/2 - Fixing JavaScript with ESLint..."; $(MAKE) lint-fix
+	@printf ""; echo "📋 2/2 - Fixing JavaScript formatting..."; $(MAKE) format
+	@printf ""; echo "✅ All fixes applied!"
 
 # ==========================
 #        CONTAINERS
@@ -230,33 +230,33 @@ enter-container-httpd: ## Open shell in HTTPD container (debug)
 # ==========================
 .PHONY: ssl-certs ssl-clean preprod preprod-no-ssl preprod-ci preprod-ci-no-ssl
 ssl-certs: ## Generate self-signed SSL certificates
-	@echo "$(BOLD)Generating SSL certificates for development...$(NC)"
+	@printf "$(BOLD)Generating SSL certificates for development...$(NC)"
 	$(call require_cmd,openssl)
 	@mkdir -p docker/apache/ssl
-	@echo "[req]" > docker/apache/ssl/openssl.conf
-	@echo "default_bits = 2048" >> docker/apache/ssl/openssl.conf
-	@echo "prompt = no" >> docker/apache/ssl/openssl.conf
-	@echo "distinguished_name = req_distinguished_name" >> docker/apache/ssl/openssl.conf
-	@echo "req_extensions = v3_req" >> docker/apache/ssl/openssl.conf
-	@echo "" >> docker/apache/ssl/openssl.conf
-	@echo "[req_distinguished_name]" >> docker/apache/ssl/openssl.conf
-	@echo "C = FR" >> docker/apache/ssl/openssl.conf
-	@echo "ST = France" >> docker/apache/ssl/openssl.conf
-	@echo "L = Lyon" >> docker/apache/ssl/openssl.conf
-	@echo "O = Episciences" >> docker/apache/ssl/openssl.conf
-	@echo "OU = Development" >> docker/apache/ssl/openssl.conf
-	@echo "CN = epimanager-preprod.episciences.org" >> docker/apache/ssl/openssl.conf
-	@echo "emailAddress = dev@episciences.org" >> docker/apache/ssl/openssl.conf
-	@echo "" >> docker/apache/ssl/openssl.conf
-	@echo "[v3_req]" >> docker/apache/ssl/openssl.conf
-	@echo "keyUsage = keyEncipherment, dataEncipherment, digitalSignature" >> docker/apache/ssl/openssl.conf
-	@echo "extendedKeyUsage = serverAuth" >> docker/apache/ssl/openssl.conf
-	@echo "subjectAltName = @alt_names" >> docker/apache/ssl/openssl.conf
-	@echo "" >> docker/apache/ssl/openssl.conf
-	@echo "[alt_names]" >> docker/apache/ssl/openssl.conf
-	@echo "DNS.1 = epimanager-preprod.episciences.org" >> docker/apache/ssl/openssl.conf
-	@echo "DNS.2 = localhost" >> docker/apache/ssl/openssl.conf
-	@echo "IP.1 = 127.0.0.1" >> docker/apache/ssl/openssl.conf
+	@printf "[req]" > docker/apache/ssl/openssl.conf
+	@printf "default_bits = 2048" >> docker/apache/ssl/openssl.conf
+	@printf "prompt = no" >> docker/apache/ssl/openssl.conf
+	@printf "distinguished_name = req_distinguished_name" >> docker/apache/ssl/openssl.conf
+	@printf "req_extensions = v3_req" >> docker/apache/ssl/openssl.conf
+	@printf "" >> docker/apache/ssl/openssl.conf
+	@printf "[req_distinguished_name]" >> docker/apache/ssl/openssl.conf
+	@printf "C = FR" >> docker/apache/ssl/openssl.conf
+	@printf "ST = France" >> docker/apache/ssl/openssl.conf
+	@printf "L = Lyon" >> docker/apache/ssl/openssl.conf
+	@printf "O = Episciences" >> docker/apache/ssl/openssl.conf
+	@printf "OU = Development" >> docker/apache/ssl/openssl.conf
+	@printf "CN = epimanager-preprod.episciences.org" >> docker/apache/ssl/openssl.conf
+	@printf "emailAddress = dev@episciences.org" >> docker/apache/ssl/openssl.conf
+	@printf "" >> docker/apache/ssl/openssl.conf
+	@printf "[v3_req]" >> docker/apache/ssl/openssl.conf
+	@printf "keyUsage = keyEncipherment, dataEncipherment, digitalSignature" >> docker/apache/ssl/openssl.conf
+	@printf "extendedKeyUsage = serverAuth" >> docker/apache/ssl/openssl.conf
+	@printf "subjectAltName = @alt_names" >> docker/apache/ssl/openssl.conf
+	@printf "" >> docker/apache/ssl/openssl.conf
+	@printf "[alt_names]" >> docker/apache/ssl/openssl.conf
+	@printf "DNS.1 = epimanager-preprod.episciences.org" >> docker/apache/ssl/openssl.conf
+	@printf "DNS.2 = localhost" >> docker/apache/ssl/openssl.conf
+	@printf "IP.1 = 127.0.0.1" >> docker/apache/ssl/openssl.conf
 	@if [ ! -f "docker/apache/ssl/epimanager-preprod.episciences.org.crt" ]; then \
 		openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
 			-keyout docker/apache/ssl/epimanager-preprod.episciences.org.key \
@@ -270,53 +270,60 @@ ssl-certs: ## Generate self-signed SSL certificates
 	fi
 
 ssl-clean: ## Remove SSL certificates
-	@echo "$(BOLD)Removing SSL certificates...$(NC)"
+	@printf "$(BOLD)Removing SSL certificates...$(NC)"
 	@rm -rf docker/apache/ssl/
-	@echo "$(GREEN)✓ SSL certificates removed$(NC)"
+	@printf "$(GREEN)✓ SSL certificates removed$(NC)"
+
+preprod-setup: ## Complete preprod setup (build assets + compile env + start containers)
+	@printf "🚀 Setting up complete preprod environment..."
+	@printf ""; echo "📋 1/3 - Building production assets..."; $(MAKE) yarn-encore-production
+	@printf ""; echo "📋 2/3 - Compiling environment variables..."; $(MAKE) dump-env-preprod || true
+	@printf ""; echo "📋 3/3 - Starting preprod containers..."; $(MAKE) preprod
+	@printf ""; echo "✅ Preprod environment ready!"
 
 preprod: ssl-certs ## Start preprod containers with SSL (Docker command on host)
-	@echo "$(BOLD)Starting Docker containers for preprod with SSL...$(NC)"
-	$(call require_file,docker-compose.yml)
+	@printf "$(BOLD)Starting Docker containers for preprod with SSL...$(NC)"
+	$(call require_file,docker-compose.yaml)
 	$(DOCKER_COMPOSE) up -d
-	@echo "$(GREEN)✓ Containers started$(NC)"
-	@echo ""; echo "$(BOLD)🌐 Application URLs:$(NC)"
-	@echo "  $(BLUE)HTTP:$(NC)  http://epimanager-preprod.episciences.org"
-	@echo "  $(BLUE)HTTPS:$(NC) https://epimanager-preprod.episciences.org"
-	@echo ""; echo "$(YELLOW)⚠️  Required configuration:$(NC)"
-	@echo "  Add to $(BOLD)/etc/hosts$(NC): $(BOLD)127.0.0.1    epimanager-preprod.episciences.org$(NC)"
+	@printf "$(GREEN)✓ Containers started$(NC)"
+	@printf ""; echo "$(BOLD)🌐 Application URLs:$(NC)"
+	@printf "  $(BLUE)HTTP:$(NC)  http://epimanager-preprod.episciences.org"
+	@printf "  $(BLUE)HTTPS:$(NC) https://epimanager-preprod.episciences.org"
+	@printf ""; echo "$(YELLOW)⚠️  Required configuration:$(NC)"
+	@printf "  Add to $(BOLD)/etc/hosts$(NC): $(BOLD)127.0.0.1    epimanager-preprod.episciences.org$(NC)"
 
 preprod-no-ssl: ## Start preprod containers (HTTP only)
-	@echo "$(BOLD)Starting Docker containers for preprod (HTTP only)...$(NC)"
+	@printf "$(BOLD)Starting Docker containers for preprod (HTTP only)...$(NC)"
 	$(call require_file,docker-compose.yml)
 	$(DOCKER_COMPOSE) up -d
-	@echo "$(GREEN)✓ Containers started$(NC)"
-	@echo ""; echo "$(BOLD)🌐 Application URLs:$(NC)"
-	@echo "  $(BLUE)HTTP:$(NC)  http://epimanager-preprod.episciences.org"
-	@echo ""; echo "$(YELLOW)⚠️  Required configuration:$(NC)"
-	@echo "  Add to $(BOLD)/etc/hosts$(NC): $(BOLD)127.0.0.1    epimanager-preprod.episciences.org$(NC)"
+	@printf "$(GREEN)✓ Containers started$(NC)"
+	@printf ""; echo "$(BOLD)🌐 Application URLs:$(NC)"
+	@printf "  $(BLUE)HTTP:$(NC)  http://epimanager-preprod.episciences.org"
+	@printf ""; echo "$(YELLOW)⚠️  Required configuration:$(NC)"
+	@printf "  Add to $(BOLD)/etc/hosts$(NC): $(BOLD)127.0.0.1    epimanager-preprod.episciences.org$(NC)"
 
 preprod-ci: ssl-certs ## Start preprod with CI database (compose in host mode)
-	@echo "$(BOLD)Starting Docker containers for preprod (CI mode with standalone database)...$(NC)"
+	@printf "$(BOLD)Starting Docker containers for preprod (CI mode with standalone database)...$(NC)"
 	$(call require_file,docker-compose.yml)
 	$(call require_file,docker-compose.ci.yml)
 	$(DOCKER_COMPOSE) -f docker-compose.yml -f docker-compose.ci.yml up -d
-	@echo "$(GREEN)✓ CI containers started with standalone database$(NC)"
-	@echo ""; echo "$(BOLD)🌐 Application URLs:$(NC)"
-	@echo "  $(BLUE)HTTP:$(NC)  http://epimanager-preprod.episciences.org"
-	@echo "  $(BLUE)HTTPS:$(NC) https://epimanager-preprod.episciences.org"
-	@echo ""; echo "$(YELLOW)⚠️  Required configuration:$(NC)"
-	@echo "  Add to $(BOLD)/etc/hosts$(NC): $(BOLD)127.0.0.1    epimanager-preprod.episciences.org$(NC)"
+	@printf "$(GREEN)✓ CI containers started with standalone database$(NC)"
+	@printf ""; echo "$(BOLD)🌐 Application URLs:$(NC)"
+	@printf "  $(BLUE)HTTP:$(NC)  http://epimanager-preprod.episciences.org"
+	@printf "  $(BLUE)HTTPS:$(NC) https://epimanager-preprod.episciences.org"
+	@printf ""; echo "$(YELLOW)⚠️  Required configuration:$(NC)"
+	@printf "  Add to $(BOLD)/etc/hosts$(NC): $(BOLD)127.0.0.1    epimanager-preprod.episciences.org$(NC)"
 
 preprod-ci-no-ssl: ## Start preprod with CI database (HTTP only)
-	@echo "$(BOLD)Starting Docker containers for preprod (CI mode, HTTP only)...$(NC)"
+	@printf "$(BOLD)Starting Docker containers for preprod (CI mode, HTTP only)...$(NC)"
 	$(call require_file,docker-compose.yml)
 	$(call require_file,docker-compose.ci.yml)
 	$(DOCKER_COMPOSE) -f docker-compose.yml -f docker-compose.ci.yml up -d
-	@echo "$(GREEN)✓ CI containers started with standalone database$(NC)"
-	@echo ""; echo "$(BOLD)🌐 Application URLs:$(NC)"
-	@echo "  $(BLUE)HTTP:$(NC)  http://epimanager-preprod.episciences.org"
-	@echo ""; echo "$(YELLOW)⚠️  Required configuration:$(NC)"
-	@echo "  Add to $(BOLD)/etc/hosts$(NC): $(BOLD)127.0.0.1    epimanager-preprod.episciences.org$(NC)"
+	@printf "$(GREEN)✓ CI containers started with standalone database$(NC)"
+	@printf ""; echo "$(BOLD)🌐 Application URLs:$(NC)"
+	@printf "  $(BLUE)HTTP:$(NC)  http://epimanager-preprod.episciences.org"
+	@printf ""; echo "$(YELLOW)⚠️  Required configuration:$(NC)"
+	@printf "  Add to $(BOLD)/etc/hosts$(NC): $(BOLD)127.0.0.1    epimanager-preprod.episciences.org$(NC)"
 
 # ==========================
 #        PRODUCTION DEPLOYMENT (HOST-ONLY)
@@ -334,15 +341,17 @@ cache-warmup: ## Warm up Symfony cache (prod, host)
 
 # Shared deployment logic (HOST)
 define deploy-logic
-	@echo "🚀 Starting deployment for: $(1) (host only)"
+	@printf "🚀 Starting deployment for: $(1) (host only)"
 	@if [ ! -d ".git" ]; then echo "$(RED)✗ Not a git repository$(NC)"; exit 1; fi
 	@git fetch --all --tags
 	@git checkout --force $(1)
 	@git pull --ff-only || true
 	@# Version
-	@CURRENT_TAG=$$(git describe --tags --abbrev=0 2>/dev/null || echo "no-tag"); \
+	@CURRENT_TAG=$$(git describe --tags --abbrev=0 2>/dev/null || echo "no-tag@printf ")
+; \
 	[ "$(1)" != "main" ] && CURRENT_TAG="$(1)" || true; \
-	DEPLOY_DATE=$$(date "+%Y-%m-%d %X %z"); \
+	DEPLOY_DATE=$$(date "+%Y-%m-%d %X %z@printf ")
+; \
 	printf "%s\n" "<?php" "\$$appVersion='$$CURRENT_TAG ($$DEPLOY_DATE)';" > version.php; \
 	echo "$(GREEN)Version written to version.php$(NC)"
 	@# Frontend dependencies (if present)
@@ -354,20 +363,31 @@ define deploy-logic
 	else \
 		echo "$(YELLOW)⚠ Yarn not found, skipping assets compilation$(NC)"; \
 	fi
-	@echo "$(GREEN)Fetch/checkout/pull OK$(NC)"
+	@printf "$(GREEN)Fetch/checkout/pull OK$(NC)"
 endef
 
+dump-env-preprod: ## Compile .env files for preprod environment (optimizes performance)
+	@printf "$(BOLD)Compiling environment variables for preprod...$(NC)\n"
+	$(DOCKER) exec $(CNTR_NAME_PHP) composer dump-env preprod
+	@printf "$(GREEN)✓ Environment compiled to .env.local.php$(NC)\n"
+
+dump-env-prod: ## Compile .env files for production environment (optimizes performance)
+	@printf "$(BOLD)Compiling environment variables for production...$(NC)\n"
+	$(DOCKER) exec $(CNTR_NAME_PHP) composer dump-env prod
+	@printf "$(GREEN)✓ Environment compiled to .env.local.php$(NC)\n"
+
 deploy-prod: ## Complete production deployment (host-only)
-	@echo "🚀 Starting production deployment (host only)..."
-	@echo ""; echo "📋 1/6 - Installing production dependencies..."; $(MAKE) composer-install-prod
-	@echo ""; echo "📋 2/6 - Building production assets..."; $(MAKE) yarn-encore-production || true
-	@echo ""; echo "📋 3/6 - Running database migrations..."
+	@printf "🚀 Starting production deployment (host only)..."
+	@printf ""; echo "📋 1/7 - Installing production dependencies..."; $(MAKE) composer-install-prod
+	@printf ""; echo "📋 2/7 - Building production assets..."; $(MAKE) yarn-encore-production || true
+	@printf ""; echo "📋 3/7 - Compiling environment..."; $(MAKE) dump-env-prod || true
+	@printf ""; echo "📋 4/7 - Running database migrations..."
 	php bin/console doctrine:migrations:migrate --no-interaction --env=prod
-	@echo ""; echo "📋 4/6 - Clearing cache..."; $(MAKE) cache-clear
-	@echo ""; echo "📋 5/6 - Warming up cache..."; $(MAKE) cache-warmup
-	@echo ""; echo "📋 6/6 - Restarting services (via Docker)..."; $(MAKE) restart-httpd; $(MAKE) restart-php
-	@echo ""; echo "✅ Production deployment completed successfully!"
-	@echo "🌐 Application ready at: http://epimanager-preprod.episciences.org/"
+	@printf ""; echo "📋 5/7 - Clearing cache..."; $(MAKE) cache-clear
+	@printf ""; echo "📋 6/7 - Warming up cache..."; $(MAKE) cache-warmup
+	@printf ""; echo "📋 7/7 - Restarting services (via Docker)..."; $(MAKE) restart-httpd; $(MAKE) restart-php
+	@printf ""; echo "✅ Production deployment completed successfully!"
+	@printf "🌐 Application ready at: http://epimanager-preprod.episciences.org/"
 
 deploy: ## Deploy main branch (host-only)
 	$(call deploy-logic,main)

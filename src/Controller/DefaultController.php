@@ -137,11 +137,7 @@ class DefaultController extends AbstractController
         } else {
             $logger->warning('User is not authenticated');
         }
-        //dd($user);
-        dump($this->container->get('security.token_storage'));
-        dump($this->getUser());
-        //$reviews = $this->reviewRepository->findAllForList();
-        //dd($reviews);
+
         $reviews = $this->reviewManager->getActiveReviewsForDisplayPaginated(
             $paginator,
             $request->query->getInt('page', 1),
