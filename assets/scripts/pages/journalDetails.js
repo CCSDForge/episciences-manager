@@ -377,6 +377,10 @@ document.addEventListener('DOMContentLoaded', function () {
   const pageBody = document.getElementById('page-body');
   const editButton = document.getElementById('edit-button');
 
+  // Preview button elements
+  const previewButtonContainer = document.getElementById('live-effect-button-container');
+  const previewPageButton = document.getElementById('preview-page-button');
+
   // Inline edit elements
   const inlineEditContent = document.getElementById('inline-edit-content');
   const pageTitleInline = document.getElementById('page-title-inline');
@@ -479,6 +483,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Remove active class from all page links
     pageLinks.forEach(l => l.classList.remove('active'));
+
+    // Hide preview button
+    hidePreviewButton();
 
     // Show default home content
     pageBody.innerHTML = `
@@ -925,6 +932,33 @@ document.addEventListener('DOMContentLoaded', function () {
       currentText.textContent = currentTitle;
       breadcrumbCurrent.style.display = 'block';
       breadcrumbNav.style.display = 'block';
+    }
+
+    // Show preview button and update URL
+    updatePreviewButton(pageCode);
+  }
+
+  // Function to update preview button
+  function updatePreviewButton(pageCode) {
+    if (previewButtonContainer && previewPageButton && pageCode && currentJournalCode) {
+      // Generate preview URL: https://{code}.episciences.org/{pagecode}
+      const previewUrl = `https://${currentJournalCode}.episciences.org/${pageCode}`;
+
+      // Update button href and show it
+      previewPageButton.href = previewUrl;
+      previewButtonContainer.style.display = 'block';
+    } else {
+      // Hide preview button if no page is selected
+      if (previewButtonContainer) {
+        previewButtonContainer.style.display = 'none';
+      }
+    }
+  }
+
+  // Function to hide preview button when going to home
+  function hidePreviewButton() {
+    if (previewButtonContainer) {
+      previewButtonContainer.style.display = 'none';
     }
   }
 });
