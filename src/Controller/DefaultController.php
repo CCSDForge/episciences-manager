@@ -143,7 +143,6 @@ class DefaultController extends AbstractController
             $request->query->getInt('page', 1),
             8
         );
-        //dd($reviews);
 
         $showLogoutMessage = $request->query->get('logout') === 'success';
 
