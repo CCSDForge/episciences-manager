@@ -112,6 +112,19 @@ function updateInlineEditTranslations() {
       '<i class="fas fa-save me-1"></i>' + window.translations.save;
   }
 
+  // Update preview page button
+  const previewPageButton = document.getElementById('preview-page-button');
+  console.log('Preview page button found:', !!previewPageButton);
+  console.log('window.translations.previewPage:', window.translations.previewPage);
+  console.log('All translation keys:', Object.keys(window.translations));
+  if (previewPageButton && window.translations.previewPage) {
+    console.log('Updating preview page button:', window.translations.previewPage);
+    previewPageButton.innerHTML =
+      '<i class="fas fa-external-link-alt me-1"></i>' + window.translations.previewPage;
+  } else {
+    console.log('Preview page button NOT updated. Button exists:', !!previewPageButton, 'Translation exists:', !!window.translations.previewPage);
+  }
+
   console.log('=== updateInlineEditTranslations completed ===');
 }
 
@@ -303,6 +316,7 @@ function getFallbackTranslations(locale) {
       missingPageInfo: 'Informations de page manquantes',
       saveSuccess: 'Sauvegardé avec succès',
       saveError: 'Erreur de sauvegarde: ',
+      previewPage: 'Aperçu de la page',
     },
     en: {
       edit: 'Edit',
@@ -317,6 +331,7 @@ function getFallbackTranslations(locale) {
       missingPageInfo: 'Missing page information',
       saveSuccess: 'Saved successfully',
       saveError: 'Save error: ',
+      previewPage: 'Preview Page',
     },
   };
 
@@ -370,6 +385,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Initialize with fallback translations (no API call)
   initializeTranslations();
+
+  // Update UI elements with translations
+  updateInlineEditTranslations();
 
   const pageLinks = document.querySelectorAll('.page-nav-link');
   const homeLink = document.querySelector('a[href*="app_journal_detail"]');
@@ -1041,6 +1059,13 @@ document.addEventListener('DOMContentLoaded', function () {
       // Update button href and show it
       previewPageButton.href = previewUrl;
       previewButtonContainer.style.display = 'block';
+
+      // Update button text with current translation
+      if (window.translations && window.translations.previewPage) {
+        previewPageButton.innerHTML =
+          '<i class="fas fa-external-link-alt me-1"></i>' + window.translations.previewPage;
+      }
+
       console.log('DEBUG: Preview button shown with URL:', previewUrl);
     } else {
       // Hide preview button if no page is selected
