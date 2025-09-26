@@ -48,7 +48,7 @@ export function initializeCKEditor(elementId, placeholder = '') {
     return null;
   }
 
-  return ClassicEditor.create(element, {
+  const config = {
     licenseKey: 'GPL', // Free license for open source usage
     plugins: [
       Essentials, // Essential plugins
@@ -132,11 +132,48 @@ export function initializeCKEditor(elementId, placeholder = '') {
       'undo',
       'redo',
     ],
-
-    // Note: Image configuration moved to be handled by individual plugins
-
+    // Image configuration
+    image: {
+      toolbar: [
+        'imageTextAlternative', // Alternative text (alt)
+        '|',
+        'imageStyle:alignLeft', // Left alignment
+        'imageStyle:alignCenter', // Center alignment
+        'imageStyle:alignRight', // Right alignment
+        '|',
+        'resizeImage', // Resize
+      ],
+      resizeOptions: [
+        {
+          name: 'resizeImage:original',
+          value: null,
+          label: 'Original size',
+        },
+        {
+          name: 'resizeImage:25',
+          value: '25',
+          label: '25%',
+        },
+        {
+          name: 'resizeImage:50',
+          value: '50',
+          label: '50%',
+        },
+        {
+          name: 'resizeImage:75',
+          value: '75',
+          label: '75%',
+        },
+      ],
+      insert: {
+        integrations: ['url'],
+      },
+    },
     placeholder: placeholder,
-  }).then(editor => {
+  };
+
+  // Use the config object directly (JavaScript doesn't need type casting)
+  return ClassicEditor.create(element, config).then(editor => {
     editorInstance = editor;
 
     const editableEl = editor.ui.view.editable.element;
