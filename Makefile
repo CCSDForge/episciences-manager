@@ -141,7 +141,7 @@ composer-update: ## Update Composer dependencies
 
 yarn-build: ## Compile assets for development
 	yarn build
-	$(DOCKER) exec $(CNTR_NAME_PHP) php bin/console cache:clear
+	$(DOCKER) exec $(CNTR_NAME_PHP) php bin/console cache:clear --env=${APP_ENV:-dev}
 
 yarn-encore-production: ## Compile assets for production
 	yarn install --frozen-lockfile
@@ -334,11 +334,11 @@ preprod-ci-no-ssl: ## Start preprod with CI database (HTTP only)
 composer-install-prod: ## Install PHP dependencies (prod, host)
 	composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --classmap-authoritative
 
-cache-clear: ## Clear Symfony cache (prod, host)
-	php bin/console cache:clear --env=prod --no-debug
+cache-clear: ## Clear Symfony cache (adapts to current APP_ENV)
+	php bin/console cache:clear --env=${APP_ENV:-dev}
 
-cache-warmup: ## Warm up Symfony cache (prod, host)
-	php bin/console cache:warmup --env=prod --no-debug
+cache-warmup: ## Warm up Symfony cache (adapts to current APP_ENV)
+	php bin/console cache:warmup --env=${APP_ENV:-dev}
 
 # Shared deployment logic (HOST)
 define deploy-logic

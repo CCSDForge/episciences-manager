@@ -232,10 +232,13 @@ COMPOSE_PROJECT_NAME=episciences-manager
 Add to your `/etc/hosts` file:
 ```
 127.0.0.1    epimanager-dev.episciences.org
+127.0.0.1    epimanager-preprod.episciences.org
 ```
 
 Then access:
-- HTTP: http://epimanager-dev.episciences.org
+- Development: http://epimanager-dev.episciences.org
+- Preproduction(HTTP): http://epimanager-preprod.episciences.org
+- Preproduction(HTTPS): https://epimanager-preprod.episciences.org (when SSL is enabled)
 
 ## Production Deployment
 
