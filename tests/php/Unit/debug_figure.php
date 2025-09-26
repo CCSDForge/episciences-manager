@@ -4,7 +4,7 @@ require_once 'vendor/autoload.php';
 
 use League\HTMLToMarkdown\HtmlConverter;
 
-$html = '<figure class="image"><img src="http://epimanager.episciences.org/en/epijinfo/resources/test.png" alt="Test image"></figure>';
+$html = '<figure class="image"><img src="http://epimanager-dev.episciences.org/en/epijinfo/resources/test.png" alt="Test image"></figure>';
 
 // Test direct conversion without custom converter
 $converter = new HtmlConverter([

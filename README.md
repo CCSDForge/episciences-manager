@@ -32,11 +32,11 @@ More information about Episciences: https://www.episciences.org/
 
 - Docker & Docker Compose
 - Make
-- Node.js & npm
+- Node.js & Yarn
 
 ## Development Setup
 
-### Using Docker (Recommended)
+### Using Docker
 
 ```bash
 # Clone the repository
@@ -53,7 +53,7 @@ make composer-install
 # Build production assets
 make yarn-encore-production
 
-# Access the application at http://epimanager.episciences.org/
+# Access the application at http://epimanager-dev.episciences.org/
 # Make sure to add "127.0.0.1 localhost epimanager.episciences.org" to /etc/hosts
 ```
 
@@ -74,12 +74,12 @@ cd episciences-manager
 
 # Install dependencies
 composer install
-npm install
+yarn install
 
 # Build assets for development
-npm run build
+yarn build
 # OR using Make
-make npm-build
+make yarn-build
 
 # Start development
 symfony server:start
@@ -98,7 +98,7 @@ symfony server:start
 - `make composer-update` - Update PHP dependencies
 
 ### Asset Building
-- `make npm-build` - Build assets for development (fast build)
+- `make yarn-build` - Build assets for development (fast build)
 - `make yarn-encore-production` - Build production assets (optimized, minified)
 
 ### Database
@@ -121,7 +121,7 @@ symfony server:start
 - `make test-e2e` - Run E2E tests with Playwright
 
 ### Production Deployment
-- `make deploy-prod` - Complete production deployment (recommended)
+- `make deploy-prod` - Complete production deployment
 - `make deploy` - Deploy current branch to production
 - `make deploy-branch BRANCH=feature` - Deploy specific branch to production
 - `make deploy-tag TAG=v1.0.0` - Deploy specific tag to production
@@ -133,10 +133,13 @@ symfony server:start
 ### SSL & Preproduction
 - `make ssl-certs` - Generate self-signed SSL certificates
 - `make ssl-clean` - Remove SSL certificates
+- `make preprod-setup` - Complete preprod setup (build assets + compile env + start containers)
 - `make preprod` - Start preprod containers with SSL
 - `make preprod-no-ssl` - Start preprod containers (HTTP only)
 - `make preprod-ci` - Start preprod with CI database and SSL
 - `make preprod-ci-no-ssl` - Start preprod with CI database (HTTP only)
+- `make dump-env-preprod` - Compile .env files for preprod environment (optimizes performance)
+- `make dump-env-prod` - Compile .env files for production environment (optimizes performance)
 
 ### Container Management
 - `make restart-httpd` - Restart Apache
@@ -158,8 +161,8 @@ make check-all      # All quality checks + tests
 
 # Direct commands
 vendor/bin/pest     # PHP tests
-npm test           # JavaScript tests
-npm run test:e2e   # E2E tests
+yarn test           # JavaScript tests
+yarn test:e2e       # E2E tests
 ```
 
 ## Code Quality
@@ -191,6 +194,9 @@ make ssl-clean
 
 ### Starting Preproduction Environment
 ```bash
+# Complete setup (recommended) - builds assets, compiles env, starts containers
+make preprod-setup
+
 # With SSL (HTTPS + HTTP)
 make preprod
 
@@ -204,15 +210,35 @@ make preprod-ci
 make preprod-ci-no-ssl
 ```
 
+### Environment Configuration
+The project uses Docker environment files for configuration:
+- Main environment variables are stored in `.env.local` (not committed to git)
+- This includes database credentials and Docker Compose settings
+- The Makefile automatically loads `.env.local` using `--env-file` for all Docker commands
+- Environment files can be compiled for better performance using `make dump-env-preprod` or `make dump-env-prod`
+
+**Required `.env.local` variables:**
+```bash
+DB_EPISCIENCES_USER=<database_user>
+DB_EPISCIENCES_PASSWORD=<database_password>
+DB_EPISCIENCES_HOST=<database_host>
+DB_EPISCIENCES_PORT=<database_port>
+DB_EPISCIENCES_DATABASE=<database_name>
+COMPOSE_PROJECT_NAME=episciences-manager
+```
+
+
 ### Access Configuration
 Add to your `/etc/hosts` file:
 ```
+127.0.0.1    epimanager-dev.episciences.org
 127.0.0.1    epimanager-preprod.episciences.org
 ```
 
 Then access:
-- HTTP: http://epimanager-preprod.episciences.org
-- HTTPS: https://epimanager-preprod.episciences.org (when SSL is enabled)
+- Development: http://epimanager-dev.episciences.org
+- Preproduction(HTTP): http://epimanager-preprod.episciences.org
+- Preproduction(HTTPS): https://epimanager-preprod.episciences.org (when SSL is enabled)
 
 ## Production Deployment
 

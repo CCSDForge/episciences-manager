@@ -89,12 +89,12 @@ class DefaultController extends AbstractController
             session_destroy();
             $logger->info('Session destroyed due to gateway mode');
         }
-        dump('=== DEBUG FORCE ACTION ===');
+        //dump('=== DEBUG FORCE ACTION ===');
 
         $user = $this->getUser();
 
         //dd('User before CAS login:', $user);
-        dump('User:', $this->getUser());
+        //dump('User:', $this->getUser());
         $logger->info('User after CAS login', ['user' => $user ? $user->getUserIdentifier() : 'null']);
 
         //return $this->redirectToRoute('user_profile');
@@ -138,8 +138,8 @@ class DefaultController extends AbstractController
             $logger->warning('User is not authenticated');
         }
         //dd($user);
-        dump($this->container->get('security.token_storage'));
-        dump($this->getUser());
+        //dump($this->container->get('security.token_storage'));
+        //dump($this->getUser());
         //$reviews = $this->reviewRepository->findAllForList();
         //dd($reviews);
         $reviews = $this->reviewManager->getActiveReviewsForDisplayPaginated(

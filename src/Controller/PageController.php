@@ -158,6 +158,7 @@ final class PageController extends AbstractController
             'cancel' => $translator->trans('journalDetails.cancel', [], 'messages', $locale),
             'save' => $translator->trans('journalDetails.save', [], 'messages', $locale),
             'welcomeBackoffice' => $translator->trans('journalDetails.welcome_backoffice', [], 'messages', $locale),
+            'previewPage' => $translator->trans('journalDetails.preview_page', [], 'messages', $locale),
             'welcome' => $translator->trans('head.welcome', [], 'messages', $locale),
             'login' => $translator->trans('head.login', [], 'messages', $locale),
             'logout' => $translator->trans('head.logout', [], 'messages', $locale)
