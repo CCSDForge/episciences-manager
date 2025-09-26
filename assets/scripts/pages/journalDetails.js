@@ -378,7 +378,9 @@ document.addEventListener('DOMContentLoaded', function () {
   const editButton = document.getElementById('edit-button');
 
   // Preview button elements
-  const previewButtonContainer = document.getElementById('live-effect-button-container');
+  const previewButtonContainer = document.getElementById(
+    'preview-page-button-container'
+  );
   const previewPageButton = document.getElementById('preview-page-button');
 
   // Inline edit elements
@@ -935,22 +937,116 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Show preview button and update URL
-    updatePreviewButton(pageCode);
+    updatePreviewButton(pageCode, clickedLink);
   }
 
   // Function to update preview button
-  function updatePreviewButton(pageCode) {
-    if (previewButtonContainer && previewPageButton && pageCode && currentJournalCode) {
-      // Generate preview URL: https://{code}.episciences.org/{pagecode}
-      const previewUrl = `https://${currentJournalCode}.episciences.org/${pageCode}`;
+  function updatePreviewButton(pageCode, clickedLink) {
+    console.log('DEBUG updatePreviewButton values:');
+    console.log('  previewButtonContainer:', previewButtonContainer);
+    console.log('  previewPageButton:', previewPageButton);
+    console.log('  pageCode:', pageCode);
+    console.log('  currentJournalCode:', currentJournalCode);
+
+    console.log('Element search by different methods:');
+    console.log(
+      '  byId:',
+      document.getElementById('preview-page-button-container')
+    );
+    console.log(
+      '  querySelector:',
+      document.querySelector('#preview-page-button-container')
+    );
+
+    if (!previewButtonContainer) {
+      console.error('previewButtonContainer is null! Cannot show button.');
+    }
+    if (!previewPageButton) {
+      console.error('previewPageButton is null! Cannot set URL.');
+    }
+
+    if (
+      previewButtonContainer &&
+      previewPageButton &&
+      currentJournalCode &&
+      clickedLink
+    ) {
+      let previewUrl;
+
+      // Check if this is a container page (has children)
+      const isContainer =
+        clickedLink.getAttribute('data-is-container') === 'true';
+
+      if (isContainer) {
+        // For container pages, use the container title to create the URL
+        const currentLocale = getCurrentLocale();
+        const titleEn = clickedLink.getAttribute('data-title-en');
+        const titleFr = clickedLink.getAttribute('data-title-fr');
+        const title = currentLocale === 'fr' && titleFr ? titleFr : titleEn;
+
+        // Convert title to URL-friendly format (lowercase, spaces to hyphens, remove special chars)
+        const urlTitle = title
+          ? title
+              .toLowerCase()
+              .replace(/\s+/g, '-')
+              .replace(/[^\w-]/g, '')
+          : 'page';
+        previewUrl = `https://${currentJournalCode}.episciences.org/${urlTitle}`;
+        console.log(
+          'DEBUG: Container page detected, using title:',
+          title,
+          '→',
+          urlTitle
+        );
+      } else {
+        // Check if this is a child page (has parent title data)
+        const parentTitleEn = clickedLink.getAttribute('data-parent-title-en');
+        const parentTitleFr = clickedLink.getAttribute('data-parent-title-fr');
+
+        if (parentTitleEn || parentTitleFr) {
+          // This is a child page, redirect to parent page
+          const currentLocale = getCurrentLocale();
+          const parentTitle =
+            currentLocale === 'fr' && parentTitleFr
+              ? parentTitleFr
+              : parentTitleEn;
+          const urlTitle = parentTitle
+            ? parentTitle
+                .toLowerCase()
+                .replace(/\s+/g, '-')
+                .replace(/[^\w-]/g, '')
+            : 'page';
+          previewUrl = `https://${currentJournalCode}.episciences.org/${urlTitle}`;
+          console.log(
+            'DEBUG: Child page detected, redirecting to parent:',
+            parentTitle,
+            '→',
+            urlTitle
+          );
+        } else if (pageCode) {
+          // For regular pages, use pageCode
+          previewUrl = `https://${currentJournalCode}.episciences.org/${pageCode}`;
+          console.log(
+            'DEBUG: Regular page detected, using pageCode:',
+            pageCode
+          );
+        } else {
+          // No pageCode available, hide preview button
+          console.log('DEBUG: No pageCode available, hiding preview button');
+          previewButtonContainer.style.display = 'none';
+          return;
+        }
+      }
 
       // Update button href and show it
       previewPageButton.href = previewUrl;
       previewButtonContainer.style.display = 'block';
+      console.log('DEBUG: Preview button shown with URL:', previewUrl);
     } else {
       // Hide preview button if no page is selected
       if (previewButtonContainer) {
         previewButtonContainer.style.display = 'none';
+        console.log('DEBUG: Preview button hidden - condition failed');
       }
     }
   }
