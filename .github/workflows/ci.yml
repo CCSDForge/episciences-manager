@@ -32,7 +32,7 @@ jobs:
 
       - name: 🎼 Install PHP dependencies
         run: |
-          composer install --prefer-dist --no-interaction --optimize-autoloader
+          composer install --prefer-dist --no-interaction --optimize-autoloader --no-scripts
           echo "✅ PHP dependencies installed"
 
       - name: 🟢 Setup Node.js

@@ -89,12 +89,12 @@ class DefaultController extends AbstractController
             session_destroy();
             $logger->info('Session destroyed due to gateway mode');
         }
-        dump('=== DEBUG FORCE ACTION ===');
+        //dump('=== DEBUG FORCE ACTION ===');
 
         $user = $this->getUser();
 
         //dd('User before CAS login:', $user);
-        dump('User:', $this->getUser());
+        //dump('User:', $this->getUser());
         $logger->info('User after CAS login', ['user' => $user ? $user->getUserIdentifier() : 'null']);
 
         //return $this->redirectToRoute('user_profile');
