@@ -141,7 +141,7 @@ composer-update: ## Update Composer dependencies
 
 yarn-build: ## Compile assets for development
 	yarn build
-	$(DOCKER) exec $(CNTR_NAME_PHP) php bin/console cache:clear --env=${APP_ENV:-dev}
+	$(DOCKER) exec -e APP_ENV=dev $(CNTR_NAME_PHP) php bin/console cache:clear --env=dev
 
 yarn-encore-production: ## Compile assets for production
 	yarn install --frozen-lockfile
@@ -334,13 +334,13 @@ preprod-ci-no-ssl: ## Start preprod with CI database (HTTP only)
 composer-install-prod: ## Install PHP dependencies (prod, host)
 	composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --classmap-authoritative
 
-cache-clear: ## Clear Symfony cache (adapts to current APP_ENV)
-	php bin/console cache:clear --env=${APP_ENV:-dev}
+cache-clear: ## Clear Symfony cache (prod environment)
+	php bin/console cache:clear --env=prod
 
-cache-warmup: ## Warm up Symfony cache (adapts to current APP_ENV)
-	php bin/console cache:warmup --env=${APP_ENV:-dev}
+cache-warmup: ## Warm up Symfony cache (prod environment)
+	php bin/console cache:warmup --env=prod
 
-# Shared deployment logic (HOST)
+# Shared deployment logic
 define deploy-logic
 	@echo -e "$(BOLD)🚀 Starting deployment for: $(YELLOW)$(1)$(NC) $(BLUE)(host only)$(NC)"
 	@if [ ! -d ".git" ]; then echo -e "$(RED)✗ Not a git repository$(NC)"; exit 1; fi
