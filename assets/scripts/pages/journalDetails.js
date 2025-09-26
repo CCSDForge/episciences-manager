@@ -115,14 +115,26 @@ function updateInlineEditTranslations() {
   // Update preview page button
   const previewPageButton = document.getElementById('preview-page-button');
   console.log('Preview page button found:', !!previewPageButton);
-  console.log('window.translations.previewPage:', window.translations.previewPage);
+  console.log(
+    'window.translations.previewPage:',
+    window.translations.previewPage
+  );
   console.log('All translation keys:', Object.keys(window.translations));
   if (previewPageButton && window.translations.previewPage) {
-    console.log('Updating preview page button:', window.translations.previewPage);
+    console.log(
+      'Updating preview page button:',
+      window.translations.previewPage
+    );
     previewPageButton.innerHTML =
-      '<i class="fas fa-external-link-alt me-1"></i>' + window.translations.previewPage;
+      '<i class="fas fa-external-link-alt me-1"></i>' +
+      window.translations.previewPage;
   } else {
-    console.log('Preview page button NOT updated. Button exists:', !!previewPageButton, 'Translation exists:', !!window.translations.previewPage);
+    console.log(
+      'Preview page button NOT updated. Button exists:',
+      !!previewPageButton,
+      'Translation exists:',
+      !!window.translations.previewPage
+    );
   }
 
   console.log('=== updateInlineEditTranslations completed ===');
@@ -1063,7 +1075,8 @@ document.addEventListener('DOMContentLoaded', function () {
       // Update button text with current translation
       if (window.translations && window.translations.previewPage) {
         previewPageButton.innerHTML =
-          '<i class="fas fa-external-link-alt me-1"></i>' + window.translations.previewPage;
+          '<i class="fas fa-external-link-alt me-1"></i>' +
+          window.translations.previewPage;
       }
 
       console.log('DEBUG: Preview button shown with URL:', previewUrl);
