@@ -5,6 +5,7 @@ on:
     branches: [ main, develop, preprod ]
   pull_request:
     branches: [ main, develop, preprod ]
+
 jobs:
   # Tests and quality checks
   ci:
@@ -38,11 +39,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: 'yarn'
+          cache: 'npm'
 
       - name: 📦 Install Node dependencies
         run: |
-          yarn install --frozen-lockfile
+          npm ci
           echo "✅ Node dependencies installed"
           echo "🔍 JavaScript files to be linted:"
           find assets/ tests/javascript/ -name "*.js" -type f 2>/dev/null | head -10 || echo "No JS files found yet"
@@ -68,7 +69,7 @@ jobs:
       - name: 🏗️ Build frontend assets
         run: |
           echo "🏗️ Building assets..."
-          yarn build
+          npm run build
           ls -la public/build/ || echo "Build folder created"
           echo "✅ Assets built successfully"
 
@@ -93,7 +94,7 @@ jobs:
           echo "🔍 Disk space: $(df -h . | tail -1)"
           
           echo "🔍 Running ESLint..."
-          if yarn lint; then
+          if npm run lint; then
             ESLINT_EXIT_CODE=0
             echo "✅ ESLint passed (exit code: $ESLINT_EXIT_CODE)"
           else
@@ -105,19 +106,19 @@ jobs:
             echo "ESLint version:"
             npx eslint --version || echo "Cannot get ESLint version"
             echo "Running ESLint with debug output (first 50 lines):"
-            yarn lint --debug 2>&1 | head -50 || echo "Debug failed"
+            npm run lint -- --debug 2>&1 | head -50 || echo "Debug failed"
             exit $ESLINT_EXIT_CODE
           fi
           
           echo "🎨 Running Prettier format check..."
-          if yarn format:check; then
+          if npm run format:check; then
             PRETTIER_EXIT_CODE=0
             echo "✅ Prettier check passed (exit code: $PRETTIER_EXIT_CODE)"
           else
             PRETTIER_EXIT_CODE=$?
             echo "❌ Prettier check failed with exit code: $PRETTIER_EXIT_CODE"
             echo "🔍 Files that need formatting:"
-            yarn format:check --list-different 2>&1 || echo "Cannot list different files"
+            npm run format:check -- --list-different 2>&1 || echo "Cannot list different files"
             exit $PRETTIER_EXIT_CODE
           fi
           
@@ -135,7 +136,7 @@ jobs:
             find tests/javascript/ -name "*.test.js" -o -name "*.spec.js" 2>/dev/null | head -10 || echo "No test files found"
           
             echo "🧪 Executing npm test..."
-            if yarn test; then
+            if npm test; then
               echo "✅ JavaScript unit tests passed"
             else
               TEST_EXIT_CODE=$?
@@ -151,7 +152,7 @@ jobs:
       - name: 🌐 E2E Tests (Disabled)
         run: |
           echo "🌐 E2E tests are disabled in CI for security reasons"
-          echo "ℹ️ E2E tests can be run locally with: yarn test:e2e"
+          echo "ℹ️ E2E tests can be run locally with: npm run test:e2e"
           echo "✅ Skipping E2E tests to protect user data"
 
       - name: 📊 Upload test results
