@@ -36,7 +36,7 @@ More information about Episciences: https://www.episciences.org/
 
 ## Development Setup
 
-### Using Docker 
+### Using Docker
 
 ```bash
 # Clone the repository
@@ -53,7 +53,7 @@ make composer-install
 # Build production assets
 make yarn-encore-production
 
-# Access the application at http://epimanager.episciences.org/
+# Access the application at http://epimanager-dev.episciences.org/
 # Make sure to add "127.0.0.1 localhost epimanager.episciences.org" to /etc/hosts
 ```
 
@@ -231,12 +231,14 @@ COMPOSE_PROJECT_NAME=episciences-manager
 ### Access Configuration
 Add to your `/etc/hosts` file:
 ```
+127.0.0.1    epimanager-dev.episciences.org
 127.0.0.1    epimanager-preprod.episciences.org
 ```
 
 Then access:
-- HTTP: http://epimanager-preprod.episciences.org
-- HTTPS: https://epimanager-preprod.episciences.org (when SSL is enabled)
+- Development: http://epimanager-dev.episciences.org
+- Preproduction(HTTP): http://epimanager-preprod.episciences.org
+- Preproduction(HTTPS): https://epimanager-preprod.episciences.org (when SSL is enabled)
 
 ## Production Deployment
 

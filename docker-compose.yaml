@@ -8,13 +8,11 @@ services:
     restart: always
     volumes:
       - ./docker/apache/vhost.conf:/usr/local/apache2/conf/extra/episciences-manager.conf
-      - ./docker/apache/ssl:/usr/local/apache2/conf/ssl
       - .:/var/www/htdocs
       - ./var/cache:/var/www/htdocs/var/cache
       - ./var/log:/var/www/htdocs/var/log
     ports:
       - "80:80"
-      - "443:443"
     depends_on:
       - php-fpm-manager
     networks:

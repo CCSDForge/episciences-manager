@@ -78,8 +78,8 @@ help: ## Display available commands list
 	@echo ""
 	@echo -e "$(YELLOW)Quick Start:$(NC)"
 	@echo -e "  1. Run $(BOLD)make up$(NC) to start all containers"
-	@echo -e "  2. Add to /etc/hosts: $(BOLD)127.0.0.1 localhost epimanager.episciences.org$(NC)"
-	@echo -e "  3. Access: $(GREEN)http://epimanager.episciences.org/$(NC)"
+	@echo -e "  2. Add to /etc/hosts: $(BOLD)127.0.0.1 localhost epimanager-dev.episciences.org$(NC)"
+	@echo -e "  3. Access: $(GREEN)http://epimanager-dev.episciences.org/$(NC)"
 	@echo ""
 
 # ==========================
@@ -90,8 +90,8 @@ up: ## Start all containers (in background)
 	$(DOCKER_COMPOSE) --env-file .env.local up -d
 	@echo "====================================================================="
 	@echo "Make sure you have this line in /etc/hosts:"
-	@echo "127.0.0.1 localhost epimanager.episciences.org"
-	@echo "Episciences Manager : http://epimanager.episciences.org/"
+	@echo "127.0.0.1 localhost epimanager-dev.episciences.org"
+	@echo "Episciences Manager : http://epimanager-dev.episciences.org/"
 	@echo "PhpMyAdmin          : http://localhost:8001/"
 	@echo "====================================================================="
 	@echo "SQL: place your dumps in ~/tmp/"

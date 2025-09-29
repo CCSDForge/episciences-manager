@@ -112,6 +112,31 @@ function updateInlineEditTranslations() {
       '<i class="fas fa-save me-1"></i>' + window.translations.save;
   }
 
+  // Update preview page button
+  const previewPageButton = document.getElementById('preview-page-button');
+  console.log('Preview page button found:', !!previewPageButton);
+  console.log(
+    'window.translations.previewPage:',
+    window.translations.previewPage
+  );
+  console.log('All translation keys:', Object.keys(window.translations));
+  if (previewPageButton && window.translations.previewPage) {
+    console.log(
+      'Updating preview page button:',
+      window.translations.previewPage
+    );
+    previewPageButton.innerHTML =
+      '<i class="fas fa-external-link-alt me-1"></i>' +
+      window.translations.previewPage;
+  } else {
+    console.log(
+      'Preview page button NOT updated. Button exists:',
+      !!previewPageButton,
+      'Translation exists:',
+      !!window.translations.previewPage
+    );
+  }
+
   console.log('=== updateInlineEditTranslations completed ===');
 }
 
@@ -303,6 +328,7 @@ function getFallbackTranslations(locale) {
       missingPageInfo: 'Informations de page manquantes',
       saveSuccess: 'Sauvegardé avec succès',
       saveError: 'Erreur de sauvegarde: ',
+      previewPage: 'Aperçu de la page',
     },
     en: {
       edit: 'Edit',
@@ -317,6 +343,7 @@ function getFallbackTranslations(locale) {
       missingPageInfo: 'Missing page information',
       saveSuccess: 'Saved successfully',
       saveError: 'Save error: ',
+      previewPage: 'Preview Page',
     },
   };
 
@@ -371,11 +398,20 @@ document.addEventListener('DOMContentLoaded', function () {
   // Initialize with fallback translations (no API call)
   initializeTranslations();
 
+  // Update UI elements with translations
+  updateInlineEditTranslations();
+
   const pageLinks = document.querySelectorAll('.page-nav-link');
   const homeLink = document.querySelector('a[href*="app_journal_detail"]');
   const pageContent = document.getElementById('page-content');
   const pageBody = document.getElementById('page-body');
   const editButton = document.getElementById('edit-button');
+
+  // Preview button elements
+  const previewButtonContainer = document.getElementById(
+    'preview-page-button-container'
+  );
+  const previewPageButton = document.getElementById('preview-page-button');
 
   // Inline edit elements
   const inlineEditContent = document.getElementById('inline-edit-content');
@@ -479,6 +515,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Remove active class from all page links
     pageLinks.forEach(l => l.classList.remove('active'));
+
+    // Hide preview button
+    hidePreviewButton();
 
     // Show default home content
     pageBody.innerHTML = `
@@ -925,6 +964,135 @@ document.addEventListener('DOMContentLoaded', function () {
       currentText.textContent = currentTitle;
       breadcrumbCurrent.style.display = 'block';
       breadcrumbNav.style.display = 'block';
+    }
+
+    // Show preview button and update URL
+    updatePreviewButton(pageCode, clickedLink);
+  }
+
+  // Function to update preview button
+  function updatePreviewButton(pageCode, clickedLink) {
+    console.log('DEBUG updatePreviewButton values:');
+    console.log('  previewButtonContainer:', previewButtonContainer);
+    console.log('  previewPageButton:', previewPageButton);
+    console.log('  pageCode:', pageCode);
+    console.log('  currentJournalCode:', currentJournalCode);
+
+    console.log('Element search by different methods:');
+    console.log(
+      '  byId:',
+      document.getElementById('preview-page-button-container')
+    );
+    console.log(
+      '  querySelector:',
+      document.querySelector('#preview-page-button-container')
+    );
+
+    if (!previewButtonContainer) {
+      console.error('previewButtonContainer is null! Cannot show button.');
+    }
+    if (!previewPageButton) {
+      console.error('previewPageButton is null! Cannot set URL.');
+    }
+
+    if (
+      previewButtonContainer &&
+      previewPageButton &&
+      currentJournalCode &&
+      clickedLink
+    ) {
+      let previewUrl;
+
+      // Check if this is a container page (has children)
+      const isContainer =
+        clickedLink.getAttribute('data-is-container') === 'true';
+
+      if (isContainer) {
+        // For container pages, use the container title to create the URL
+        const currentLocale = getCurrentLocale();
+        const titleEn = clickedLink.getAttribute('data-title-en');
+        const titleFr = clickedLink.getAttribute('data-title-fr');
+        const title = currentLocale === 'fr' && titleFr ? titleFr : titleEn;
+
+        // Convert title to URL-friendly format (lowercase, spaces to hyphens, remove special chars)
+        const urlTitle = title
+          ? title
+              .toLowerCase()
+              .replace(/\s+/g, '-')
+              .replace(/[^\w-]/g, '')
+          : 'page';
+        previewUrl = `https://${currentJournalCode}.episciences.org/${urlTitle}`;
+        console.log(
+          'DEBUG: Container page detected, using title:',
+          title,
+          '→',
+          urlTitle
+        );
+      } else {
+        // Check if this is a child page (has parent title data)
+        const parentTitleEn = clickedLink.getAttribute('data-parent-title-en');
+        const parentTitleFr = clickedLink.getAttribute('data-parent-title-fr');
+
+        if (parentTitleEn || parentTitleFr) {
+          // This is a child page, redirect to parent page
+          const currentLocale = getCurrentLocale();
+          const parentTitle =
+            currentLocale === 'fr' && parentTitleFr
+              ? parentTitleFr
+              : parentTitleEn;
+          const urlTitle = parentTitle
+            ? parentTitle
+                .toLowerCase()
+                .replace(/\s+/g, '-')
+                .replace(/[^\w-]/g, '')
+            : 'page';
+          previewUrl = `https://${currentJournalCode}.episciences.org/${urlTitle}`;
+          console.log(
+            'DEBUG: Child page detected, redirecting to parent:',
+            parentTitle,
+            '→',
+            urlTitle
+          );
+        } else if (pageCode) {
+          // For regular pages, use pageCode
+          previewUrl = `https://${currentJournalCode}.episciences.org/${pageCode}`;
+          console.log(
+            'DEBUG: Regular page detected, using pageCode:',
+            pageCode
+          );
+        } else {
+          // No pageCode available, hide preview button
+          console.log('DEBUG: No pageCode available, hiding preview button');
+          previewButtonContainer.style.display = 'none';
+          return;
+        }
+      }
+
+      // Update button href and show it
+      previewPageButton.href = previewUrl;
+      previewButtonContainer.style.display = 'block';
+
+      // Update button text with current translation
+      if (window.translations && window.translations.previewPage) {
+        previewPageButton.innerHTML =
+          '<i class="fas fa-external-link-alt me-1"></i>' +
+          window.translations.previewPage;
+      }
+
+      console.log('DEBUG: Preview button shown with URL:', previewUrl);
+    } else {
+      // Hide preview button if no page is selected
+      if (previewButtonContainer) {
+        previewButtonContainer.style.display = 'none';
+        console.log('DEBUG: Preview button hidden - condition failed');
+      }
+    }
+  }
+
+  // Function to hide preview button when going to home
+  function hidePreviewButton() {
+    if (previewButtonContainer) {
+      previewButtonContainer.style.display = 'none';
     }
   }
 });
