@@ -56,7 +56,6 @@ journalDetails:
   missing_page_info: "Error: missing page information"
   save_success: "Title and content saved successfully!"
   save_error: "Error while saving: "
-  preview_page: "Preview Page"
 
 
 resources:

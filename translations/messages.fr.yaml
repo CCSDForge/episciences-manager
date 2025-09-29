@@ -55,7 +55,6 @@ journalDetails:
  missing_page_info: "Erreur: informations de page manquantes"
  save_success: "Titre et contenu sauvegardés avec succès!"
  save_error: "Erreur lors de la sauvegarde: "
- preview_page: "Aperçu de la page"
 
 
 resources:
