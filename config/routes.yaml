@@ -9,11 +9,10 @@ controllers:
     defaults:
         _locale: en
 
-home_redirect:
+# Allow home page to be accessed directly at root /
+app_home_root:
     path: /
-    controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController::redirectAction
+    controller: App\Controller\DefaultController::index
     methods: [GET]
     defaults:
-        route: app_home
-        _locale: 'en'
-        permanent: true
+        _locale: en

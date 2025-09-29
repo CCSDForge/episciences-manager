@@ -8,11 +8,13 @@ services:
     restart: always
     volumes:
       - ./docker/apache/vhost.conf:/usr/local/apache2/conf/extra/episciences-manager.conf
+      - ./docker/apache/ssl:/usr/local/apache2/conf/ssl
       - .:/var/www/htdocs
       - ./var/cache:/var/www/htdocs/var/cache
       - ./var/log:/var/www/htdocs/var/log
     ports:
       - "80:80"
+      - "443:443"
     depends_on:
       - php-fpm-manager
     networks:
@@ -49,7 +51,7 @@ services:
       - DB_AUTH_USER=root
       - DB_AUTH_PASSWORD=root
       - DB_AUTH_DATABASE=auth
-      - DATABASE_URL=mysql://$${DB_EPISCIENCES_USER}:$${DB_EPISCIENCES_PASSWORD}@$${DB_EPISCIENCES_HOST}:$${DB_EPISCIENCES_PORT}/$${DB_EPISCIENCES_DATABASE}?serverVersion=8.0&charset=utf8mb4
+      - DATABASE_URL=mysql://${DB_EPISCIENCES_USER}:${DB_EPISCIENCES_PASSWORD}@${DB_EPISCIENCES_HOST}:${DB_EPISCIENCES_PORT}/${DB_EPISCIENCES_DATABASE}?serverVersion=8.0&charset=utf8mb4
     expose:
       - "9000"
     networks:

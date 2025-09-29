@@ -8,4 +8,15 @@ import './bootstrap.js';
  */
 import './styles/app.scss';
 
+// Disable debug console methods in production/preprod environments
+// Reads environment from data-env attribute set by Symfony in Twig template
+const isProduction = document.body?.dataset?.env !== 'dev';
+if (isProduction) {
+  // Disable debug console methods but keep error and warn
+  console.log = () => {};
+  console.debug = () => {};
+  console.info = () => {};
+  // Keep console.error and console.warn for production debugging
+}
+
 console.log('Welcome to Webpack Encore with Bootstrap!🎉');
