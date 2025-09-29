@@ -6,6 +6,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
+        {# favicon — served from Encore build output #}
+        <link rel="icon" href="{{ asset('build/images/favicon.ico') }}" />
+
         {# SEO Meta tags #}
         <meta name="description" content="{% block meta_description %}{{ 'meta.default_description'|trans }}{% endblock %}">
         <meta name="keywords" content="{% block meta_keywords %}{{ 'meta.default_keywords'|trans }}{% endblock %}">
