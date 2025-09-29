@@ -69,7 +69,7 @@ help: ## Display available commands list
 	| awk 'BEGIN {FS=":.*?## "}; {printf "  $(BOLD)%-22s$(NC) %s\n", $$1, $$2}'
 	@echo ""
 	@echo -e "$(RED)Deployment Commands:$(NC)"
-	@grep -E '^(deploy.*|composer-install-prod|cache-clear|cache-warmup|yarn-encore-production|dump-env-.*):.*?## .*$$' $(MAKEFILE_LIST) \
+	@grep -E '^(deploy.*|composer-install-prod|cache-clear.*|cache-warmup|yarn-encore-production|dump-env-.*):.*?## .*$$' $(MAKEFILE_LIST) \
 	| awk 'BEGIN {FS=":.*?## "}; {printf "  $(BOLD)%-22s$(NC) %s\n", $$1, $$2}'
 	@echo ""
 	@echo -e "$(BLUE)Composer/Yarn Commands:$(NC)"
@@ -150,7 +150,7 @@ can-i-use-update: ## Update Browserslist (host, when caniuse-lite is outdated)
 	$(NPX) update-browserslist-db@latest
 
 # ==========================
-#   CODE QUALITY / TESTS (HOST)
+#   CODE QUALITY / TESTS
 # ==========================
 .PHONY: test test-e2e test-php lint lint-fix format format-check lint-php lint-php-file check-all fix-all
 
@@ -274,11 +274,12 @@ ssl-clean: ## Remove SSL certificates
 	@rm -rf docker/apache/ssl/
 	@echo -e "$(GREEN)✓ SSL certificates removed$(NC)"
 
-preprod-setup: ## Complete preprod setup (build assets + compile env + start containers)
+preprod-setup: ## Complete preprod setup (build assets + compile env + start containers + clear cache)
 	@echo -e "🚀 Setting up complete preprod environment..."
-	@echo -e ""; echo "📋 1/3 - Building production assets..."; $(MAKE) yarn-encore-production
-	@echo -e ""; echo "📋 2/3 - Compiling environment variables..."; $(MAKE) dump-env-preprod || true
-	@echo -e ""; echo "📋 3/3 - Starting preprod containers..."; $(MAKE) preprod
+	@echo -e ""; echo "📋 1/4 - Building production assets..."; $(MAKE) yarn-encore-production
+	@echo -e ""; echo "📋 2/4 - Compiling environment variables..."; $(MAKE) dump-env-preprod || true
+	@echo -e ""; echo "📋 3/4 - Starting preprod containers..."; $(MAKE) preprod
+	@echo -e ""; echo "📋 4/4 - Clearing preprod cache..."; $(MAKE) cache-clear-preprod || true
 	@echo -e ""; echo "✅ Preprod environment ready!"
 
 preprod: ssl-certs ## Start preprod containers with SSL (Docker command on host)
@@ -330,16 +331,19 @@ preprod-ci-no-ssl: ## Start preprod with CI database (HTTP only)
 # ==========================
 .PHONY: composer-install-prod cache-clear cache-warmup deploy-prod deploy deploy-branch deploy-tag
 
-composer-install-prod: ## Install PHP dependencies (prod, host)
+composer-install-prod: ## Install PHP dependencies (prod)
 	composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --classmap-authoritative
 
 cache-clear: ## Clear Symfony cache (prod, host)
 	php bin/console cache:clear --env=prod --no-debug
 
+cache-clear-preprod: ## Clear Symfony cache (preprod, Docker container)
+	$(DOCKER) exec $(CNTR_NAME_PHP) php bin/console cache:clear --env=preprod --no-debug
+
 cache-warmup: ## Warm up Symfony cache (prod, host)
 	php bin/console cache:warmup --env=prod --no-debug
 
-# Shared deployment logic (HOST)
+# Shared deployment logic
 define deploy-logic
 	@echo -e "$(BOLD)🚀 Starting deployment for: $(YELLOW)$(1)$(NC) $(BLUE)(host only)$(NC)"
 	@if [ ! -d ".git" ]; then echo -e "$(RED)✗ Not a git repository$(NC)"; exit 1; fi
@@ -389,11 +393,11 @@ deploy-prod: ## Complete production deployment
 	@echo -e ""; echo -e "$(GREEN)✅ Production deployment completed successfully!$(NC)"
 	@echo -e "$(GREEN)🌐 Application ready at: $(BOLD)http://epimanager-preprod.episciences.org/$(NC)"
 
-deploy: ## Deploy main branch (host-only)
+deploy: ## Deploy main branch
 	$(call deploy-logic,main)
 	$(MAKE) deploy-prod
 
-deploy-branch: ## Deploy a branch (make deploy-branch BRANCH=xxx) (host-only)
+deploy-branch: ## Deploy a branch (make deploy-branch BRANCH=xxx)
 	@if [ -z "$(BRANCH)" ]; then \
 		echo -e "$(RED)Usage: make deploy-branch BRANCH=branch-name$(NC)"; \
 		echo -e "$(YELLOW)Examples:$(NC)"; \
@@ -404,7 +408,7 @@ deploy-branch: ## Deploy a branch (make deploy-branch BRANCH=xxx) (host-only)
 	$(call deploy-logic,$(BRANCH))
 	$(MAKE) deploy-prod
 
-deploy-tag: ## Deploy a tag (make deploy-tag TAG=v1.0.0) (host-only)
+deploy-tag: ## Deploy a tag (make deploy-tag TAG=v1.0.0)
 	@if [ -z "$(TAG)" ]; then \
 		echo -e "$(RED)Usage: make deploy-tag TAG=tag-name$(NC)"; \
 		echo -e "$(YELLOW)Examples:$(NC)"; \
@@ -424,4 +428,4 @@ deploy-tag: ## Deploy a tag (make deploy-tag TAG=v1.0.0) (host-only)
 	test test-e2e test-php lint lint-fix format format-check lint-php lint-php-file check-all fix-all \
 	restart-httpd restart-php enter-container-php enter-container-httpd \
 	ssl-certs ssl-clean preprod preprod-no-ssl preprod-ci preprod-ci-no-ssl \
-	composer-install-prod cache-clear cache-warmup deploy-prod deploy deploy-branch deploy-tag
+	composer-install-prod cache-clear cache-clear-preprod cache-warmup deploy-prod deploy deploy-branch deploy-tag
