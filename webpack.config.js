@@ -66,11 +66,18 @@ Encore
   //
   .enablePostCssLoader()
 
-  .copyFiles({
-    from: './assets/images',
-    pattern: /\.(png|jpg|jpeg|gif|svg|webp|ico)$/,
-    to: 'images/[name].[ext]',
-  })
+  .copyFiles(
+    {
+      from: './assets/images',
+      pattern: /\.(png|jpg|jpeg|gif|svg|webp|ico)$/,
+      to: 'images/[name].[ext]',
+    },
+    {
+      from: './assets/images',
+      pattern: /favicon\.ico$/,
+      to: '../[name].[ext]', // puts it in public/favicon.ico
+    }
+  )
   /*
    * FEATURE CONFIG
    *
