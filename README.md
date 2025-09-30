@@ -49,12 +49,13 @@ make up
 
 # Install dependencies
 make composer-install
+yarn install
 
-# Build production assets
-make yarn-encore-production
+# Build assets
+yarn build
 
 # Access the application at http://epimanager-dev.episciences.org/
-# Make sure to add "127.0.0.1 localhost epimanager.episciences.org" to /etc/hosts
+# Make sure to add "127.0.0.1 localhost epimanager-dev.episciences.org" to /etc/hosts
 ```
 
 ### Database Setup
@@ -87,33 +88,35 @@ symfony server:start
 
 ## Available Make Commands
 
-### Container Management
-- `make build` - Build Docker containers
-- `make up` - Start all containers
-- `make down` - Stop containers
-- `make clean` - Clean up Docker resources
+### Docker Development Commands
+- `make up` - Start all containers (in background)
+- `make down` - Stop and remove containers, networks, orphan volumes
+- `make restart` - Restart all containers
+- `make logs` - Display logs in real time (usage: make logs [SERVICE=php])
+- `make ps` - View containers status
+- `make build` - Rebuild Docker images
+- `make clean` - Clean up (project containers/volumes only)
 
-### Dependencies
-- `make composer-install` - Install PHP dependencies
-- `make composer-update` - Update PHP dependencies
-
-### Asset Building
-- `make yarn-build` - Build assets for development (fast build)
-- `make yarn-encore-production` - Build production assets (optimized, minified)
+### Composer/Yarn Commands
+- `make composer-install` - Install Composer dependencies
+- `make composer-update` - Update Composer dependencies
+- `make yarn-build` - Compile assets for development
+- `make yarn-encore-production` - Compile assets for production
+- `make can-i-use-update` - Update Browserslist (host, when caniuse-lite is outdated)
 
 ### Database
 - `make load-db-manager` - Load episciences database (episciences.sql from ~/tmp/)
 - `make load-db-auth` - Load authentication database (cas_users.sql from ~/tmp/)
 
-### Code Quality
-- `make lint` - Check JavaScript with ESLint
-- `make lint-fix` - Fix JavaScript issues automatically
-- `make format` - Format JavaScript with Prettier
-- `make format-check` - Check JavaScript formatting
-- `make lint-php` - Check PHP syntax in src/ directory
-- `make lint-php-file FILE=path` - Check specific PHP file syntax
-- `make check-all` - Run all quality checks (PHP, JS, tests)
-- `make fix-all` - Fix all auto-fixable issues (ESLint + Prettier)
+### Code Quality / Testing
+- `make lint` - Check JS code with ESLint
+- `make lint-fix` - Fix JS code with ESLint (usage: make lint-fix [FILE=src/file.js])
+- `make format` - Format JS code with Prettier
+- `make format-check` - Check JS formatting with Prettier
+- `make lint-php` - Check PHP syntax in src/
+- `make lint-php-file` - Check PHP syntax of a file (make lint-php-file FILE=src/file.php)
+- `make check-all` - Run all checks (PHP, JS, tests)
+- `make fix-all` - Fix all (lint JS + Prettier)
 
 ### Testing
 - `make test` - Run JavaScript unit tests
@@ -121,34 +124,33 @@ symfony server:start
 - `make test-e2e` - Run E2E tests with Playwright
 
 ### Production Deployment
-- `make deploy-prod` - Complete production deployment
-- `make deploy` - Deploy current branch to production
+- `make deploy-prod` - Complete production deployment (migrations + cache + restart)
+- `make deploy` - Deploy main branch to production
 - `make deploy-branch BRANCH=feature` - Deploy specific branch to production
 - `make deploy-tag TAG=v1.0.0` - Deploy specific tag to production
 - `make composer-install-prod` - Install production dependencies (no-dev, optimized)
 - `make yarn-encore-production` - Build production assets and optimize
-- `make cache-clear` - Clear Symfony cache
-- `make cache-warmup` - Warm up Symfony cache
+- `make cache-clear` - Clear Symfony cache (prod, host)
+- `make cache-warmup` - Warm up Symfony cache (prod, host)
 
 ### SSL & Preproduction
 - `make ssl-certs` - Generate self-signed SSL certificates
 - `make ssl-clean` - Remove SSL certificates
-- `make preprod-setup` - Complete preprod setup (build assets + compile env + start containers)
+- `make preprod-setup` - Complete preprod setup (build assets + compile env + start containers + clear cache)
 - `make preprod` - Start preprod containers with SSL
 - `make preprod-no-ssl` - Start preprod containers (HTTP only)
 - `make preprod-ci` - Start preprod with CI database and SSL
 - `make preprod-ci-no-ssl` - Start preprod with CI database (HTTP only)
+- `make cache-clear-preprod` - Clear Symfony cache (preprod, Docker container)
 - `make dump-env-preprod` - Compile .env files for preprod environment (optimizes performance)
 - `make dump-env-prod` - Compile .env files for production environment (optimizes performance)
 
 ### Container Management
-- `make restart-httpd` - Restart Apache
-- `make restart-php` - Restart PHP-FPM
-- `make enter-container-php` - Open shell in PHP container
-- `make enter-container-httpd` - Open shell in Apache container
+- `make restart-httpd` - Restart Apache httpd (Docker command launched on host)
+- `make restart-php` - Restart PHP-FPM (Docker command launched on host)
+- `make enter-container-php` - Open shell in PHP container (debug)
+- `make enter-container-httpd` - Open shell in HTTPD container (debug)
 
-### Utilities
-- `make can-i-use-update` - Update browserslist database
 
 ## Testing
 
