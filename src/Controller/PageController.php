@@ -17,13 +17,33 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class PageController extends AbstractController
 {
+    // URL aliases mapping: URL slug => actual page_code in database
+    private const PAGE_ALIASES = [
+        'acknowledgments' => 'journal-acknowledgments',
+        // 'indexing' => 'journal-indexing',
+    ];
+
+    /**
+     * Get the URL slug for a given page code
+     * Returns the short alias if one exists, otherwise returns the page code itself
+     */
+    public static function getPageSlug(string $pageCode): string
+    {
+        // Reverse lookup: find the alias key for this page code
+        $alias = array_search($pageCode, self::PAGE_ALIASES, true);
+        return $alias !== false ? $alias : $pageCode;
+    }
+
     #[Route('/journal/{code}/page/{pageTitle}', name: 'app_page_show', methods: ['GET'])]
     public function showPage(string $code, string $pageTitle, PageRepository $pageRepository, MarkdownService $markdownService, ReviewManager $reviewManager, PageHierarchyService $hierarchyService, Request $request): Response
     {
-        // Find the page directly - no more container redirection needed
+        // Check if there's an alias for this pageTitle
+        $actualPageCode = self::PAGE_ALIASES[$pageTitle] ?? $pageTitle;
+
+        // Find the page using the actual page code
         $page = $pageRepository->findOneBy([
             'rvcode' => $code,
-            'page_code' => $pageTitle
+            'page_code' => $actualPageCode
         ]);
 
         if (!$page) {
@@ -73,9 +93,12 @@ final class PageController extends AbstractController
         EntityManagerInterface $entityManager,
         MarkdownService $markdownService
     ): JsonResponse {
+        // Check if there's an alias for this pageTitle
+        $actualPageCode = self::PAGE_ALIASES[$pageTitle] ?? $pageTitle;
+
         $page = $pageRepository->findOneBy([
             'rvcode' => $code,
-            'page_code' => $pageTitle
+            'page_code' => $actualPageCode
         ]);
 
         if (!$page) {
