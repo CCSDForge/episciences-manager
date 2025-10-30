@@ -54,14 +54,9 @@ npm test
 npm run test:e2e
 ```
 
-## Acknowledgments
-
-Episciences has received funding from:
-
-- CNRS
-- European Commission grant 101017452 "OpenAIRE Nexus - OpenAIRE-Nexus Scholarly Communication Services for EOSC users"
-
-The software is developed by the Center for the Direct Scientific Communication (CCSD).
+## Credits
+- The software is developed by the Center for the Direct Scientific Communication (CCSD).
+- See [AUTHORS](AUTHORS) file
 
 ## License
 
