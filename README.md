@@ -2,7 +2,7 @@
 
 An overlay journal management platform built with Symfony
 
-![PHP](https://img.shields.io/badge/PHP-8.2%2B-blue) ![Symfony](https://img.shields.io/badge/Symfony-7.2-green) ![JavaScript](https://img.shields.io/badge/JavaScript-ES6%2B-yellow) ![License](https://img.shields.io/badge/License-Proprietary-red)
+![PHP](https://img.shields.io/badge/PHP-8.2%2B-blue) ![Symfony](https://img.shields.io/badge/Symfony-7.2-green) ![JavaScript](https://img.shields.io/badge/JavaScript-ES6%2B-yellow) [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0)
 
 ![CI Status](https://github.com/CCSDForge/episciences-manager/workflows/CI%20Pipeline/badge.svg) ![PHP Tests](https://img.shields.io/github/actions/workflow/status/CCSDForge/episciences-manager/ci.yml?label=PHP%20Tests&logo=php) ![JS Tests](https://img.shields.io/github/actions/workflow/status/CCSDForge/episciences-manager/ci.yml?label=JS%20Tests&logo=javascript) ![E2E Tests](https://img.shields.io/github/actions/workflow/status/CCSDForge/episciences-manager/ci.yml?label=E2E%20Tests&logo=playwright)
 
@@ -10,7 +10,6 @@ This repository hosts the management software for Episciences overlay journals p
 
 ## Features
 
-- **Review Management**: Complete system for managing peer reviews
 - **User Management**: Authentication with CAS integration
 - **Journal Administration**: Tools for managing overlay journals
 - **Markdown Support**: Built-in markdown processing for content
@@ -22,7 +21,7 @@ More information about Episciences: https://www.episciences.org/
 ## Tech Stack
 
 - **Backend**: PHP 8.2+ with Symfony 7.2
-- **Database**: PostgreSQL with Doctrine ORM
+- **Database**: Mysql with Doctrine ORM
 - **Frontend**: Bootstrap 5, Stimulus, Webpack Encore
 - **Testing**: Pest (PHP) + Jest (JavaScript) + Playwright (E2E)
 - **Authentication**: CAS (Central Authentication Service)
@@ -60,4 +59,4 @@ npm run test:e2e
 
 ## License
 
-This project is proprietary software. See [LICENSE](LICENSE) for details.
+This project is Free software (GPL v3) . See [LICENSE](LICENSE) for details.
