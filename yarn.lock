@@ -1430,11 +1430,11 @@
   integrity sha512-QNqXyfVS2wm9hweSYD2O7F0G06uurj9kZ96TRQE5Y9hU7+tgdZwIkbAKc5Ocy1HxEY2kuDQa6cQ1WRs/O5LFKA==
 
 "@playwright/test@^1.54.2":
-  version "1.54.2"
-  resolved "https://registry.npmjs.org/@playwright/test/-/test-1.54.2.tgz"
-  integrity sha512-A+znathYxPf+72riFd1r1ovOLqsIIB0jKIoPjyK2kqEIe30/6jF6BC7QNluHuwUmsD2tv1XZVugN8GqfTMOxsA==
+  version "1.56.1"
+  resolved "https://registry.npmjs.org/@playwright/test/-/test-1.56.1.tgz"
+  integrity sha512-vSMYtL/zOcFpvJCW71Q/OEGQb7KYBPAdKh35WNSkaZA75JlAO8ED8UN6GUNTm3drWomcbcqRPFqQbLae8yBTdg==
   dependencies:
-    playwright "1.54.2"
+    playwright "1.56.1"
 
 "@popperjs/core@^2.11.8":
   version "2.11.8"
@@ -4291,17 +4291,17 @@ pkg-dir@^7.0.0:
   dependencies:
     find-up "^6.3.0"
 
-playwright-core@1.54.2:
-  version "1.54.2"
-  resolved "https://registry.npmjs.org/playwright-core/-/playwright-core-1.54.2.tgz"
-  integrity sha512-n5r4HFbMmWsB4twG7tJLDN9gmBUeSPcsBZiWSE4DnYz9mJMAFqr2ID7+eGC9kpEnxExJ1epttwR59LEWCk8mtA==
+playwright-core@1.56.1:
+  version "1.56.1"
+  resolved "https://registry.npmjs.org/playwright-core/-/playwright-core-1.56.1.tgz"
+  integrity sha512-hutraynyn31F+Bifme+Ps9Vq59hKuUCz7H1kDOcBs+2oGguKkWTU50bBWrtz34OUWmIwpBTWDxaRPXrIXkgvmQ==
 
-playwright@1.54.2:
-  version "1.54.2"
-  resolved "https://registry.npmjs.org/playwright/-/playwright-1.54.2.tgz"
-  integrity sha512-Hu/BMoA1NAdRUuulyvQC0pEqZ4vQbGfn8f7wPXcnqQmM+zct9UliKxsIkLNmz/ku7LElUNqmaiv1TG/aL5ACsw==
+playwright@1.56.1:
+  version "1.56.1"
+  resolved "https://registry.npmjs.org/playwright/-/playwright-1.56.1.tgz"
+  integrity sha512-aFi5B0WovBHTEvpM3DzXTUaeN6eN0qWnTkKx4NQaH4Wvcmc153PdaY2UBdSYKaGYw+UyWXSVyxDUg5DoPEttjw==
   dependencies:
-    playwright-core "1.54.2"
+    playwright-core "1.56.1"
   optionalDependencies:
     fsevents "2.3.2"
 
@@ -5129,9 +5129,9 @@ tldts@^6.1.32:
     tldts-core "^6.1.86"
 
 tmp@^0.2.1:
-  version "0.2.3"
-  resolved "https://registry.npmjs.org/tmp/-/tmp-0.2.3.tgz"
-  integrity sha512-nZD7m9iCPC5g0pYmcaxogYKggSfLsdxl8of3Q/oIbqCqLLIO9IAF0GWjX1z9NZRHPiXv8Wex4yDCaZsgEw0Y8w==
+  version "0.2.5"
+  resolved "https://registry.npmjs.org/tmp/-/tmp-0.2.5.tgz"
+  integrity sha512-voyz6MApa1rQGUxT3E+BK7/ROe8itEx7vD8/HEvt4xwXucvQ5G5oeEiHkmHZJuBO21RpOf+YYm9MOivj709jow==
 
 tmpl@1.0.5:
   version "1.0.5"
