@@ -18,7 +18,7 @@ class PageExtension extends AbstractExtension
     /**
      * Get the URL slug for a given page code
      * Converts database page codes to their URL aliases
-     * Example: 'journal-acknowledgments' => 'acknowledgments'
+     * Example: 'journal-acknowledgements' => 'acknowledgements'
      */
     public function getPageSlug(string $pageCode): string
     {
