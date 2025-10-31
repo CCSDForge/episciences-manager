@@ -13,7 +13,7 @@ page_hierarchies:
         children:
           - "about"
           - "journal-indexing"
-          - "journal-acknowledgments"
+          - "journal-acknowledgements"
       - title:
           en: "Boards"
           fr: "Comités"

@@ -19,7 +19,7 @@ final class PageController extends AbstractController
 {
     // URL aliases mapping: URL slug => actual page_code in database
     private const PAGE_ALIASES = [
-        'acknowledgments' => 'journal-acknowledgments',
+        'acknowledgements' => 'journal-acknowledgements',
         'indexing' => 'journal-indexing',
     ];
 
