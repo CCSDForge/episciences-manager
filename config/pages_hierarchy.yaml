@@ -12,18 +12,13 @@ page_hierarchies:
         order: 1
         children:
           - "about"
-      - title:
-          en: "Home Page"
-          fr: "Répertoire"
-        type: "container"
-        order: 2
-        children:
           - "journal-indexing"
+          - "journal-acknowledgments"
       - title:
           en: "Boards"
           fr: "Comités"
         type: "container"
-        order: 3
+        order: 2
         children:
           - "editorial-board"
           - "scientific-advisory-board"
@@ -33,17 +28,17 @@ page_hierarchies:
           en: "For Authors"
           fr: "Pour les Auteurs"
         type: "container"
-        order: 4
+        order: 3
         children:
           - "ethical-charter"
           - "prepare-submission"
           - "editorial-workflow"
       - code: "credits"
-        order: 5
+        order: 4
       - code: "custom-page"
-        order: 6
+        order: 4
       - code: "News"
-        order: 7
+        order: 6
 
 
   # Specific configuration for a particular journal (optional)

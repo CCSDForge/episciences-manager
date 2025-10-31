@@ -50,7 +50,7 @@
                                                        aria-expanded="false"
                                                    {% elseif not isContainer %}
                                                        href="#"
-                                                       data-page-code="{{ page.pageCode }}"
+                                                       data-page-code="{{ page.pageCode|page_slug }}"
                                                        data-journal-code="{{ rvcode }}"
                                                        data-current-title-en="{{ page.title.en ?? page.pageCode }}"
                                                        data-current-title-fr="{{ page.title.fr ?? page.title.en ?? page.pageCode }}"
@@ -71,7 +71,7 @@
                                                                 <a class="dropdown-item page-nav-link"
                                                                    id="nav-page-{{ subPage.pageCode }}"
                                                                    href="#"
-                                                                   data-page-code="{{ subPage.pageCode }}"
+                                                                   data-page-code="{{ subPage.pageCode|page_slug }}"
                                                                    data-journal-code="{{ rvcode }}"
                                                                    data-parent-title-en="{% if isContainer %}{{ page.title.en ?? page.title }}{% else %}{{ page.title.en ?? page.pageCode }}{% endif %}"
                                                                    data-parent-title-fr="{% if isContainer %}{{ page.title.fr ?? page.title.en ?? page.title }}{% else %}{{ page.title.fr ?? page.title.en ?? page.pageCode }}{% endif %}"
