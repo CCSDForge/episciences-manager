@@ -20,10 +20,13 @@ page_hierarchies:
         type: "container"
         order: 2
         children:
+          - "introduction-board"
           - "editorial-board"
           - "scientific-advisory-board"
           - "technical-board"
+          - "reviewers-board"
           - "former-members"
+          - "operating-charter-board"
       - title:
           en: "For Authors"
           fr: "Pour les Auteurs"
