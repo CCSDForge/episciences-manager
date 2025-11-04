@@ -67,19 +67,62 @@
                                                 {% if hasSubPages %}
                                                     <ul class="dropdown-menu">
                                                         {% for subPage in pages.sub[pageKey] %}
-                                                            <li>
-                                                                <a class="dropdown-item page-nav-link"
-                                                                   id="nav-page-{{ subPage.pageCode }}"
-                                                                   href="#"
-                                                                   data-page-code="{{ subPage.pageCode|page_slug }}"
-                                                                   data-journal-code="{{ rvcode }}"
-                                                                   data-parent-title-en="{% if isContainer %}{{ page.title.en ?? page.title }}{% else %}{{ page.title.en ?? page.pageCode }}{% endif %}"
-                                                                   data-parent-title-fr="{% if isContainer %}{{ page.title.fr ?? page.title.en ?? page.title }}{% else %}{{ page.title.fr ?? page.title.en ?? page.pageCode }}{% endif %}"
-                                                                   data-current-title-en="{{ subPage.title.en ?? subPage.pageCode }}"
-                                                                   data-current-title-fr="{{ subPage.title.fr ?? subPage.title.en ?? subPage.pageCode }}">
-                                                                    {{ subPage.title[app.request.locale] ?? subPage.title['en'] ?? subPage.pageCode }}
-                                                                </a>
-                                                            </li>
+                                                            {% set isSubContainer = subPage.type is defined and subPage.type == 'container' %}
+                                                            {% set subPageKey = isSubContainer ? (subPage.title.en ?? subPage.title) : subPage.pageCode %}
+                                                            {% set hasNestedSubPages = isSubContainer and pages.sub[subPageKey] is defined and pages.sub[subPageKey] is not empty %}
+
+                                                            {% if hasNestedSubPages %}
+                                                                <li class="dropend">
+                                                                    <a class="dropdown-item dropdown-toggle"
+                                                                       id="nav-{% if isSubContainer %}container-{{ subPageKey|lower|replace({' ': '-', '.': '-', '&': 'and'}) }}{% else %}page-{{ subPage.pageCode }}{% endif %}"
+                                                                       href="#"
+                                                                       data-bs-toggle="dropdown"
+                                                                       role="button"
+                                                                       aria-expanded="false"
+                                                                       {% if isSubContainer %}
+                                                                           data-title-en="{{ subPage.title.en ?? subPage.title }}"
+                                                                           data-title-fr="{{ subPage.title.fr ?? subPage.title.en ?? subPage.title }}"
+                                                                           data-is-container="true"
+                                                                       {% endif %}>
+                                                                        {% if isSubContainer %}
+                                                                            {{ subPage.title[app.request.locale] ?? subPage.title['en'] ?? subPage.title }}
+                                                                        {% else %}
+                                                                            {{ subPage.title[app.request.locale] ?? subPage.title['en'] ?? subPage.pageCode }}
+                                                                        {% endif %}
+                                                                    </a>
+                                                                    <ul class="dropdown-menu">
+                                                                        {% for nestedPage in pages.sub[subPageKey] %}
+                                                                            <li>
+                                                                                <a class="dropdown-item page-nav-link"
+                                                                                   id="nav-page-{{ nestedPage.pageCode }}"
+                                                                                   href="#"
+                                                                                   data-page-code="{{ nestedPage.pageCode|page_slug }}"
+                                                                                   data-journal-code="{{ rvcode }}"
+                                                                                   data-parent-title-en="{{ subPage.title.en ?? subPage.title }}"
+                                                                                   data-parent-title-fr="{{ subPage.title.fr ?? subPage.title.en ?? subPage.title }}"
+                                                                                   data-current-title-en="{{ nestedPage.title.en ?? nestedPage.pageCode }}"
+                                                                                   data-current-title-fr="{{ nestedPage.title.fr ?? nestedPage.title.en ?? nestedPage.pageCode }}">
+                                                                                    {{ nestedPage.title[app.request.locale] ?? nestedPage.title['en'] ?? nestedPage.pageCode }}
+                                                                                </a>
+                                                                            </li>
+                                                                        {% endfor %}
+                                                                    </ul>
+                                                                </li>
+                                                            {% else %}
+                                                                <li>
+                                                                    <a class="dropdown-item page-nav-link"
+                                                                       id="nav-page-{{ subPage.pageCode }}"
+                                                                       href="#"
+                                                                       data-page-code="{{ subPage.pageCode|page_slug }}"
+                                                                       data-journal-code="{{ rvcode }}"
+                                                                       data-parent-title-en="{% if isContainer %}{{ page.title.en ?? page.title }}{% else %}{{ page.title.en ?? page.pageCode }}{% endif %}"
+                                                                       data-parent-title-fr="{% if isContainer %}{{ page.title.fr ?? page.title.en ?? page.title }}{% else %}{{ page.title.fr ?? page.title.en ?? page.pageCode }}{% endif %}"
+                                                                       data-current-title-en="{{ subPage.title.en ?? subPage.pageCode }}"
+                                                                       data-current-title-fr="{{ subPage.title.fr ?? subPage.title.en ?? subPage.pageCode }}">
+                                                                        {{ subPage.title[app.request.locale] ?? subPage.title['en'] ?? subPage.pageCode }}
+                                                                    </a>
+                                                                </li>
+                                                            {% endif %}
                                                         {% endfor %}
                                                     </ul>
                                                 {% endif %}

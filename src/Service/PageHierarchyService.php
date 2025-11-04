@@ -35,51 +35,7 @@ class PageHierarchyService
 
         // Process according to configuration
         foreach ($journalConfig as $pageConfig) {
-            // Handle container pages (without code)
-            if (isset($pageConfig['type']) && $pageConfig['type'] === 'container') {
-                // First, collect existing children
-                $existingChildren = [];
-                if (isset($pageConfig['children'])) {
-                    foreach ($pageConfig['children'] as $childCode) {
-                        if (isset($pagesByCode[$childCode])) {
-                            $existingChildren[] = $pagesByCode[$childCode];
-                        }
-                    }
-                }
-
-                // Only create container if it has at least one existing child
-                if (!empty($existingChildren)) {
-                    // Create a virtual page object for the container
-                    $containerPage = new \stdClass();
-                    $containerPage->title = $pageConfig['title'] ?? 'Container';
-                    $containerPage->type = 'container';
-                    // No more default_child needed!
-                    $organized['main'][] = $containerPage;
-                    // Add existing children to sub-pages
-                    $containerKey = is_array($pageConfig['title']) ?
-                        ($pageConfig['title']['en'] ?? 'container') :
-                        ($pageConfig['title'] ?? 'container');
-                    $organized['sub'][$containerKey] = $existingChildren;
-                }
-                // If no existing children, container is not displayed at all
-            } else {
-                // Handle normal pages with code
-                $pageCode = $pageConfig['code'];
-
-                // If page exists in database
-                if (isset($pagesByCode[$pageCode])) {
-                    $organized['main'][] = $pagesByCode[$pageCode];
-
-                    // Process children if any
-                    if (isset($pageConfig['children'])) {
-                        foreach ($pageConfig['children'] as $childCode) {
-                            if (isset($pagesByCode[$childCode])) {
-                                $organized['sub'][$pageCode][] = $pagesByCode[$childCode];
-                            }
-                        }
-                    }
-                }
-            }
+            $this->processPageConfig($pageConfig, $pagesByCode, $organized);
         }
 
         // Add unconfigured pages at the end (safety fallback)
@@ -93,6 +49,121 @@ class PageHierarchyService
         return $organized;
     }
 
+    private function processPageConfig(array $pageConfig, array $pagesByCode, array &$organized, ?string $parentKey = null): void
+    {
+        // Handle container pages (without code)
+        if (isset($pageConfig['type']) && $pageConfig['type'] === 'container') {
+            $containerKey = is_array($pageConfig['title']) ?
+                ($pageConfig['title']['en'] ?? 'container') :
+                ($pageConfig['title'] ?? 'container');
+
+            // First, process children BEFORE creating the container
+            // This ensures nested containers and their children are processed first
+            $existingChildren = [];
+            $hasNestedContainers = false;
+
+            if (isset($pageConfig['children'])) {
+                foreach ($pageConfig['children'] as $child) {
+                    // Check if child is a nested container (array) or a simple page code (string)
+                    if (is_array($child)) {
+                        // Nested container - process it recursively
+                        // IMPORTANT: Pass $containerKey as the parent so nested container goes into sub[$containerKey]
+                        $this->processPageConfig($child, $pagesByCode, $organized, $containerKey);
+                        $hasNestedContainers = true;
+                    } elseif (isset($pagesByCode[$child])) {
+                        // Simple page code
+                        $existingChildren[] = $pagesByCode[$child];
+                    }
+                }
+            }
+
+            // Only create container if it has at least one existing child or nested container
+            if (!empty($existingChildren) || $hasNestedContainers || $this->hasNestedContainersWithChildren($pageConfig, $pagesByCode)) {
+                // Create a virtual page object for the container
+                $containerPage = new \stdClass();
+                $containerPage->title = $pageConfig['title'] ?? 'Container';
+                $containerPage->type = 'container';
+
+                // Add to parent container or main
+                if ($parentKey !== null) {
+                    // This is a nested container, add it to parent's sub-pages
+                    if (!isset($organized['sub'][$parentKey])) {
+                        $organized['sub'][$parentKey] = [];
+                    }
+                    $organized['sub'][$parentKey][] = $containerPage;
+                } else {
+                    // This is a top-level container, add to main
+                    $organized['main'][] = $containerPage;
+                }
+
+                // Add direct children (non-container pages) to this container's sub-pages
+                if (!empty($existingChildren)) {
+                    if (!isset($organized['sub'][$containerKey])) {
+                        $organized['sub'][$containerKey] = [];
+                    }
+                    $organized['sub'][$containerKey] = array_merge(
+                        $organized['sub'][$containerKey],
+                        $existingChildren
+                    );
+                }
+            }
+        } else {
+            // Handle normal pages with code
+            $pageCode = $pageConfig['code'];
+
+            // If page exists in database
+            if (isset($pagesByCode[$pageCode])) {
+                // Add to parent container or main
+                if ($parentKey !== null) {
+                    if (!isset($organized['sub'][$parentKey])) {
+                        $organized['sub'][$parentKey] = [];
+                    }
+                    $organized['sub'][$parentKey][] = $pagesByCode[$pageCode];
+                } else {
+                    $organized['main'][] = $pagesByCode[$pageCode];
+                }
+
+                // Process children if any
+                if (isset($pageConfig['children'])) {
+                    foreach ($pageConfig['children'] as $childCode) {
+                        if (isset($pagesByCode[$childCode])) {
+                            if (!isset($organized['sub'][$pageCode])) {
+                                $organized['sub'][$pageCode] = [];
+                            }
+                            $organized['sub'][$pageCode][] = $pagesByCode[$childCode];
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private function hasNestedContainersWithChildren(array $pageConfig, array $pagesByCode): bool
+    {
+        if (!isset($pageConfig['children'])) {
+            return false;
+        }
+
+        foreach ($pageConfig['children'] as $child) {
+            if (is_array($child) && isset($child['type']) && $child['type'] === 'container') {
+                // Check if nested container has any existing children
+                if (isset($child['children'])) {
+                    foreach ($child['children'] as $nestedChild) {
+                        if (is_string($nestedChild) && isset($pagesByCode[$nestedChild])) {
+                            return true;
+                        }
+                    }
+                }
+                // Recursively check for deeper nesting
+                if ($this->hasNestedContainersWithChildren($child, $pagesByCode)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
 
     private function getAllConfiguredCodes(array $config): array
     {
@@ -103,7 +174,24 @@ class PageHierarchyService
                 $codes[] = $pageConfig['code'];
             }
             if (isset($pageConfig['children'])) {
-                $codes = array_merge($codes, $pageConfig['children']);
+                $codes = array_merge($codes, $this->extractCodesFromChildren($pageConfig['children']));
+            }
+        }
+        return $codes;
+    }
+
+    private function extractCodesFromChildren(array $children): array
+    {
+        $codes = [];
+        foreach ($children as $child) {
+            if (is_array($child)) {
+                // Nested container - recursively extract codes
+                if (isset($child['children'])) {
+                    $codes = array_merge($codes, $this->extractCodesFromChildren($child['children']));
+                }
+            } else {
+                // Simple page code
+                $codes[] = $child;
             }
         }
         return $codes;
