@@ -268,8 +268,33 @@ function updateBreadcrumbLanguage(locale) {
     return;
   }
 
+  const grandparentText = document.querySelector(
+    '.breadcrumb-grandparent-text'
+  );
   const parentText = document.querySelector('.breadcrumb-parent-text');
   const currentText = document.querySelector('.breadcrumb-current-text');
+
+  // Update grandparent title if it exists
+  const grandparentTitleEn = activeLink.getAttribute(
+    'data-grandparent-title-en'
+  );
+  const grandparentTitleFr = activeLink.getAttribute(
+    'data-grandparent-title-fr'
+  );
+
+  if (grandparentText && grandparentTitleEn) {
+    const newGrandparentTitle =
+      locale === 'fr' && grandparentTitleFr
+        ? grandparentTitleFr
+        : grandparentTitleEn;
+    console.log(
+      'Updating breadcrumb grandparent from:',
+      grandparentText.textContent,
+      'to:',
+      newGrandparentTitle
+    );
+    grandparentText.textContent = newGrandparentTitle;
+  }
 
   // Update parent title if it exists
   const parentTitleEn = activeLink.getAttribute('data-parent-title-en');
@@ -907,8 +932,14 @@ document.addEventListener('DOMContentLoaded', function () {
   // Function to update breadcrumb navigation
   function updateBreadcrumb(clickedLink) {
     const breadcrumbNav = document.getElementById('breadcrumb-nav');
+    const breadcrumbGrandparent = document.getElementById(
+      'breadcrumb-grandparent'
+    );
     const breadcrumbParent = document.getElementById('breadcrumb-parent');
     const breadcrumbCurrent = document.getElementById('breadcrumb-current');
+    const grandparentText = document.querySelector(
+      '.breadcrumb-grandparent-text'
+    );
     const parentText = document.querySelector('.breadcrumb-parent-text');
     const currentText = document.querySelector('.breadcrumb-current-text');
     const homeLink = document.querySelector('.breadcrumb-home');
@@ -920,12 +951,22 @@ document.addEventListener('DOMContentLoaded', function () {
     const pageCode = clickedLink.getAttribute('data-page-code');
 
     // Get multilingual titles
+    const grandparentTitleEn = clickedLink.getAttribute(
+      'data-grandparent-title-en'
+    );
+    const grandparentTitleFr = clickedLink.getAttribute(
+      'data-grandparent-title-fr'
+    );
     const parentTitleEn = clickedLink.getAttribute('data-parent-title-en');
     const parentTitleFr = clickedLink.getAttribute('data-parent-title-fr');
     const currentTitleEn = clickedLink.getAttribute('data-current-title-en');
     const currentTitleFr = clickedLink.getAttribute('data-current-title-fr');
 
     // Select title based on current locale
+    const grandparentTitle =
+      currentLocale === 'fr' && grandparentTitleFr
+        ? grandparentTitleFr
+        : grandparentTitleEn;
     const parentTitle =
       currentLocale === 'fr' && parentTitleFr ? parentTitleFr : parentTitleEn;
     const currentTitle =
@@ -935,12 +976,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     console.log('Updating breadcrumb:', {
       pageCode,
+      grandparentTitle,
       parentTitle,
       currentTitle,
       currentLocale,
     });
 
     // Reset breadcrumb visibility
+    breadcrumbGrandparent.style.display = 'none';
     breadcrumbParent.style.display = 'none';
     breadcrumbCurrent.style.display = 'none';
 
@@ -952,15 +995,24 @@ document.addEventListener('DOMContentLoaded', function () {
       resetToHomeState();
     });
 
-    if (parentTitle) {
-      // Sub-page: Show breadcrumb with parent
+    if (grandparentTitle && parentTitle) {
+      // Nested page (3 levels): Show grandparent > parent > current
+      grandparentText.textContent = grandparentTitle;
+      parentText.textContent = parentTitle;
+      currentText.textContent = currentTitle;
+      breadcrumbGrandparent.style.display = 'block';
+      breadcrumbParent.style.display = 'block';
+      breadcrumbCurrent.style.display = 'block';
+      breadcrumbNav.style.display = 'block';
+    } else if (parentTitle) {
+      // Sub-page (2 levels): Show parent > current
       parentText.textContent = parentTitle;
       currentText.textContent = currentTitle;
       breadcrumbParent.style.display = 'block';
       breadcrumbCurrent.style.display = 'block';
       breadcrumbNav.style.display = 'block';
     } else {
-      // Main page: Show only current page
+      // Main page (1 level): Show only current page
       currentText.textContent = currentTitle;
       breadcrumbCurrent.style.display = 'block';
       breadcrumbNav.style.display = 'block';

@@ -98,6 +98,8 @@
                                                                                    href="#"
                                                                                    data-page-code="{{ nestedPage.pageCode|page_slug }}"
                                                                                    data-journal-code="{{ rvcode }}"
+                                                                                   data-grandparent-title-en="{{ page.title.en ?? page.title }}"
+                                                                                   data-grandparent-title-fr="{{ page.title.fr ?? page.title.en ?? page.title }}"
                                                                                    data-parent-title-en="{{ subPage.title.en ?? subPage.title }}"
                                                                                    data-parent-title-fr="{{ subPage.title.fr ?? subPage.title.en ?? subPage.title }}"
                                                                                    data-current-title-en="{{ nestedPage.title.en ?? nestedPage.pageCode }}"
@@ -157,6 +159,9 @@
                                             <i class="fas fa-home me-1"></i>
                                             {{ 'journalDetails.home' | trans }}
                                         </a>
+                                    </li>
+                                    <li id="breadcrumb-grandparent" class="breadcrumb-item" style="display: none;">
+                                        <span class="breadcrumb-grandparent-text"></span>
                                     </li>
                                     <li id="breadcrumb-parent" class="breadcrumb-item" style="display: none;">
                                         <span class="breadcrumb-parent-text"></span>
