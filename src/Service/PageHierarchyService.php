@@ -51,13 +51,13 @@ class PageHierarchyService
 
     private function processPageConfig(array $pageConfig, array $pagesByCode, array &$organized, ?string $parentKey = null): void
     {
-        // Handle container pages (without code)
+        // Handle container pages (without pagecode)
         if (isset($pageConfig['type']) && $pageConfig['type'] === 'container') {
             $containerKey = is_array($pageConfig['title']) ?
                 ($pageConfig['title']['en'] ?? 'container') :
                 ($pageConfig['title'] ?? 'container');
 
-            // First, process children BEFORE creating the container
+            // First, process children before creating the container
             // This ensures nested containers and their children are processed first
             $existingChildren = [];
             $hasNestedContainers = false;
@@ -67,7 +67,7 @@ class PageHierarchyService
                     // Check if child is a nested container (array) or a simple page code (string)
                     if (is_array($child)) {
                         // Nested container - process it recursively
-                        // IMPORTANT: Pass $containerKey as the parent so nested container goes into sub[$containerKey]
+                        // Pass $containerKey as the parent so nested container goes into sub[$containerKey]
                         $this->processPageConfig($child, $pagesByCode, $organized, $containerKey);
                         $hasNestedContainers = true;
                     } elseif (isset($pagesByCode[$child])) {
