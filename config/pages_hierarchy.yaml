@@ -21,8 +21,8 @@ page_hierarchies:
         order: 2
         children:
           - "introduction-board"
-          - "editorial-board"
           - "scientific-advisory-board"
+          - "editorial-board"
           - "technical-board"
           - "reviewers-board"
           - "former-members"
@@ -33,12 +33,12 @@ page_hierarchies:
         type: "container"
         order: 3
         children:
+          - "ethical-charter"
           - title:
               en: "For authors"
               fr: "Pour les auteurs"
             type: "container"
             children:
-              - "ethical-charter"
               - "prepare-submission"
               - "editorial-workflow"
           - "for-reviewers"
