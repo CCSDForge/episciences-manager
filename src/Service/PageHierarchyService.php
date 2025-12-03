@@ -57,28 +57,24 @@ class PageHierarchyService
                 ($pageConfig['title']['en'] ?? 'container') :
                 ($pageConfig['title'] ?? 'container');
 
-            // First, process children before creating the container
-            // This ensures nested containers and their children are processed first
-            $existingChildren = [];
-            $hasNestedContainers = false;
+            // Collect children information while preserving order
+            $childrenInfo = [];
 
             if (isset($pageConfig['children'])) {
                 foreach ($pageConfig['children'] as $child) {
                     // Check if child is a nested container (array) or a simple page code (string)
                     if (is_array($child)) {
-                        // Nested container - process it recursively
-                        // Pass $containerKey as the parent so nested container goes into sub[$containerKey]
-                        $this->processPageConfig($child, $pagesByCode, $organized, $containerKey);
-                        $hasNestedContainers = true;
+                        // Nested container - mark for recursive processing
+                        $childrenInfo[] = ['type' => 'container', 'config' => $child];
                     } elseif (isset($pagesByCode[$child])) {
                         // Simple page code
-                        $existingChildren[] = $pagesByCode[$child];
+                        $childrenInfo[] = ['type' => 'page', 'page' => $pagesByCode[$child]];
                     }
                 }
             }
 
             // Only create container if it has at least one existing child or nested container
-            if (!empty($existingChildren) || $hasNestedContainers || $this->hasNestedContainersWithChildren($pageConfig, $pagesByCode)) {
+            if (!empty($childrenInfo) || $this->hasNestedContainersWithChildren($pageConfig, $pagesByCode)) {
                 // Create a virtual page object for the container
                 $containerPage = new \stdClass();
                 $containerPage->title = $pageConfig['title'] ?? 'Container';
@@ -96,15 +92,19 @@ class PageHierarchyService
                     $organized['main'][] = $containerPage;
                 }
 
-                // Add direct children (non-container pages) to this container's sub-pages
-                if (!empty($existingChildren)) {
-                    if (!isset($organized['sub'][$containerKey])) {
-                        $organized['sub'][$containerKey] = [];
+                // Process children in the order they appear in the YAML
+                if (!isset($organized['sub'][$containerKey])) {
+                    $organized['sub'][$containerKey] = [];
+                }
+
+                foreach ($childrenInfo as $childInfo) {
+                    if ($childInfo['type'] === 'container') {
+                        // Process nested container recursively
+                        $this->processPageConfig($childInfo['config'], $pagesByCode, $organized, $containerKey);
+                    } else {
+                        // Add simple page directly
+                        $organized['sub'][$containerKey][] = $childInfo['page'];
                     }
-                    $organized['sub'][$containerKey] = array_merge(
-                        $organized['sub'][$containerKey],
-                        $existingChildren
-                    );
                 }
             }
         } else {
