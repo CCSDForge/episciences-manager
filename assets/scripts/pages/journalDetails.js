@@ -113,7 +113,8 @@ function updateInlineEditTranslations() {
     console.log('Updating cancel button:', window.translations.cancel);
     // Security: Escape translation to prevent XSS
     cancelButton.innerHTML =
-      '<i class="fas fa-times me-1"></i>' + escapeHtml(window.translations.cancel);
+      '<i class="fas fa-times me-1"></i>' +
+      escapeHtml(window.translations.cancel);
   }
 
   // Update save button (inline edit)
@@ -258,7 +259,8 @@ function updateHomeLinks(locale) {
 
       // Security: Escape text from data attributes to prevent XSS
       if (icon) {
-        breadcrumbHome.innerHTML = icon.outerHTML + ' ' + escapeHtml(newHomeText);
+        breadcrumbHome.innerHTML =
+          icon.outerHTML + ' ' + escapeHtml(newHomeText);
       } else {
         breadcrumbHome.innerHTML =
           '<i class="fas fa-home me-1"></i> ' + escapeHtml(newHomeText);
@@ -562,8 +564,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Show default home content
     // Security: Escape translations to prevent XSS
-    const welcomeText = escapeHtml(window.translations?.welcomeBackoffice || 'Welcome to the journal management backoffice');
-    const selectPageText = escapeHtml(window.translations?.selectPageFirst || 'Please select a page to edit first');
+    const welcomeText = escapeHtml(
+      window.translations?.welcomeBackoffice ||
+        'Welcome to the journal management backoffice'
+    );
+    const selectPageText = escapeHtml(
+      window.translations?.selectPageFirst ||
+        'Please select a page to edit first'
+    );
     pageBody.innerHTML = `
       <div class="text-center py-5">
         <i class="fas fa-home fa-3x text-primary mb-3"></i>
