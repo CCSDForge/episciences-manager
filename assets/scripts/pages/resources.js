@@ -146,6 +146,7 @@ document.addEventListener('DOMContentLoaded', function () {
           body: formData,
           headers: {
             'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRF-Token': window.resourcesData.csrfTokenUpload,
           },
         })
       );
@@ -419,6 +420,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const response = await fetch(deleteUrl, {
           method: 'DELETE',
+          headers: {
+            'X-CSRF-Token': window.resourcesData.csrfTokenDelete,
+          },
         });
 
         const result = await response.json();
@@ -595,6 +599,7 @@ document.addEventListener('DOMContentLoaded', function () {
           body: formData,
           headers: {
             'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRF-Token': window.resourcesData.csrfTokenUpload,
           },
         })
       );
@@ -646,10 +651,16 @@ document.addEventListener('DOMContentLoaded', function () {
   function showMessage(message, type) {
     const alertDiv = document.createElement('div');
     alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
-    alertDiv.innerHTML = `
-            ${message}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        `;
+
+    // Security: Create elements safely to prevent XSS
+    const textNode = document.createTextNode(message);
+    alertDiv.appendChild(textNode);
+
+    const closeButton = document.createElement('button');
+    closeButton.type = 'button';
+    closeButton.className = 'btn-close';
+    closeButton.setAttribute('data-bs-dismiss', 'alert');
+    alertDiv.appendChild(closeButton);
 
     uploadMessages.appendChild(alertDiv);
 
@@ -1056,8 +1067,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const insertId = `link_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
     console.log('Generated insert ID:', insertId);
 
-    // Create link HTML
-    const linkHtml = `<a href="${url}" target="_blank">${filename}</a>`;
+    // Security: Create link HTML safely by escaping user data
+    const linkHtml = `<a href="${escapeHtml(url)}" target="_blank">${escapeHtml(filename)}</a>`;
 
     // Try to communicate with CKEditor using postMessage
     if (window.parent !== window) {
