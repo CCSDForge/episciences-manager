@@ -16,6 +16,8 @@ security:
       pattern: ^/
       #pattern: ^/(force|extract|admin)
       security: true
+      lazy: true
+      provider: app_user_provider
       custom_authenticators:
         - cas.security.authentication.authenticator
     main:

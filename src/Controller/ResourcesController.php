@@ -15,9 +15,15 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use App\Service\ResourceUsageService;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
+use Symfony\Component\Security\Csrf\CsrfToken;
 
 final class ResourcesController extends AbstractController
 {
+    public function __construct(
+        private readonly CsrfTokenManagerInterface $csrfTokenManager
+    ) {
+    }
     private const ALLOWED_EXTENSIONS = [
         'png', 'jpg', 'jpeg', 'gif', 'tif', 'tiff', 'zip', 'gz', '7z', 'rar', 
         'tar', 'bz', 'bz2', 'rtf', 'doc', 'eps', 'ps', 'dvi', 'docx', 'pdf', 
@@ -41,10 +47,14 @@ final class ResourcesController extends AbstractController
     #[Route('/journal/{rvcode}/resources/upload', name: 'app_resources_upload', methods: ['POST'], requirements: ['rvcode' => '[\w\-]+'])]
     public function upload(Request $request, string $rvcode, SluggerInterface $slugger, UploadDirectoryService $dirs): JsonResponse
     {
-        // Debug logging
-        error_log('Upload request received for journal: ' . $rvcode);
-        error_log('Files in request: ' . print_r($_FILES, true));
-        error_log('Post data: ' . print_r($_POST, true));
+        // Validate CSRF token for security
+        $csrfToken = $request->headers->get('X-CSRF-Token') ?? $request->request->get('_csrf_token');
+        if (!$this->csrfTokenManager->isTokenValid(new CsrfToken('resources_upload', $csrfToken))) {
+            return new JsonResponse([
+                'success' => false,
+                'message' => 'Invalid CSRF token'
+            ], 403);
+        }
 
         /** @var UploadedFile|null $uploadedFile */
         $uploadedFile = $request->files->get('file');
@@ -53,9 +63,8 @@ final class ResourcesController extends AbstractController
         $customFileName = $request->request->get('customFileName', null);
 
         if (!$uploadedFile) {
-            error_log('No file uploaded in request');
             return new JsonResponse([
-                'success' => false, 
+                'success' => false,
                 'message' => 'No file uploaded'
             ], 400);
         }
@@ -84,33 +93,18 @@ final class ResourcesController extends AbstractController
 
         // Handle custom filename
         if ($action === 'custom' && $customFileName) {
-            error_log("=== CUSTOM FILENAME DEBUG ===");
-            error_log("Original customFileName: " . $customFileName);
-            
             // Extract filename without extension from custom name
             $customNameParts = pathinfo($customFileName);
             $customBaseName = $customNameParts['filename'];
-            error_log("customBaseName after pathinfo: " . $customBaseName);
-            
+
             // Use custom name but keep original extension
             $safeFilename = (string) $slugger->slug($customBaseName);
             $newFilename = $safeFilename . '.' . $extension;
-            error_log("safeFilename after slug: " . $safeFilename);
-            error_log("newFilename: " . $newFilename);
-            
+
             // Check if the custom filename already exists
             $destinationPath = $uploadDirectory . '/' . $newFilename;
-            error_log("destinationPath: " . $destinationPath);
-            error_log("file_exists check: " . (file_exists($destinationPath) ? 'TRUE' : 'FALSE'));
-            
-            // List all files in the directory for debugging
-            if (is_dir($uploadDirectory)) {
-                $files = scandir($uploadDirectory);
-                error_log("Files in directory: " . json_encode($files));
-            }
-            
+
             if (file_exists($destinationPath)) {
-                error_log("CONFLICT DETECTED - returning 409");
                 return new JsonResponse([
                     'success' => false,
                     'conflict' => true,
@@ -120,7 +114,6 @@ final class ResourcesController extends AbstractController
                     'isCustomName' => true
                 ], 409);
             }
-            error_log("NO CONFLICT - proceeding with upload");
         } else {
             // Generate safe filename from original
             $safeFilename = (string) $slugger->slug($originalFilename);
@@ -201,20 +194,49 @@ final class ResourcesController extends AbstractController
     }
 
     #[Route('/journal/{rvcode}/resources/{filename}/delete', name: 'app_resources_delete', methods: ['DELETE'], requirements: ['rvcode' => '[\w\-]+'])]
-    public function delete(string $rvcode, string $filename, UploadDirectoryService $dirs): JsonResponse
+    public function delete(Request $request, string $rvcode, string $filename, UploadDirectoryService $dirs): JsonResponse
     {
-        $filePath = $dirs->getUploadDirectory($rvcode) . '/' . $filename;
-
-        if (!file_exists($filePath)) {
+        // Validate CSRF token for security
+        $csrfToken = $request->headers->get('X-CSRF-Token');
+        if (!$this->csrfTokenManager->isTokenValid(new CsrfToken('resources_delete', $csrfToken))) {
             return new JsonResponse([
-                'success' => false, 
+                'success' => false,
+                'message' => 'Invalid CSRF token'
+            ], 403);
+        }
+
+        $uploadDirectory = $dirs->getUploadDirectory($rvcode);
+        $filePath = $uploadDirectory . '/' . $filename;
+
+        // Security: Prevent path traversal attacks by validating the resolved path
+        $realFilePath = realpath($filePath);
+        $realUploadDir = realpath($uploadDirectory);
+
+        if ($realFilePath === false || $realUploadDir === false) {
+            return new JsonResponse([
+                'success' => false,
+                'message' => 'File not found'
+            ], 404);
+        }
+
+        // Ensure the file is within the allowed upload directory
+        if (strpos($realFilePath, $realUploadDir) !== 0) {
+            return new JsonResponse([
+                'success' => false,
+                'message' => 'Access denied'
+            ], 403);
+        }
+
+        if (!file_exists($realFilePath)) {
+            return new JsonResponse([
+                'success' => false,
                 'message' => 'File not found'
             ], 404);
         }
 
         try {
-            unlink($filePath);
-            
+            unlink($realFilePath);
+
             return new JsonResponse([
                 'success' => true,
                 'message' => 'File deleted successfully'
@@ -222,8 +244,8 @@ final class ResourcesController extends AbstractController
 
         } catch (\Exception $e) {
             return new JsonResponse([
-                'success' => false, 
-                'message' => 'Failed to delete file: ' . $e->getMessage()
+                'success' => false,
+                'message' => 'Failed to delete file'
             ], 500);
         }
     }
@@ -293,15 +315,32 @@ final class ResourcesController extends AbstractController
     #[Route('/{rvcode}/resources/{filename}', name: 'app_resources_serve', requirements: ['rvcode' => '[\w\-]+', 'filename' => '.+'])]
     public function serve(string $rvcode, string $filename, UploadDirectoryService $dirs): Response
     {
-        $filePath = $dirs->getUploadDirectory($rvcode) . '/' . $filename;
+        $uploadDirectory = $dirs->getUploadDirectory($rvcode);
+        $filePath = $uploadDirectory . '/' . $filename;
 
-        if (!file_exists($filePath)) {
+        // Security: Prevent path traversal attacks by validating the resolved path
+        $realFilePath = realpath($filePath);
+        $realUploadDir = realpath($uploadDirectory);
+
+        if ($realFilePath === false || $realUploadDir === false) {
             throw $this->createNotFoundException('File not found');
         }
 
-        $response = new BinaryFileResponse($filePath);
-        $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_INLINE, $filename);
-        
+        // Ensure the file is within the allowed upload directory
+        if (strpos($realFilePath, $realUploadDir) !== 0) {
+            throw $this->createAccessDeniedException('Access denied');
+        }
+
+        if (!file_exists($realFilePath)) {
+            throw $this->createNotFoundException('File not found');
+        }
+
+        $response = new BinaryFileResponse($realFilePath);
+
+        // Use basename to get only the filename, preventing header injection
+        $safeFilename = basename($filename);
+        $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_INLINE, $safeFilename);
+
         return $response;
     }
 

@@ -349,6 +349,8 @@
         listUrl: '{{ path('app_resources_list', {'rvcode': journal_code}) }}',
         checkExistsUrl: '{{ path('app_resources_check_exists', {'rvcode': journal_code}) }}',
         checkUsageUrl: '{{ path('app_resources_check_usage', {'rvcode': journal_code, 'filename': '__FILENAME__'}) }}',
+        csrfTokenUpload: '{{ csrf_token('resources_upload') }}',
+        csrfTokenDelete: '{{ csrf_token('resources_delete') }}',
         translations: {
             uploadSuccess: '{{ 'resources.uploadSuccess'|trans }}',
             uploadError: '{{ 'resources.uploadError'|trans }}',

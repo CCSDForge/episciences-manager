@@ -54,24 +54,28 @@ readonly class ResourceUsageService
         $locations = [];
         $content = $page->getContent();
 
+        // Security: Escape special regex characters in filename to prevent regex injection
+        $escapedFilename = preg_quote($filename, '/');
+        $escapedRvcode = preg_quote($rvcode, '/');
+
         // Search patterns for different ways resources can be referenced
         $patterns = [
             // Direct resource URLs: /journal_code/resources/filename
-            "/{$rvcode}\/resources\/{$filename}/i",
+            "/{$escapedRvcode}\/resources\/{$escapedFilename}/i",
             // Relative resource URLs: resources/filename
-            "/resources\/{$filename}/i",
+            "/resources\/{$escapedFilename}/i",
             // HTML img src attributes
-            "/src=[\"']{$rvcode}\/resources\/{$filename}[\"']/i",
-            "/src=[\"']resources\/{$filename}[\"']/i",
+            "/src=[\"']{$escapedRvcode}\/resources\/{$escapedFilename}[\"']/i",
+            "/src=[\"']resources\/{$escapedFilename}[\"']/i",
             // HTML href attributes for links
-            "/href=[\"']{$rvcode}\/resources\/{$filename}[\"']/i",
-            "/href=[\"']resources\/{$filename}[\"']/i",
+            "/href=[\"']{$escapedRvcode}\/resources\/{$escapedFilename}[\"']/i",
+            "/href=[\"']resources\/{$escapedFilename}[\"']/i",
             // Markdown image syntax
-            "/!\[.*?\]\([^)]*{$filename}[^)]*\)/i",
+            "/!\[.*?\]\([^)]*{$escapedFilename}[^)]*\)/i",
             // Markdown link syntax
-            "/\[.*?\]\([^)]*{$filename}[^)]*\)/i",
+            "/\[.*?\]\([^)]*{$escapedFilename}[^)]*\)/i",
             // Just the filename itself (loose match)
-            "/{$filename}/i"
+            "/{$escapedFilename}/i"
         ];
 
         foreach ($content as $locale => $contentData) {
