@@ -45,7 +45,7 @@ RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Configure Git safe directory to avoid ownership warnings
-RUN git config --global --add safe.directory /var/www/htdocs
+RUN git config --system --add safe.directory /var/www/htdocs
 
 # Add Xdebug configuration
 #COPY ./docker/php-fpm/xdebug.ini /usr/local/etc/php/conf.d/

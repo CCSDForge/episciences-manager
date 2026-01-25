@@ -15,7 +15,7 @@ RUN sed -i '/LoadModule rewrite_module/s/^#//g' /usr/local/apache2/conf/httpd.co
 
 # Include the manager VirtualHost configuration
 RUN echo "Include conf/extra/episciences-manager.conf" >> /usr/local/apache2/conf/httpd.conf && \
-    echo "ServerName epimanager-preprod.episciences.org" >> /usr/local/apache2/conf/httpd.conf
+    echo "ServerName manager-ng-dev.episciences.org" >> /usr/local/apache2/conf/httpd.conf
 
 
 COPY ./docker/apache/entrypoint.sh /usr/local/bin/entrypoint.sh

@@ -1,7 +1,7 @@
 services:
   httpd:
     image: "${COMPOSE_PROJECT_NAME}-httpd:latest"
-    container_name: httpd-manager
+    container_name: episciences-manager-httpd
     build:
       context: .
       dockerfile: docker/apache/Dockerfile
@@ -13,8 +13,8 @@ services:
       - ./var/cache:/var/www/htdocs/var/cache
       - ./var/log:/var/www/htdocs/var/log
     ports:
-      - "80:80"
-      - "443:443"
+      - "8082:80"
+      - "4443:443"
     depends_on:
       - php-fpm-manager
     networks:
@@ -24,7 +24,7 @@ services:
       /bin/sh -c "chown -R www-data:www-data /var/www/htdocs/var && httpd-foreground"
 
   php-fpm-manager:
-    container_name: php-fpm-manager
+    container_name: episciences-manager-php-fpm
     working_dir: /var/www/htdocs
     build:
       context: .

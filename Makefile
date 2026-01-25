@@ -18,8 +18,8 @@ NC=\033[0m
 DOCKER         ?= docker
 DOCKER_COMPOSE ?= docker compose
 NPX            ?= npx
-CNTR_NAME_HTTPD?= httpd-manager
-CNTR_NAME_PHP  ?= php-fpm-manager
+CNTR_NAME_HTTPD?= episciences-manager-httpd
+CNTR_NAME_PHP  ?= episciences-manager-php-fpm
 CNTR_APP_DIR   ?= /var/www/htdocs
 
 # MySQL connections (local mysql client)
@@ -78,8 +78,8 @@ help: ## Display available commands list
 	@echo ""
 	@echo -e "$(YELLOW)Quick Start:$(NC)"
 	@echo -e "  1. Run $(BOLD)make up$(NC) to start all containers"
-	@echo -e "  2. Add to /etc/hosts: $(BOLD)127.0.0.1 localhost epimanager-dev.episciences.org$(NC)"
-	@echo -e "  3. Access: $(GREEN)http://epimanager-dev.episciences.org/$(NC)"
+	@echo -e "  2. Add to /etc/hosts: $(BOLD)127.0.0.1 localhost manager-ng-dev.episciences.org$(NC)"
+	@echo -e "  3. Access: $(GREEN)http://manager-ng-dev.episciences.org:8082/$(NC)"
 	@echo ""
 
 # ==========================
@@ -88,10 +88,12 @@ help: ## Display available commands list
 .PHONY: up down restart logs ps build clean
 up: ## Start all containers (in background)
 	$(DOCKER_COMPOSE) --env-file .env.local up -d
+	@echo "Fixing permissions for internal cache and logs..."
+	$(DOCKER) exec -u root $(CNTR_NAME_PHP) sh -c "chown www-data:www-data /var/www && chown -R www-data:www-data /var/www/htdocs/var"
 	@echo "====================================================================="
 	@echo "Make sure you have this line in /etc/hosts:"
-	@echo "127.0.0.1 localhost epimanager-dev.episciences.org"
-	@echo "Episciences Manager : http://epimanager-dev.episciences.org/"
+	@echo "127.0.0.1 localhost manager-ng-dev.episciences.org"
+	@echo "Episciences Manager : http://manager-ng-dev.episciences.org:8082/"
 	@echo "PhpMyAdmin          : http://localhost:8001/"
 	@echo "====================================================================="
 	@echo "SQL: place your dumps in ~/tmp/"
@@ -132,12 +134,17 @@ load-db-auth: ## Load SQL dump from ~/tmp/cas_users.sql (local mysql client)
 # ==========================
 #        COMPOSER/YARN
 # ==========================
-.PHONY: composer-install composer-update yarn-build yarn-encore-production can-i-use-update
+.PHONY: composer-install composer-update yarn-build yarn-encore-production can-i-use-update install composer
+install: composer-install yarn-build ## Alias for composer-install + yarn-build
+
+composer: ## Alias for composer-install
+	$(MAKE) composer-install
+
 composer-install: ## Install Composer dependencies
-	composer install --no-interaction --prefer-dist --optimize-autoloader
+	$(DOCKER) exec -it -u www-data $(CNTR_NAME_PHP) composer install --no-interaction --prefer-dist --optimize-autoloader
 
 composer-update: ## Update Composer dependencies
-	composer update --no-interaction --prefer-dist --optimize-autoloader
+	$(DOCKER) exec -it -u www-data $(CNTR_NAME_PHP) composer update --no-interaction --prefer-dist --optimize-autoloader
 
 yarn-build: ## Compile assets for development
 	yarn build
@@ -332,7 +339,7 @@ preprod-ci-no-ssl: ## Start preprod with CI database (HTTP only)
 .PHONY: composer-install-prod cache-clear cache-warmup deploy-prod deploy deploy-branch deploy-tag
 
 composer-install-prod: ## Install PHP dependencies (prod)
-	composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --classmap-authoritative
+	$(DOCKER) exec -it -u www-data $(CNTR_NAME_PHP) composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --classmap-authoritative
 
 cache-clear: ## Clear Symfony cache (prod, host)
 	php bin/console cache:clear --env=prod --no-debug
