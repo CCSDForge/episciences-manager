@@ -31,7 +31,11 @@ chown -R www-data:www-data /var/www/htdocs/var/cache /var/www/htdocs/var/log
 su www-data -s /bin/sh -c "cd /var/www/htdocs && composer install --no-interaction --prefer-dist --optimize-autoloader"
 # Vider le cache Symfony si le script console existe
 if [ -f "/var/www/htdocs/bin/console" ]; then
-  su www-data -s /bin/sh -c "cd /var/www/htdocs && php bin/console cache:clear --env=dev"
+  su www-data -s /bin/sh -c "cd /var/www/htdocs && php bin/console cache:clear --env=${APP_ENV:-dev}"
+  # Warmup uniquement en prod/preprod (en dev, Symfony reconstruit le cache à la volée)
+  if [ "${APP_ENV:-dev}" != "dev" ]; then
+    su www-data -s /bin/sh -c "cd /var/www/htdocs && php bin/console cache:warmup --env=${APP_ENV:-dev}"
+  fi
 fi
 
 user=$(id -un)

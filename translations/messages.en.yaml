@@ -15,6 +15,7 @@ nav:
   dashboard: "Dashboard"
   users: "Users"
   journal: "Journal"
+  journalConfiguration: "Journal Configuration"
   website: "Website"
   statistics: "Statistics"
 

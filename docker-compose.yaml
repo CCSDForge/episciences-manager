@@ -17,6 +17,7 @@ services:
       - php-fpm-manager
     networks:
       - epi-manager-network
+      - epi-network
     command: >
       /bin/sh -c "chown -R www-data:www-data /var/www/htdocs/var && httpd-foreground"
 
@@ -60,6 +61,6 @@ networks:
   epi-manager-network:
     driver: bridge
   epi-network:
-    name: episciences_epi-network
+    name: epi-network
     external: true
 
