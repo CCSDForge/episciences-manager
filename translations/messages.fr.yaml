@@ -15,7 +15,7 @@ nav:
  dashboard: "Tableau de bord"
  users: "Utilisateurs"
  journal: "Journal"
- journalSettings: "Configuration du journal"
+ journalConfiguration: "Configuration du journal"
  website: "Site Web"
  statistics: "Statistiques"
 
@@ -41,6 +41,14 @@ journal:
  search_placeholder: "Rechercher un journal par nom ou code"
  clear_search: "Vider la recherche"
  see_details: "Voir les détails (epiadmin uniquement)"
+
+journalConfiguration:
+  title: "Configuration du journal"
+  selectJournal: "Sélectionner un journal"
+  searchPlaceholder: "Rechercher un journal par nom ou code"
+  noJournals: "Aucun journal disponible"
+  noResults: "Aucun journal trouvé correspondant à votre recherche"
+  clearSearch: "Effacer la recherche"
 
 journalDetails:
  home: "Accueil"

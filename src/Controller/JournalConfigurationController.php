@@ -3,6 +3,7 @@ namespace App\Controller;
 
 use App\Service\JournalConfigurationService;
 use App\Service\ReviewManager;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -12,12 +13,26 @@ use Symfony\Component\Routing\Attribute\Route;
 class JournalConfigurationController extends AbstractController
 {
     #[Route('/journal/configuration', name: 'app_journal_configuration_select')]
-    public function select(ReviewManager $reviewManager): Response
+    public function select(Request $request, ReviewManager $reviewManager, PaginatorInterface $paginator): Response
     {
-        $journals = $reviewManager->getAllReviewsForDisplay();
+        $search = $request->query->get('search', '');
+        $page = $request->query->getInt('page', 1);
+
+        if (!empty($search)) {
+            // Search without pagination
+            $journals = $reviewManager->searchReviews($search);
+            $pagination = null;
+        } else {
+            // Paginated list
+            $result = $reviewManager->getAllReviewsForDisplayPaginated($paginator, $page, 10);
+            $journals = $result['reviews'];
+            $pagination = $result['pagination'];
+        }
 
         return $this->render('journal_configuration/select.html.twig', [
             'journals' => $journals,
+            'pagination' => $pagination,
+            'search' => $search,
         ]);
     }
 

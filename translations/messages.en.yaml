@@ -42,6 +42,14 @@ journal:
   clear_search: "Clear search"
   see_details: "See Details (epiadmin only)"
 
+journalConfiguration:
+  title: "Journal Configuration"
+  selectJournal: "Select a journal"
+  searchPlaceholder: "Search for a journal by name or code"
+  noJournals: "No journals available"
+  noResults: "No journals found matching your search"
+  clearSearch: "Clear search"
+
 journalDetails:
   home: "Home"
   welcome_backoffice: "Welcome to the journal management backoffice"
