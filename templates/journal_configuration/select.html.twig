@@ -1,21 +1,19 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ 'journalConfiguration.selectJournal'|trans }}{% endblock %}
+{% block title %}{{ 'selectJournal.title'|trans }}{% endblock %}
 
 {% block body %}
     <div class="journal-config-page">
         <div class="container">
+            {% if app.user and app.user.userIdentifier != '__NO_USER__' %}
+                {% include 'partials/_navbar.html.twig' %}
+            {% endif %}
             <div class="row justify-content-center">
                 <div class="col-lg-10">
-                    <h1 class="journal-config-title">
-                        <i class="fas fa-cog me-2"></i>
-                        {{ 'journalConfiguration.title'|trans }}
-                    </h1>
-
                     <div class="journal-config-card">
                         <div class="card-header">
                             <i class="fas fa-book"></i>
-                            {{ 'journalConfiguration.selectJournal'|trans }}
+                            {{ 'selectJournal.title'|trans }}
                         </div>
                         <div class="card-body">
                             <div class="search-container">
@@ -24,11 +22,11 @@
                                         <input type="text"
                                                name="search"
                                                class="form-control form-control-lg"
-                                               placeholder="{{ 'journalConfiguration.searchPlaceholder'|trans }}"
+                                               placeholder="{{ 'selectJournal.searchPlaceholder'|trans }}"
                                                value="{{ search|default('') }}"
                                                autocomplete="off">
                                         {% if search|default('') is not empty %}
-                                            <a href="{{ path('app_journal_configuration_select') }}" class="clear-btn" title="{{ 'journalConfiguration.clearSearch'|trans }}">
+                                            <a href="{{ path('app_journal_configuration_select') }}" class="clear-btn" title="{{ 'selectJournal.clearSearch'|trans }}">
                                                 <i class="fas fa-times"></i>
                                             </a>
                                         {% endif %}
@@ -54,9 +52,9 @@
                                         <i class="fas fa-search"></i>
                                         <p>
                                             {% if search|default('') is not empty %}
-                                                {{ 'journalConfiguration.noResults'|trans }}
+                                                {{ 'selectJournal.noResults'|trans }}
                                             {% else %}
-                                                {{ 'journalConfiguration.noJournals'|trans }}
+                                                {{ 'selectJournal.noJournals'|trans }}
                                             {% endif %}
                                         </p>
                                     </div>
@@ -80,5 +78,6 @@
 
 {% block stylesheets %}
     {{ parent() }}
-    {{ encore_entry_link_tags('journalConfiguration') }}
+    {{ encore_entry_link_tags('selectJournal') }}
+    {{ encore_entry_link_tags('navbar') }}
 {% endblock %}

@@ -42,13 +42,15 @@ journal:
   clear_search: "Clear search"
   see_details: "See Details (epiadmin only)"
 
-journalConfiguration:
-  title: "Journal Configuration"
-  selectJournal: "Select a journal"
+selectJournal:
+  title: "Select a Journal"
   searchPlaceholder: "Search for a journal by name or code"
   noJournals: "No journals available"
   noResults: "No journals found matching your search"
   clearSearch: "Clear search"
+
+journalConfiguration:
+  title: "Journal Configuration"
 
 journalDetails:
   home: "Home"

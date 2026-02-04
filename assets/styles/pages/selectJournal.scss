@@ -15,28 +15,6 @@ $primary-gradient: linear-gradient(
   padding: $spacing-xl 0;
 }
 
-// Page title
-.journal-config-title {
-  background: $primary-gradient;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  font-weight: 800;
-  font-size: $font-size-display;
-  margin-bottom: $spacing-xl;
-
-  i {
-    background: $primary-gradient;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  @media (max-width: 768px) {
-    font-size: $font-size-xxl;
-  }
-}
-
 // Card styles
 .journal-config-card {
   background: rgba(255, 255, 255, 0.25);
@@ -45,14 +23,16 @@ $primary-gradient: linear-gradient(
   box-shadow: 0 8px 32px 0 $shadow-light;
   border-radius: $border-radius-xl;
   overflow: hidden;
+  margin-top: $spacing-xxl;
 
   .card-header {
     background: $primary-gradient;
     color: $white;
-    padding: $spacing-lg $spacing-xl;
+    padding: $spacing-xl;
     border: none;
-    font-weight: 600;
-    font-size: $font-size-lg;
+    font-weight: 700;
+    font-size: $font-size-xxl;
+    text-align: center;
 
     i {
       margin-right: $spacing-sm;
