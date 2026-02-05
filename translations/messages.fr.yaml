@@ -42,17 +42,83 @@ journal:
  clear_search: "Vider la recherche"
  see_details: "Voir les détails (epiadmin uniquement)"
 
-selectJournal:
-  title: "Sélectionner un journal"
-  searchPlaceholder: "Rechercher un journal par nom ou code"
-  noJournals: "Aucun journal disponible"
-  noResults: "Aucun journal trouvé correspondant à votre recherche"
-  clearSearch: "Effacer la recherche"
-  edit: "Éditer"
-  noAccess: "Pas d'accès"
-
 journalConfiguration:
+  selectJournal:
+    title: "Sélectionner un journal"
+    searchPlaceholder: "Rechercher un journal par nom ou code"
+    noJournals: "Aucun journal disponible"
+    noResults: "Aucun journal trouvé correspondant à votre recherche"
+    clearSearch: "Effacer la recherche"
+    edit: "Éditer"
+    editTooltip: "Configurer les paramètres de cette revue"
+    noAccess: "Pas d'accès"
+  
   title: "Configuration du journal"
+  save: "Sauvegarder"
+  saved: "Configuration sauvegardée avec succès"
+  error: "Erreur lors de la sauvegarde"
+  
+  common:
+    back: "Retour"
+  
+  api:
+    title: "Configuration de l'API"
+    domain: "Domaine de l'API"
+  
+  theme:
+    title: "Thème"
+    primaryColor: "Couleur primaire"
+    primaryTextColor: "Couleur du texte primaire"
+    preview: "Aperçu"
+    previewText: "Ceci est un exemple de texte avec le thème appliqué"
+  
+  languages:
+    title: "Langues"
+    accepted: "Langues acceptées"
+    default: "Langue par défaut"
+  
+  homepage:
+    title: "Page d'accueil"
+    latestArticlesCarouselRender: "Carrousel des derniers articles"
+    latestNewsCarouselRender: "Carrousel des dernières actualités"
+    membersCarouselRender: "Carrousel des membres"
+    statsRender: "Afficher les statistiques"
+    journalIndexationRender: "Afficher l'indexation du journal"
+    specialIssuesRender: "Afficher les numéros spéciaux"
+    latestAcceptedArticlesCarouselRender: "Carrousel des articles acceptés récents"
+    lastNewsRender: "Afficher les dernières actualités"
+    lastInformationRenderType: "Type d'information à afficher"
+    lastNews: "Dernières actualités"
+    lastVolume: "Dernier volume"
+    lastSpecialIssue: "Dernier numéro spécial"
+  
+  menu:
+    title: "Menu"
+    acceptedArticlesRender: "Articles acceptés"
+    volumesRender: "Volumes"
+    lastVolumeRender: "Dernier volume"
+    volumeTypeProceedingsRender: "Actes de conférence"
+    specialIssuesRender: "Numéros spéciaux"
+    sectionsRender: "Sections"
+    newsRender: "Actualités"
+    journalIndexingRender: "Indexation du journal"
+    journalAcknowledgementsRender: "Remerciements"
+    journalForReviewersRender: "Pour les relecteurs"
+    journalForConferenceOrganisersRender: "Pour les organisateurs de conférence"
+  
+  statistics:
+    title: "Statistiques"
+    colors: "Couleurs des graphiques"
+    statistic: "Statistique"
+    render: "Afficher"
+    order: "Ordre"
+    acceptanceRate: "Taux d'acceptation"
+    nbSubmissions: "Nombre de soumissions"
+    nbSubmissionsDetails: "Détails des soumissions"
+    reviewsRequested: "Relectures demandées"
+    reviewsReceived: "Relectures reçues"
+    medianSubmissionPublication: "Délai médian soumission-publication"
+    medianReviewsNumber: "Nombre médian de relectures"
 
 journalDetails:
  home: "Accueil"

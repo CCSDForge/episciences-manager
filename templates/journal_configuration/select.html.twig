@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ 'selectJournal.title'|trans }}{% endblock %}
+{% block title %}{{ 'journalConfiguration.selectJournal.title'|trans }}{% endblock %}
 
 {% block body %}
     <div class="journal-config-page">
@@ -13,7 +13,7 @@
                     <div class="journal-config-card">
                         <div class="card-header">
                             <i class="fas fa-book"></i>
-                            {{ 'selectJournal.title'|trans }}
+                            {{ 'journalConfiguration.selectJournal.title'|trans }}
                         </div>
                         <div class="card-body">
                             <div class="search-container">
@@ -22,11 +22,11 @@
                                         <input type="text"
                                                name="search"
                                                class="form-control form-control-lg"
-                                               placeholder="{{ 'selectJournal.searchPlaceholder'|trans }}"
+                                               placeholder="{{ 'journalConfiguration.selectJournal.searchPlaceholder'|trans }}"
                                                value="{{ search|default('') }}"
                                                autocomplete="off">
                                         {% if search|default('') is not empty %}
-                                            <a href="{{ path('app_journal_configuration_select') }}" class="clear-btn" title="{{ 'selectJournal.clearSearch'|trans }}">
+                                            <a href="{{ path('app_journal_configuration_select') }}" class="clear-btn" title="{{ 'journalConfiguration.selectJournal.clearSearch'|trans }}">
                                                 <i class="fas fa-times"></i>
                                             </a>
                                         {% endif %}
@@ -48,11 +48,11 @@
                                             <a href="{{ path('app_journal_configuration', {'code': journal.code}) }}"
                                                class="btn btn-sm btn-outline-primary"
                                                data-bs-toggle="tooltip"
-                                               title="{{ 'selectJournal.edit'|trans }}">
+                                               title="{{ 'journalConfiguration.selectJournal.editTooltip'|trans }}">
                                                 <i class="fa-solid fa-user-pen"></i>
                                             </a>
                                         {% else %}
-                                            <span class="d-inline-block" tabindex="0" data-bs-toggle="tooltip" title="{{ 'selectJournal.noAccess'|trans }}">
+                                            <span class="d-inline-block" tabindex="0" data-bs-toggle="tooltip" title="{{ 'journalConfiguration.selectJournal.noAccess'|trans }}">
                                                 <span class="btn btn-sm btn-outline-secondary disabled" style="pointer-events: none;">
                                                     <i class="fas fa-lock"></i>
                                                 </span>
@@ -64,9 +64,9 @@
                                         <i class="fas fa-search"></i>
                                         <p>
                                             {% if search|default('') is not empty %}
-                                                {{ 'selectJournal.noResults'|trans }}
+                                                {{ 'journalConfiguration.selectJournal.noResults'|trans }}
                                             {% else %}
-                                                {{ 'selectJournal.noJournals'|trans }}
+                                                {{ 'journalConfiguration.selectJournal.noJournals'|trans }}
                                             {% endif %}
                                         </p>
                                     </div>

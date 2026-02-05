@@ -42,17 +42,83 @@ journal:
   clear_search: "Clear search"
   see_details: "See Details (epiadmin only)"
 
-selectJournal:
-  title: "Select a Journal"
-  searchPlaceholder: "Search for a journal by name or code"
-  noJournals: "No journals available"
-  noResults: "No journals found matching your search"
-  clearSearch: "Clear search"
-  edit: "Edit"
-  noAccess: "No access"
-
 journalConfiguration:
+  selectJournal:
+    title: "Select a Journal"
+    searchPlaceholder: "Search for a journal by name or code"
+    noJournals: "No journals available"
+    noResults: "No journals found matching your search"
+    clearSearch: "Clear search"
+    edit: "Edit"
+    editTooltip: "Configure this journal's settings"
+    noAccess: "No access"
+  
   title: "Journal Configuration"
+  save: "Save"
+  saved: "Configuration saved successfully"
+  error: "Error saving configuration"
+  
+  common:
+    back: "Back"
+  
+  api:
+    title: "API Configuration"
+    domain: "API Domain"
+  
+  theme:
+    title: "Theme"
+    primaryColor: "Primary Color"
+    primaryTextColor: "Primary Text Color"
+    preview: "Preview"
+    previewText: "This is a sample text with the theme applied"
+  
+  languages:
+    title: "Languages"
+    accepted: "Accepted Languages"
+    default: "Default Language"
+  
+  homepage:
+    title: "Homepage"
+    latestArticlesCarouselRender: "Latest Articles Carousel"
+    latestNewsCarouselRender: "Latest News Carousel"
+    membersCarouselRender: "Members Carousel"
+    statsRender: "Display Statistics"
+    journalIndexationRender: "Display Journal Indexation"
+    specialIssuesRender: "Display Special Issues"
+    latestAcceptedArticlesCarouselRender: "Latest Accepted Articles Carousel"
+    lastNewsRender: "Display Latest News"
+    lastInformationRenderType: "Information Display Type"
+    lastNews: "Latest News"
+    lastVolume: "Latest Volume"
+    lastSpecialIssue: "Latest Special Issue"
+  
+  menu:
+    title: "Menu"
+    acceptedArticlesRender: "Accepted Articles"
+    volumesRender: "Volumes"
+    lastVolumeRender: "Latest Volume"
+    volumeTypeProceedingsRender: "Conference Proceedings"
+    specialIssuesRender: "Special Issues"
+    sectionsRender: "Sections"
+    newsRender: "News"
+    journalIndexingRender: "Journal Indexing"
+    journalAcknowledgementsRender: "Acknowledgements"
+    journalForReviewersRender: "For Reviewers"
+    journalForConferenceOrganisersRender: "For Conference Organizers"
+  
+  statistics:
+    title: "Statistics"
+    colors: "Chart Colors"
+    statistic: "Statistic"
+    render: "Display"
+    order: "Order"
+    acceptanceRate: "Acceptance Rate"
+    nbSubmissions: "Number of Submissions"
+    nbSubmissionsDetails: "Submissions Details"
+    reviewsRequested: "Reviews Requested"
+    reviewsReceived: "Reviews Received"
+    medianSubmissionPublication: "Median Submission-Publication Time"
+    medianReviewsNumber: "Median Number of Reviews"
 
 journalDetails:
   home: "Home"
