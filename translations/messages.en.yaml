@@ -48,6 +48,8 @@ selectJournal:
   noJournals: "No journals available"
   noResults: "No journals found matching your search"
   clearSearch: "Clear search"
+  edit: "Edit"
+  noAccess: "No access"
 
 journalConfiguration:
   title: "Journal Configuration"

@@ -29,8 +29,15 @@ class JournalConfigurationController extends AbstractController
             $pagination = $result['pagination'];
         }
 
+        // Add permission info to each journal
+        $journalsWithPermissions = [];
+        foreach ($journals as $journal) {
+            $journal['canEdit'] = $this->isGranted('REVIEW_VIEW', $journal);
+            $journalsWithPermissions[] = $journal;
+        }
+
         return $this->render('journal_configuration/select.html.twig', [
-            'journals' => $journals,
+            'journals' => $journalsWithPermissions,
             'pagination' => $pagination,
             'search' => $search,
         ]);
@@ -47,6 +54,9 @@ class JournalConfigurationController extends AbstractController
         if ($review === null) {
             throw $this->createNotFoundException('Journal not found');
         }
+
+        // Check if user has permission to view this specific review
+        $this->denyAccessUnlessGranted('REVIEW_VIEW', $review);
 
         $configuration = $configurationService->getConfigurationArray($review['rvid']);
 
