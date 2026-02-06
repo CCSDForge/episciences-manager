@@ -88,6 +88,7 @@ journalConfiguration:
     latestAcceptedArticlesCarouselRender: "Carrousel des articles acceptés récents"
     lastNewsRender: "Afficher les dernières actualités"
     lastInformationRenderType: "Type d'information à afficher"
+    lastInformationRenderTypeHint: "Bloc de la page d'accueil, à droite du texte de présentation du journal"
     lastNews: "Dernières actualités"
     lastVolume: "Dernier volume"
     lastSpecialIssue: "Dernier numéro spécial"

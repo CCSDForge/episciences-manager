@@ -23,7 +23,7 @@ class JournalConfigurationService
                 'primaryTextColor' => '#ffffff',
             ],
             'languages' => [
-                'accepted' => ['en', 'fr'],
+                'accepted' => ['en', 'fr','es'],
                 'default' => 'en',
             ],
             'homepage' => [
@@ -39,8 +39,6 @@ class JournalConfigurationService
             ],
             'menu' => [
                 'acceptedArticlesRender' => true,
-                'volumesRender' => true,
-                'lastVolumeRender' => true,
                 'volumeTypeProceedingsRender' => true,
                 'specialIssuesRender' => true,
                 'sectionsRender' => true,
@@ -59,9 +57,6 @@ class JournalConfigurationService
                 'reviewsReceived' => ['render' => true, 'order' => 2],
                 'medianSubmissionPublication' => ['render' => true, 'order' => 3],
                 'medianReviewsNumber' => ['render' => true, 'order' => 4],
-            ],
-            'matomo' => [
-                'siteId' => 0,
             ],
         ];
     }

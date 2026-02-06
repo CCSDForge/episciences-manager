@@ -88,6 +88,7 @@ journalConfiguration:
     latestAcceptedArticlesCarouselRender: "Latest Accepted Articles Carousel"
     lastNewsRender: "Display Latest News"
     lastInformationRenderType: "Information Display Type"
+    lastInformationRenderTypeHint: "Homepage block, at the right of the journal about text"
     lastNews: "Latest News"
     lastVolume: "Latest Volume"
     lastSpecialIssue: "Latest Special Issue"
