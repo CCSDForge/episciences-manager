@@ -5,15 +5,20 @@
   {% block body %}
       <div class="container py-4">
           <div class="d-flex align-items-center justify-content-between mb-4">
-              <div>
-                  <h1 class="h3 mb-0"><i class="fas fa-cog me-2"></i>{{ 'journalConfiguration.title'|trans }}</h1>
-                  <small class="text-muted">{{ review.name }}</small>
+              <div class="text-start" style="flex:1;">
+                  <span class="text-muted fs-5">{{ review.name }}</span>
               </div>
-              <a href="{{ path('app_journal', {'code': rvcode}) }}" class="btn
+              <div class="text-ceter" style="flex:1;">
+                  <h1 class="h3 mb-0"><i class="fas fa-cog me-2"></i>{{ 'journalConfiguration.title'|trans }}</h1>
+              </div>
+              <div class="text-end" style="flex:1;">
+                  <a href="{{ path('app_journal', {'code': rvcode}) }}" class="btn
  btn-outline-secondary">
-                  <i class="fas fa-arrow-left me-1"></i>
-                  {{ 'journalConfiguration.common.back'|trans }}
-              </a>
+                      <i class="fas fa-arrow-left me-1"></i>
+                      {{ 'journalConfiguration.common.back'|trans }}
+                  </a>
+              </div>
+
           </div>
 
           <div id="configuration-alerts"></div>
@@ -22,266 +27,252 @@
 
               {# ===== API Configuration ===== #}
               <div class="card">
-                  <div class="card-header">
+                  <div class="card-header" style="font-size: 18px;">
                       <i class="fas fa-plug me-2"></i>
                       {{ 'journalConfiguration.api.title'|trans }}
                   </div>
-                  <div class="card-body">
-                          <div class="mb-3">
-                              <label for="api_domain" class="form-label">{{
-                                  'journalConfiguration.api.domain'|trans }}</label>
-                              <input type="url" class="form-control" id="api_domain"
-                                     value="{{ configuration.api_domain }}"
-                                     placeholder="https://api.episciences.org">
-                          </div>
+                  <div class="card-body px-5">
+                      <div class="mb-3">
+                          <label for="api_domain"
+                                 class="form-label">{{ 'journalConfiguration.api.domain'|trans }}</label>
+                          <input type="url" class="form-control" id="api_domain"
+                                 value="{{ configuration.api_domain }}"
+                                 placeholder="https://api.episciences.org">
+                      </div>
                   </div>
               </div>
 
               {# ===== Theme ===== #}
               <div class="card">
-                  <div class="card-header">
+                  <div class="card-header" style="font-size: 18px;">
                       <i class="fas fa-palette me-2"></i>
                       {{ 'journalConfiguration.theme.title'|trans }}
                   </div>
-                  <div class="card-body">
-                          <div class="row">
-                              <div class="col-md-6 mb-3">
-                                  <label for="theme_primaryColor" class="form-label">{{
-                                      'journalConfiguration.theme.primaryColor'|trans }}</label>
-                                  <div class="input-group">
-                                      <input type="color" class="form-control form-control-color"
-                                             id="theme_primaryColor_picker"
-                                             value="{{ configuration.theme.primaryColor }}">
-                                      <input type="text" class="form-control"
-                                             id="theme_primaryColor"
-                                             value="{{ configuration.theme.primaryColor }}"
-                                             pattern="^#[0-9A-Fa-f]{6}$">
-                                  </div>
-                              </div>
-                              <div class="col-md-6 mb-3">
-                                  <label for="theme_primaryTextColor" class="form-label">{{
-                                      'journalConfiguration.theme.primaryTextColor'|trans }}</label>
-                                  <div class="input-group">
-                                      <input type="color" class="form-control form-control-color"
-                                             id="theme_primaryTextColor_picker"
-                                             value="{{ configuration.theme.primaryTextColor }}">
-                                      <input type="text" class="form-control"
-                                             id="theme_primaryTextColor"
-                                             value="{{ configuration.theme.primaryTextColor }}"
-                                             pattern="^#[0-9A-Fa-f]{6}$">
-                                  </div>
+                  <div class="card-body px-5">
+                      <div class="row justify-content-between">
+                          <div class="col-md-5 mb-3">
+                              <label for="theme_primaryColor"
+                                     class="form-label">{{ 'journalConfiguration.theme.primaryColor'|trans }}</label>
+                              <div class="input-group">
+                                  <input type="color" class="form-control form-control-color"
+                                         id="theme_primaryColor_picker"
+                                         value="{{ configuration.theme.primaryColor }}">
+                                  <input type="text" class="form-control"
+                                         id="theme_primaryColor"
+                                         value="{{ configuration.theme.primaryColor }}"
+                                         pattern="^#[0-9A-Fa-f]{6}$">
                               </div>
                           </div>
-                          <div class="mt-3">
-                              <label class="form-label">{{
-                                  'journalConfiguration.theme.preview'|trans }}</label>
-                              <div id="theme-preview" class="p-3 rounded"
-                                   style="background-color: {{ configuration.theme.primaryColor }};
-                                           color: {{ configuration.theme.primaryTextColor }};">
-                                  {{ 'journalConfiguration.theme.previewText'|trans }}
+                          <div class="col-md-5 mb-3">
+                              <label for="theme_primaryTextColor"
+                                     class="form-label">{{ 'journalConfiguration.theme.primaryTextColor'|trans }}</label>
+                              <div class="input-group">
+                                  <input type="color" class="form-control form-control-color"
+                                         id="theme_primaryTextColor_picker"
+                                         value="{{ configuration.theme.primaryTextColor }}">
+                                  <input type="text" class="form-control"
+                                         id="theme_primaryTextColor"
+                                         value="{{ configuration.theme.primaryTextColor }}"
+                                         pattern="^#[0-9A-Fa-f]{6}$">
                               </div>
                           </div>
+                      </div>
+                      <div class="mt-3">
+                          <label class="form-label">{{ 'journalConfiguration.theme.preview'|trans }}</label>
+                          <div id="theme-preview" class="p-3 rounded"
+                               style="background-color: {{ configuration.theme.primaryColor }};
+                                       color: {{ configuration.theme.primaryTextColor }};">
+                              {{ 'journalConfiguration.theme.previewText'|trans }}
+                          </div>
+                      </div>
                   </div>
               </div>
 
               {# ===== Languages ===== #}
               <div class="card">
-                  <div class="card-header">
+                  <div class="card-header" style="font-size: 18px;">
                       <i class="fas fa-language me-2"></i>
                       {{ 'journalConfiguration.languages.title'|trans }}
                   </div>
-                  <div class="card-body">
-                          <div class="mb-3">
-                              <label class="form-label">{{
-                                  'journalConfiguration.languages.accepted'|trans }}</label>
-                              <div class="d-flex flex-wrap gap-3">
-                                  {% set availableLanguages = {'en': 'English', 'fr': 'Français',
-                                      'es': 'Español', 'de': 'Deutsch'} %}
-                                  {% for code, name in availableLanguages %}
-                                      <div class="form-check">
-                                          <input class="form-check-input language-checkbox"
-                                                 type="checkbox"
-                                                 id="lang_{{ code }}" value="{{ code }}"
-                                                  {{ code in configuration.languages.accepted ?
-                                                  'checked' : '' }}>
-                                          <label class="form-check-label" for="lang_{{ code }}">{{
-                                              name }}</label>
-                                      </div>
-                                  {% endfor %}
-                              </div>
+                  <div class="card-body px-5">
+                      <div class="mb-3">
+                          <label class="form-label">{{ 'journalConfiguration.languages.accepted'|trans }}</label>
+                          <div class="d-flex flex-wrap gap-3">
+                              {% set availableLanguages = {'en': 'English', 'fr': 'Français',
+                                  'es': 'Español', 'de': 'Deutsch'} %}
+                              {% for code, name in availableLanguages %}
+                                  <div class="form-check">
+                                      <input class="form-check-input language-checkbox"
+                                             type="checkbox"
+                                             id="lang_{{ code }}" value="{{ code }}"
+                                              {{ code in configuration.languages.accepted ?
+                                              'checked' : '' }}>
+                                      <label class="form-check-label" for="lang_{{ code }}">{{ name }}</label>
+                                  </div>
+                              {% endfor %}
                           </div>
-                          <div class="mb-3">
-                              <label for="languages_default" class="form-label">{{
-                                  'journalConfiguration.languages.default'|trans }}</label>
-                              <select class="form-select" id="languages_default">
-                                  {% for code, name in availableLanguages %}
-                                      <option value="{{ code }}" {{ configuration.languages.default
-                                      == code ? 'selected' : '' }}>{{ name }}</option>
-                                  {% endfor %}
-                              </select>
-                          </div>
+                      </div>
+                      <div class="mb-3">
+                          <label for="languages_default"
+                                 class="form-label">{{ 'journalConfiguration.languages.default'|trans }}</label>
+                          <select class="form-select" id="languages_default">
+                              {% for code, name in availableLanguages %}
+                                  <option value="{{ code }}" {{ configuration.languages.default
+                                  == code ? 'selected' : '' }}>{{ name }}</option>
+                              {% endfor %}
+                          </select>
+                      </div>
                   </div>
               </div>
 
               {# ===== Homepage ===== #}
               <div class="card">
-                  <div class="card-header">
+                  <div class="card-header" style="font-size: 18px;">
                       <i class="fas fa-home me-2"></i>
                       {{ 'journalConfiguration.homepage.title'|trans }}
                   </div>
-                  <div class="card-body">
-                          {% set homepageOptions = [
-                              'latestArticlesCarouselRender',
-                              'latestNewsCarouselRender',
-                              'membersCarouselRender',
-                              'statsRender',
-                              'journalIndexationRender',
-                              'specialIssuesRender',
-                              'latestAcceptedArticlesCarouselRender',
-                              'lastNewsRender'
-                          ] %}
-                          <div class="row">
-                              {% for option in homepageOptions %}
-                                  <div class="col-md-6 mb-3">
-                                      <div class="form-check form-switch">
-                                          <input class="form-check-input homepage-option"
-                                                 type="checkbox"
-                                                 id="homepage_{{ option }}"
-                                                  {{ configuration.homepage[option] ? 'checked' : ''
-                                                  }}>
-                                          <label class="form-check-label" for="homepage_{{ option
-                                          }}">
-                                              {{ ('journalConfiguration.homepage.' ~ option)|trans
-                                              }}
-                                          </label>
-                                      </div>
+                  <div class="card-body px-5">
+                      {% set homepageOptions = [
+                          'latestArticlesCarouselRender',
+                          'latestNewsCarouselRender',
+                          'membersCarouselRender',
+                          'statsRender',
+                          'journalIndexationRender',
+                          'specialIssuesRender',
+                          'latestAcceptedArticlesCarouselRender',
+                          'lastNewsRender'
+                      ] %}
+                      <div class="row justify-content-between">
+                          {% for option in homepageOptions %}
+                              <div class="col-md-5 mb-3">
+                                  <div class="form-check form-switch">
+                                      <input class="form-check-input homepage-option"
+                                             type="checkbox"
+                                             id="homepage_{{ option }}"
+                                              {{ configuration.homepage[option] ? 'checked' : '' }}>
+                                      <label class="form-check-label" for="homepage_{{ option }}">
+                                          {{ ('journalConfiguration.homepage.' ~ option)|trans }}
+                                      </label>
                                   </div>
-                              {% endfor %}
-                          </div>
-                          <div class="mb-3">
-                              <label for="homepage_lastInformationRenderType" class="form-label">
-                                  {{ 'journalConfiguration.homepage.lastInformationRenderType'|trans }}
-                                  <small class="text-muted">({{ 'journalConfiguration.homepage.lastInformationRenderTypeHint'|trans }})</small>
-                              </label>
-                              <select class="form-select" id="homepage_lastInformationRenderType">
-                                  <option value="last-news" {{
-                                  configuration.homepage.lastInformationRenderType == 'last-news' ? 'selected' : '' }}>
-                                      {{ 'journalConfiguration.homepage.lastNews'|trans }}
-                                  </option>
-                                  <option value="last-volume" {{
-                                  configuration.homepage.lastInformationRenderType == 'last-volume' ? 'selected' : '' }}>
-                                      {{ 'journalConfiguration.homepage.lastVolume'|trans }}
-                                  </option>
-                                  <option value="last-special-issue" {{
-                                  configuration.homepage.lastInformationRenderType == 'last-special-issue' ? 'selected' : '' }}>
-                                      {{ 'journalConfiguration.homepage.lastSpecialIssue'|trans }}
-                                  </option>
-                              </select>
-                          </div>
+                              </div>
+                          {% endfor %}
+                      </div>
+                      <div class="my-3">
+                          <label for="homepage_lastInformationRenderType" class="form-label">
+                              {{ 'journalConfiguration.homepage.lastInformationRenderType'|trans }}
+                              <small class="text-muted">({{ 'journalConfiguration.homepage.lastInformationRenderTypeHint'|trans }}
+                                  )</small>
+                          </label>
+                          <select class="form-select" id="homepage_lastInformationRenderType">
+                              <option value="last-news" {{ configuration.homepage.lastInformationRenderType == 'last-news' ? 'selected' : '' }}>
+                                  {{ 'journalConfiguration.homepage.lastNews'|trans }}
+                              </option>
+                              <option value="last-volume" {{ configuration.homepage.lastInformationRenderType == 'last-volume' ? 'selected' : '' }}>
+                                  {{ 'journalConfiguration.homepage.lastVolume'|trans }}
+                              </option>
+                              <option value="last-special-issue" {{ configuration.homepage.lastInformationRenderType == 'last-special-issue' ? 'selected' : '' }}>
+                                  {{ 'journalConfiguration.homepage.lastSpecialIssue'|trans }}
+                              </option>
+                          </select>
+                      </div>
                   </div>
               </div>
 
               {# ===== Menu ===== #}
               <div class="card">
-                  <div class="card-header">
+                  <div class="card-header" style="font-size: 18px;">
                       <i class="fas fa-bars me-2"></i>
                       {{ 'journalConfiguration.menu.title'|trans }}
                   </div>
-                  <div class="card-body">
-                          {% set menuOptions = [
-                              'acceptedArticlesRender',
-                              'volumesRender',
-                              'lastVolumeRender',
-                              'volumeTypeProceedingsRender',
-                              'specialIssuesRender',
-                              'sectionsRender',
-                              'newsRender',
-                              'journalIndexingRender',
-                              'journalAcknowledgementsRender',
-                              'journalForReviewersRender',
-                              'journalForConferenceOrganisersRender'
-                          ] %}
-                          <div class="row">
-                              {% for option in menuOptions %}
-                                  <div class="col-md-6 mb-3">
-                                      <div class="form-check form-switch">
-                                          <input class="form-check-input menu-option"
-                                                 type="checkbox"
-                                                 id="menu_{{ option }}"
-                                                  {{ configuration.menu[option] ? 'checked' : '' }}>
-                                          <label class="form-check-label" for="menu_{{ option }}">
-                                              {{ ('journalConfiguration.menu.' ~ option)|trans }}
-                                          </label>
-                                      </div>
+                  <div class="card-body px-5">
+                      {% set menuOptions = [
+                          'acceptedArticlesRender',
+                          'volumesRender',
+                          'lastVolumeRender',
+                          'volumeTypeProceedingsRender',
+                          'specialIssuesRender',
+                          'sectionsRender',
+                          'newsRender',
+                          'journalIndexingRender',
+                          'journalAcknowledgementsRender',
+                          'journalForReviewersRender',
+                          'journalForConferenceOrganisersRender'
+                      ] %}
+                      <div class="row justify-content-between">
+                          {% for option in menuOptions %}
+                              <div class="col-md-5 mb-3">
+                                  <div class="form-check form-switch">
+                                      <input class="form-check-input menu-option"
+                                             type="checkbox"
+                                             id="menu_{{ option }}"
+                                              {{ configuration.menu[option] ? 'checked' : '' }}>
+                                      <label class="form-check-label" for="menu_{{ option }}">
+                                          {{ ('journalConfiguration.menu.' ~ option)|trans }}
+                                      </label>
                                   </div>
-                              {% endfor %}
-                          </div>
+                              </div>
+                          {% endfor %}
+                      </div>
                   </div>
               </div>
 
               {# ===== Statistics ===== #}
               <div class="card">
-                  <div class="card-header">
+                  <div class="card-header" style="font-size: 18px;">
                       <i class="fas fa-chart-bar me-2"></i>
                       {{ 'journalConfiguration.statistics.title'|trans }}
                   </div>
-                  <div class="card-body">
-                          <div class="mb-4">
-                              <label class="form-label">{{
-                                  'journalConfiguration.statistics.colors'|trans }}</label>
-                              <div class="d-flex flex-wrap gap-2" id="statistics-colors">
-                                  {% for i, color in configuration.statistics.colors %}
-                                      <input type="color" class="form-control form-control-color
+                  <div class="card-body px-5">
+                      <div class="mb-4">
+                          <label class="form-label">{{ 'journalConfiguration.statistics.colors'|trans }}</label>
+                          <div class="d-flex flex-wrap gap-2" id="statistics-colors">
+                              {% for i, color in configuration.statistics.colors %}
+                                  <input type="color" class="form-control form-control-color
   stats-color"
-                                             value="{{ color }}" data-index="{{ i }}">
-                                  {% endfor %}
-                              </div>
-                          </div>
-
-                          {% set statsOptions = [
-                              'acceptanceRate',
-                              'nbSubmissions',
-                              'nbSubmissionsDetails',
-                              'reviewsRequested',
-                              'reviewsReceived',
-                              'medianSubmissionPublication',
-                              'medianReviewsNumber'
-                          ] %}
-                          <table class="table table-sm">
-                              <thead>
-                              <tr>
-                                  <th>{{ 'journalConfiguration.statistics.statistic'|trans
-                                      }}</th>
-                                  <th class="text-center">{{
-                                      'journalConfiguration.statistics.render'|trans }}</th>
-                                  <th class="text-center">{{
-                                      'journalConfiguration.statistics.order'|trans }}</th>
-                              </tr>
-                              </thead>
-                              <tbody>
-                              {% for option in statsOptions %}
-                                  <tr>
-                                      <td>{{ ('journalConfiguration.statistics.' ~ option)|trans
-                                          }}</td>
-                                      <td class="text-center">
-                                          <input class="form-check-input stats-render"
-                                                 type="checkbox"
-                                                 id="stats_{{ option }}_render"
-                                                  {{ configuration.statistics[option].render ?
-                                                  'checked' : '' }}>
-                                      </td>
-                                      <td class="text-center">
-                                          <input type="number" class="form-control
-  form-control-sm stats-order d-inline-block"
-                                                 id="stats_{{ option }}_order"
-                                                 value="{{
-                                                 configuration.statistics[option].order }}"
-                                                 min="1" max="100" style="width: 70px;">
-                                      </td>
-                                  </tr>
+                                         value="{{ color }}" data-index="{{ i }}">
                               {% endfor %}
-                              </tbody>
-                          </table>
+                          </div>
+                      </div>
+
+                      {% set statsOptions = [
+                          'acceptanceRate',
+                          'nbSubmissions',
+                          'nbSubmissionsDetails',
+                          'reviewsRequested',
+                          'reviewsReceived',
+                          'medianSubmissionPublication',
+                          'medianReviewsNumber'
+                      ] %}
+                      <table class="table mt-3 table-sm">
+                          <thead>
+                          <tr>
+                              <th>{{ 'journalConfiguration.statistics.statistic'|trans }}</th>
+                              <th class="text-center">{{ 'journalConfiguration.statistics.render'|trans }}</th>
+                              <th class="text-center">{{ 'journalConfiguration.statistics.order'|trans }}</th>
+                          </tr>
+                          </thead>
+                          <tbody>
+                          {% for option in statsOptions %}
+                              <tr>
+                                  <td>{{ ('journalConfiguration.statistics.' ~ option)|trans }}</td>
+                                  <td class="text-center">
+                                      <input class="form-check-input stats-render"
+                                             type="checkbox"
+                                             id="stats_{{ option }}_render"
+                                              {{ configuration.statistics[option].render ?
+                                              'checked' : '' }}>
+                                  </td>
+                                  <td class="text-center">
+                                      <input type="number" class="form-control
+  form-control-sm stats-order d-inline-block"
+                                             id="stats_{{ option }}_order"
+                                             value="{{ configuration.statistics[option].order }}"
+                                             min="1" max="100" style="width: 70px;">
+                                  </td>
+                              </tr>
+                          {% endfor %}
+                          </tbody>
+                      </table>
                   </div>
               </div>
           </div>
