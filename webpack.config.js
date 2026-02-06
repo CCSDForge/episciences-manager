@@ -29,6 +29,7 @@ Encore
   .addEntry('journalDetailsJs', './assets/scripts/pages/journalDetails.js')
   .addEntry('resourcesJs', './assets/scripts/pages/resources.js')
   .addEntry('selectJournalJs', './assets/scripts/pages/selectJournal.js')
+  .addEntry('journalConfigurationJs', './assets/scripts/pages/journalConfiguration.js')
 
   .addStyleEntry('main', './assets/styles/app.scss')
   .addStyleEntry('navbar', './assets/styles/partials/_navbar.scss')
