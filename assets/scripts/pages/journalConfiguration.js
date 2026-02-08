@@ -31,9 +31,18 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             body: JSON.stringify(data)
         })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
             .then(result => {
-                showAlert('success', window.journalConfigurationData.translations.saved);
+                if (result.success) {
+                    showAlert('success', window.journalConfigurationData.translations.saved);
+                } else {
+                    showAlert('danger', result.message || window.journalConfigurationData.translations.error);
+                }
             })
             .catch(error => {
                 showAlert('danger', window.journalConfigurationData.translations.error);
@@ -42,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .finally(() => {
                 // Re-enable button
                 saveButton.disabled = false;
-                saveButton.innerHTML = '<i class="fas fa-save me-2"></i>' + 'Save';
+                saveButton.innerHTML = '<i class="fas fa-save me-2"></i>' + window.journalConfigurationData.translations.save;
             });
     });
 
