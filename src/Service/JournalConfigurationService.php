@@ -9,7 +9,8 @@ class JournalConfigurationService
 {
     public function __construct(
         private JournalConfigurationRepository $repository,
-        private EntityManagerInterface         $entityManager
+        private EntityManagerInterface         $entityManager,
+        private JsonSchemaValidator            $schemaValidator
     )
     {
     }
@@ -148,85 +149,26 @@ class JournalConfigurationService
     }
 
     /**
-     * Validate configuration values.
+     * Validate configuration values using JSON Schema.
      *
      * @param array<string, mixed> $config
-     * @return array<string, string> Validation errors indexed by field path
+     * @return array<string, string> Validation errors
      */
     private function validateConfiguration(array $config): array
     {
+        $result = $this->schemaValidator->validate($config, 'journal_configuration');
+
+        if ($result['valid']) {
+            return [];
+        }
+
+        // Convert errors array to associative array format
         $errors = [];
-
-        if (
-            isset($config['api_domain']) &&
-            is_string($config['api_domain']) &&
-            !filter_var($config['api_domain'], FILTER_VALIDATE_URL)
-        ) {
-            $errors['api_domain'] = 'Invalid URL format';
-        }
-
-        if (isset($config['theme']) && is_array($config['theme'])) {
-            if (
-                isset($config['theme']['primaryColor']) &&
-                is_string($config['theme']['primaryColor']) &&
-                !$this->isValidHexColor($config['theme']['primaryColor'])
-            ) {
-                $errors['theme.primaryColor'] = 'Invalid hex color format';
-            }
-
-            if (
-                isset($config['theme']['primaryTextColor']) &&
-                is_string($config['theme']['primaryTextColor']) &&
-                !$this->isValidHexColor($config['theme']['primaryTextColor'])
-            ) {
-                $errors['theme.primaryTextColor'] = 'Invalid hex color format';
-            }
-        }
-
-        $validLanguages = ['en', 'fr', 'es'];
-
-        if (isset($config['languages']) && is_array($config['languages'])) {
-            if (isset($config['languages']['accepted']) && is_array($config['languages']['accepted'])) {
-                foreach ($config['languages']['accepted'] as $lang) {
-                    if (!is_string($lang) || !in_array($lang, $validLanguages, true)) {
-                        $errors['languages.accepted'] = "Invalid language: {$lang}";
-                        break;
-                    }
-                }
-            }
-
-            if (
-                isset($config['languages']['default']) &&
-                is_string($config['languages']['default']) &&
-                !in_array($config['languages']['default'], $validLanguages, true)
-            ) {
-                $errors['languages.default'] = 'Invalid default language';
-            }
-        }
-
-        if (
-            isset($config['statistics']['colors']) &&
-            is_array($config['statistics']['colors'])
-        ) {
-            foreach ($config['statistics']['colors'] as $index => $color) {
-                if (!is_string($color) || !$this->isValidHexColor($color)) {
-                    $errors["statistics.colors.$index"] = 'Invalid hex color format';
-                }
-            }
+        foreach ($result['errors'] as $index => $error) {
+            $errors["validation_error_{$index}"] = $error;
         }
 
         return $errors;
-    }
-
-    /**
-     * Determine whether a value is a valid hex color.
-     *
-     * @param string $color
-     * @return bool
-     */
-    private function isValidHexColor(string $color): bool
-    {
-        return preg_match('/^#[0-9A-Fa-f]{6}$/', $color) === 1;
     }
 
     /**

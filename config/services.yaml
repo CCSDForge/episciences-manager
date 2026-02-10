@@ -46,3 +46,8 @@ services:
     App\Service\PageHierarchyService:
         arguments:
             $projectDir: '%kernel.project_dir%'
+
+    # Configuration of the JSON Schema Validator
+    App\Service\JsonSchemaValidator:
+        arguments:
+            $projectDir: '%kernel.project_dir%'
