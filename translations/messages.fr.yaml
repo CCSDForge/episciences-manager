@@ -43,17 +43,7 @@ journal:
  see_details: "Voir les détails (epiadmin uniquement)"
 
 journalConfiguration:
-  selectJournal:
-    title: "Sélectionner un journal"
-    searchPlaceholder: "Rechercher un journal par nom ou code"
-    noJournals: "Aucun journal disponible"
-    noResults: "Aucun journal trouvé correspondant à votre recherche"
-    clearSearch: "Effacer la recherche"
-    edit: "Éditer"
-    editTooltip: "Configurer les paramètres de cette revue"
-    noAccess: "Pas d'accès"
-  
-  title: "Configuration du journal"
+  title: "Configuration"
   save: "Sauvegarder"
   saved: "Configuration sauvegardée avec succès"
   error: "Erreur lors de la sauvegarde"

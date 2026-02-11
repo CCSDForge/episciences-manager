@@ -12,37 +12,6 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class JournalConfigurationController extends AbstractController
 {
-    #[Route('/journal/configuration', name: 'app_journal_configuration_select')]
-    public function select(Request $request, ReviewManager $reviewManager, PaginatorInterface $paginator): Response
-    {
-        $search = $request->query->get('search', '');
-        $page = $request->query->getInt('page', 1);
-
-        if (!empty($search)) {
-            // Search without pagination
-            $journals = $reviewManager->searchReviews($search);
-            $pagination = null;
-        } else {
-            // Paginated list
-            $result = $reviewManager->getAllReviewsForDisplayPaginated($paginator, $page, 10);
-            $journals = $result['reviews'];
-            $pagination = $result['pagination'];
-        }
-
-        // Add permission info to each journal
-        $journalsWithPermissions = [];
-        foreach ($journals as $journal) {
-            $journal['canEdit'] = $this->isGranted('REVIEW_VIEW', $journal);
-            $journalsWithPermissions[] = $journal;
-        }
-
-        return $this->render('journal_configuration/select.html.twig', [
-            'journals' => $journalsWithPermissions,
-            'pagination' => $pagination,
-            'search' => $search,
-        ]);
-    }
-
     #[Route('/journal/{code}/configuration', name: 'app_journal_configuration')]
     public function index(
         string $code,
