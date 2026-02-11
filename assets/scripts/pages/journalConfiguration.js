@@ -172,4 +172,32 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('theme_primaryColor_picker')?.addEventListener('input', updatePreview);
         document.getElementById('theme_primaryTextColor_picker')?.addEventListener('input', updatePreview);
     }
+
+    // Update chart preview on color change
+    const statsColorInputs = document.querySelectorAll('.stats-color');
+    const chartPreview = document.getElementById('chart-preview');
+
+    function updateChartPreview() {
+        const colors = [...statsColorInputs].map(input => input.value);
+        if (chartPreview && colors.length >= 4) {
+            chartPreview.style.background = `conic-gradient(
+                ${colors[0]} 0deg 90deg,
+                ${colors[1]} 90deg 126deg,
+                ${colors[2]} 126deg 198deg,
+                ${colors[3]} 198deg 360deg
+            )`;
+        }
+    }
+
+    statsColorInputs.forEach((colorInput, index) => {
+        colorInput.addEventListener('input', () => {
+            // Update chart
+            updateChartPreview();
+            // Update legend color
+            const legendColor = document.getElementById(`legend-color-${index}`);
+            if (legendColor) {
+                legendColor.style.background = colorInput.value;
+            }
+        });
+    });
 });

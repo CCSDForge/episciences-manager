@@ -35,9 +35,14 @@
                       <div class="mb-3">
                           <label for="api_domain"
                                  class="form-label">{{ 'journalConfiguration.api.domain'|trans }}</label>
-                          <input type="url" class="form-control" id="api_domain"
-                                 value="{{ configuration.api_domain }}"
-                                 placeholder="https://api.episciences.org">
+                          <select class="form-select" id="api_domain">
+                              <option value="https://api-preprod.episciences.org" {{ configuration.api_domain == 'https://api-preprod.episciences.org' ? 'selected' : '' }}>
+                                  https://api-preprod.episciences.org
+                              </option>
+                              <option value="https://api.episciences.org" {{ configuration.api_domain == 'https://api.episciences.org' ? 'selected' : '' }}>
+                                  https://api.episciences.org
+                              </option>
+                          </select>
                       </div>
                   </div>
               </div>
@@ -98,8 +103,12 @@
                       <div class="mb-3">
                           <label class="form-label">{{ 'journalConfiguration.languages.accepted'|trans }}</label>
                           <div class="d-flex flex-wrap gap-3">
-                              {% set availableLanguages = {'en': 'English', 'fr': 'Français',
-                                  'es': 'Español', 'de': 'Deutsch'} %}
+                              {% set availableLanguages = {
+                              'en': 'journalConfiguration.languages.english'|trans,
+                              'fr': 'journalConfiguration.languages.french'|trans,
+                              'es': 'journalConfiguration.languages.spanish'|trans,
+                              'de': 'journalConfiguration.languages.german'|trans
+                          } %}
                               {% for code, name in availableLanguages %}
                                   <div class="form-check">
                                       <input class="form-check-input language-checkbox"
@@ -224,13 +233,52 @@
                   </div>
                   <div class="card-body px-5">
                       <div class="mb-4">
-                          <label class="form-label">{{ 'journalConfiguration.statistics.colors'|trans }}</label>
-                          <div class="d-flex flex-wrap gap-2" id="statistics-colors">
-                              {% for i, color in configuration.statistics.colors %}
-                                  <input type="color" class="form-control form-control-color
-  stats-color"
-                                         value="{{ color }}" data-index="{{ i }}">
-                              {% endfor %}
+                          <div class="row align-items-center">
+                              <div class="col-md-3">
+                              </div>
+                              <div class="col-md-3">
+                                  <label class="form-label">{{ 'journalConfiguration.statistics.colors'|trans }}</label>
+                                  <div class="d-flex flex-wrap gap-2" id="statistics-colors">
+                                      {% for i, color in configuration.statistics.colors %}
+                                          <input type="color" class="form-control form-control-color stats-color"
+                                                 value="{{ color }}" data-index="{{ i }}">
+                                      {% endfor %}
+                                  </div>
+                              </div>
+                              <div class="col-md-6">
+                                  <label class="form-label">{{ 'journalConfiguration.statistics.preview'|trans }}</label>
+                                  <div class="d-flex align-items-center gap-4">
+                                      <div id="chart-preview" style="
+                                          width: 100px;
+                                          height: 100px;
+                                          border-radius: 50%;
+                                          background: conic-gradient(
+                                              {{ configuration.statistics.colors[0] }} 0deg 90deg,
+                                              {{ configuration.statistics.colors[1] }} 90deg 126deg,
+                                              {{ configuration.statistics.colors[2] }} 126deg 198deg,
+                                              {{ configuration.statistics.colors[3] }} 198deg 360deg
+                                          );
+                                      "></div>
+                                      <div class="chart-legend small">
+                                          <div class="d-flex align-items-center mb-1">
+                                              <span id="legend-color-0" class="me-2" style="display:inline-block;width:14px;height:14px;background:{{ configuration.statistics.colors[0] }};"></span>
+                                              <span>{{ 'journalConfiguration.statistics.preview.published'|trans }}</span>
+                                          </div>
+                                          <div class="d-flex align-items-center mb-1">
+                                              <span id="legend-color-1" class="me-2" style="display:inline-block;width:14px;height:14px;background:{{ configuration.statistics.colors[1] }};"></span>
+                                              <span>{{ 'journalConfiguration.statistics.preview.rejected'|trans }}</span>
+                                          </div>
+                                          <div class="d-flex align-items-center mb-1">
+                                              <span id="legend-color-2" class="me-2" style="display:inline-block;width:14px;height:14px;background:{{ configuration.statistics.colors[2] }};"></span>
+                                              <span>{{ 'journalConfiguration.statistics.preview.accepted'|trans }}</span>
+                                          </div>
+                                          <div class="d-flex align-items-center mb-1">
+                                              <span id="legend-color-3" class="me-2" style="display:inline-block;width:14px;height:14px;background:{{ configuration.statistics.colors[3] }};"></span>
+                                              <span>{{ 'journalConfiguration.statistics.preview.other'|trans }}</span>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
                           </div>
                       </div>
 

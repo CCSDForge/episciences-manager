@@ -154,6 +154,10 @@ journalConfiguration:
     title: "Languages"
     accepted: "Accepted Languages"
     default: "Default Language"
+    english: "English"
+    french: "French"
+    spanish: "Spanish"
+    german: "German"
 
   homepage:
     title: "Homepage"
@@ -198,6 +202,11 @@ journalConfiguration:
     reviewsReceived: "Reviews Received"
     medianSubmissionPublication: "Median Submission-Publication Time"
     medianReviewsNumber: "Median Number of Reviews"
+    preview: "Preview"
+    preview.published: "Published articles"
+    preview.rejected: "Rejected articles"
+    preview.accepted: "Accepted articles"
+    preview.other: "Other status"
 
 footer:
   about_title: "About Episciences"

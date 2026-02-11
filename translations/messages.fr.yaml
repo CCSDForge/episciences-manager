@@ -66,6 +66,10 @@ journalConfiguration:
     title: "Langues"
     accepted: "Langues acceptées"
     default: "Langue par défaut"
+    english: "Anglais"
+    french: "Français"
+    spanish: "Espagnol"
+    german: "Allemand"
   
   homepage:
     title: "Page d'accueil"
@@ -110,6 +114,11 @@ journalConfiguration:
     reviewsReceived: "Relectures reçues"
     medianSubmissionPublication: "Délai médian soumission-publication"
     medianReviewsNumber: "Nombre médian de relectures"
+    preview: "Aperçu"
+    preview.published: "Articles publiés"
+    preview.rejected: "Articles refusés"
+    preview.accepted: "Articles acceptés"
+    preview.other: "Autre statut"
 
 journalDetails:
  home: "Accueil"
