@@ -83,11 +83,27 @@
                           </div>
                       </div>
                       <div class="mt-3">
-                          <label class="form-label">{{ 'journalConfiguration.theme.preview'|trans }}</label>
-                          <div id="theme-preview" class="p-3 rounded"
-                               style="background-color: {{ configuration.theme.primaryColor }};
-                                       color: {{ configuration.theme.primaryTextColor }};">
-                              {{ 'journalConfiguration.theme.previewText'|trans }}
+                          <div class="row">
+                              <div class="col-md-7">
+                                  <label class="form-label">{{ 'journalConfiguration.theme.preview'|trans }}</label>
+                                  <div id="theme-preview" class="p-3 rounded"
+                                       style="background-color: {{ configuration.theme.primaryColor }};
+                                               color: {{ configuration.theme.primaryTextColor }};">
+                                      {{ 'journalConfiguration.theme.previewText'|trans }}
+                                  </div>
+                              </div>
+                              <div class="col-md-4">
+                                  <label class="form-label">{{ 'journalConfiguration.theme.contrastRatio'|trans }}</label>
+                                  <div class="p-3 rounded border text-center">
+                                      <div id="contrast-ratio-value" class="fs-3 fw-bold">--</div>
+                                      <div id="contrast-ratio-level" class="badge mt-2">--</div>
+                                      <div class="small text-muted mt-2">
+                                          <span class="badge bg-success">AAA ≥ 7:1</span>
+                                          <span class="badge bg-warning text-dark">AA ≥ 4.5:1</span>
+                                          <span class="badge bg-danger">< 4.5:1</span>
+                                      </div>
+                                  </div>
+                              </div>
                           </div>
                       </div>
                   </div>

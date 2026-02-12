@@ -61,6 +61,7 @@ journalConfiguration:
     primaryTextColor: "Couleur du texte primaire"
     preview: "Aperçu"
     previewText: "Ceci est un exemple de texte avec le thème appliqué"
+    contrastRatio: "Ratio de contraste"
   
   languages:
     title: "Langues"
