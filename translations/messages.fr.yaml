@@ -15,7 +15,7 @@ nav:
  dashboard: "Tableau de bord"
  users: "Utilisateurs"
  journal: "Journal"
- journalConfiguration: "Configuration du journal"
+ journalSettings: "Paramètres du journal"
  website: "Site Web"
  statistics: "Statistiques"
 
@@ -42,19 +42,19 @@ journal:
  clear_search: "Vider la recherche"
  see_details: "Voir les détails (epiadmin uniquement)"
 
-journalConfiguration:
-  title: "Configuration"
+journalSettings:
+  title: "Paramètres"
   save: "Sauvegarder"
-  saved: "Configuration sauvegardée avec succès"
+  saved: "Paramètres sauvegardés avec succès"
   error: "Erreur lors de la sauvegarde"
-  
+
   common:
     back: "Retour"
-  
+
   api:
-    title: "Configuration de l'API"
+    title: "Paramètres de l'API"
     domain: "Domaine de l'API"
-  
+
   theme:
     title: "Thème"
     primaryColor: "Couleur primaire"
@@ -62,7 +62,7 @@ journalConfiguration:
     preview: "Aperçu"
     previewText: "Ceci est un exemple de texte avec le thème appliqué"
     contrastRatio: "Ratio de contraste"
-  
+
   languages:
     title: "Langues"
     accepted: "Langues acceptées"
@@ -71,7 +71,7 @@ journalConfiguration:
     french: "Français"
     spanish: "Espagnol"
     german: "Allemand"
-  
+
   homepage:
     title: "Page d'accueil"
     latestArticlesCarouselRender: "Carrousel des derniers articles"
@@ -87,7 +87,7 @@ journalConfiguration:
     lastNews: "Dernières actualités"
     lastVolume: "Dernier volume"
     lastSpecialIssue: "Dernier numéro spécial"
-  
+
   menu:
     title: "Menu"
     acceptedArticlesRender: "Articles acceptés"
@@ -101,7 +101,7 @@ journalConfiguration:
     journalAcknowledgementsRender: "Remerciements"
     journalForReviewersRender: "Pour les relecteurs"
     journalForConferenceOrganisersRender: "Pour les organisateurs de conférence"
-  
+
   statistics:
     title: "Statistiques"
     colors: "Couleurs des graphiques"

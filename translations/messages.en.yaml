@@ -15,7 +15,7 @@ nav:
   dashboard: "Dashboard"
   users: "Users"
   journal: "Journal"
-  journalConfiguration: "Journal Configuration"
+  journalSettings: "Journal Settings"
   website: "Website"
   statistics: "Statistics"
 
@@ -130,17 +130,17 @@ resources:
   safeToDelete: "It can be safely deleted."
   generateAutomatically: "Generate automatically"
 
-journalConfiguration:
-  title: "Configuration"
+journalSettings:
+  title: "Settings"
   save: "Save"
-  saved: "Configuration saved successfully"
-  error: "Error saving configuration"
+  saved: "Settings saved successfully"
+  error: "Error saving settings"
 
   common:
     back: "Back"
 
   api:
-    title: "API Configuration"
+    title: "API Settings"
     domain: "API Domain"
 
   theme:

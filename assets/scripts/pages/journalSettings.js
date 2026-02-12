@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const saveButton = document.getElementById('saveConfiguration');
-    const alertsContainer = document.getElementById('configuration-alerts');
+    const saveButton = document.getElementById('saveSettings');
+    const alertsContainer = document.getElementById('settings-alerts');
 
     saveButton.addEventListener('click', function() {
         // Collect form data
@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
         saveButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Saving...';
 
         // Send request
-        fetch(window.journalConfigurationData.updateUrl, {
+        fetch(window.journalSettingsData.updateUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -39,19 +39,19 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(result => {
                 if (result.success) {
-                    showAlert('success', window.journalConfigurationData.translations.saved);
+                    showAlert('success', window.journalSettingsData.translations.saved);
                 } else {
-                    showAlert('danger', result.message || window.journalConfigurationData.translations.error);
+                    showAlert('danger', result.message || window.journalSettingsData.translations.error);
                 }
             })
             .catch(error => {
-                showAlert('danger', window.journalConfigurationData.translations.error);
+                showAlert('danger', window.journalSettingsData.translations.error);
                 console.error('Error:', error);
             })
             .finally(() => {
                 // Re-enable button
                 saveButton.disabled = false;
-                saveButton.innerHTML = '<i class="fas fa-save me-2"></i>' + window.journalConfigurationData.translations.save;
+                saveButton.innerHTML = '<i class="fas fa-save me-2"></i>' + window.journalSettingsData.translations.save;
             });
     });
 

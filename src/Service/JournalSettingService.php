@@ -1,21 +1,21 @@
 <?php
 namespace App\Service;
 
-use App\Entity\JournalConfiguration;
-use App\Repository\JournalConfigurationRepository;
+use App\Entity\JournalSetting;
+use App\Repository\JournalSettingRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
-class JournalConfigurationService
+class JournalSettingService
 {
     public function __construct(
-        private JournalConfigurationRepository $repository,
-        private EntityManagerInterface         $entityManager,
-        private JsonSchemaValidator            $schemaValidator
+        private JournalSettingRepository $repository,
+        private EntityManagerInterface   $entityManager,
+        private JsonSchemaValidator      $schemaValidator
     )
     {
     }
 
-    public function getDefaultConfiguration(): array
+    public function getDefaultSetting(): array
     {
         return [
             'api_domain' => '',
@@ -63,68 +63,68 @@ class JournalConfigurationService
     }
 
     /**
-     * Get a configuration entity by its RVID.
+     * Get a setting entity by its RVID.
      *
      * @param int $rvid
-     * @return JournalConfiguration|null
+     * @return JournalSetting|null
      */
-    public function getByRvid(int $rvid): ?JournalConfiguration
+    public function getByRvid(int $rvid): ?JournalSetting
     {
         return $this->repository->findByRvid($rvid);
     }
 
     /**
-     * Get the configuration for the given RVID or create it with default values.
+     * Get the setting for the given RVID or create it with default values.
      *
      * @param int $rvid
-     * @return JournalConfiguration
+     * @return JournalSetting
      */
-    public function getOrCreateConfiguration(int $rvid): JournalConfiguration
+    public function getOrCreateSetting(int $rvid): JournalSetting
     {
-        $configuration = $this->repository->findByRvid($rvid);
+        $setting = $this->repository->findByRvid($rvid);
 
-        if ($configuration === null) {
-            $configuration = new JournalConfiguration();
-            $configuration->setRvid($rvid);
-            $configuration->setConfiguration($this->getDefaultConfiguration());
-            $configuration->setCreatedAt(new \DateTime());
-            $configuration->setUpdatedAt(new \DateTime());
+        if ($setting === null) {
+            $setting = new JournalSetting();
+            $setting->setRvid($rvid);
+            $setting->setSetting($this->getDefaultSetting());
+            $setting->setCreatedAt(new \DateTime());
+            $setting->setUpdatedAt(new \DateTime());
 
-            $this->entityManager->persist($configuration);
+            $this->entityManager->persist($setting);
             $this->entityManager->flush();
         }
 
-        return $configuration;
+        return $setting;
     }
 
     /**
-     * Get the configuration as an array merged with default values.
+     * Get the setting as an array merged with default values.
      *
      * @param int $rvid
      * @return array<string, mixed>
      */
-    public function getConfigurationArray(int $rvid): array
+    public function getSettingArray(int $rvid): array
     {
-        $configuration = $this->getOrCreateConfiguration($rvid);
+        $setting = $this->getOrCreateSetting($rvid);
 
-        return $this->mergeWithDefaults($configuration->getConfiguration());
+        return $this->mergeWithDefaults($setting->getSetting());
     }
 
     /**
-     * Update the configuration for the given RVID.
+     * Update the setting for the given RVID.
      *
      * @param int $rvid
-     * @param array<string, mixed> $newConfiguration
+     * @param array<string, mixed> $newSetting
      *
      * @return array{
      *     success: bool,
      *     errors?: array<string, string>,
-     *     configuration?: JournalConfiguration
+     *     setting?: JournalSetting
      * }
      */
-    public function updateConfiguration(int $rvid, array $newConfiguration): array
+    public function updateSetting(int $rvid, array $newSetting): array
     {
-        $errors = $this->validateConfiguration($newConfiguration);
+        $errors = $this->validateSetting($newSetting);
 
         if ($errors !== []) {
             return [
@@ -133,30 +133,30 @@ class JournalConfigurationService
             ];
         }
 
-        $configuration = $this->getOrCreateConfiguration($rvid);
+        $setting = $this->getOrCreateSetting($rvid);
 
-        $mergedConfiguration = $this->mergeWithDefaults($newConfiguration);
+        $mergedSetting = $this->mergeWithDefaults($newSetting);
 
-        $configuration->setConfiguration($mergedConfiguration);
-        $configuration->setUpdatedAt(new \DateTime());
+        $setting->setSetting($mergedSetting);
+        $setting->setUpdatedAt(new \DateTime());
 
         $this->entityManager->flush();
 
         return [
             'success' => true,
-            'configuration' => $configuration,
+            'setting' => $setting,
         ];
     }
 
     /**
-     * Validate configuration values using JSON Schema.
+     * Validate setting values using JSON Schema.
      *
      * @param array<string, mixed> $config
      * @return array<string, string> Validation errors
      */
-    private function validateConfiguration(array $config): array
+    private function validateSetting(array $config): array
     {
-        $result = $this->schemaValidator->validate($config, 'journal_configuration');
+        $result = $this->schemaValidator->validate($config, 'journal_setting');
 
         if ($result['valid']) {
             return [];
@@ -172,14 +172,14 @@ class JournalConfigurationService
     }
 
     /**
-     * Merge a configuration array with default configuration values.
+     * Merge a setting array with default setting values.
      *
      * @param array<string, mixed> $config
      * @return array<string, mixed>
      */
     private function mergeWithDefaults(array $config): array
     {
-        return array_replace_recursive($this->getDefaultConfiguration(), $config);
+        return array_replace_recursive($this->getDefaultSetting(), $config);
     }
 
 }

@@ -3,13 +3,13 @@
 
 namespace App\Entity;
 
-use App\Repository\JournalConfigurationRepository;
+use App\Repository\JournalSettingRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: JournalConfigurationRepository::class)]
-#[ORM\Table(name: 'JOURNAL_CONFIGURATION')]
-class JournalConfiguration
+#[ORM\Entity(repositoryClass: JournalSettingRepository::class)]
+#[ORM\Table(name: 'JOURNAL_SETTING')]
+class JournalSetting
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -19,8 +19,8 @@ class JournalConfiguration
     #[ORM\Column(name: 'RVID', type: 'integer', unique: true)]
     private ?int $rvid = null;
 
-    #[ORM\Column(name: 'CONFIGURATION', type: 'json')]
-    private array $configuration = [];
+    #[ORM\Column(name: 'SETTING', type: 'json')]
+    private array $setting = [];
 
     #[ORM\Column(name: 'CREATED_AT', type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $createdAt = null;
@@ -45,14 +45,14 @@ class JournalConfiguration
         return $this;
     }
 
-    public function getConfiguration(): array
+    public function getSetting(): array
     {
-        return $this->configuration;
+        return $this->setting;
     }
 
-    public function setConfiguration(array $configuration): static
+    public function setSetting(array $setting): static
     {
-        $this->configuration = $configuration;
+        $this->setting = $setting;
         return $this;
     }
 

@@ -1,22 +1,21 @@
 <?php
 namespace App\Controller;
 
-use App\Service\JournalConfigurationService;
+use App\Service\JournalSettingService;
 use App\Service\ReviewManager;
-use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-class JournalConfigurationController extends AbstractController
+class JournalSettingController extends AbstractController
 {
-    #[Route('/journal/{code}/configuration', name: 'app_journal_configuration')]
+    #[Route('/journal/{code}/settings', name: 'app_journal_settings')]
     public function index(
         string $code,
         ReviewManager $reviewManager,
-        JournalConfigurationService $configurationService
+        JournalSettingService $settingService
     ): Response {
         $review = $reviewManager->getReviewByCode($code);
 
@@ -27,20 +26,20 @@ class JournalConfigurationController extends AbstractController
         // Check if user has permission to view this specific review
         $this->denyAccessUnlessGranted('REVIEW_VIEW', $review);
 
-        $configuration = $configurationService->getConfigurationArray($review['rvid']);
+        $setting = $settingService->getSettingArray($review['rvid']);
 
-        return $this->render('journal_configuration/index.html.twig', [
+        return $this->render('journal_settings/index.html.twig', [
             'review' => $review,
-            'configuration' => $configuration,
+            'setting' => $setting,
             'rvcode' => $code,
         ]);
     }
 
-    #[Route('/journal/{code}/configuration/show', name: 'app_journal_configuration_show', methods: ['GET'])]
+    #[Route('/journal/{code}/settings/show', name: 'app_journal_settings_show', methods: ['GET'])]
     public function show(
         string $code,
         ReviewManager $reviewManager,
-        JournalConfigurationService $configurationService
+        JournalSettingService $settingService
     ): JsonResponse {
         $review = $reviewManager->getReviewByCode($code);
 
@@ -51,20 +50,20 @@ class JournalConfigurationController extends AbstractController
             );
         }
 
-        $configuration = $configurationService->getConfigurationArray($review['rvid']);
+        $setting = $settingService->getSettingArray($review['rvid']);
 
         return new JsonResponse([
             'success' => true,
-            'configuration' => $configuration,
+            'setting' => $setting,
         ]);
     }
 
-    #[Route('/journal/{code}/configuration/edit', name: 'app_journal_configuration_update', methods: ['POST','PUT'])]
+    #[Route('/journal/{code}/settings/edit', name: 'app_journal_settings_update', methods: ['POST','PUT'])]
     public function update(
         string $code,
         Request $request,
         ReviewManager $reviewManager,
-        JournalConfigurationService $configurationService
+        JournalSettingService $settingService
     ): JsonResponse {
         $review = $reviewManager->getReviewByCode($code);
 
@@ -84,7 +83,7 @@ class JournalConfigurationController extends AbstractController
             );
         }
 
-        $result = $configurationService->updateConfiguration($review['rvid'], $data);
+        $result = $settingService->updateSetting($review['rvid'], $data);
 
         if ($result['success'] === false) {
             return new JsonResponse(
@@ -99,7 +98,7 @@ class JournalConfigurationController extends AbstractController
 
         return new JsonResponse([
             'success' => true,
-            'message' => 'Configuration saved',
+            'message' => 'Settings saved',
         ]);
     }
 
