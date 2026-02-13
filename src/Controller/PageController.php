@@ -42,7 +42,7 @@ final class PageController extends AbstractController
 
         // Find the page using the actual page code
         $page = $pageRepository->findOneBy([
-            'rvcode' => $code,
+            'code' => $code,
             'page_code' => $actualPageCode
         ]);
 
@@ -78,7 +78,7 @@ final class PageController extends AbstractController
 
         return $this->render('review/journalDetails.html.twig', [
             'review' => $review,
-            'rvcode' => $code,
+            'code' => $code,
             'pages' => $organizedPages,
             'currentPageCode' => $pageTitle, // Pass the current page code to the template
         ]);
@@ -97,7 +97,7 @@ final class PageController extends AbstractController
         $actualPageCode = self::PAGE_ALIASES[$pageTitle] ?? $pageTitle;
 
         $page = $pageRepository->findOneBy([
-            'rvcode' => $code,
+            'code' => $code,
             'page_code' => $actualPageCode
         ]);
 

@@ -31,7 +31,7 @@ class JournalSettingController extends AbstractController
         return $this->render('journal_settings/index.html.twig', [
             'review' => $review,
             'setting' => $setting,
-            'rvcode' => $code,
+            'code' => $code,
             'homepageOptions' => $settingService->getHomepageOptions(),
             'menuOptions' => $settingService->getMenuOptions(),
             'statsOptions' => $settingService->getStatisticsOptions(),

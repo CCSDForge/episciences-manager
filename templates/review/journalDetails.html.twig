@@ -24,7 +24,7 @@
                                 <div class="container-fluid">
                                     <div class="navbar-nav d-flex flex-wrap">
                                         <a class="nav-link me-2 mb-2 home-nav-link"
-                                           href="{{ path('app_journal_detail', {'code': rvcode, '_locale': app.request.locale}) }}"
+                                           href="{{ path('app_journal_detail', {'code': code, '_locale': app.request.locale}) }}"
                                            data-home-text-en="Home"
                                            data-home-text-fr="Accueil">
                                             {{ 'journalDetails.home' | trans }}
@@ -51,7 +51,7 @@
                                                    {% elseif not isContainer %}
                                                        href="#"
                                                        data-page-code="{{ page.pageCode|page_slug }}"
-                                                       data-journal-code="{{ rvcode }}"
+                                                       data-journal-code="{{ code }}"
                                                        data-current-title-en="{{ page.title.en ?? page.pageCode }}"
                                                        data-current-title-fr="{{ page.title.fr ?? page.title.en ?? page.pageCode }}"
                                                    {% else %}
@@ -97,7 +97,7 @@
                                                                                    id="nav-page-{{ nestedPage.pageCode }}"
                                                                                    href="#"
                                                                                    data-page-code="{{ nestedPage.pageCode|page_slug }}"
-                                                                                   data-journal-code="{{ rvcode }}"
+                                                                                   data-journal-code="{{ code }}"
                                                                                    data-grandparent-title-en="{{ page.title.en ?? page.title }}"
                                                                                    data-grandparent-title-fr="{{ page.title.fr ?? page.title.en ?? page.title }}"
                                                                                    data-parent-title-en="{{ subPage.title.en ?? subPage.title }}"
@@ -116,7 +116,7 @@
                                                                        id="nav-page-{{ subPage.pageCode }}"
                                                                        href="#"
                                                                        data-page-code="{{ subPage.pageCode|page_slug }}"
-                                                                       data-journal-code="{{ rvcode }}"
+                                                                       data-journal-code="{{ code }}"
                                                                        data-parent-title-en="{% if isContainer %}{{ page.title.en ?? page.title }}{% else %}{{ page.title.en ?? page.pageCode }}{% endif %}"
                                                                        data-parent-title-fr="{% if isContainer %}{{ page.title.fr ?? page.title.en ?? page.title }}{% else %}{{ page.title.fr ?? page.title.en ?? page.pageCode }}{% endif %}"
                                                                        data-current-title-en="{{ subPage.title.en ?? subPage.pageCode }}"
@@ -132,7 +132,7 @@
                                         {% endfor %}
 
                                         <a class="nav-link me-2 mb-2"
-                                           href="{{ path('app_resources_manager', {'rvcode': rvcode}) }}"
+                                           href="{{ path('app_resources_manager', {'code': code}) }}"
                                            target="_blank"
                                            rel="noopener noreferrer">
                                             <i class="fas fa-folder-open me-1"></i>
@@ -140,7 +140,7 @@
                                         </a>
 
                                         <a class="nav-link me-2 mb-2"
-                                           href="{{ path('app_journal_settings', {'code': rvcode}) }}"
+                                           href="{{ path('app_journal_settings', {'code': code}) }}"
                                            target="_blank"
                                            rel="noopener noreferrer">
                                             <i class="fas fa-cog me-2"></i>
