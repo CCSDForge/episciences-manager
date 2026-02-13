@@ -157,16 +157,6 @@
                       {{ 'journalSettings.homepage.title'|trans }}
                   </div>
                   <div class="card-body px-5">
-                      {% set homepageOptions = [
-                          'latestArticlesCarouselRender',
-                          'latestNewsCarouselRender',
-                          'membersCarouselRender',
-                          'statsRender',
-                          'journalIndexationRender',
-                          'specialIssuesRender',
-                          'latestAcceptedArticlesCarouselRender',
-                          'lastNewsRender'
-                      ] %}
                       <div class="row justify-content-between">
                           {% for option in homepageOptions %}
                               <div class="col-md-5 mb-3">
@@ -210,19 +200,6 @@
                       {{ 'journalSettings.menu.title'|trans }}
                   </div>
                   <div class="card-body px-5">
-                      {% set menuOptions = [
-                          'acceptedArticlesRender',
-                          'volumesRender',
-                          'lastVolumeRender',
-                          'volumeTypeProceedingsRender',
-                          'specialIssuesRender',
-                          'sectionsRender',
-                          'newsRender',
-                          'journalIndexingRender',
-                          'journalAcknowledgementsRender',
-                          'journalForReviewersRender',
-                          'journalForConferenceOrganisersRender'
-                      ] %}
                       <div class="row justify-content-between">
                           {% for option in menuOptions %}
                               <div class="col-md-5 mb-3">
@@ -298,15 +275,6 @@
                           </div>
                       </div>
 
-                      {% set statsOptions = [
-                          'acceptanceRate',
-                          'nbSubmissions',
-                          'nbSubmissionsDetails',
-                          'reviewsRequested',
-                          'reviewsReceived',
-                          'medianSubmissionPublication',
-                          'medianReviewsNumber'
-                      ] %}
                       <table class="table mt-3 table-sm">
                           <thead>
                           <tr>

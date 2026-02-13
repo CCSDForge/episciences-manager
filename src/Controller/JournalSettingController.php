@@ -32,6 +32,9 @@ class JournalSettingController extends AbstractController
             'review' => $review,
             'setting' => $setting,
             'rvcode' => $code,
+            'homepageOptions' => $settingService->getHomepageOptions(),
+            'menuOptions' => $settingService->getMenuOptions(),
+            'statsOptions' => $settingService->getStatisticsOptions(),
         ]);
     }
 

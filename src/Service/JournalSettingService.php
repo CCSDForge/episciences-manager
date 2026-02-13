@@ -15,6 +15,65 @@ class JournalSettingService
     {
     }
 
+    /**
+     * Get available homepage options.
+     *
+     * @return array<string>
+     */
+    public function getHomepageOptions(): array
+    {
+        return [
+            'latestArticlesCarouselRender',
+            'latestNewsCarouselRender',
+            'membersCarouselRender',
+            'statsRender',
+            'journalIndexationRender',
+            'specialIssuesRender',
+            'latestAcceptedArticlesCarouselRender',
+            'lastNewsRender',
+        ];
+    }
+
+    /**
+     * Get available menu options.
+     *
+     * @return array<string>
+     */
+    public function getMenuOptions(): array
+    {
+        return [
+            'acceptedArticlesRender',
+            'volumesRender',
+            'lastVolumeRender',
+            'volumeTypeProceedingsRender',
+            'specialIssuesRender',
+            'sectionsRender',
+            'newsRender',
+            'journalIndexingRender',
+            'journalAcknowledgementsRender',
+            'journalForReviewersRender',
+            'journalForConferenceOrganisersRender',
+        ];
+    }
+
+    /**
+     * Get available statistics options.
+     *
+     * @return array<string>
+     */
+    public function getStatisticsOptions(): array
+    {
+        return [
+            'acceptanceRate',
+            'nbSubmissions',
+            'nbSubmissionsDetails',
+            'reviewsRequested',
+            'reviewsReceived',
+            'medianSubmissionPublication',
+            'medianReviewsNumber',
+        ];
+    }
+
     public function getDefaultSetting(): array
     {
         return [
