@@ -42,7 +42,7 @@ final class PageController extends AbstractController
 
         // Find the page using the actual page code
         $page = $pageRepository->findOneBy([
-            'code' => $code,
+            'rvcode' => $code,
             'page_code' => $actualPageCode
         ]);
 
@@ -97,15 +97,24 @@ final class PageController extends AbstractController
         $actualPageCode = self::PAGE_ALIASES[$pageTitle] ?? $pageTitle;
 
         $page = $pageRepository->findOneBy([
-            'code' => $code,
+            'rvcode' => $code,
             'page_code' => $actualPageCode
         ]);
 
-        if (!$page) {
-            return new JsonResponse(['success' => false, 'message' => 'Page not found'], 404);
-        }
-
         $data = json_decode($request->getContent(), true);
+
+        // If page doesn't exist, create it
+        if (!$page) {
+            $page = new \App\Entity\Page();
+            $page->setRvcode($code);
+            $page->setPageCode($actualPageCode);
+            $page->setUid(0); // Default UID
+            $page->setTitle([]);
+            $page->setContent([]);
+            $page->setVisibility(['en' => true, 'fr' => true]);
+            $page->setDateCreation(new \DateTime());
+            $entityManager->persist($page);
+        }
 
         if (!isset($data['content'], $data['locale'])) {
             return new JsonResponse(['success' => false, 'message' => 'Missing content or locale'], 400);

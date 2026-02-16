@@ -36,7 +36,7 @@ page_hierarchies:
           - "ethical-charter"
           - title:
               en: "For authors"
-              fr: "Pour les auteurs"
+              fr: "Pour les auteurs/autrices"
             type: "container"
             children:
               - "prepare-submission"
