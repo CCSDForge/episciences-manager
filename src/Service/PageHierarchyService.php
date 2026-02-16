@@ -204,21 +204,23 @@ class PageHierarchyService
     {
         $emptyPage = new \stdClass();
         $emptyPage->id = null;
+        $emptyPage->uid = 0;
         $emptyPage->pageCode = $pageCode;
         $emptyPage->rvcode = $rvcode;
         $emptyPage->title = ['en' => $this->formatPageTitle($pageCode), 'fr' => $this->formatPageTitle($pageCode)];
         $emptyPage->content = ['en' => '', 'fr' => ''];
+        $emptyPage->visibility = ['public'];
         $emptyPage->isEmpty = true;
 
         return $emptyPage;
     }
 
     /**
-     * Format page code into a readable title (e.g., "about" → "About", "editorial-board" → "Editorial Board").
+     * Format page code into a readable title (e.g., "about" → "about", "editorial-board" → "editorial board").
      */
     private function formatPageTitle(string $pageCode): string
     {
-        return ucwords(str_replace('-', ' ', $pageCode));
+        return str_replace('-', ' ', $pageCode);
     }
 
     /**

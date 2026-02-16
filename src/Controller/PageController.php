@@ -46,20 +46,30 @@ final class PageController extends AbstractController
             'page_code' => $actualPageCode
         ]);
 
-        if (!$page) {
-            throw $this->createNotFoundException('Page not found');
-        }
-
         // If it's an AJAX request, return JSON
         if ($request->isXmlHttpRequest()) {
+            // If page doesn't exist, return empty content
+            if (!$page) {
+                return new JsonResponse([
+                    'title' => ['en' => ucwords(str_replace('-', ' ', $actualPageCode)), 'fr' => ucwords(str_replace('-', ' ', $actualPageCode))],
+                    'content' => ['en' => '', 'fr' => ''],
+                    'pageCode' => $actualPageCode,
+                    'isEmpty' => true
+                ]);
+            }
+
             // Convert markdown content to HTML
             $htmlContent = $markdownService->convertContentArray($page->getContent());
-            
+
             return new JsonResponse([
                 'title' => $page->getTitle(),
                 'content' => $htmlContent,
                 'pageCode' => $page->getPageCode()
             ]);
+        }
+
+        if (!$page) {
+            throw $this->createNotFoundException('Page not found');
         }
 
         // For direct access, render the journal page with the current page preselected
@@ -107,12 +117,13 @@ final class PageController extends AbstractController
         if (!$page) {
             $page = new \App\Entity\Page();
             $page->setRvcode($code);
-            $page->setPageCode($actualPageCode);
-            $page->setUid(0); // Default UID
+            $page->setPageCode(strtolower($actualPageCode));
+            $page->setUid($this->getUser()?->getUid() ?? 0);
             $page->setTitle([]);
             $page->setContent([]);
-            $page->setVisibility(['en' => true, 'fr' => true]);
+            $page->setVisibility(['public']);
             $page->setDateCreation(new \DateTime());
+            $page->setDateUpdated(new \DateTime());
             $entityManager->persist($page);
         }
 
@@ -144,6 +155,9 @@ final class PageController extends AbstractController
             $currentTitle[$locale] = $title;
             $page->setTitle($currentTitle);
         }
+
+        // Always update the date_updated timestamp
+        $page->setDateUpdated(new \DateTime());
 
         try {
             $entityManager->flush();
