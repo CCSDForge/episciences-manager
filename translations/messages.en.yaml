@@ -141,18 +141,22 @@ journalSettings:
 
   api:
     title: "API Settings"
+    description: "Configure the API connection for your journal"
     domain: "API Domain"
 
   theme:
     title: "Theme"
+    description: "Customize the colors of your journal"
     primaryColor: "Primary Color"
     primaryTextColor: "Primary Text Color"
     preview: "Preview"
     previewText: "This is a sample text with the theme applied"
-    contrastRatio: "Contrast Ratio"
+    contrastRatio: "Contrast Ratio (Accessibility)"
+    contrastFail: "Fail"
 
   languages:
     title: "Languages"
+    description: "Set the available languages for your journal"
     accepted: "Accepted Languages"
     default: "Default Language"
     english: "English"
@@ -162,6 +166,7 @@ journalSettings:
 
   homepage:
     title: "Homepage"
+    description: "Configure the elements displayed on the homepage"
     latestArticlesCarouselRender: "Latest Articles Carousel"
     latestNewsCarouselRender: "Latest News Carousel"
     membersCarouselRender: "Members Carousel"
@@ -178,6 +183,7 @@ journalSettings:
 
   menu:
     title: "Menu"
+    description: "Choose which items appear in the navigation menu"
     acceptedArticlesRender: "Accepted Articles"
     volumesRender: "Volumes"
     lastVolumeRender: "Latest Volume"
@@ -192,6 +198,7 @@ journalSettings:
 
   statistics:
     title: "Statistics"
+    description: "Configure the display of public statistics"
     colors: "Chart Colors"
     statistic: "Statistic"
     render: "Display"

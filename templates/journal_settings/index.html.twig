@@ -30,6 +30,7 @@
                   <div class="card-header" style="font-size: 18px;">
                       <i class="fas fa-plug me-2"></i>
                       {{ 'journalSettings.api.title'|trans }}
+                      <small class="text-muted">({{ 'journalSettings.api.description'|trans }})</small>
                   </div>
                   <div class="card-body px-5">
                       <div class="mb-3">
@@ -52,6 +53,7 @@
                   <div class="card-header" style="font-size: 18px;">
                       <i class="fas fa-palette me-2"></i>
                       {{ 'journalSettings.theme.title'|trans }}
+                      <small class="text-muted">({{ 'journalSettings.theme.description'|trans }})</small>
                   </div>
                   <div class="card-body px-5 py-3">
                       <div class="row justify-content-between mb-3">
@@ -96,7 +98,7 @@
                                   <label class="form-label">{{ 'journalSettings.theme.contrastRatio'|trans }}</label>
                                   <div class="p-3 rounded border text-center">
                                       <div id="contrast-ratio-value" class="fs-3 fw-bold">--</div>
-                                      <div id="contrast-ratio-level" class="badge mt-2">--</div>
+                                      <div id="contrast-ratio-level" class="badge mt-2" data-fail-label="{{ 'journalSettings.theme.contrastFail'|trans }}">--</div>
                                       <div class="small text-muted mt-2">
                                           <span class="badge bg-success">AAA ≥ 7:1</span>
                                           <span class="badge bg-warning text-dark">AA ≥ 4.5:1</span>
@@ -114,6 +116,7 @@
                   <div class="card-header" style="font-size: 18px;">
                       <i class="fas fa-language me-2"></i>
                       {{ 'journalSettings.languages.title'|trans }}
+                      <small class="text-muted">({{ 'journalSettings.languages.description'|trans }})</small>
                   </div>
                   <div class="card-body px-5">
                       <div class="mb-3">
@@ -155,6 +158,7 @@
                   <div class="card-header" style="font-size: 18px;">
                       <i class="fas fa-home me-2"></i>
                       {{ 'journalSettings.homepage.title'|trans }}
+                      <small class="text-muted">({{ 'journalSettings.homepage.description'|trans }})</small>
                   </div>
                   <div class="card-body px-5">
                       <div class="row justify-content-between">
@@ -198,6 +202,7 @@
                   <div class="card-header" style="font-size: 18px;">
                       <i class="fas fa-bars me-2"></i>
                       {{ 'journalSettings.menu.title'|trans }}
+                      <small class="text-muted">({{ 'journalSettings.menu.description'|trans }})</small>
                   </div>
                   <div class="card-body px-5">
                       <div class="row justify-content-between">
@@ -223,6 +228,7 @@
                   <div class="card-header" style="font-size: 18px;">
                       <i class="fas fa-chart-bar me-2"></i>
                       {{ 'journalSettings.statistics.title'|trans }}
+                      <small class="text-muted">({{ 'journalSettings.statistics.description'|trans }})</small>
                   </div>
                   <div class="card-body px-5">
                       <div class="mb-4">

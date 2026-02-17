@@ -53,18 +53,22 @@ journalSettings:
 
   api:
     title: "Paramètres de l'API"
+    description: "Configurez la connexion API de votre journal"
     domain: "Domaine de l'API"
 
   theme:
     title: "Thème"
+    description: "Personnalisez les couleurs de votre journal"
     primaryColor: "Couleur primaire"
     primaryTextColor: "Couleur du texte primaire"
     preview: "Aperçu"
     previewText: "Ceci est un exemple de texte avec le thème appliqué"
-    contrastRatio: "Ratio de contraste"
+    contrastRatio: "Ratio de contraste (accessibilité)"
+    contrastFail: "Échec"
 
   languages:
     title: "Langues"
+    description: "Définissez les langues disponibles pour votre journal"
     accepted: "Langues acceptées"
     default: "Langue par défaut"
     english: "Anglais"
@@ -74,6 +78,7 @@ journalSettings:
 
   homepage:
     title: "Page d'accueil"
+    description: "Configurez les éléments affichés sur la page d'accueil"
     latestArticlesCarouselRender: "Carrousel des derniers articles"
     latestNewsCarouselRender: "Carrousel des dernières actualités"
     membersCarouselRender: "Carrousel des membres"
@@ -90,6 +95,7 @@ journalSettings:
 
   menu:
     title: "Menu"
+    description: "Choisissez les éléments visibles dans le menu de navigation"
     acceptedArticlesRender: "Articles acceptés"
     volumesRender: "Volumes"
     lastVolumeRender: "Dernier volume"
@@ -104,6 +110,7 @@ journalSettings:
 
   statistics:
     title: "Statistiques"
+    description: "Configurez l'affichage des statistiques publiques"
     colors: "Couleurs des graphiques"
     statistic: "Statistique"
     render: "Afficher"

@@ -225,7 +225,7 @@ document.addEventListener('DOMContentLoaded', function() {
             contrastRatioLevel.textContent = 'AA';
             contrastRatioLevel.className = 'badge bg-warning text-dark mt-2';
         } else {
-            contrastRatioLevel.textContent = 'Fail';
+            contrastRatioLevel.textContent = contrastRatioLevel.dataset.failLabel || 'Fail';
             contrastRatioLevel.className = 'badge bg-danger mt-2';
         }
     }
