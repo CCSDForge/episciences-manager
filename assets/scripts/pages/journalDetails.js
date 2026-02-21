@@ -513,10 +513,10 @@ document.addEventListener('DOMContentLoaded', function () {
         if (data.error) {
           pageBody.innerHTML = '<p class="text-danger">Page not found</p>';
         } else {
+          const noContentText = window.journalDetailsData?.translations?.noContentAvailable || 'No content available';
           pageBody.innerHTML =
             data.content[locale] ||
-            data.content['en'] ||
-            'No content available';
+            noContentText;
         }
         pageContent.style.display = 'block';
       })
@@ -622,10 +622,10 @@ document.addEventListener('DOMContentLoaded', function () {
             pageBody.innerHTML = '<p class="text-danger">Page not found</p>';
           } else {
             // Use the locale extracted from the URL
+            const noContentText = window.journalDetailsData?.translations?.noContentAvailable || 'No content available';
             pageBody.innerHTML =
               data.content[locale] ||
-              data.content['en'] ||
-              'No content available';
+              noContentText;
             console.log('Content to show:', pageBody.innerHTML);
             //the content is HTML converted from markdown, so it's safe to use innerHTML
           }

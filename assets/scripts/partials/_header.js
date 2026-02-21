@@ -48,87 +48,88 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // Function to load page content via AJAX
-  function loadPageContentAjax(newUrl, selectedLocale, hash) {
-    fetch(newUrl, {
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest',
-      },
-    })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then(data => {
-        // Update page title - avoid updating journal name h1
-        if (data.title && data.title[selectedLocale]) {
-          // Only update elements specifically meant for page titles, not journal names
-          const pageTitle = document.getElementById('page-title');
-          if (pageTitle) {
-            pageTitle.textContent = data.title[selectedLocale];
-          }
+  async function loadPageContentAjax(newUrl, selectedLocale, hash) {
+    try {
+      // Load translations first to ensure noContentAvailable is in the correct language
+      await updateTranslations(selectedLocale);
 
-          // Update any element with class page-title specifically
-          const pageTitleElements = document.querySelectorAll('.page-title');
-          pageTitleElements.forEach(element => {
-            element.textContent = data.title[selectedLocale];
-          });
-        }
-
-        // Update page content - try multiple selectors
-        if (data.content && data.content[selectedLocale]) {
-          // Try .page-content class first
-          const contentElement = document.querySelector('.page-content');
-          if (contentElement) {
-            contentElement.innerHTML = data.content[selectedLocale];
-          }
-
-          // Also try page-body id if it exists (from journalDetails.js)
-          const pageBody = document.getElementById('page-body');
-          if (pageBody) {
-            pageBody.innerHTML = data.content[selectedLocale];
-          }
-        }
-
-        // Update document title
-        if (data.title && data.title[selectedLocale]) {
-          document.title = data.title[selectedLocale];
-        }
-
-        // Update URL without page reload
-        history.pushState({}, '', newUrl + hash);
-
-        // Update page lang attribute
-        document.documentElement.lang = selectedLocale;
-
-        // Update language button text
-        const languageToggle = document.getElementById(
-          'language-dropdown-toggle'
-        );
-        if (languageToggle) {
-          const iconElement = languageToggle.querySelector('i.fas.fa-globe');
-          if (iconElement) {
-            languageToggle.innerHTML =
-              iconElement.outerHTML + ' ' + selectedLocale.toUpperCase();
-          } else {
-            languageToggle.innerHTML =
-              '<i class="fas fa-globe me-1"></i> ' +
-              selectedLocale.toUpperCase();
-          }
-        }
-
-        // Update page navigation links to use the new locale
-        updatePageNavLinks(selectedLocale);
-
-        // Update translations and inline edit content
-        updateTranslations(selectedLocale).catch(console.error);
-      })
-      .catch(error => {
-        console.error('Error loading page content:', error);
-        // Fallback to normal page navigation
-        window.location.href = newUrl + hash;
+      const response = await fetch(newUrl, {
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+        },
       });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+
+      // Update page title - avoid updating journal name h1
+      if (data.title && data.title[selectedLocale]) {
+        // Only update elements specifically meant for page titles, not journal names
+        const pageTitle = document.getElementById('page-title');
+        if (pageTitle) {
+          pageTitle.textContent = data.title[selectedLocale];
+        }
+
+        // Update any element with class page-title specifically
+        const pageTitleElements = document.querySelectorAll('.page-title');
+        pageTitleElements.forEach(element => {
+          element.textContent = data.title[selectedLocale];
+        });
+      }
+
+      // Update page content - try multiple selectors
+      const noContentText = window.journalDetailsData?.translations?.noContentAvailable || 'No content available';
+      const contentToShow = (data.content && data.content[selectedLocale]) ? data.content[selectedLocale] : noContentText;
+
+      // Try .page-content class first
+      const contentElement = document.querySelector('.page-content');
+      if (contentElement) {
+        contentElement.innerHTML = contentToShow;
+      }
+
+      // Also try page-body id if it exists (from journalDetails.js)
+      const pageBody = document.getElementById('page-body');
+      if (pageBody) {
+        pageBody.innerHTML = contentToShow;
+      }
+
+      // Update document title
+      if (data.title && data.title[selectedLocale]) {
+        document.title = data.title[selectedLocale];
+      }
+
+      // Update URL without page reload
+      history.pushState({}, '', newUrl + hash);
+
+      // Update page lang attribute
+      document.documentElement.lang = selectedLocale;
+
+      // Update language button text
+      const languageToggle = document.getElementById(
+        'language-dropdown-toggle'
+      );
+      if (languageToggle) {
+        const iconElement = languageToggle.querySelector('i.fas.fa-globe');
+        if (iconElement) {
+          languageToggle.innerHTML =
+            iconElement.outerHTML + ' ' + selectedLocale.toUpperCase();
+        } else {
+          languageToggle.innerHTML =
+            '<i class="fas fa-globe me-1"></i> ' +
+            selectedLocale.toUpperCase();
+        }
+      }
+
+      // Update page navigation links to use the new locale
+      updatePageNavLinks(selectedLocale);
+    } catch (error) {
+      console.error('Error loading page content:', error);
+      // Fallback to normal page navigation
+      window.location.href = newUrl + hash;
+    }
   }
 
   // Custom dropdown behavior - intercept Bootstrap dropdown
@@ -212,6 +213,12 @@ document.addEventListener('DOMContentLoaded', function () {
       // Update global translations
       window.translations = translations;
       window.currentLocale = newLocale;
+
+      // Update journalDetailsData with noContentAvailable translation
+      if (window.journalDetailsData && translations.noContentAvailable) {
+        window.journalDetailsData.locale = newLocale;
+        window.journalDetailsData.translations.noContentAvailable = translations.noContentAvailable;
+      }
 
       // Update inline edit content if the function exists
       if (typeof window.updateInlineEditTranslations === 'function') {

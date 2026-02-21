@@ -27,6 +27,7 @@ page_hierarchies:
           - "reviewers-board"
           - "former-members"
           - "operating-charter-board"
+          - "test-board"
       - title:
           en: "Publish"
           fr: "Publier"
@@ -43,6 +44,7 @@ page_hierarchies:
               - "editorial-workflow"
           - "for-reviewers"
           - "for-conference-organisers"
+          - "for-submissions-committee"
       - code: "credits"
         order: 4
       - code: "custom-page"

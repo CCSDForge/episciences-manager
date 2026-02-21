@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 
 class JournalSettingController extends AbstractController
 {
@@ -62,6 +63,7 @@ class JournalSettingController extends AbstractController
     }
 
     #[Route('/journal/{code}/settings/edit', name: 'app_journal_settings_update', methods: ['POST','PUT'])]
+    #[IsCsrfTokenValid('journal-settings')]
     public function update(
         string $code,
         Request $request,

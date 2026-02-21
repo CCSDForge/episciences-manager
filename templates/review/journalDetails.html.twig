@@ -268,5 +268,13 @@
 
 {% block javascripts %}
     {{ parent() }}
+    <script>
+        window.journalDetailsData = {
+            locale: '{{ app.request.locale }}',
+            translations: {
+                noContentAvailable: '{{ 'journalDetails.noContentAvailable'|trans }}'
+            }
+        };
+    </script>
     {{ encore_entry_script_tags('journalDetailsJs') }}
 {% endblock %}
