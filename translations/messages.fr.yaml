@@ -130,6 +130,7 @@ journalSettings:
 
 journalDetails:
   home: "Accueil"
+  menu: "Menu"
   welcome_backoffice: "Bienvenue dans le backoffice de gestion du journal"
   noContentAvailable: "Aucun contenu disponible"
   edit: "Éditer"
