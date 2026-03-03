@@ -33,7 +33,9 @@
             <div class="list-group">
                 {% for review in reviews %}
                     <a href="{{ review.url }}" class="list-group-item clearfix" target="_blank">
-                        <img src="{{ review.logo }}" alt="Logo {{ review.code }}" class="review-logo">
+                        <img src="{{ asset('build/images/logo-' ~ review.code ~ logo_suffix ~ '.svg') }}"
+                             onerror="this.onerror=null; this.src='{{ asset('build/images/logo-' ~ review.code ~ '.svg') }}';"
+                             alt="Logo {{ review.code }}" class="review-logo">
                         <span class="review-name">{{ review.name }}</span>
                         <i class="fa fa-external-link review-link"></i>
                     </a>

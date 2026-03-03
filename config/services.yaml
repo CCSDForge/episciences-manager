@@ -51,3 +51,4 @@ services:
     App\Service\JsonSchemaValidator:
         arguments:
             $projectDir: '%kernel.project_dir%'
+
