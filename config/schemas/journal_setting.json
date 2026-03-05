@@ -23,14 +23,14 @@
             "properties": {
                 "default": {
                     "type": "string",
-                    "enum": ["en", "fr", "es"]
+                    "enum": ["en", "fr", "es", "de"]
                 },
                 "accepted": {
                     "type": "array",
                     "minItems": 1,
                     "items": {
                         "type": "string",
-                        "enum": ["en", "fr", "es"]
+                        "enum": ["en", "fr", "es", "de"]
                     }
                 }
             }
@@ -45,10 +45,15 @@
                 "journalIndexationRender": { "type": "boolean" },
                 "specialIssuesRender": { "type": "boolean" },
                 "latestAcceptedArticlesCarouselRender": { "type": "boolean" },
-                "lastNewsRender": { "type": "boolean" },
+                "lastNewsRender": { "type": "boolean" }
+            }
+        },
+        "homepageRightBlock": {
+            "type": "object",
+            "properties": {
                 "lastInformationRenderType": {
                     "type": "string",
-                    "enum": ["last-news", "last-articles", "both"]
+                    "enum": ["last-news", "last-volume", "last-special-issue"]
                 }
             }
         },
@@ -59,9 +64,10 @@
                 "volumeTypeProceedingsRender": { "type": "boolean" },
                 "specialIssuesRender": { "type": "boolean" },
                 "sectionsRender": { "type": "boolean" },
-                "newsRender": { "type": "boolean" },
+                "authorsRender": { "type": "boolean" },
                 "journalIndexingRender": { "type": "boolean" },
                 "journalAcknowledgementsRender": { "type": "boolean" },
+                "journalEthicalCharterRender": { "type": "boolean" },
                 "journalForReviewersRender": { "type": "boolean" },
                 "journalForConferenceOrganisersRender": { "type": "boolean" }
             }

@@ -177,19 +177,19 @@
                           {% endfor %}
                       </div>
                       <div class="my-3">
-                          <label for="homepage_lastInformationRenderType" class="form-label">
+                          <label for="homepageRightBlock_lastInformationRenderType" class="form-label">
                               {{ 'journalSettings.homepage.lastInformationRenderType'|trans }}
                               <small class="text-muted">({{ 'journalSettings.homepage.lastInformationRenderTypeHint'|trans }}
                                   )</small>
                           </label>
-                          <select class="form-select" id="homepage_lastInformationRenderType">
-                              <option value="last-news" {{ setting.homepage.lastInformationRenderType == 'last-news' ? 'selected' : '' }}>
+                          <select class="form-select" id="homepageRightBlock_lastInformationRenderType">
+                              <option value="last-news" {{ setting.homepageRightBlock.lastInformationRenderType == 'last-news' ? 'selected' : '' }}>
                                   {{ 'journalSettings.homepage.lastNews'|trans }}
                               </option>
-                              <option value="last-volume" {{ setting.homepage.lastInformationRenderType == 'last-volume' ? 'selected' : '' }}>
+                              <option value="last-volume" {{ setting.homepageRightBlock.lastInformationRenderType == 'last-volume' ? 'selected' : '' }}>
                                   {{ 'journalSettings.homepage.lastVolume'|trans }}
                               </option>
-                              <option value="last-special-issue" {{ setting.homepage.lastInformationRenderType == 'last-special-issue' ? 'selected' : '' }}>
+                              <option value="last-special-issue" {{ setting.homepageRightBlock.lastInformationRenderType == 'last-special-issue' ? 'selected' : '' }}>
                                   {{ 'journalSettings.homepage.lastSpecialIssue'|trans }}
                               </option>
                           </select>
@@ -330,6 +330,7 @@
       <script>
           window.journalSettingsData = {
               updateUrl: '{{ path('app_journal_settings_update', {'code': code}) }}',
+              csrfToken: '{{ csrf_token('journal-settings') }}',
               translations: {
                   save: '{{ 'journalSettings.save'|trans }}',
                   saved: '{{ 'journalSettings.saved'|trans }}',

@@ -15,16 +15,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 default: document.getElementById('languages_default').value
             },
             homepage: collectHomepageData(),
+            homepageRightBlock: collectHomepageRightBlockData(),
             menu: collectMenuData(),
-            statistics: collectStatisticsData()
+            statistics: collectStatisticsData(),
         };
 
         // Disable button during request
         saveButton.disabled = true;
         saveButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Saving...';
 
+        // Build URL with CSRF token
+        const url = new URL(window.journalSettingsData.updateUrl, window.location.origin);
+        url.searchParams.set('_token', window.journalSettingsData.csrfToken);
+
         // Send request
-        fetch(window.journalSettingsData.updateUrl, {
+        fetch(url.toString(), {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -32,16 +37,23 @@ document.addEventListener('DOMContentLoaded', function() {
             body: JSON.stringify(data)
         })
             .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
+                return response.json().then(data => ({
+                    ok: response.ok,
+                    status: response.status,
+                    data: data
+                }));
             })
-            .then(result => {
-                if (result.success) {
+            .then(({ok, status, data}) => {
+                if (ok && data.success) {
                     showAlert('success', window.journalSettingsData.translations.saved);
                 } else {
-                    showAlert('danger', result.message || window.journalSettingsData.translations.error);
+                    let errorMessage = data.message || window.journalSettingsData.translations.error;
+                    if (data.errors) {
+                        const errorDetails = Object.values(data.errors).join('<br>');
+                        errorMessage += '<br><small>' + errorDetails + '</small>';
+                    }
+                    showAlert('danger', errorMessage);
+                    console.error('Validation errors:', data);
                 }
             })
             .catch(error => {
@@ -56,12 +68,10 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     /**
-     * Collect homepage options data
+     * Collect homepage options data (boolean checkboxes only)
      */
     function collectHomepageData() {
-        const homepage = {
-            lastInformationRenderType: document.getElementById('homepage_lastInformationRenderType').value
-        };
+        const homepage = {};
 
         document.querySelectorAll('.homepage-option').forEach(checkbox => {
             const optionName = checkbox.id.replace('homepage_', '');
@@ -69,6 +79,15 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         return homepage;
+    }
+
+    /**
+     * Collect homepage layout data (select options)
+     */
+    function collectHomepageRightBlockData() {
+        return {
+            lastInformationRenderType: document.getElementById('homepageRightBlock_lastInformationRenderType').value
+        };
     }
 
     /**

@@ -43,14 +43,13 @@ class JournalSettingService
     {
         return [
             'acceptedArticlesRender',
-            'volumesRender',
-            'lastVolumeRender',
             'volumeTypeProceedingsRender',
             'specialIssuesRender',
             'sectionsRender',
-            'newsRender',
+            'authorsRender',
             'journalIndexingRender',
             'journalAcknowledgementsRender',
+            'journalEthicalCharterRender',
             'journalForReviewersRender',
             'journalForConferenceOrganisersRender',
         ];
@@ -83,7 +82,7 @@ class JournalSettingService
                 'primaryTextColor' => '#ffffff',
             ],
             'languages' => [
-                'accepted' => ['en', 'fr','es'],
+                'accepted' => ['en', 'fr', 'es'],
                 'default' => 'en',
             ],
             'homepage' => [
@@ -95,6 +94,8 @@ class JournalSettingService
                 'specialIssuesRender' => true,
                 'latestAcceptedArticlesCarouselRender' => true,
                 'lastNewsRender' => true,
+            ],
+            'homepageRightBlock' => [
                 'lastInformationRenderType' => 'last-news',
             ],
             'menu' => [
@@ -102,11 +103,12 @@ class JournalSettingService
                 'volumeTypeProceedingsRender' => true,
                 'specialIssuesRender' => true,
                 'sectionsRender' => true,
-                'newsRender' => true,
-                'journalIndexingRender' => true,
-                'journalAcknowledgementsRender' => true,
-                'journalForReviewersRender' => true,
-                'journalForConferenceOrganisersRender' => true,
+                'authorsRender' => true,
+                'journalIndexingRender' => false,
+                'journalAcknowledgementsRender' => false,
+                'journalEthicalCharterRender' => true,
+                'journalForReviewersRender' => false,
+                'journalForConferenceOrganisersRender' => false,
             ],
             'statistics' => [
                 'colors' => ['#840909', '#295fba', '#3f557a', '#192132'],
@@ -183,6 +185,7 @@ class JournalSettingService
      */
     public function updateSetting(int $rvid, array $newSetting): array
     {
+
         $errors = $this->validateSetting($newSetting);
 
         if ($errors !== []) {
@@ -194,7 +197,9 @@ class JournalSettingService
 
         $setting = $this->getOrCreateSetting($rvid);
 
-        $mergedSetting = $this->mergeWithDefaults($newSetting);
+        // Merge new settings with existing and default settings
+        $existingSetting = $setting->getSetting();
+        $mergedSetting = array_replace_recursive($this->getDefaultSetting(), $existingSetting, $newSetting);
 
         $setting->setSetting($mergedSetting);
         $setting->setUpdatedAt(new \DateTime());

@@ -8,7 +8,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 
 class JournalSettingController extends AbstractController
 {
@@ -63,13 +62,21 @@ class JournalSettingController extends AbstractController
     }
 
     #[Route('/journal/{code}/settings/edit', name: 'app_journal_settings_update', methods: ['POST','PUT'])]
-    #[IsCsrfTokenValid('journal-settings')]
     public function update(
         string $code,
         Request $request,
         ReviewManager $reviewManager,
         JournalSettingService $settingService
     ): JsonResponse {
+        // Validate CSRF token from query parameter
+        $token = $request->query->get('_token');
+        if (!$this->isCsrfTokenValid('journal-settings', $token)) {
+            return new JsonResponse(
+                ['success' => false, 'message' => 'Invalid CSRF token'],
+                Response::HTTP_FORBIDDEN
+            );
+        }
+
         $review = $reviewManager->getReviewByCode($code);
 
         if ($review === null) {
