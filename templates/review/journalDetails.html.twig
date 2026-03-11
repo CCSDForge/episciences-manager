@@ -10,7 +10,7 @@
                 </div>
 
                 <!-- Main column -->
-                <div class="col-12 col-xl-9">
+                <div class="col-12 col-xl-10">
                     <!-- Mobile: Logo + Title stacked -->
                     <div class="d-md-none mt-3 px-3 text-center">
                         <div class="journal-logo mb-3">
@@ -94,8 +94,8 @@
                             </div>
                         </div>
 
-                        <!-- Row 2: Sidebar + Content -->
-                        <div class="d-flex">
+                        <!-- Row 2: Sidebar + Content + Language Widget -->
+                        <div class="d-flex align-items-start">
                             <!-- Sidebar (hidden on mobile) -->
                             <div class="flex-shrink-0 d-none d-md-block" style="width: 20%; min-width: 200px; max-width: 300px;">
                                 {% if pages is defined and pages.main is not empty %}
@@ -246,8 +246,8 @@
                             {% endif %}
                         </div>
 
-                            <!-- Content -->
-                            <div class="flex-grow-1 px-3 px-md-0 ms-md-4 mt-3 mt-md-0">
+                        <!-- Content -->
+                        <div class="flex-grow-1 px-3 px-md-0 ms-md-4 mt-3 mt-md-0">
                         <!-- Breadcrumb Navigation & Preview Button -->
                         <div id="breadcrumb-nav" class="bg-light rounded px-3 py-2 mb-3 d-flex justify-content-between align-items-center" style="display: none !important;">
                             <!-- Breadcrumb Navigation -->
@@ -342,13 +342,35 @@
                                 </button>
                             </div>
                         </div>
+                        </div>
+
+                        <!-- Language Widget (Desktop only) -->
+                        <div class="flex-shrink-0 d-none d-xl-block ms-4" style="width: 180px;">
+                            <div class="language-widget" style="position: sticky; top: 20px;">
+                                <div class="bg-light rounded d-flex justify-content-between align-items-center border" id="languageWidgetHeader" style="padding: 0.75rem 1rem;">
+                                    <span class="fw-semibold small">{{ 'journalDetails.languages'|trans|default('Langues') }}</span>
+                                    <button class="btn btn-link btn-sm p-0 text-muted" type="button" data-bs-toggle="collapse" data-bs-target="#languageWidgetBody" aria-expanded="true">
+                                        <i class="fas fa-chevron-up fa-xs"></i>
+                                    </button>
+                                </div>
+                                <div class="collapse show" id="languageWidgetBody">
+                                    <div class="bg-white border border-top-0 rounded-bottom px-3 py-2">
+                                        <label class="form-label small text-muted mb-1">{{ 'journalDetails.language'|trans|default('Langue') }}</label>
+                                        <select class="form-select form-select-sm language-switch-select" id="sidebar-language-select">
+                                            <option value="en" {{ app.request.locale == 'en' ? 'selected' : '' }}>🇬🇧 English</option>
+                                            <option value="fr" {{ app.request.locale == 'fr' ? 'selected' : '' }}>🇫🇷 Français</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 </div>
 
-                <!-- Right column for future content -->
-                <div class="col-2 d-none d-xl-block">
-                    <!-- Future content here -->
+                <!-- Right empty column (matches left) -->
+                <div class="col-1 d-none d-xl-block">
+                    <!-- Empty to balance layout -->
                 </div>
             </div>
 

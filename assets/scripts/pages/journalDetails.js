@@ -448,6 +448,83 @@ document.addEventListener('DOMContentLoaded', function () {
   let currentJournalCode = null;
   let isInlineEdit = false;
 
+  // Sidebar language switcher handler - load content in selected language via AJAX
+  const sidebarLanguageSelect = document.getElementById('sidebar-language-select');
+  console.log('=== LANGUAGE WIDGET DEBUG ===');
+  console.log('sidebarLanguageSelect element:', sidebarLanguageSelect);
+  console.log('currentPageCode:', currentPageCode);
+  console.log('currentJournalCode:', currentJournalCode);
+
+  if (sidebarLanguageSelect) {
+    console.log('Adding change event listener to sidebar language select');
+    sidebarLanguageSelect.addEventListener('change', async function () {
+      const newLocale = this.value;
+      console.log('=== LANGUAGE CHANGE EVENT ===');
+      console.log('Language widget changed to:', newLocale);
+      console.log('currentPageCode:', currentPageCode);
+      console.log('currentJournalCode:', currentJournalCode);
+
+      // Check if a page is currently selected
+      if (currentPageCode && currentJournalCode) {
+        const pageUrl = `/${newLocale}/journal/${currentJournalCode}/page/${currentPageCode}`;
+        console.log('Fetching content from:', pageUrl);
+
+        try {
+          const response = await fetch(pageUrl, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+          });
+
+          if (!response.ok) throw new Error('Network response was not ok');
+
+          const data = await response.json();
+          console.log('Data received:', data);
+
+          // Update page content with the selected language
+          if (pageBody) {
+            const noContentText = window.journalDetailsData?.translations?.noContentAvailable || 'No content available';
+            pageBody.innerHTML = data.content?.[newLocale] || noContentText;
+          }
+
+          // Update URL without page reload
+          history.pushState({}, '', pageUrl);
+
+          // Update document lang attribute
+          document.documentElement.lang = newLocale;
+
+          // Update current locale
+          window.currentLocale = newLocale;
+
+        } catch (error) {
+          console.error('Error loading page content:', error);
+        }
+      } else {
+        console.log('No page selected, nothing to update');
+      }
+    });
+
+    // Toggle chevron icon on collapse
+    const collapseToggle = document.querySelector('[data-bs-target="#languageWidgetBody"]');
+    const languageWidgetBody = document.getElementById('languageWidgetBody');
+
+    if (collapseToggle && languageWidgetBody) {
+      languageWidgetBody.addEventListener('shown.bs.collapse', function () {
+        const icon = collapseToggle.querySelector('i');
+        if (icon) {
+          icon.classList.remove('fa-chevron-down');
+          icon.classList.add('fa-chevron-up');
+        }
+      });
+
+      languageWidgetBody.addEventListener('hidden.bs.collapse', function () {
+        const icon = collapseToggle.querySelector('i');
+        if (icon) {
+          icon.classList.remove('fa-chevron-up');
+          icon.classList.add('fa-chevron-down');
+        }
+      });
+    }
+  }
+
   console.log('Found links:', pageLinks.length);
   console.log('Page content element:', pageContent);
 

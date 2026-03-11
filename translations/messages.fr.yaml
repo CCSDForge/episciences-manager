@@ -145,6 +145,8 @@ journalDetails:
   save_success: "Titre et contenu sauvegardés avec succès!"
   save_error: "Erreur lors de la sauvegarde: "
   preview_page: "Aperçu de la page"
+  languages: "Langues"
+  language: "Langue"
 
 resources:
   title: "Ressources"
