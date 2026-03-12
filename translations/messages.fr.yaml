@@ -147,6 +147,9 @@ journalDetails:
   preview_page: "Aperçu de la page"
   languages: "Langues"
   language: "Langue"
+  translations: "Traductions"
+  add_translation: "Ajouter une traduction"
+  edit_translation: "Modifier la traduction"
 
 resources:
   title: "Ressources"

@@ -6,6 +6,7 @@ import {
   focusEditor,
 } from '../components/ckeditor.js';
 
+
 // Function to update inline edit translations dynamically
 function updateInlineEditTranslations() {
   console.log(
@@ -329,6 +330,72 @@ function updateBreadcrumbLanguage(locale) {
   }
 }
 
+/**
+ * Update the sidebar language select visibility:
+ * show only languages that have existing content for the current page.
+ * When no page is selected (contentByLocale is null), show all accepted languages.
+ */
+function updateLanguageSelectOptions(contentByLocale) {
+  const select = document.getElementById('sidebar-language-select');
+  if (!select) return;
+
+  const currentLocale = getCurrentLocale();
+
+  Array.from(select.options).forEach(option => {
+    if (!contentByLocale) {
+      option.hidden = false;
+    } else {
+      const hasContent = contentByLocale[option.value] && contentByLocale[option.value].trim() !== '';
+      option.hidden = !hasContent;
+    }
+  });
+
+  if (select.selectedOptions[0]?.hidden) {
+    const firstVisible = Array.from(select.options).find(o => !o.hidden);
+    if (firstVisible) firstVisible.selected = true;
+  }
+}
+
+/**
+ * Update the translations list in the sidebar widget.
+ * - Pencil icon + title if content exists for that language
+ * - "+" icon + empty field if no content
+ */
+function updateTranslationsList(titleByLocale, contentByLocale) {
+  document.querySelectorAll('#translations-list .translation-row').forEach(row => {
+    const lang = row.getAttribute('data-lang');
+    const actionBtn = row.querySelector('.translation-action-btn');
+    const titleInput = row.querySelector('.translation-title-input');
+    const icon = actionBtn?.querySelector('i');
+
+    const hasContent = contentByLocale?.[lang]?.trim();
+    const title = titleByLocale?.[lang] || '';
+
+    if (hasContent) {
+      if (icon) icon.className = 'fas fa-pencil-alt text-primary';
+      actionBtn?.setAttribute('title', window.journalDetailsData?.translations?.editTranslation || 'Edit');
+      if (titleInput) titleInput.value = title;
+    } else {
+      if (icon) icon.className = 'fas fa-plus text-muted';
+      actionBtn?.setAttribute('title', window.journalDetailsData?.translations?.addTranslation || 'Add');
+      if (titleInput) titleInput.value = '';
+    }
+  });
+}
+
+/**
+ * Reset the translations list to initial empty state (flags stay from Twig).
+ */
+function resetTranslationsList() {
+  document.querySelectorAll('#translations-list .translation-row').forEach(row => {
+    const icon = row.querySelector('.translation-action-btn i');
+    const titleInput = row.querySelector('.translation-title-input');
+
+    if (icon) icon.className = 'fas fa-plus text-muted';
+    if (titleInput) titleInput.value = '';
+  });
+}
+
 // Make functions globally available for the header script
 window.updateInlineEditTranslations = updateInlineEditTranslations;
 window.updateContainerTitles = updateContainerTitles;
@@ -397,15 +464,15 @@ async function loadTranslations(locale) {
   }
 }
 
-// Helper function to get current locale consistently
+// Returns a locale valid for routes (en|fr only)
 function getCurrentLocale() {
+  const routeLocales = ['en', 'fr'];
   const locale =
     document.documentElement.lang ||
     window.location.pathname.split('/')[1] ||
     'en';
 
-  // Validate the locale (only EN and FR are supported)
-  return ['en', 'fr'].includes(locale) ? locale : 'en';
+  return routeLocales.includes(locale) ? locale : 'en';
 }
 
 // Initialize with current page locale (no API call yet)
@@ -447,27 +514,16 @@ document.addEventListener('DOMContentLoaded', function () {
   let currentPageCode = null;
   let currentJournalCode = null;
   let isInlineEdit = false;
+  let editingLocale = null;
 
-  // Sidebar language switcher handler - load content in selected language via AJAX
   const sidebarLanguageSelect = document.getElementById('sidebar-language-select');
-  console.log('=== LANGUAGE WIDGET DEBUG ===');
-  console.log('sidebarLanguageSelect element:', sidebarLanguageSelect);
-  console.log('currentPageCode:', currentPageCode);
-  console.log('currentJournalCode:', currentJournalCode);
 
   if (sidebarLanguageSelect) {
-    console.log('Adding change event listener to sidebar language select');
     sidebarLanguageSelect.addEventListener('change', async function () {
       const newLocale = this.value;
-      console.log('=== LANGUAGE CHANGE EVENT ===');
-      console.log('Language widget changed to:', newLocale);
-      console.log('currentPageCode:', currentPageCode);
-      console.log('currentJournalCode:', currentJournalCode);
 
-      // Check if a page is currently selected
       if (currentPageCode && currentJournalCode) {
         const pageUrl = `/${newLocale}/journal/${currentJournalCode}/page/${currentPageCode}`;
-        console.log('Fetching content from:', pageUrl);
 
         try {
           const response = await fetch(pageUrl, {
@@ -477,28 +533,21 @@ document.addEventListener('DOMContentLoaded', function () {
           if (!response.ok) throw new Error('Network response was not ok');
 
           const data = await response.json();
-          console.log('Data received:', data);
 
-          // Update page content with the selected language
           if (pageBody) {
             const noContentText = window.journalDetailsData?.translations?.noContentAvailable || 'No content available';
             pageBody.innerHTML = data.content?.[newLocale] || noContentText;
           }
 
-          // Update URL without page reload
           history.pushState({}, '', pageUrl);
-
-          // Update document lang attribute
           document.documentElement.lang = newLocale;
-
-          // Update current locale
           window.currentLocale = newLocale;
+
+          updateTranslationsList(data.title, data.content);
 
         } catch (error) {
           console.error('Error loading page content:', error);
         }
-      } else {
-        console.log('No page selected, nothing to update');
       }
     });
 
@@ -525,8 +574,52 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
-  console.log('Found links:', pageLinks.length);
-  console.log('Page content element:', pageContent);
+  // Translation row click: open inline edit for that language
+  document.querySelectorAll('#translations-list .translation-action-btn').forEach(btn => {
+    btn.addEventListener('click', async function () {
+      const row = this.closest('.translation-row');
+      const lang = row?.getAttribute('data-lang');
+
+      if (!lang) return;
+
+      if (!currentPageCode || !currentJournalCode) {
+        alert(window.translations?.selectPageFirst || 'Please select a page first');
+        return;
+      }
+
+      if (isInlineEdit) {
+        exitInlineEdit();
+        await new Promise(r => setTimeout(r, 200));
+      }
+
+      // Store the target locale for saving (don't change document.lang / route locale)
+      editingLocale = lang;
+
+      // Clear page body and open inline edit with empty fields
+      if (pageBody) pageBody.innerHTML = '';
+
+      pageTitleInline.value = '';
+      pageContent.style.display = 'none';
+      inlineEditContent.style.display = 'block';
+
+      const placeholder = window.translations?.enterContent || 'Enter the content here...';
+      try {
+        const editorPromise = initializeCKEditor('page-content-inline', placeholder);
+        if (editorPromise) {
+          await editorPromise;
+          setEditorContent('');
+          setTimeout(() => focusEditor(), 100);
+        }
+      } catch (error) {
+        console.error('Error initializing CKEditor:', error);
+      }
+
+      const cardFooter = document.querySelector('.card-footer');
+      if (cardFooter) cardFooter.style.display = 'none';
+
+      isInlineEdit = true;
+    });
+  });
 
   // Check if we're on a specific page route on page load
   function initializeCurrentPage() {
@@ -576,7 +669,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
-  // Function to load current page content
   function loadCurrentPageContent(locale, journalCode, pageCode) {
     const pageUrl = `/${locale}/journal/${journalCode}/page/${pageCode}`;
 
@@ -596,6 +688,9 @@ document.addEventListener('DOMContentLoaded', function () {
             noContentText;
         }
         pageContent.style.display = 'block';
+
+        updateTranslationsList(data.title, data.content);
+        updateLanguageSelectOptions(data.content);
       })
       .catch(error => {
         console.error('Error loading current page content:', error);
@@ -604,24 +699,18 @@ document.addEventListener('DOMContentLoaded', function () {
       });
   }
 
-  // Function to reset to home state
   function resetToHomeState() {
-    // Exit inline edit mode if active
     if (isInlineEdit) {
       exitInlineEdit();
     }
 
-    // Clear current page info
     currentPageCode = null;
     currentJournalCode = null;
 
-    // Remove active class from all page links
     pageLinks.forEach(l => l.classList.remove('active'));
 
-    // Hide preview button
     hidePreviewButton();
 
-    // Show default home content
     pageBody.innerHTML = `
       <div class="text-center py-5">
         <i class="fas fa-home fa-3x text-primary mb-3"></i>
@@ -630,6 +719,9 @@ document.addEventListener('DOMContentLoaded', function () {
       </div>
     `;
     pageContent.style.display = 'block';
+
+    resetTranslationsList();
+    updateLanguageSelectOptions(null);
   }
 
   // Initialize current page if we're on a page route
@@ -690,23 +782,19 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .then(data => {
           console.log('Data received:', JSON.stringify(data, null, 2));
-          console.log(
-            'Raw content from server:',
-            JSON.stringify(data.content, null, 2)
-          );
           console.log('Current locale:', locale);
           if (data.error) {
             pageBody.innerHTML = '<p class="text-danger">Page not found</p>';
           } else {
-            // Use the locale extracted from the URL
             const noContentText = window.journalDetailsData?.translations?.noContentAvailable || 'No content available';
             pageBody.innerHTML =
               data.content[locale] ||
               noContentText;
-            console.log('Content to show:', pageBody.innerHTML);
-            //the content is HTML converted from markdown, so it's safe to use innerHTML
           }
           pageContent.style.display = 'block';
+
+          updateTranslationsList(data.title, data.content);
+          updateLanguageSelectOptions(data.content);
         })
         .catch(error => {
           console.error('Fetch error:', error);
@@ -847,13 +935,13 @@ document.addEventListener('DOMContentLoaded', function () {
       pageContent.style.display = 'block';
       inlineEditContent.style.display = 'none';
 
-      // Show the edit button footer again
       const cardFooter = document.querySelector('.card-footer');
       if (cardFooter) {
         cardFooter.style.display = 'block';
       }
 
       isInlineEdit = false;
+      editingLocale = null;
     });
   }
 
@@ -887,13 +975,14 @@ document.addEventListener('DOMContentLoaded', function () {
       console.log('Content from editor:', newContent);
       console.log('Title from input:', newTitle);
       console.log('Editor content length:', newContent?.length || 0);
-      let locale = getCurrentLocale();
 
-      const saveUrl = `/${locale}/journal/${currentJournalCode}/page/${currentPageCode}/edit`;
+      // editingLocale = target language for translation (e.g. "es"), otherwise current route locale
+      let locale = editingLocale || getCurrentLocale();
 
-      console.log('Saving content:', newContent);
+      const saveUrl = `/${getCurrentLocale()}/journal/${currentJournalCode}/page/${currentPageCode}/edit`;
+
       console.log('Save URL:', saveUrl);
-      console.log('Locale:', locale);
+      console.log('Content locale:', locale);
 
       // Save via AJAX
       console.log('=== SENDING FETCH REQUEST ===');

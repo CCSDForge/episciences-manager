@@ -4,6 +4,7 @@ namespace App\Controller;
 
 
 use App\Repository\PageRepository;
+use App\Service\JournalSettingService;
 use App\Service\MarkdownService;
 use App\Service\ReviewManager;
 use App\Service\PageHierarchyService;
@@ -35,7 +36,7 @@ final class PageController extends AbstractController
     }
 
     #[Route('/journal/{code}/page/{pageTitle}', name: 'app_page_show', methods: ['GET'])]
-    public function showPage(string $code, string $pageTitle, PageRepository $pageRepository, MarkdownService $markdownService, ReviewManager $reviewManager, PageHierarchyService $hierarchyService, Request $request): Response
+    public function showPage(string $code, string $pageTitle, PageRepository $pageRepository, MarkdownService $markdownService, ReviewManager $reviewManager, PageHierarchyService $hierarchyService, JournalSettingService $settingService, Request $request): Response
     {
         // Check if there's an alias for this pageTitle
         $actualPageCode = self::PAGE_ALIASES[$pageTitle] ?? $pageTitle;
@@ -86,11 +87,15 @@ final class PageController extends AbstractController
         $allPages = $pageRepository->findBy(['rvcode' => $code]);
         $organizedPages = $hierarchyService->organizePages($allPages, $code);
 
+        $setting = $settingService->getSettingArray($review['rvid']);
+        $acceptedLanguages = $setting['languages']['accepted'] ?? ['en', 'fr'];
+
         return $this->render('review/journalDetails.html.twig', [
             'review' => $review,
             'code' => $code,
             'pages' => $organizedPages,
-            'currentPageCode' => $pageTitle, // Pass the current page code to the template
+            'currentPageCode' => $pageTitle,
+            'acceptedLanguages' => $acceptedLanguages,
         ]);
     }
 

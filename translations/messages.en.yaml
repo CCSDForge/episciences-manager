@@ -64,6 +64,9 @@ journalDetails:
   preview_page: "Preview Page"
   languages: "Languages"
   language: "Language"
+  translations: "Translations"
+  add_translation: "Add translation"
+  edit_translation: "Edit translation"
 
 
 resources:

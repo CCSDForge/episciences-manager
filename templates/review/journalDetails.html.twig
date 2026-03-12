@@ -345,21 +345,39 @@
                         </div>
 
                         <!-- Language Widget (Desktop only) -->
-                        <div class="flex-shrink-0 d-none d-xl-block ms-4" style="width: 180px;">
+                        {% set langFlags = { en: '🇬🇧', fr: '🇫🇷', es: '🇪🇸', de: '🇩🇪', it: '🇮🇹', pt: '🇵🇹', nl: '🇳🇱', ar: '🇸🇦', zh: '🇨🇳', ja: '🇯🇵' } %}
+                        {% set langNames = { en: 'English', fr: 'Français', es: 'Español', de: 'Deutsch', it: 'Italiano', pt: 'Português', nl: 'Nederlands', ar: 'العربية', zh: '中文', ja: '日本語' } %}
+                        <div class="flex-shrink-0 d-none d-xl-block ms-4" style="width: 220px;">
                             <div class="language-widget" style="position: sticky; top: 20px;">
-                                <div class="bg-light rounded d-flex justify-content-between align-items-center border" id="languageWidgetHeader" style="padding: 0.75rem 1rem;">
+                                <div class="bg-light rounded-top d-flex justify-content-between align-items-center border" id="languageWidgetHeader" style="padding: 0.75rem 1rem;">
                                     <span class="fw-semibold small">{{ 'journalDetails.languages'|trans|default('Langues') }}</span>
                                     <button class="btn btn-link btn-sm p-0 text-muted" type="button" data-bs-toggle="collapse" data-bs-target="#languageWidgetBody" aria-expanded="true">
                                         <i class="fas fa-chevron-up fa-xs"></i>
                                     </button>
                                 </div>
                                 <div class="collapse show" id="languageWidgetBody">
-                                    <div class="bg-white border border-top-0 rounded-bottom px-3 py-2">
+                                    <div class="bg-white border border-top-0 px-3 py-2">
                                         <label class="form-label small text-muted mb-1">{{ 'journalDetails.language'|trans|default('Langue') }}</label>
                                         <select class="form-select form-select-sm language-switch-select" id="sidebar-language-select">
-                                            <option value="en" {{ app.request.locale == 'en' ? 'selected' : '' }}>🇬🇧 English</option>
-                                            <option value="fr" {{ app.request.locale == 'fr' ? 'selected' : '' }}>🇫🇷 Français</option>
+                                            {% for lang in acceptedLanguages|default(['en', 'fr']) %}
+                                                <option value="{{ lang }}" {{ app.request.locale == lang ? 'selected' : '' }}>{{ langFlags[lang]|default('') }} {{ langNames[lang]|default(lang) }}</option>
+                                            {% endfor %}
                                         </select>
+                                    </div>
+                                    <!-- Traductions section -->
+                                    <div class="bg-white border border-top-0 rounded-bottom px-3 py-2">
+                                        <label class="form-label small text-muted mb-1">{{ 'journalDetails.translations'|trans|default('Traductions') }}</label>
+                                        <div id="translations-list">
+                                            {% for lang in acceptedLanguages|default(['en', 'fr']) %}
+                                                <div class="translation-row d-flex align-items-center mb-1" data-lang="{{ lang }}">
+                                                    <span class="translation-flag me-1" style="min-width: 24px; text-align: center;">{{ langFlags[lang]|default('') }}</span>
+                                                    <button class="btn btn-link btn-sm p-0 me-1 translation-action-btn" type="button" title="{{ 'journalDetails.add_translation'|trans|default('Ajouter') }}">
+                                                        <i class="fas fa-plus text-muted"></i>
+                                                    </button>
+                                                    <input type="text" class="form-control form-control-sm translation-title-input" readonly placeholder="{{ langNames[lang]|default(lang) }}" style="font-size: 0.8rem;">
+                                                </div>
+                                            {% endfor %}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -388,8 +406,12 @@
     <script>
         window.journalDetailsData = {
             locale: '{{ app.request.locale }}',
+            acceptedLanguages: {{ acceptedLanguages|default(['en', 'fr'])|json_encode|raw }},
             translations: {
-                noContentAvailable: '{{ 'journalDetails.noContentAvailable'|trans }}'
+                noContentAvailable: '{{ 'journalDetails.noContentAvailable'|trans }}',
+                translations: '{{ 'journalDetails.translations'|trans|default('Traductions') }}',
+                addTranslation: '{{ 'journalDetails.add_translation'|trans|default('Ajouter une traduction') }}',
+                editTranslation: '{{ 'journalDetails.edit_translation'|trans|default('Modifier la traduction') }}'
             }
         };
     </script>
