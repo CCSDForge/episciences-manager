@@ -523,10 +523,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
   if (sidebarLanguageSelect) {
     sidebarLanguageSelect.addEventListener('change', async function () {
-      const newLocale = this.value;
+      const selectedLang = this.value;
+      const routeLocale = getCurrentLocale();
+
+      editingLocale = selectedLang;
 
       if (currentPageCode && currentJournalCode) {
-        const pageUrl = `/${newLocale}/journal/${currentJournalCode}/page/${currentPageCode}`;
+        const pageUrl = `/${routeLocale}/journal/${currentJournalCode}/page/${currentPageCode}`;
 
         try {
           const response = await fetch(pageUrl, {
@@ -537,12 +540,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
           const data = await response.json();
 
-          updatePageView(data, newLocale);
-
-          history.pushState({}, '', pageUrl);
-          document.documentElement.lang = newLocale;
-          window.currentLocale = newLocale;
-
+          updatePageView(data, selectedLang);
           updateTranslationsList(data.title, data.content);
 
         } catch (error) {
@@ -942,7 +940,11 @@ document.addEventListener('DOMContentLoaded', function () {
       }
 
       isInlineEdit = false;
-      editingLocale = null;
+      // Preserve editingLocale from sidebar language select;
+      // reset only if no language is explicitly selected
+      if (sidebarLanguageSelect) {
+        editingLocale = sidebarLanguageSelect.value;
+      }
     });
   }
 
@@ -1061,10 +1063,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const activeLink = document.querySelector('.page-nav-link.active');
             if (activeLink && updatedTitle) {
-              // Update the visible text
               activeLink.textContent = updatedTitle;
 
-              // Update the data attributes used by breadcrumb
               const currentLocale = getCurrentLocale();
 
               if (currentLocale === 'fr') {
@@ -1073,14 +1073,25 @@ document.addEventListener('DOMContentLoaded', function () {
                 activeLink.setAttribute('data-current-title-en', updatedTitle);
               }
 
-              // Update breadcrumb immediately if it's visible
               updateBreadcrumbLanguage(currentLocale);
             }
 
             // Exit inline edit mode
             exitInlineEdit();
 
-            // Show success message
+            // Refresh translation list after save
+            const routeLocale = getCurrentLocale();
+            const refreshUrl = `/${routeLocale}/journal/${currentJournalCode}/page/${currentPageCode}`;
+            fetch(refreshUrl, {
+              headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            })
+              .then(r => r.json())
+              .then(pageData => {
+                updateTranslationsList(pageData.title, pageData.content);
+                updateLanguageSelectOptions(pageData.content);
+              })
+              .catch(() => {});
+
             alert(window.translations?.saveSuccess || 'Saved successfully');
           } else {
             alert(
