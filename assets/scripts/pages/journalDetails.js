@@ -496,6 +496,9 @@ document.addEventListener('DOMContentLoaded', function () {
   const pageLinks = document.querySelectorAll('.page-nav-link');
   const homeLink = document.querySelector('a[href*="app_journal_detail"]');
   const pageContent = document.getElementById('page-content');
+  const pageViewFields = document.getElementById('page-view-fields');
+  const pageHomeContent = document.getElementById('page-home-content');
+  const pageTitleView = document.getElementById('page-title-view');
   const pageBody = document.getElementById('page-body');
   const editButton = document.getElementById('edit-button');
 
@@ -534,10 +537,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
           const data = await response.json();
 
-          if (pageBody) {
-            const noContentText = window.journalDetailsData?.translations?.noContentAvailable || 'No content available';
-            pageBody.innerHTML = data.content?.[newLocale] || noContentText;
-          }
+          updatePageView(data, newLocale);
 
           history.pushState({}, '', pageUrl);
           document.documentElement.lang = newLocale;
@@ -682,10 +682,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (data.error) {
           pageBody.innerHTML = '<p class="text-danger">Page not found</p>';
         } else {
-          const noContentText = window.journalDetailsData?.translations?.noContentAvailable || 'No content available';
-          pageBody.innerHTML =
-            data.content[locale] ||
-            noContentText;
+          updatePageView(data, locale);
         }
         pageContent.style.display = 'block';
 
@@ -697,6 +694,21 @@ document.addEventListener('DOMContentLoaded', function () {
         pageBody.innerHTML = '<p class="text-danger">Error loading content</p>';
         pageContent.style.display = 'block';
       });
+  }
+
+  function updatePageView(data, locale) {
+    const noContentText = window.journalDetailsData?.translations?.noContentAvailable || 'No content available';
+
+    if (pageHomeContent) pageHomeContent.style.display = 'none';
+    if (pageViewFields) pageViewFields.style.display = 'block';
+
+    if (pageTitleView) {
+      pageTitleView.value = (data.title && (data.title[locale] || data.title['en'])) || '';
+    }
+
+    if (pageBody) {
+      pageBody.innerHTML = (data.content && data.content[locale]) ? data.content[locale] : noContentText;
+    }
   }
 
   function resetToHomeState() {
@@ -711,13 +723,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     hidePreviewButton();
 
-    pageBody.innerHTML = `
-      <div class="text-center py-5">
-        <i class="fas fa-home fa-3x text-primary mb-3"></i>
-        <h3>${window.translations?.welcomeBackoffice || 'Welcome to the journal management backoffice'}</h3>
-        <p class="text-muted">${window.translations?.selectPageFirst || 'Please select a page to edit first'}</p>
-      </div>
-    `;
+    if (pageViewFields) pageViewFields.style.display = 'none';
+    if (pageHomeContent) pageHomeContent.style.display = 'block';
+
     pageContent.style.display = 'block';
 
     resetTranslationsList();
@@ -786,10 +794,7 @@ document.addEventListener('DOMContentLoaded', function () {
           if (data.error) {
             pageBody.innerHTML = '<p class="text-danger">Page not found</p>';
           } else {
-            const noContentText = window.journalDetailsData?.translations?.noContentAvailable || 'No content available';
-            pageBody.innerHTML =
-              data.content[locale] ||
-              noContentText;
+            updatePageView(data, locale);
           }
           pageContent.style.display = 'block';
 
@@ -837,11 +842,7 @@ document.addEventListener('DOMContentLoaded', function () {
       return;
     }
 
-    // Get current page title and content
-    const activeLink = document.querySelector('.page-nav-link.active');
-    const pageTitle = activeLink
-      ? activeLink.textContent.trim()
-      : currentPageCode;
+    const pageTitle = (pageTitleView && pageTitleView.value) || currentPageCode;
     const currentContent = pageBody.innerHTML || '';
 
     // Populate inline edit form
@@ -1051,11 +1052,13 @@ document.addEventListener('DOMContentLoaded', function () {
           }
 
           if (data.success) {
-            // Update page content
             const { htmlContent, updatedTitle } = data;
             pageBody.innerHTML = htmlContent || newContent;
 
-            // Update page title in navigation and breadcrumb data
+            if (updatedTitle && pageTitleView) {
+              pageTitleView.value = updatedTitle;
+            }
+
             const activeLink = document.querySelector('.page-nav-link.active');
             if (activeLink && updatedTitle) {
               // Update the visible text

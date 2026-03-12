@@ -291,8 +291,17 @@
                             <div class="card-body">
                                 <!-- View Mode -->
                                 <div id="page-content" class="ck-content" style="display: block;">
-                                    <div id="page-body">
-                                        <!-- Default home content -->
+                                    <div id="page-view-fields" style="display: none;">
+                                        <div class="mb-3">
+                                            <label class="form-label text-primary fw-semibold">{{ 'journalDetails.page_title' | trans }}</label>
+                                            <input type="text" class="form-control" id="page-title-view" readonly>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label text-primary fw-semibold">{{ 'journalDetails.content' | trans }}</label>
+                                            <div id="page-body" class="form-control" style="height: auto; min-height: 200px;"></div>
+                                        </div>
+                                    </div>
+                                    <div id="page-home-content">
                                         <div class="text-center py-5">
                                             <i class="fas fa-home fa-3x text-primary mb-3"></i>
                                             <h3>{{ 'journalDetails.welcome_backoffice' | trans }}</h3>
