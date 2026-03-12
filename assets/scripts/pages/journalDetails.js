@@ -590,13 +590,29 @@ document.addEventListener('DOMContentLoaded', function () {
         await new Promise(r => setTimeout(r, 200));
       }
 
-      // Store the target locale for saving (don't change document.lang / route locale)
       editingLocale = lang;
 
-      // Clear page body and open inline edit with empty fields
+      // Fetch existing content for this language
+      let existingTitle = '';
+      let existingContent = '';
+      try {
+        const routeLocale = getCurrentLocale();
+        const pageUrl = `/${routeLocale}/journal/${currentJournalCode}/page/${currentPageCode}`;
+        const response = await fetch(pageUrl, {
+          headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          existingTitle = (data.title && data.title[lang]) || '';
+          existingContent = (data.content && data.content[lang]) || '';
+        }
+      } catch (error) {
+        console.error('Error fetching page data:', error);
+      }
+
       if (pageBody) pageBody.innerHTML = '';
 
-      pageTitleInline.value = '';
+      pageTitleInline.value = existingTitle;
       pageContent.style.display = 'none';
       inlineEditContent.style.display = 'block';
 
@@ -605,7 +621,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const editorPromise = initializeCKEditor('page-content-inline', placeholder);
         if (editorPromise) {
           await editorPromise;
-          setEditorContent('');
+          setEditorContent(existingContent);
           setTimeout(() => focusEditor(), 100);
         }
       } catch (error) {
