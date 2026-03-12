@@ -931,9 +931,7 @@ document.addEventListener('DOMContentLoaded', function () {
     isInlineEdit = true;
   }
 
-  // Function to exit inline edit mode
   function exitInlineEdit() {
-    // Destroy CKEditor instance
     destroyEditor().then(() => {
       const fallbackTextarea = document.getElementById('page-content-fallback');
       if (fallbackTextarea) {
@@ -956,10 +954,24 @@ document.addEventListener('DOMContentLoaded', function () {
       }
 
       isInlineEdit = false;
-      // Preserve editingLocale from sidebar language select;
-      // reset only if no language is explicitly selected
       if (sidebarLanguageSelect) {
         editingLocale = sidebarLanguageSelect.value;
+      }
+
+      // Reload page content to restore view after edit/cancel
+      if (currentPageCode && currentJournalCode) {
+        const displayLang = editingLocale || getCurrentLocale();
+        const routeLocale = getCurrentLocale();
+        const pageUrl = `/${routeLocale}/journal/${currentJournalCode}/page/${currentPageCode}`;
+        fetch(pageUrl, {
+          headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        })
+          .then(r => r.json())
+          .then(data => {
+            updatePageView(data, displayLang);
+            updateTranslationsList(data.title, data.content);
+          })
+          .catch(() => {});
       }
     });
   }
