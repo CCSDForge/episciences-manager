@@ -2,6 +2,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const saveButton = document.getElementById('saveSettings');
     const alertsContainer = document.getElementById('settings-alerts');
 
+    /**
+     * Escape HTML special characters to prevent XSS
+     */
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
     if (saveButton) {
         saveButton.addEventListener('click', function() {
         // Collect form data
@@ -48,12 +57,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (ok && data.success) {
                     showAlert('success', window.journalSettingsData.translations.saved);
                 } else {
-                    let errorMessage = data.message || window.journalSettingsData.translations.error;
+                    let errorMessage = escapeHtml(data.message || window.journalSettingsData.translations.error);
                     if (data.errors) {
-                        const errorDetails = Object.values(data.errors).join('<br>');
+                        const errorDetails = Object.values(data.errors).map(escapeHtml).join('<br>');
                         errorMessage += '<br><small>' + errorDetails + '</small>';
                     }
-                    showAlert('danger', errorMessage);
+                    showAlert('danger', errorMessage, true);
                     console.error('Validation errors:', data);
                 }
             })
@@ -141,11 +150,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
     /**
      * Show alert message
+     * @param {string} type - Alert type (success, danger, warning, info)
+     * @param {string} message - Message to display
+     * @param {boolean} isHtmlSafe - If true, message is already escaped and can contain safe HTML like <br>
      */
-    function showAlert(type, message) {
+    function showAlert(type, message, isHtmlSafe = false) {
+        const validTypes = ['success', 'danger', 'warning', 'info'];
+        const safeType = validTypes.includes(type) ? type : 'info';
+        const safeMessage = isHtmlSafe ? message : escapeHtml(message);
+
         alertsContainer.innerHTML = `
-            <div class="alert alert-${type} alert-dismissible fade show" role="alert">
-                ${message}
+            <div class="alert alert-${safeType} alert-dismissible fade show" role="alert">
+                ${safeMessage}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         `;

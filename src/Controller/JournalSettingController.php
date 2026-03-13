@@ -53,6 +53,13 @@ class JournalSettingController extends AbstractController
             );
         }
 
+        if (!$this->isGranted('REVIEW_VIEW', $review)) {
+            return new JsonResponse(
+                ['success' => false, 'message' => 'Access denied'],
+                Response::HTTP_FORBIDDEN
+            );
+        }
+
         $setting = $settingService->getSettingArray($review['rvid']);
 
         return new JsonResponse([

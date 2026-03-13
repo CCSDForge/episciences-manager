@@ -8,6 +8,7 @@ use App\Service\JournalSettingService;
 use App\Service\MarkdownService;
 use App\Service\ReviewManager;
 use App\Service\PageHierarchyService;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -18,6 +19,10 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class PageController extends AbstractController
 {
+    public function __construct(
+        private readonly LoggerInterface $logger
+    ) {
+    }
     // URL aliases mapping: URL slug => actual page_code in database
     private const PAGE_ALIASES = [
         'acknowledgements' => 'journal-acknowledgements',
@@ -38,6 +43,22 @@ final class PageController extends AbstractController
     #[Route('/journal/{code}/page/{pageTitle}', name: 'app_page_show', methods: ['GET'])]
     public function showPage(string $code, string $pageTitle, PageRepository $pageRepository, MarkdownService $markdownService, ReviewManager $reviewManager, PageHierarchyService $hierarchyService, JournalSettingService $settingService, Request $request): Response
     {
+        // Check permissions first
+        $review = $reviewManager->getReviewByCode($code);
+        if (!$review) {
+            if ($request->isXmlHttpRequest()) {
+                return new JsonResponse(['error' => 'Journal not found'], Response::HTTP_NOT_FOUND);
+            }
+            throw $this->createNotFoundException('Review not found');
+        }
+
+        if (!$this->isGranted('REVIEW_VIEW', $review)) {
+            if ($request->isXmlHttpRequest()) {
+                return new JsonResponse(['error' => 'Access denied'], Response::HTTP_FORBIDDEN);
+            }
+            throw $this->createAccessDeniedException('Access denied');
+        }
+
         // Check if there's an alias for this pageTitle
         $actualPageCode = self::PAGE_ALIASES[$pageTitle] ?? $pageTitle;
 
@@ -73,16 +94,6 @@ final class PageController extends AbstractController
             throw $this->createNotFoundException('Page not found');
         }
 
-        // For direct access, render the journal page with the current page preselected
-        // Get review and organize pages like in ReviewController
-        $review = $reviewManager->getReviewByCode($code);
-        if (!$review) {
-            throw $this->createNotFoundException('Review not found');
-        }
-
-        // Check permissions
-        $this->denyAccessUnlessGranted('REVIEW_VIEW', $review);
-
         // Get all pages for the journal
         $allPages = $pageRepository->findBy(['rvcode' => $code]);
         $organizedPages = $hierarchyService->organizePages($allPages, $code);
@@ -109,11 +120,25 @@ final class PageController extends AbstractController
         MarkdownService $markdownService,
         ReviewManager $reviewManager
     ): JsonResponse {
+        // Validate CSRF token
+        $token = $request->headers->get('X-CSRF-Token') ?? $request->query->get('_token');
+        if (!$this->isCsrfTokenValid('page-edit', $token)) {
+            return new JsonResponse(
+                ['success' => false, 'message' => 'Invalid CSRF token'],
+                Response::HTTP_FORBIDDEN
+            );
+        }
+
         $review = $reviewManager->getReviewByCode($code);
         if (!$review) {
             return new JsonResponse(['success' => false, 'message' => 'Journal not found'], 404);
         }
-        $this->denyAccessUnlessGranted('REVIEW_EDIT', $review);
+        if (!$this->isGranted('REVIEW_EDIT', $review)) {
+            return new JsonResponse(
+                ['success' => false, 'message' => 'Access denied'],
+                Response::HTTP_FORBIDDEN
+            );
+        }
 
         $actualPageCode = self::PAGE_ALIASES[$pageTitle] ?? $pageTitle;
 
@@ -150,9 +175,14 @@ final class PageController extends AbstractController
         try {
             $markdownContent = $markdownService->toMarkdown($htmlContent);
         } catch (\Throwable $e) {
+            $this->logger->error('Error converting content', [
+                'exception' => $e->getMessage(),
+                'code' => $code,
+                'pageTitle' => $pageTitle,
+            ]);
             return new JsonResponse([
                 'success' => false,
-                'message' => 'Error converting content: ' . $e->getMessage()
+                'message' => 'Error converting content'
             ], 500);
         }
 
@@ -184,9 +214,14 @@ final class PageController extends AbstractController
                 'updatedTitle' => $title !== null ? ($page->getTitle()[$locale] ?? '') : null
             ]);
         } catch (\Throwable $e) {
+            $this->logger->error('Error saving page', [
+                'exception' => $e->getMessage(),
+                'code' => $code,
+                'pageTitle' => $pageTitle,
+            ]);
             return new JsonResponse([
                 'success' => false,
-                'message' => 'Error saving page: ' . $e->getMessage()
+                'message' => 'Error saving page'
             ], 500);
         }
     }

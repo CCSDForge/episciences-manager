@@ -1035,6 +1035,7 @@ document.addEventListener('DOMContentLoaded', function () {
         headers: {
           'Content-Type': 'application/json',
           'X-Requested-With': 'XMLHttpRequest',
+          'X-CSRF-Token': window.journalDetailsData?.csrfToken || '',
         },
         body: JSON.stringify({
           content: newContent,

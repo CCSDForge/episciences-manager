@@ -48,7 +48,7 @@ final class ReviewVoter extends Voter
     }
 
     private const VIEW_ROLES = ['epiadmin', 'administrator', 'chief_editor', 'secretary'];
-    private const EDIT_ROLES = ['epiadmin'];
+    private const EDIT_ROLES = ['epiadmin', 'administrator', 'chief_editor', 'secretary'];
 
     private function canViewDetail(User $user, int $rvid): bool
     {
