@@ -47,6 +47,7 @@ journalSettings:
   save: "Sauvegarder"
   saved: "Paramètres sauvegardés avec succès"
   error: "Erreur lors de la sauvegarde"
+  readonly_info: "Vous pouvez consulter ces paramètres, mais seul epiadmin peut les modifier."
 
   common:
     back: "Retour"

@@ -106,9 +106,15 @@ final class PageController extends AbstractController
         Request $request,
         PageRepository $pageRepository,
         EntityManagerInterface $entityManager,
-        MarkdownService $markdownService
+        MarkdownService $markdownService,
+        ReviewManager $reviewManager
     ): JsonResponse {
-        // Check if there's an alias for this pageTitle
+        $review = $reviewManager->getReviewByCode($code);
+        if (!$review) {
+            return new JsonResponse(['success' => false, 'message' => 'Journal not found'], 404);
+        }
+        $this->denyAccessUnlessGranted('REVIEW_EDIT', $review);
+
         $actualPageCode = self::PAGE_ALIASES[$pageTitle] ?? $pageTitle;
 
         $page = $pageRepository->findOneBy([

@@ -142,6 +142,7 @@ journalSettings:
   save: "Save"
   saved: "Settings saved successfully"
   error: "Error saving settings"
+  readonly_info: "You can view these settings, but only epiadmin can modify them."
 
   common:
     back: "Back"

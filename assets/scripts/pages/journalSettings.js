@@ -2,7 +2,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const saveButton = document.getElementById('saveSettings');
     const alertsContainer = document.getElementById('settings-alerts');
 
-    saveButton.addEventListener('click', function() {
+    if (saveButton) {
+        saveButton.addEventListener('click', function() {
         // Collect form data
         const data = {
             api_domain: document.getElementById('api_domain').value,
@@ -65,7 +66,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 saveButton.disabled = false;
                 saveButton.innerHTML = '<i class="fas fa-save me-2"></i>' + window.journalSettingsData.translations.save;
             });
-    });
+        });
+    }
 
     /**
      * Collect homepage options data (boolean checkboxes only)

@@ -47,11 +47,13 @@ final class ReviewVoter extends Voter
         return false;
     }
 
+    private const VIEW_ROLES = ['epiadmin', 'administrator', 'chief_editor', 'secretary'];
+    private const EDIT_ROLES = ['epiadmin'];
+
     private function canViewDetail(User $user, int $rvid): bool
     {
-        //only epiadmin can see the details
         foreach ($user->getRolesDetails() as $role) {
-            if ($role['ROLEID'] === 'epiadmin' && (int)$role['RVID'] === $rvid) {
+            if (in_array($role['ROLEID'], self::VIEW_ROLES, true) && (int)$role['RVID'] === $rvid) {
                 return true;
             }
         }
@@ -60,9 +62,8 @@ final class ReviewVoter extends Voter
 
     private function canEdit(User $user, int $rvid): bool
     {
-        //Only epiadmin can edit
         foreach ($user->getRolesDetails() as $role) {
-            if ($role['ROLEID'] === 'epiadmin' && (int)$role['RVID'] === $rvid) {
+            if (in_array($role['ROLEID'], self::EDIT_ROLES, true) && (int)$role['RVID'] === $rvid) {
                 return true;
             }
         }

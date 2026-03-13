@@ -23,7 +23,7 @@
 
           <div id="settings-alerts"></div>
 
-          <div class="d-flex flex-column gap-3">
+          <div id="journal-settings-form" class="d-flex flex-column gap-3">
 
               {# ===== API Settings ===== #}
               <div class="card">
@@ -316,12 +316,18 @@
           </div>
 
           {# ===== Save Button ===== #}
-          <div class="d-flex justify-content-center mt-4">
-              <button type="button" class="btn btn-primary btn-lg" id="saveSettings">
-                  <i class="fas fa-save me-2"></i>
-                  {{ 'journalSettings.save'|trans }}
-              </button>
-          </div>
+          {% if canEditSettings %}
+              <div class="d-flex justify-content-center mt-4">
+                  <button type="button" class="btn btn-primary btn-lg" id="saveSettings">
+                      <i class="fas fa-save me-2"></i>
+                      {{ 'journalSettings.save'|trans }}
+                  </button>
+              </div>
+          {% else %}
+              <div class="alert alert-info mt-4 text-center">
+                  {{ 'journalSettings.readonly_info'|trans|default('You can view these settings but only epiadmin can modify them.') }}
+              </div>
+          {% endif %}
       </div>
   {% endblock %}
 
@@ -337,6 +343,21 @@
                   error: '{{ 'journalSettings.error'|trans }}'
               }
           };
+
+          {% if not canEditSettings %}
+          document.addEventListener('DOMContentLoaded', function () {
+              var container = document.getElementById('journal-settings-form');
+              if (!container) { return; }
+              container.querySelectorAll('input, select, textarea, button').forEach(function (el) {
+                  // keep back button and potential links active
+                  if (el.id === 'saveSettings') {
+                      el.disabled = true;
+                  } else if (el.type !== 'button' && el.type !== 'submit') {
+                      el.disabled = true;
+                  }
+              });
+          });
+          {% endif %}
       </script>
       {{ encore_entry_script_tags('journalSettingsJs') }}
   {% endblock %}

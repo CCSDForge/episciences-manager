@@ -23,7 +23,6 @@ class JournalSettingController extends AbstractController
             throw $this->createNotFoundException('Journal not found');
         }
 
-        // Check if user has permission to view this specific review
         $this->denyAccessUnlessGranted('REVIEW_VIEW', $review);
 
         $setting = $settingService->getSettingArray($review['rvid']);
@@ -35,6 +34,7 @@ class JournalSettingController extends AbstractController
             'homepageOptions' => $settingService->getHomepageOptions(),
             'menuOptions' => $settingService->getMenuOptions(),
             'statsOptions' => $settingService->getStatisticsOptions(),
+            'canEditSettings' => $this->isGranted('REVIEW_EDIT', $review),
         ]);
     }
 
@@ -85,6 +85,8 @@ class JournalSettingController extends AbstractController
                 Response::HTTP_NOT_FOUND
             );
         }
+
+        $this->denyAccessUnlessGranted('REVIEW_EDIT', $review);
 
         $data = json_decode($request->getContent(), true);
 
