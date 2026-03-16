@@ -38,7 +38,7 @@ final class ResourcesController extends AbstractController
         ]);
     }
 
-    #[Route('/journal/{code}/resources/upload', name: 'app_resources_upload', methods: ['POST'], requirements: ['code' => '[\w\-]+'])]
+    #[Route('/journal/{code}/resources/upload', name: 'app_resources_upload', requirements: ['code' => '[\w\-]+'], methods: ['POST'])]
     public function upload(Request $request, string $code, SluggerInterface $slugger, UploadDirectoryService $dirs): JsonResponse
     {
         // Debug logging
@@ -49,8 +49,8 @@ final class ResourcesController extends AbstractController
         /** @var UploadedFile|null $uploadedFile */
         $uploadedFile = $request->files->get('file');
         $overwrite = $request->request->getBoolean('overwrite', false);
-        $action = $request->request->get('action', null); // 'replace', 'rename', or 'custom'
-        $customFileName = $request->request->get('customFileName', null);
+        $action = $request->request->get('action'); // 'replace', 'rename', or 'custom'
+        $customFileName = $request->request->get('customFileName');
 
         if (!$uploadedFile) {
             error_log('No file uploaded in request');
@@ -200,7 +200,7 @@ final class ResourcesController extends AbstractController
         }
     }
 
-    #[Route('/journal/{code}/resources/{filename}/delete', name: 'app_resources_delete', methods: ['DELETE'], requirements: ['code' => '[\w\-]+'])]
+    #[Route('/journal/{code}/resources/{filename}/delete', name: 'app_resources_delete', requirements: ['code' => '[\w\-]+'], methods: ['DELETE'])]
     public function delete(string $code, string $filename, UploadDirectoryService $dirs): JsonResponse
     {
         $filePath = $dirs->getUploadDirectory($code) . '/' . $filename;
@@ -228,7 +228,7 @@ final class ResourcesController extends AbstractController
         }
     }
 
-    #[Route('/journal/{code}/resources/list', name: 'app_resources_list', methods: ['GET'], requirements: ['code' => '[\w\-]+'])]
+    #[Route('/journal/{code}/resources/list', name: 'app_resources_list', requirements: ['code' => '[\w\-]+'], methods: ['GET'])]
     public function list(string $code, UploadDirectoryService $dirs): JsonResponse
     {
         $files = $this->getFilesForJournal($code, $dirs);
@@ -239,7 +239,7 @@ final class ResourcesController extends AbstractController
         ]);
     }
 
-    #[Route('/journal/{code}/resources/check-exists', name: 'app_resources_check_exists', methods: ['POST'], requirements: ['code' => '[\w\-]+'])]
+    #[Route('/journal/{code}/resources/check-exists', name: 'app_resources_check_exists', requirements: ['code' => '[\w\-]+'], methods: ['POST'])]
     public function checkExists(Request $request, string $code, UploadDirectoryService $dirs, SluggerInterface $slugger): JsonResponse
     {
         $filename = $request->request->get('filename');
@@ -270,7 +270,7 @@ final class ResourcesController extends AbstractController
         ]);
     }
 
-    #[Route('/journal/{code}/resources/{filename}/check-usage', name: 'app_resources_check_usage', methods: ['GET'], requirements: ['code' => '[\w\-]+'])]
+    #[Route('/journal/{code}/resources/{filename}/check-usage', name: 'app_resources_check_usage', requirements: ['code' => '[\w\-]+'], methods: ['GET'])]
     public function checkUsage(string $code, string $filename, ResourceUsageService $usageService): JsonResponse
     {
         try {

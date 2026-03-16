@@ -71,7 +71,7 @@ final class PageController extends AbstractController
         // If it's an AJAX request, return JSON
         if ($request->isXmlHttpRequest()) {
             // If page doesn't exist, return empty content
-            if (!$page) {
+            if (!$page instanceof \App\Entity\Page) {
                 return new JsonResponse([
                     'title' => ['en' => ucwords(str_replace('-', ' ', $actualPageCode)), 'fr' => ucwords(str_replace('-', ' ', $actualPageCode))],
                     'content' => ['en' => '', 'fr' => ''],
@@ -90,7 +90,7 @@ final class PageController extends AbstractController
             ]);
         }
 
-        if (!$page) {
+        if (!$page instanceof \App\Entity\Page) {
             throw $this->createNotFoundException('Page not found');
         }
 
@@ -150,7 +150,7 @@ final class PageController extends AbstractController
         $data = json_decode($request->getContent(), true);
 
         // If page doesn't exist, create it
-        if (!$page) {
+        if (!$page instanceof \App\Entity\Page) {
             $page = new \App\Entity\Page();
             $page->setRvcode($code);
             $page->setPageCode(strtolower($actualPageCode));

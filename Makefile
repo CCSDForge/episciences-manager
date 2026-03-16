@@ -21,6 +21,7 @@ NPX            ?= npx
 CNTR_NAME_HTTPD?= httpd-manager
 CNTR_NAME_PHP  ?= php-fpm-manager
 CNTR_APP_DIR   ?= /var/www/htdocs
+CNTR_USER_ID   ?= $(shell id -u):$(shell id -g)
 
 # MySQL connections (local mysql client)
 MYSQL_CONNECT_EPISCIENCES ?= mysql -u root -proot -h 127.0.0.1 -P 33060 episciences
@@ -57,7 +58,7 @@ help: ## Display available commands list
 	| awk 'BEGIN {FS=":.*?## "}; {printf "  $(BOLD)%-22s$(NC) %s\n", $$1, $$2}'
 	@echo ""
 	@echo -e "$(YELLOW)Code Quality / Testing Commands:$(NC)"
-	@grep -E '^(lint|lint-fix|lint-php|lint-php-file|check-all|fix-all|test|test-php|test-e2e|format|format-check):.*?## .*$$' $(MAKEFILE_LIST) \
+	@grep -E '^(lint|lint-fix|lint-php|lint-php-file|phpstan|rector|check-all|fix-all|test|test-php|test-e2e|format|format-check):.*?## .*$$' $(MAKEFILE_LIST) \
 	| awk 'BEGIN {FS=":.*?## "}; {printf "  $(BOLD)%-22s$(NC) %s\n", $$1, $$2}'
 	@echo ""
 	@echo -e "$(PURPLE)Container Management:$(NC)"
@@ -153,7 +154,7 @@ can-i-use-update: ## Update Browserslist (host, when caniuse-lite is outdated)
 # ==========================
 #   CODE QUALITY / TESTS (HOST)
 # ==========================
-.PHONY: test test-e2e test-php lint lint-fix format format-check lint-php lint-php-file check-all fix-all
+.PHONY: test test-e2e test-php lint lint-fix format format-check lint-php lint-php-file phpstan rector check-all fix-all
 
 test: ## Run JavaScript unit tests
 	yarn test
@@ -195,6 +196,24 @@ lint-php-file: ## Check PHP syntax of a file (make lint-php-file FILE=src/file.p
 		echo -e "$(RED)❌ Usage: make lint-php-file FILE=path/to/file.php$(NC)"; \
 		exit 2; \
 	fi
+
+phpstan: ## Run PHPStan static analysis (make phpstan [TARGET=path/to/file] [LEVEL=X])
+	@echo -e "$(BLUE)Ensuring PHPStan cache directory exists and is writable...$(NC)"
+	@$(DOCKER_COMPOSE) --env-file .env.local exec -u 0:0 $(CNTR_NAME_PHP) mkdir -p /tmp/phpstan
+	@$(DOCKER_COMPOSE) --env-file .env.local exec -u 0:0 $(CNTR_NAME_PHP) chmod -R 777 /tmp/phpstan
+	@echo -e "$(BLUE)🔍 Running PHPStan static analysis...$(NC)"
+	@$(DOCKER_COMPOSE) --env-file .env.local exec -u $(CNTR_USER_ID) -w $(CNTR_APP_DIR) $(CNTR_NAME_PHP) \
+		./vendor/bin/phpstan analyse --memory-limit=1G $(if $(LEVEL),--level $(LEVEL)) $(TARGET)
+	@echo -e "$(GREEN)✅ PHPStan analysis completed$(NC)"
+
+rector: ## Run Rector refactoring tool (make rector [TARGET=path/to/file] [DRY_RUN=1])
+	@echo -e "$(BLUE)Ensuring Rector cache directories exist and are writable...$(NC)"
+	@$(DOCKER_COMPOSE) --env-file .env.local exec -u 0:0 $(CNTR_NAME_PHP) mkdir -p $(CNTR_APP_DIR)/cache/rector /tmp/cache
+	@$(DOCKER_COMPOSE) --env-file .env.local exec -u 0:0 $(CNTR_NAME_PHP) chmod -R 777 $(CNTR_APP_DIR)/cache/rector /tmp/cache
+	@echo -e "$(BLUE)🔍 Running Rector...$(NC)"
+	@$(DOCKER_COMPOSE) --env-file .env.local exec -u $(CNTR_USER_ID) -w $(CNTR_APP_DIR) $(CNTR_NAME_PHP) \
+		./vendor/bin/rector process $(TARGET) $(if $(DRY_RUN),--dry-run)
+	@echo -e "$(GREEN)✅ Rector completed$(NC)"
 
 check-all: ## Run all checks (PHP, JS, tests)
 	@echo -e "🚀 Running all quality checks..."
@@ -422,7 +441,7 @@ deploy-tag: ## Deploy a tag (make deploy-tag TAG=v1.0.0) (host-only)
 .PHONY: help up down restart logs ps build clean \
 	load-db-manager load-db-auth \
 	composer-install composer-update yarn-build yarn-encore-production can-i-use-update \
-	test test-e2e test-php lint lint-fix format format-check lint-php lint-php-file check-all fix-all \
+	test test-e2e test-php lint lint-fix format format-check lint-php lint-php-file phpstan rector check-all fix-all \
 	restart-httpd restart-php enter-container-php enter-container-httpd \
 	ssl-certs ssl-clean preprod preprod-no-ssl preprod-ci preprod-ci-no-ssl \
 	composer-install-prod cache-clear cache-warmup deploy-prod deploy deploy-branch deploy-tag

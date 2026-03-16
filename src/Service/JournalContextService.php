@@ -35,7 +35,7 @@ class JournalContextService
         }
         
         // Priority 3: Extract from HTTP host (subdomain)
-        if ($request) {
+        if ($request instanceof \Symfony\Component\HttpFoundation\Request) {
             $host = $request->getHost();
             if (preg_match('/^([a-zA-Z0-9-]+)\.episciences\.org$/', $host, $matches)) {
                 $this->currentJournalCode = $matches[1];

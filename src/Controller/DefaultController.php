@@ -32,8 +32,7 @@ class DefaultController extends AbstractController
         $target = urlencode($secureBaseUrl . '/' . $locale . '/force');
 
         // Construct the CAS login URL with the service parameter
-        $url = 'https://' . 'cas-preprod.ccsd.cnrs.fr'
-            . '/cas/login?service=' . $target;
+        $url = 'https://cas-preprod.ccsd.cnrs.fr/cas/login?service=' . $target;
 
         $secureCasUrl = $this->loadHttpsOrHttp($url);
         $logger->info('Redirecting to CAS login URL', ['url' => $secureCasUrl]);
@@ -95,17 +94,13 @@ class DefaultController extends AbstractController
 
         //dd('User before CAS login:', $user);
         //dump('User:', $this->getUser());
-        $logger->info('User after CAS login', ['user' => $user ? $user->getUserIdentifier() : 'null']);
+        $logger->info('User after CAS login', ['user' => $user instanceof \Symfony\Component\Security\Core\User\UserInterface ? $user->getUserIdentifier() : 'null']);
 
         //return $this->redirectToRoute('user_profile');
         return $this->redirectToRoute('app_home');
 
     }
 
-    /**
-     * @param string $url
-     * @return string
-     */
     private function loadHttpsOrHttp(string $url): string
     {
         try {
@@ -132,7 +127,7 @@ class DefaultController extends AbstractController
     {
         $logger->info('Home page accessed');
         $user = $this->getUser();
-        if ($user) {
+        if ($user instanceof \Symfony\Component\Security\Core\User\UserInterface) {
             $logger->info('User is authenticated', ['user' => $user->getUserIdentifier()]);
         } else {
             $logger->warning('User is not authenticated');
@@ -155,7 +150,7 @@ class DefaultController extends AbstractController
             'logout_success' => $showLogoutMessage,
             'reviews' => $reviews,
             'user' => $user,
-            'isAuthenticated' => $user !== null
+            'isAuthenticated' => $user instanceof \Symfony\Component\Security\Core\User\UserInterface
         ]);
     }
 }

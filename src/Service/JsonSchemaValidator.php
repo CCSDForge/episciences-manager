@@ -3,8 +3,7 @@
 namespace App\Service;
 
 use Swaggest\JsonSchema\Schema;
-use Swaggest\JsonSchema\Exception\ValidationException;
-use Swaggest\JsonSchema\Exception\TypeException;
+use Swaggest\JsonSchema\Exception as JsonSchemaException;
 
 class JsonSchemaValidator
 {
@@ -59,12 +58,7 @@ class JsonSchemaValidator
                 'valid' => true,
                 'errors' => [],
             ];
-        } catch (ValidationException $e) {
-            return [
-                'valid' => false,
-                'errors' => [$e->getMessage()],
-            ];
-        } catch (TypeException $e) {
+        } catch (JsonSchemaException $e) {
             return [
                 'valid' => false,
                 'errors' => [$e->getMessage()],

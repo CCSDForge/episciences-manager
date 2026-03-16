@@ -74,7 +74,7 @@ class PageHierarchyService
             }
 
             // Only create container if it has at least one existing child or nested container
-            if (!empty($childrenInfo) || $this->hasNestedContainersWithChildren($pageConfig, $pagesByCode)) {
+            if ($childrenInfo !== [] || $this->hasNestedContainersWithChildren($pageConfig, $pagesByCode)) {
                 // Create a virtual page object for the container
                 $containerPage = new \stdClass();
                 $containerPage->title = $pageConfig['title'] ?? 'Container';
