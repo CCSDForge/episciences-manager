@@ -34,7 +34,7 @@ class JournalSettingController extends AbstractController
             'homepageOptions' => $settingService->getHomepageOptions(),
             'menuOptions' => $settingService->getMenuOptions(),
             'statsOptions' => $settingService->getStatisticsOptions(),
-            'canEditSettings' => $this->isGranted('REVIEW_EDIT', $review),
+            'canEditSettings' => $this->isGranted('REVIEW_EDIT_SETTINGS', $review),
         ]);
     }
 
@@ -93,7 +93,7 @@ class JournalSettingController extends AbstractController
             );
         }
 
-        $this->denyAccessUnlessGranted('REVIEW_EDIT', $review);
+        $this->denyAccessUnlessGranted('REVIEW_EDIT_SETTINGS', $review);
 
         $data = json_decode($request->getContent(), true);
 
