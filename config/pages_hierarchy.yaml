@@ -27,7 +27,6 @@ page_hierarchies:
           - "reviewers-board"
           - "former-members"
           - "operating-charter-board"
-          - "test-board"
       - title:
           en: "Publish"
           fr: "Publier"
@@ -45,10 +44,11 @@ page_hierarchies:
           - "for-reviewers"
           - "for-conference-organisers"
           - "for-submissions-committee"
+          - "proposing-special-issues"
       - code: "credits"
         order: 4
       - code: "custom-page"
-        order: 4
+        order: 5
       - code: "News"
         order: 6
 
