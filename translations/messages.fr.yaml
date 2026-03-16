@@ -104,9 +104,11 @@ journalSettings:
     specialIssuesRender: "Numéros spéciaux"
     sectionsRender: "Sections"
     newsRender: "Actualités"
+    authorsRender: "Auteurs"
     journalIndexingRender: "Indexation du journal"
     journalAcknowledgementsRender: "Remerciements"
     journalForReviewersRender: "Pour les relecteurs"
+    journalEthicalCharterRender: "Charte éthique"
     journalForConferenceOrganisersRender: "Pour les organisateurs de conférence"
 
   statistics:

@@ -169,8 +169,11 @@ class PageHierarchyService
     {
         $codes = [];
         foreach ($config as $pageConfig) {
-            // Only add code if it's not a container
-            if (!isset($pageConfig['type']) || $pageConfig['type'] !== 'container') {
+            if ($pageConfig === null) {
+                continue;
+            }
+            // Only add code if it's not a container and code is set
+            if ((!isset($pageConfig['type']) || $pageConfig['type'] !== 'container') && !empty($pageConfig['code'])) {
                 $codes[] = $pageConfig['code'];
             }
             if (isset($pageConfig['children'])) {
@@ -184,6 +187,9 @@ class PageHierarchyService
     {
         $codes = [];
         foreach ($children as $child) {
+            if ($child === null) {
+                continue;
+            }
             if (is_array($child)) {
                 // Nested container - recursively extract codes
                 if (isset($child['children'])) {

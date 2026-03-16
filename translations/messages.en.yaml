@@ -199,9 +199,11 @@ journalSettings:
     specialIssuesRender: "Special Issues"
     sectionsRender: "Sections"
     newsRender: "News"
+    authorsRender: "Authors"
     journalIndexingRender: "Journal Indexing"
     journalAcknowledgementsRender: "Acknowledgements"
     journalForReviewersRender: "For Reviewers"
+    journalEthicalCharterRender: "Ethical Charter"
     journalForConferenceOrganisersRender: "For Conference Organizers"
 
   statistics:
