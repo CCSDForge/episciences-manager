@@ -154,7 +154,9 @@ final class PageController extends AbstractController
             $page = new \App\Entity\Page();
             $page->setRvcode($code);
             $page->setPageCode(strtolower($actualPageCode));
-            $page->setUid($this->getUser()?->getUid() ?? 0);
+            /** @var \App\Entity\User|null $user */
+            $user = $this->getUser();
+            $page->setUid($user?->getUid() ?? 0);
             $page->setTitle([]);
             $page->setContent([]);
             $page->setVisibility(['public']);
@@ -187,12 +189,12 @@ final class PageController extends AbstractController
         }
 
         // Save markdown per locale
-        $currentContent = $page->getContent() ?? [];
+        $currentContent = $page->getContent();
         $currentContent[$locale] = $markdownContent;
         $page->setContent($currentContent);
 
         if ($title !== null) {
-            $currentTitle = $page->getTitle() ?? [];
+            $currentTitle = $page->getTitle();
             $currentTitle[$locale] = $title;
             $page->setTitle($currentTitle);
         }

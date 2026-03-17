@@ -18,6 +18,9 @@ class ReviewRepository extends ServiceEntityRepository
         parent::__construct($registry, Review::class);
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function findAllForList(): array
     {
         return $this->createQueryBuilder('r')
@@ -43,6 +46,8 @@ class ReviewRepository extends ServiceEntityRepository
 
     /**
      * Find all reviews that are active and have the new front switched on and not the default rvid (0).
+     *
+     * @return array<int, array<string, mixed>>
      */
     public function findActiveNewFrontReviews(): array
     {

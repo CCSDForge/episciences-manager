@@ -70,7 +70,7 @@ class MarkdownService
             {
                 // Check if this img is inside a figure - if so, skip it (let figure converter handle it)
                 $parent = $element->getParent();
-                if ($parent && strtolower($parent->getTagName() ?? '') === 'figure') {
+                if ($parent && strtolower($parent->getTagName()) === 'figure') {
                     // Return the original HTML to be preserved by the figure converter
                     $attributes = [];
                     if ($element->getAttribute('src') !== '' && $element->getAttribute('src') !== '0') {
@@ -93,12 +93,12 @@ class MarkdownService
                 }
                 
                 // Standalone image - check if it has sizing attributes/styles
-                $src = trim($element->getAttribute('src') ?? '');
+                $src = trim($element->getAttribute('src'));
                 if ($src === '') {
                     return '';
                 }
 
-                $alt = $element->getAttribute('alt') ?? '';
+                $alt = $element->getAttribute('alt');
                 if ($alt === '') {
                     // fallback: use filename if alt is empty
                     $path = parse_url($src, PHP_URL_PATH) ?? '';
@@ -108,10 +108,10 @@ class MarkdownService
 
                 // Check if image has resizing attributes or is styled (from CKEditor)
                 $hasResizing = false;
-                $class = $element->getAttribute('class') ?? '';
-                $style = $element->getAttribute('style') ?? '';
-                $width = $element->getAttribute('width') ?? '';
-                $height = $element->getAttribute('height') ?? '';
+                $class = $element->getAttribute('class');
+                $style = $element->getAttribute('style');
+                $width = $element->getAttribute('width');
+                $height = $element->getAttribute('height');
                 
                 // If image has sizing info (class image_resized, width/height attrs, or sizing styles)
                 if (strpos($class, 'image_resized') !== false || 
@@ -162,6 +162,9 @@ class MarkdownService
     /**
      * Convert an array of markdown content to HTML
      * Maintains the same array structure but converts content values
+     *
+     * @param array<string, string> $content
+     * @return array<string, string>
      */
     public function convertContentArray(array $content): array
     {
@@ -179,6 +182,9 @@ class MarkdownService
     /**
      * Convert an array of HTML content to Markdown
      * Maintains the same array structure but converts content values
+     *
+     * @param array<string, string> $htmlContent
+     * @return array<string, string>
      */
     public function convertContentArrayToMarkdown(array $htmlContent): array
     {

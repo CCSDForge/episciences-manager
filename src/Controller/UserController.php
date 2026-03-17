@@ -26,8 +26,9 @@ class UserController extends AbstractController
         dump($roles);
 
         $logger->info('Attributs utilisateur CAS', $attributes);
+        /** @var \App\Entity\User|null $user */
         $user = $this->getUser();
-        $rolesDetails = $user->getRolesDetails();
+        $rolesDetails = $user?->getRolesDetails() ?? [];
         //$logger->info('Rôles utilisateur', $rolesDetails);
 
         // Passer tous les attributs au template

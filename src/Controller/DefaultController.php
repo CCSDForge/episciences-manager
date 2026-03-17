@@ -41,7 +41,7 @@ class DefaultController extends AbstractController
     }
 
     #[Route('/logout', name:'logout', methods: ['GET'])]
-    public function logout(Request $request, LoggerInterface $logger, TranslatorInterface $translator) {
+    public function logout(Request $request, LoggerInterface $logger, TranslatorInterface $translator): RedirectResponse {
         $logger->info('Logout action triggered');
 
         // Nettoyer la session Symfony

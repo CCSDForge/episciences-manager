@@ -74,6 +74,9 @@ class JournalSettingService
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getDefaultSetting(): array
     {
         return [
