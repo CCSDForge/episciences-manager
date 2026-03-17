@@ -29,8 +29,6 @@ class ReviewRepository extends ServiceEntityRepository
 
     /**
      * Create a QueryBuilder for active reviews with new front switched on.
-     *
-     * @return QueryBuilder
      */
     public function findActiveNewFrontReviewsQuery(): QueryBuilder
     {
@@ -45,8 +43,6 @@ class ReviewRepository extends ServiceEntityRepository
 
     /**
      * Find all reviews that are active and have the new front switched on and not the default rvid (0).
-     *
-     * @return array
      */
     public function findActiveNewFrontReviews(): array
     {
@@ -59,7 +55,6 @@ class ReviewRepository extends ServiceEntityRepository
     /**
      * Find a review by code or name (case insensitive).
      *
-     * @param string $search
      * @return Review[] Returns an array of Review objects
      */
     public function findByCodeOrName(string $search): array

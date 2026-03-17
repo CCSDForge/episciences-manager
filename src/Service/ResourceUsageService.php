@@ -29,7 +29,7 @@ readonly class ResourceUsageService
         foreach ($pages as $page) {
             $foundInContent = $this->searchInPageContent($page, $filename, $rvcode);
 
-            if (!empty($foundInContent)) {
+            if ($foundInContent !== []) {
                 $usage[] = [
                     'page_code' => $page->getPageCode(),
                     'title' => $page->getTitle(),
@@ -43,11 +43,6 @@ readonly class ResourceUsageService
 
     /**
      * Search for resource references in page content
-     *
-     * @param Page $page
-     * @param string $filename
-     * @param string $rvcode
-     * @return array
      */
     private function searchInPageContent(Page $page, string $filename, string $rvcode): array
     {
@@ -105,9 +100,6 @@ readonly class ResourceUsageService
 
     /**
      * Get a human-readable description of the pattern type
-     *
-     * @param int $patternIndex
-     * @return string
      */
     private function getPatternDescription(int $patternIndex): string
     {
@@ -129,17 +121,13 @@ readonly class ResourceUsageService
 
     /**
      * Get a summary of resource usage
-     *
-     * @param string $filename
-     * @param string $rvcode
-     * @return array
      */
     public function getResourceUsageSummary(string $filename, string $rvcode): array
     {
         $usage = $this->findResourceUsage($filename, $rvcode);
 
         return [
-            'inUse' => !empty($usage),
+            'inUse' => $usage !== [],
             'pageCount' => count($usage),
             'pages' => array_map(function($page) {
                 return [

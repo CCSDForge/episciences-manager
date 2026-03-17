@@ -11,12 +11,11 @@ final class ReviewVoter extends Voter
 {
     public const VIEW = 'REVIEW_VIEW';
     public const EDIT = 'REVIEW_EDIT';
+    public const EDIT_SETTINGS = 'REVIEW_EDIT_SETTINGS';
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        // replace with your own logic
-        // https://symfony.com/doc/current/security/voters.html
-        return in_array($attribute, [self::EDIT, self::VIEW])
+        return in_array($attribute, [self::VIEW, self::EDIT, self::EDIT_SETTINGS])
             && (is_array($subject) || $subject instanceof Review);
     }
 
@@ -37,21 +36,25 @@ final class ReviewVoter extends Voter
             return false;
         }
 
-        // ... (check conditions and return true to grant permission) ...
         switch ($attribute) {
             case self::VIEW:
                 return $this->canViewDetail($user, $rvid);
             case self::EDIT:
                 return $this->canEdit($user, $rvid);
+            case self::EDIT_SETTINGS:
+                return $this->canEditSettings($user, $rvid);
         }
         return false;
     }
 
+    private const VIEW_ROLES = ['epiadmin', 'administrator', 'chief_editor', 'secretary'];
+    private const EDIT_ROLES = ['epiadmin', 'administrator', 'chief_editor', 'secretary'];
+    private const EDIT_SETTINGS_ROLES = ['epiadmin'];
+
     private function canViewDetail(User $user, int $rvid): bool
     {
-        //only epiadmin can see the details
         foreach ($user->getRolesDetails() as $role) {
-            if ($role['ROLEID'] === 'epiadmin' && (int)$role['RVID'] === $rvid) {
+            if (in_array($role['ROLEID'], self::VIEW_ROLES, true) && (int)$role['RVID'] === $rvid) {
                 return true;
             }
         }
@@ -60,9 +63,18 @@ final class ReviewVoter extends Voter
 
     private function canEdit(User $user, int $rvid): bool
     {
-        //Only epiadmin can edit
         foreach ($user->getRolesDetails() as $role) {
-            if ($role['ROLEID'] === 'epiadmin' && (int)$role['RVID'] === $rvid) {
+            if (in_array($role['ROLEID'], self::EDIT_ROLES, true) && (int)$role['RVID'] === $rvid) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private function canEditSettings(User $user, int $rvid): bool
+    {
+        foreach ($user->getRolesDetails() as $role) {
+            if (in_array($role['ROLEID'], self::EDIT_SETTINGS_ROLES, true) && (int)$role['RVID'] === $rvid) {
                 return true;
             }
         }

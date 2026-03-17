@@ -36,17 +36,19 @@ page_hierarchies:
           - "ethical-charter"
           - title:
               en: "For authors"
-              fr: "Pour les auteurs"
+              fr: "Pour les auteurs/autrices"
             type: "container"
             children:
               - "prepare-submission"
               - "editorial-workflow"
           - "for-reviewers"
           - "for-conference-organisers"
+          - "for-submissions-committee"
+          - "proposing-special-issues"
       - code: "credits"
         order: 4
       - code: "custom-page"
-        order: 4
+        order: 5
       - code: "News"
         order: 6
 

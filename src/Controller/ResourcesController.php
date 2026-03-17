@@ -33,19 +33,19 @@ final class ResourcesController extends AbstractController
 
     private const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
-    #[Route('/journal/{rvcode}/resources', name: 'app_resources_manager', requirements: ['rvcode' => '[\w\-]+'])]
-    public function index(string $rvcode, UploadDirectoryService $dirs): Response
+    #[Route('/journal/{code}/resources', name: 'app_resources_manager', requirements: ['code' => '[\w\-]+'])]
+    public function index(string $code, UploadDirectoryService $dirs): Response
     {
-        $files = $this->getFilesForJournal($rvcode, $dirs);
+        $files = $this->getFilesForJournal($code, $dirs);
 
         return $this->render('resources/index.html.twig', [
             'files' => $files,
-            'journal_code' => $rvcode,
+            'journal_code' => $code,
         ]);
     }
 
-    #[Route('/journal/{rvcode}/resources/upload', name: 'app_resources_upload', methods: ['POST'], requirements: ['rvcode' => '[\w\-]+'])]
-    public function upload(Request $request, string $rvcode, SluggerInterface $slugger, UploadDirectoryService $dirs): JsonResponse
+    #[Route('/journal/{code}/resources/upload', name: 'app_resources_upload', requirements: ['code' => '[\w\-]+'], methods: ['POST'])]
+    public function upload(Request $request, string $code, SluggerInterface $slugger, UploadDirectoryService $dirs): JsonResponse
     {
         // Validate CSRF token for security
         $csrfToken = $request->headers->get('X-CSRF-Token') ?? $request->request->get('_csrf_token');
@@ -59,8 +59,8 @@ final class ResourcesController extends AbstractController
         /** @var UploadedFile|null $uploadedFile */
         $uploadedFile = $request->files->get('file');
         $overwrite = $request->request->getBoolean('overwrite', false);
-        $action = $request->request->get('action', null); // 'replace', 'rename', or 'custom'
-        $customFileName = $request->request->get('customFileName', null);
+        $action = $request->request->get('action'); // 'replace', 'rename', or 'custom'
+        $customFileName = $request->request->get('customFileName');
 
         if (!$uploadedFile) {
             return new JsonResponse([
@@ -89,7 +89,7 @@ final class ResourcesController extends AbstractController
         }
 
         // Get upload directory first
-        $uploadDirectory = $dirs->getUploadDirectory($rvcode);
+        $uploadDirectory = $dirs->getUploadDirectory($code);
 
         // Handle custom filename
         if ($action === 'custom' && $customFileName) {
@@ -182,7 +182,7 @@ final class ResourcesController extends AbstractController
                 'success' => true,
                 'message' => 'File uploaded successfully',
                 'filename' => $newFilename,
-                'url' => $this->generatePublicUrl($rvcode, $newFilename)
+                'url' => $this->generatePublicUrl($code, $newFilename)
             ]);
 
         } catch (FileException $e) {
@@ -193,8 +193,8 @@ final class ResourcesController extends AbstractController
         }
     }
 
-    #[Route('/journal/{rvcode}/resources/{filename}/delete', name: 'app_resources_delete', methods: ['DELETE'], requirements: ['rvcode' => '[\w\-]+'])]
-    public function delete(Request $request, string $rvcode, string $filename, UploadDirectoryService $dirs): JsonResponse
+    #[Route('/journal/{code}/resources/{filename}/delete', name: 'app_resources_delete', methods: ['DELETE'], requirements: ['code' => '[\w\-]+'])]
+    public function delete(Request $request, string $code, string $filename, UploadDirectoryService $dirs): JsonResponse
     {
         // Validate CSRF token for security
         $csrfToken = $request->headers->get('X-CSRF-Token');
@@ -205,7 +205,7 @@ final class ResourcesController extends AbstractController
             ], 403);
         }
 
-        $uploadDirectory = $dirs->getUploadDirectory($rvcode);
+        $uploadDirectory = $dirs->getUploadDirectory($code);
         $filePath = $uploadDirectory . '/' . $filename;
 
         // Security: Prevent path traversal attacks by validating the resolved path
@@ -250,10 +250,10 @@ final class ResourcesController extends AbstractController
         }
     }
 
-    #[Route('/journal/{rvcode}/resources/list', name: 'app_resources_list', methods: ['GET'], requirements: ['rvcode' => '[\w\-]+'])]
-    public function list(string $rvcode, UploadDirectoryService $dirs): JsonResponse
+    #[Route('/journal/{code}/resources/list', name: 'app_resources_list', requirements: ['code' => '[\w\-]+'], methods: ['GET'])]
+    public function list(string $code, UploadDirectoryService $dirs): JsonResponse
     {
-        $files = $this->getFilesForJournal($rvcode, $dirs);
+        $files = $this->getFilesForJournal($code, $dirs);
         
         return new JsonResponse([
             'success' => true,
@@ -261,8 +261,8 @@ final class ResourcesController extends AbstractController
         ]);
     }
 
-    #[Route('/journal/{rvcode}/resources/check-exists', name: 'app_resources_check_exists', methods: ['POST'], requirements: ['rvcode' => '[\w\-]+'])]
-    public function checkExists(Request $request, string $rvcode, UploadDirectoryService $dirs, SluggerInterface $slugger): JsonResponse
+    #[Route('/journal/{code}/resources/check-exists', name: 'app_resources_check_exists', requirements: ['code' => '[\w\-]+'], methods: ['POST'])]
+    public function checkExists(Request $request, string $code, UploadDirectoryService $dirs, SluggerInterface $slugger): JsonResponse
     {
         $filename = $request->request->get('filename');
         
@@ -282,7 +282,7 @@ final class ResourcesController extends AbstractController
         $safeFilename = (string) $slugger->slug($baseName);
         $finalFilename = $extension ? $safeFilename . '.' . $extension : $safeFilename;
         
-        $uploadDirectory = $dirs->getUploadDirectory($rvcode);
+        $uploadDirectory = $dirs->getUploadDirectory($code);
         $filePath = $uploadDirectory . '/' . $finalFilename;
         
         return new JsonResponse([
@@ -292,11 +292,11 @@ final class ResourcesController extends AbstractController
         ]);
     }
 
-    #[Route('/journal/{rvcode}/resources/{filename}/check-usage', name: 'app_resources_check_usage', methods: ['GET'], requirements: ['rvcode' => '[\w\-]+'])]
-    public function checkUsage(string $rvcode, string $filename, ResourceUsageService $usageService): JsonResponse
+    #[Route('/journal/{code}/resources/{filename}/check-usage', name: 'app_resources_check_usage', requirements: ['code' => '[\w\-]+'], methods: ['GET'])]
+    public function checkUsage(string $code, string $filename, ResourceUsageService $usageService): JsonResponse
     {
         try {
-            $usageSummary = $usageService->getResourceUsageSummary($filename, $rvcode);
+            $usageSummary = $usageService->getResourceUsageSummary($filename, $code);
 
             return new JsonResponse([
                 'success' => true,
@@ -312,10 +312,10 @@ final class ResourcesController extends AbstractController
         }
     }
 
-    #[Route('/{rvcode}/resources/{filename}', name: 'app_resources_serve', requirements: ['rvcode' => '[\w\-]+', 'filename' => '.+'])]
-    public function serve(string $rvcode, string $filename, UploadDirectoryService $dirs): Response
+    #[Route('/{code}/resources/{filename}', name: 'app_resources_serve', requirements: ['code' => '[\w\-]+', 'filename' => '.+'])]
+    public function serve(string $code, string $filename, UploadDirectoryService $dirs): Response
     {
-        $uploadDirectory = $dirs->getUploadDirectory($rvcode);
+        $uploadDirectory = $dirs->getUploadDirectory($code);
         $filePath = $uploadDirectory . '/' . $filename;
 
         // Security: Prevent path traversal attacks by validating the resolved path
@@ -344,9 +344,9 @@ final class ResourcesController extends AbstractController
         return $response;
     }
 
-    private function getFilesForJournal(string $rvcode, UploadDirectoryService $dirs): array
+    private function getFilesForJournal(string $code, UploadDirectoryService $dirs): array
     {
-        $directory = $dirs->getUploadDirectory($rvcode);
+        $directory = $dirs->getUploadDirectory($code);
         $files = [];
 
         if (!is_dir($directory)) {
@@ -364,7 +364,7 @@ final class ResourcesController extends AbstractController
                     'name' => $fileInfo->getFilename(),
                     'size' => $fileInfo->getSize(),
                     'modified' => $fileInfo->getMTime(),
-                    'url' => $this->generatePublicUrl($rvcode, $fileInfo->getFilename())
+                    'url' => $this->generatePublicUrl($code, $fileInfo->getFilename())
                 ];
             }
         }
@@ -378,8 +378,8 @@ final class ResourcesController extends AbstractController
     }
 
 
-    private function generatePublicUrl(string $rvcode, string $filename): string
+    private function generatePublicUrl(string $code, string $filename): string
     {
-        return "/{$rvcode}/resources/{$filename}";
+        return "/{$code}/resources/{$filename}";
     }
 }

@@ -1,0 +1,374 @@
+{% extends 'base.html.twig' %}
+
+  {% block title %}{{ 'journalSettings.title'|trans }} - {{ review.name }}{% endblock %}
+
+  {% block body %}
+      <div class="container py-4">
+          <div class="d-flex align-items-center justify-content-between mb-4">
+              <div class="text-start" style="flex:1;">
+                  <span class="text-muted fs-5">{{ review.name }}</span>
+              </div>
+              <div class="text-ceter" style="flex:1;">
+                  <h1 class="h3 mb-0"><i class="fas fa-cog me-2"></i>{{ 'journalSettings.title'|trans }}</h1>
+              </div>
+              <div class="text-end" style="flex:1;">
+                  <a href="{{ path('app_journal_detail', {'code': code}) }}" class="btn
+ btn-outline-secondary">
+                      <i class="fas fa-arrow-left me-1"></i>
+                      {{ 'journalSettings.common.back'|trans }}
+                  </a>
+              </div>
+
+          </div>
+
+          <div id="settings-alerts"></div>
+
+          <div id="journal-settings-form" class="d-flex flex-column gap-3">
+
+              {# ===== API Settings ===== #}
+              <div class="card">
+                  <div class="card-header" style="font-size: 18px;">
+                      <i class="fas fa-plug me-2"></i>
+                      {{ 'journalSettings.api.title'|trans }}
+                      <small class="text-muted">({{ 'journalSettings.api.description'|trans }})</small>
+                  </div>
+                  <div class="card-body px-5">
+                      <div class="mb-3">
+                          <label for="api_domain"
+                                 class="form-label">{{ 'journalSettings.api.domain'|trans }}</label>
+                          <select class="form-select" id="api_domain">
+                              <option value="https://api-preprod.episciences.org" {{ setting.api_domain == 'https://api-preprod.episciences.org' ? 'selected' : '' }}>
+                                  https://api-preprod.episciences.org
+                              </option>
+                              <option value="https://api.episciences.org" {{ setting.api_domain == 'https://api.episciences.org' ? 'selected' : '' }}>
+                                  https://api.episciences.org
+                              </option>
+                          </select>
+                      </div>
+                  </div>
+              </div>
+
+              {# ===== Theme ===== #}
+              <div class="card">
+                  <div class="card-header" style="font-size: 18px;">
+                      <i class="fas fa-palette me-2"></i>
+                      {{ 'journalSettings.theme.title'|trans }}
+                      <small class="text-muted">({{ 'journalSettings.theme.description'|trans }})</small>
+                  </div>
+                  <div class="card-body px-5 py-3">
+                      <div class="row justify-content-between mb-3">
+                          <div class="col-md-5">
+                              <label for="theme_primaryColor"
+                                     class="form-label">{{ 'journalSettings.theme.primaryColor'|trans }}</label>
+                              <div class="input-group">
+                                  <input type="color" class="form-control form-control-color"
+                                         id="theme_primaryColor_picker"
+                                         value="{{ setting.theme.primaryColor }}">
+                                  <input type="text" class="form-control"
+                                         id="theme_primaryColor"
+                                         value="{{ setting.theme.primaryColor }}"
+                                         pattern="^#[0-9A-Fa-f]{6}$">
+                              </div>
+                          </div>
+                          <div class="col-md-5">
+                              <label for="theme_primaryTextColor"
+                                     class="form-label">{{ 'journalSettings.theme.primaryTextColor'|trans }}</label>
+                              <div class="input-group">
+                                  <input type="color" class="form-control form-control-color"
+                                         id="theme_primaryTextColor_picker"
+                                         value="{{ setting.theme.primaryTextColor }}">
+                                  <input type="text" class="form-control"
+                                         id="theme_primaryTextColor"
+                                         value="{{ setting.theme.primaryTextColor }}"
+                                         pattern="^#[0-9A-Fa-f]{6}$">
+                              </div>
+                          </div>
+                      </div>
+                      <div class="mt-5">
+                          <div class="row justify-content-between">
+                              <div class="col-md-5 mb-3">
+                                  <label class="form-label">{{ 'journalSettings.theme.preview'|trans }}</label>
+                                  <div id="theme-preview" class="p-3 rounded"
+                                       style="background-color: {{ setting.theme.primaryColor }};
+                                               color: {{ setting.theme.primaryTextColor }};">
+                                      {{ 'journalSettings.theme.previewText'|trans }}
+                                  </div>
+                              </div>
+                              <div class="col-md-5 mb-3">
+                                  <label class="form-label">{{ 'journalSettings.theme.contrastRatio'|trans }}</label>
+                                  <div class="p-3 rounded border text-center">
+                                      <div id="contrast-ratio-value" class="fs-3 fw-bold">--</div>
+                                      <div id="contrast-ratio-level" class="badge mt-2" data-fail-label="{{ 'journalSettings.theme.contrastFail'|trans }}">--</div>
+                                      <div class="small text-muted mt-2">
+                                          <span class="badge bg-success">AAA ≥ 7:1</span>
+                                          <span class="badge bg-warning text-dark">AA ≥ 4.5:1</span>
+                                          <span class="badge bg-danger">< 4.5:1</span>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+
+              {# ===== Languages ===== #}
+              <div class="card">
+                  <div class="card-header" style="font-size: 18px;">
+                      <i class="fas fa-language me-2"></i>
+                      {{ 'journalSettings.languages.title'|trans }}
+                      <small class="text-muted">({{ 'journalSettings.languages.description'|trans }})</small>
+                  </div>
+                  <div class="card-body px-5">
+                      <div class="mb-3">
+                          <label class="form-label">{{ 'journalSettings.languages.accepted'|trans }}</label>
+                          <div class="d-flex flex-wrap gap-3">
+                              {% set availableLanguages = {
+                              'en': 'journalSettings.languages.english'|trans,
+                              'fr': 'journalSettings.languages.french'|trans,
+                              'es': 'journalSettings.languages.spanish'|trans,
+                              'de': 'journalSettings.languages.german'|trans
+                          } %}
+                              {% for code, name in availableLanguages %}
+                                  <div class="form-check">
+                                      <input class="form-check-input language-checkbox"
+                                             type="checkbox"
+                                             id="lang_{{ code }}" value="{{ code }}"
+                                              {{ code in setting.languages.accepted ?
+                                              'checked' : '' }}>
+                                      <label class="form-check-label" for="lang_{{ code }}">{{ name }}</label>
+                                  </div>
+                              {% endfor %}
+                          </div>
+                      </div>
+                      <div class="mb-3">
+                          <label for="languages_default"
+                                 class="form-label">{{ 'journalSettings.languages.default'|trans }}</label>
+                          <select class="form-select" id="languages_default">
+                              {% for code, name in availableLanguages %}
+                                  <option value="{{ code }}" {{ setting.languages.default
+                                  == code ? 'selected' : '' }}>{{ name }}</option>
+                              {% endfor %}
+                          </select>
+                      </div>
+                  </div>
+              </div>
+
+              {# ===== Homepage ===== #}
+              <div class="card">
+                  <div class="card-header" style="font-size: 18px;">
+                      <i class="fas fa-home me-2"></i>
+                      {{ 'journalSettings.homepage.title'|trans }}
+                      <small class="text-muted">({{ 'journalSettings.homepage.description'|trans }})</small>
+                  </div>
+                  <div class="card-body px-5">
+                      <div class="row justify-content-between">
+                          {% for option in homepageOptions %}
+                              <div class="col-md-5 mb-3">
+                                  <div class="form-check form-switch">
+                                      <input class="form-check-input homepage-option"
+                                             type="checkbox"
+                                             id="homepage_{{ option }}"
+                                              {{ setting.homepage[option] ? 'checked' : '' }}>
+                                      <label class="form-check-label" for="homepage_{{ option }}">
+                                          {{ ('journalSettings.homepage.' ~ option)|trans }}
+                                      </label>
+                                  </div>
+                              </div>
+                          {% endfor %}
+                      </div>
+                      <div class="my-3">
+                          <label for="homepageRightBlock_lastInformationRenderType" class="form-label">
+                              {{ 'journalSettings.homepage.lastInformationRenderType'|trans }}
+                              <small class="text-muted">({{ 'journalSettings.homepage.lastInformationRenderTypeHint'|trans }}
+                                  )</small>
+                          </label>
+                          <select class="form-select" id="homepageRightBlock_lastInformationRenderType">
+                              <option value="last-news" {{ setting.homepageRightBlock.lastInformationRenderType == 'last-news' ? 'selected' : '' }}>
+                                  {{ 'journalSettings.homepage.lastNews'|trans }}
+                              </option>
+                              <option value="last-volume" {{ setting.homepageRightBlock.lastInformationRenderType == 'last-volume' ? 'selected' : '' }}>
+                                  {{ 'journalSettings.homepage.lastVolume'|trans }}
+                              </option>
+                              <option value="last-special-issue" {{ setting.homepageRightBlock.lastInformationRenderType == 'last-special-issue' ? 'selected' : '' }}>
+                                  {{ 'journalSettings.homepage.lastSpecialIssue'|trans }}
+                              </option>
+                          </select>
+                      </div>
+                  </div>
+              </div>
+
+              {# ===== Menu ===== #}
+              <div class="card">
+                  <div class="card-header" style="font-size: 18px;">
+                      <i class="fas fa-bars me-2"></i>
+                      {{ 'journalSettings.menu.title'|trans }}
+                      <small class="text-muted">({{ 'journalSettings.menu.description'|trans }})</small>
+                  </div>
+                  <div class="card-body px-5">
+                      {% set menuCategories = {
+                          'articlesAndIssues': ['acceptedArticlesRender', 'volumeTypeProceedingsRender', 'authorsRender', 'sectionsRender', 'specialIssuesRender'],
+                          'about': ['journalIndexingRender', 'journalAcknowledgementsRender', 'journalForConferenceOrganisersRender'],
+                          'publish': ['journalEthicalCharterRender', 'journalProposingSpecialIssuesRender', 'journalForReviewersRender']
+                      } %}
+                      <div class="row">
+                          {% for category, options in menuCategories %}
+                              <div class="col-md-4 mb-4">
+                                  <h6 class="text-muted border-bottom pb-2 mb-3">
+                                      <i class="fas fa-folder me-1"></i>
+                                      {{ ('journalSettings.menu.category.' ~ category)|trans }}
+                                  </h6>
+                                  {% for option in options %}
+                                      <div class="form-check form-switch mb-2">
+                                          <input class="form-check-input menu-option"
+                                                 type="checkbox"
+                                                 id="menu_{{ option }}"
+                                                  {{ setting.menu[option] ? 'checked' : '' }}>
+                                          <label class="form-check-label" for="menu_{{ option }}">
+                                              {{ ('journalSettings.menu.' ~ option)|trans }}
+                                          </label>
+                                      </div>
+                                  {% endfor %}
+                              </div>
+                          {% endfor %}
+                      </div>
+                  </div>
+              </div>
+
+              {# ===== Statistics ===== #}
+              <div class="card">
+                  <div class="card-header" style="font-size: 18px;">
+                      <i class="fas fa-chart-bar me-2"></i>
+                      {{ 'journalSettings.statistics.title'|trans }}
+                      <small class="text-muted">({{ 'journalSettings.statistics.description'|trans }})</small>
+                  </div>
+                  <div class="card-body px-5">
+                      <div class="mb-4">
+                          <div class="row align-items-center">
+                              <div class="col-md-3">
+                              </div>
+                              <div class="col-md-3">
+                                  <label class="form-label">{{ 'journalSettings.statistics.colors'|trans }}</label>
+                                  <div class="d-flex flex-wrap gap-2" id="statistics-colors">
+                                      {% for i, color in setting.statistics.colors %}
+                                          <input type="color" class="form-control form-control-color stats-color"
+                                                 value="{{ color }}" data-index="{{ i }}">
+                                      {% endfor %}
+                                  </div>
+                              </div>
+                              <div class="col-md-6">
+                                  <label class="form-label">{{ 'journalSettings.statistics.preview'|trans }}</label>
+                                  <div class="d-flex align-items-center gap-4">
+                                      <div id="chart-preview" style="
+                                          width: 100px;
+                                          height: 100px;
+                                          border-radius: 50%;
+                                          background: conic-gradient(
+                                              {{ setting.statistics.colors[0] }} 0deg 90deg,
+                                              {{ setting.statistics.colors[1] }} 90deg 126deg,
+                                              {{ setting.statistics.colors[2] }} 126deg 198deg,
+                                              {{ setting.statistics.colors[3] }} 198deg 360deg
+                                          );
+                                      "></div>
+                                      <div class="chart-legend small">
+                                          <div class="d-flex align-items-center mb-1">
+                                              <span id="legend-color-0" class="me-2" style="display:inline-block;width:14px;height:14px;background:{{ setting.statistics.colors[0] }};"></span>
+                                              <span>{{ 'journalSettings.statistics.preview.published'|trans }}</span>
+                                          </div>
+                                          <div class="d-flex align-items-center mb-1">
+                                              <span id="legend-color-1" class="me-2" style="display:inline-block;width:14px;height:14px;background:{{ setting.statistics.colors[1] }};"></span>
+                                              <span>{{ 'journalSettings.statistics.preview.rejected'|trans }}</span>
+                                          </div>
+                                          <div class="d-flex align-items-center mb-1">
+                                              <span id="legend-color-2" class="me-2" style="display:inline-block;width:14px;height:14px;background:{{ setting.statistics.colors[2] }};"></span>
+                                              <span>{{ 'journalSettings.statistics.preview.accepted'|trans }}</span>
+                                          </div>
+                                          <div class="d-flex align-items-center mb-1">
+                                              <span id="legend-color-3" class="me-2" style="display:inline-block;width:14px;height:14px;background:{{ setting.statistics.colors[3] }};"></span>
+                                              <span>{{ 'journalSettings.statistics.preview.other'|trans }}</span>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+
+                      <table class="table mt-3 table-sm">
+                          <thead>
+                          <tr>
+                              <th>{{ 'journalSettings.statistics.statistic'|trans }}</th>
+                              <th class="text-center">{{ 'journalSettings.statistics.render'|trans }}</th>
+                              <th class="text-center">{{ 'journalSettings.statistics.order'|trans }}</th>
+                          </tr>
+                          </thead>
+                          <tbody>
+                          {% for option in statsOptions %}
+                              <tr>
+                                  <td>{{ ('journalSettings.statistics.' ~ option)|trans }}</td>
+                                  <td class="text-center">
+                                      <input class="form-check-input stats-render"
+                                             type="checkbox"
+                                             id="stats_{{ option }}_render"
+                                              {{ setting.statistics[option].render ?
+                                              'checked' : '' }}>
+                                  </td>
+                                  <td class="text-center">
+                                      <input type="number" class="form-control
+  form-control-sm stats-order d-inline-block"
+                                             id="stats_{{ option }}_order"
+                                             value="{{ setting.statistics[option].order }}"
+                                             min="1" max="100" style="width: 70px;">
+                                  </td>
+                              </tr>
+                          {% endfor %}
+                          </tbody>
+                      </table>
+                  </div>
+              </div>
+          </div>
+
+          {# ===== Save Button ===== #}
+          {% if canEditSettings %}
+              <div class="d-flex justify-content-center mt-4">
+                  <button type="button" class="btn btn-primary btn-lg" id="saveSettings">
+                      <i class="fas fa-save me-2"></i>
+                      {{ 'journalSettings.save'|trans }}
+                  </button>
+              </div>
+          {% else %}
+              <div class="alert alert-info mt-4 text-center">
+                  {{ 'journalSettings.readonly_info'|trans|default('You can view these settings but only epiadmin can modify them.') }}
+              </div>
+          {% endif %}
+      </div>
+  {% endblock %}
+
+  {% block javascripts %}
+      {{ parent() }}
+      <script>
+          window.journalSettingsData = {
+              updateUrl: '{{ path('app_journal_settings_update', {'code': code}) }}',
+              csrfToken: '{{ csrf_token('journal-settings') }}',
+              translations: {
+                  save: '{{ 'journalSettings.save'|trans }}',
+                  saved: '{{ 'journalSettings.saved'|trans }}',
+                  error: '{{ 'journalSettings.error'|trans }}'
+              }
+          };
+
+          {% if not canEditSettings %}
+          document.addEventListener('DOMContentLoaded', function () {
+              var container = document.getElementById('journal-settings-form');
+              if (!container) { return; }
+              container.querySelectorAll('input, select, textarea, button').forEach(function (el) {
+                  // keep back button and potential links active
+                  if (el.id === 'saveSettings') {
+                      el.disabled = true;
+                  } else if (el.type !== 'button' && el.type !== 'submit') {
+                      el.disabled = true;
+                  }
+              });
+          });
+          {% endif %}
+      </script>
+      {{ encore_entry_script_tags('journalSettingsJs') }}
+  {% endblock %}

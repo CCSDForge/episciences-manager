@@ -4,6 +4,7 @@ namespace App\Controller;
 
 
 use App\Repository\PageRepository;
+use App\Service\JournalSettingService;
 use App\Service\ReviewManager;
 use App\Service\PageHierarchyService;
 use Knp\Component\Pager\PaginatorInterface;
@@ -21,7 +22,7 @@ final class ReviewController extends AbstractController
     {
         $user = $this->getUser();
 
-        if (!$user) {
+        if (!$user instanceof \Symfony\Component\Security\Core\User\UserInterface) {
             throw $this->createAccessDeniedException('You must be logged in');
         }
 
@@ -54,7 +55,7 @@ final class ReviewController extends AbstractController
     }
 
     #[Route('/journal/{code}', name: 'app_journal_detail', requirements: ['code' => '[\w\-]+'])]
-    public function getJournal(string $code, ReviewManager $reviewManager, PageRepository $pageRepository, PageHierarchyService $hierarchyService): Response
+    public function getJournal(string $code, ReviewManager $reviewManager, PageRepository $pageRepository, PageHierarchyService $hierarchyService, JournalSettingService $settingService): Response
     {
         // Get the review by its code
         $review = $reviewManager->getReviewByCode($code);
@@ -74,10 +75,14 @@ final class ReviewController extends AbstractController
         // Organize pages according to configured hierarchy
         $organizedPages = $hierarchyService->organizePages($pages, $code);
 
+        $setting = $settingService->getSettingArray($review['rvid']);
+        $acceptedLanguages = $setting['languages']['accepted'] ?? ['en', 'fr'];
+
         return $this->render('review/journalDetails.html.twig', [
             'review' => $review,
-            'rvcode' => $code,
+            'code' => $code,
             'pages' => $organizedPages,
+            'acceptedLanguages' => $acceptedLanguages,
         ]);
     }
 

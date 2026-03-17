@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="{{ app.request.locale|default('fr') }}">
     <head>
         <meta charset="UTF-8">
         <title>{% block title %}{{ 'meta.default_title'|trans }}{% endblock %}</title>
@@ -41,6 +41,7 @@
 
         {% block javascripts %}
             {{ encore_entry_script_tags('app') }}
+            {{ encore_entry_script_tags('headerJs') }}
         {% endblock %}
     </head>
     <body>

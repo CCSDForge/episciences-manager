@@ -15,6 +15,7 @@ nav:
   dashboard: "Dashboard"
   users: "Users"
   journal: "Journal"
+  journalSettings: "Journal Settings"
   website: "Website"
   statistics: "Statistics"
 
@@ -41,9 +42,13 @@ journal:
   clear_search: "Clear search"
   see_details: "See Details (epiadmin only)"
 
+
+
 journalDetails:
   home: "Home"
+  menu: "Menu"
   welcome_backoffice: "Welcome to the journal management backoffice"
+  noContentAvailable: "No content available"
   edit: "Edit"
   edit_content: "Edit Content"
   edit_page_content: "Edit Page Content"
@@ -57,6 +62,11 @@ journalDetails:
   save_success: "Title and content saved successfully!"
   save_error: "Error while saving: "
   preview_page: "Preview Page"
+  languages: "Languages"
+  language: "Language"
+  translations: "Translations"
+  add_translation: "Add translation"
+  edit_translation: "Edit translation"
 
 
 resources:
@@ -126,6 +136,100 @@ resources:
   fileNotInUse: "This file is not used in any page."
   safeToDelete: "It can be safely deleted."
   generateAutomatically: "Generate automatically"
+
+journalSettings:
+  title: "Settings"
+  save: "Save"
+  saved: "Settings saved successfully"
+  error: "Error saving settings"
+  readonly_info: "You can view these settings, but only epiadmin can modify them."
+
+  common:
+    back: "Back"
+
+  api:
+    title: "API Settings"
+    description: "Configure the API connection for your journal"
+    domain: "API Domain"
+
+  theme:
+    title: "Theme"
+    description: "Customize the colors of your journal"
+    primaryColor: "Primary Color"
+    primaryTextColor: "Primary Text Color"
+    preview: "Preview"
+    previewText: "This is a sample text with the theme applied"
+    contrastRatio: "Contrast Ratio (Accessibility)"
+    contrastFail: "Fail"
+
+  languages:
+    title: "Languages"
+    description: "Set the available languages for your journal"
+    accepted: "Accepted Languages"
+    default: "Default Language"
+    english: "English"
+    french: "French"
+    spanish: "Spanish"
+    german: "German"
+
+  homepage:
+    title: "Homepage"
+    description: "Configure the elements displayed on the homepage"
+    latestArticlesCarouselRender: "Latest Articles Carousel"
+    latestNewsCarouselRender: "Latest News Carousel"
+    membersCarouselRender: "Members Carousel"
+    statsRender: "Display Statistics"
+    journalIndexationRender: "Display Journal Indexation"
+    specialIssuesRender: "Display Special Issues"
+    latestAcceptedArticlesCarouselRender: "Latest Accepted Articles Carousel"
+    lastNewsRender: "Display Latest News"
+    lastInformationRenderType: "Information Display Type"
+    lastInformationRenderTypeHint: "Homepage block, at the right of the journal about text"
+    lastNews: "Latest News"
+    lastVolume: "Latest Volume"
+    lastSpecialIssue: "Latest Special Issue"
+
+  menu:
+    title: "Menu"
+    description: "Choose which items appear in the navigation menu"
+    acceptedArticlesRender: "Accepted Articles"
+    volumesRender: "Volumes"
+    lastVolumeRender: "Latest Volume"
+    volumeTypeProceedingsRender: "Conference Proceedings"
+    specialIssuesRender: "Special Issues"
+    sectionsRender: "Sections"
+    newsRender: "News"
+    authorsRender: "Authors"
+    journalIndexingRender: "Journal Indexing"
+    journalAcknowledgementsRender: "Acknowledgements"
+    journalForReviewersRender: "For Reviewers"
+    journalEthicalCharterRender: "Ethical Charter"
+    journalForConferenceOrganisersRender: "For Conference Organizers"
+    journalProposingSpecialIssuesRender: "Proposing Special Issues"
+    category:
+      articlesAndIssues: "Articles & Issues"
+      about: "About"
+      publish: "Publish"
+
+  statistics:
+    title: "Statistics"
+    description: "Configure the display of public statistics"
+    colors: "Chart Colors"
+    statistic: "Statistic"
+    render: "Display"
+    order: "Order"
+    acceptanceRate: "Acceptance Rate"
+    nbSubmissions: "Number of Submissions"
+    nbSubmissionsDetails: "Submissions Details"
+    reviewsRequested: "Reviews Requested"
+    reviewsReceived: "Reviews Received"
+    medianSubmissionPublication: "Median Submission-Publication Time"
+    medianReviewsNumber: "Median Number of Reviews"
+    preview: "Preview"
+    preview.published: "Published articles"
+    preview.rejected: "Rejected articles"
+    preview.accepted: "Accepted articles"
+    preview.other: "Other status"
 
 footer:
   about_title: "About Episciences"

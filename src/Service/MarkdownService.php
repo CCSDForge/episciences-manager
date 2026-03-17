@@ -34,14 +34,14 @@ class MarkdownService
                 // This includes width, height, alignment, and other CSS properties
                 // Get all attributes from the figure element
                 $attributes = [];
-                if ($element->getAttribute('class')) {
+                if ($element->getAttribute('class') !== '' && $element->getAttribute('class') !== '0') {
                     $attributes[] = 'class="' . htmlspecialchars($element->getAttribute('class')) . '"';
                 }
-                if ($element->getAttribute('style')) {
+                if ($element->getAttribute('style') !== '' && $element->getAttribute('style') !== '0') {
                     $attributes[] = 'style="' . htmlspecialchars($element->getAttribute('style')) . '"';
                 }
                 
-                $attributeString = $attributes ? ' ' . implode(' ', $attributes) : '';
+                $attributeString = $attributes !== [] ? ' ' . implode(' ', $attributes) : '';
                 
                 // Get the inner content - this might be processed or raw HTML
                 $innerContent = $element->getValue();
@@ -73,19 +73,19 @@ class MarkdownService
                 if ($parent && strtolower($parent->getTagName() ?? '') === 'figure') {
                     // Return the original HTML to be preserved by the figure converter
                     $attributes = [];
-                    if ($element->getAttribute('src')) {
+                    if ($element->getAttribute('src') !== '' && $element->getAttribute('src') !== '0') {
                         $attributes[] = 'src="' . htmlspecialchars($element->getAttribute('src')) . '"';
                     }
-                    if ($element->getAttribute('alt')) {
+                    if ($element->getAttribute('alt') !== '' && $element->getAttribute('alt') !== '0') {
                         $attributes[] = 'alt="' . htmlspecialchars($element->getAttribute('alt')) . '"';
                     }
-                    if ($element->getAttribute('style')) {
+                    if ($element->getAttribute('style') !== '' && $element->getAttribute('style') !== '0') {
                         $attributes[] = 'style="' . htmlspecialchars($element->getAttribute('style')) . '"';
                     }
-                    if ($element->getAttribute('width')) {
+                    if ($element->getAttribute('width') !== '' && $element->getAttribute('width') !== '0') {
                         $attributes[] = 'width="' . htmlspecialchars($element->getAttribute('width')) . '"';
                     }
-                    if ($element->getAttribute('height')) {
+                    if ($element->getAttribute('height') !== '' && $element->getAttribute('height') !== '0') {
                         $attributes[] = 'height="' . htmlspecialchars($element->getAttribute('height')) . '"';
                     }
                     
@@ -94,7 +94,9 @@ class MarkdownService
                 
                 // Standalone image - check if it has sizing attributes/styles
                 $src = trim($element->getAttribute('src') ?? '');
-                if ($src === '') return '';
+                if ($src === '') {
+                    return '';
+                }
 
                 $alt = $element->getAttribute('alt') ?? '';
                 if ($alt === '') {
@@ -113,7 +115,7 @@ class MarkdownService
                 
                 // If image has sizing info (class image_resized, width/height attrs, or sizing styles)
                 if (strpos($class, 'image_resized') !== false || 
-                    !empty($width) || !empty($height) || 
+                    $width !== '' && $width !== '0' || $height !== '' && $height !== '0' || 
                     (strpos($style, 'width') !== false || strpos($style, 'aspect-ratio') !== false)) {
                     $hasResizing = true;
                 }
@@ -121,16 +123,16 @@ class MarkdownService
                 if ($hasResizing) {
                     // Preserve as HTML to maintain all sizing information
                     $attributes = [];
-                    if (!empty($class)) {
+                    if ($class !== '' && $class !== '0') {
                         $attributes[] = 'class="' . htmlspecialchars($class) . '"';
                     }
-                    if (!empty($style)) {
+                    if ($style !== '' && $style !== '0') {
                         $attributes[] = 'style="' . htmlspecialchars($style) . '"';
                     }
-                    if (!empty($width)) {
+                    if ($width !== '' && $width !== '0') {
                         $attributes[] = 'width="' . htmlspecialchars($width) . '"';
                     }
-                    if (!empty($height)) {
+                    if ($height !== '' && $height !== '0') {
                         $attributes[] = 'height="' . htmlspecialchars($height) . '"';
                     }
                     

@@ -33,17 +33,17 @@ class PageHierarchyService
             $pagesByCode[$page->getPageCode()] = $page;
         }
 
+        // Get all configured page codes and create empty pages for missing ones
+        $allConfiguredCodes = $this->getAllConfiguredCodes($journalConfig);
+        foreach ($allConfiguredCodes as $pageCode) {
+            if (!isset($pagesByCode[$pageCode])) {
+                $pagesByCode[$pageCode] = $this->createEmptyPage($pageCode, $rvcode);
+            }
+        }
+
         // Process according to configuration
         foreach ($journalConfig as $pageConfig) {
             $this->processPageConfig($pageConfig, $pagesByCode, $organized);
-        }
-
-        // Add unconfigured pages at the end (safety fallback)
-        $configuredCodes = $this->getAllConfiguredCodes($journalConfig);
-        foreach ($pages as $page) {
-            if (!in_array($page->getPageCode(), $configuredCodes)) {
-                $organized['main'][] = $page;
-            }
         }
 
         return $organized;
@@ -74,7 +74,7 @@ class PageHierarchyService
             }
 
             // Only create container if it has at least one existing child or nested container
-            if (!empty($childrenInfo) || $this->hasNestedContainersWithChildren($pageConfig, $pagesByCode)) {
+            if ($childrenInfo !== [] || $this->hasNestedContainersWithChildren($pageConfig, $pagesByCode)) {
                 // Create a virtual page object for the container
                 $containerPage = new \stdClass();
                 $containerPage->title = $pageConfig['title'] ?? 'Container';
@@ -169,8 +169,11 @@ class PageHierarchyService
     {
         $codes = [];
         foreach ($config as $pageConfig) {
-            // Only add code if it's not a container
-            if (!isset($pageConfig['type']) || $pageConfig['type'] !== 'container') {
+            if ($pageConfig === null) {
+                continue;
+            }
+            // Only add code if it's not a container and code is set
+            if ((!isset($pageConfig['type']) || $pageConfig['type'] !== 'container') && !empty($pageConfig['code'])) {
                 $codes[] = $pageConfig['code'];
             }
             if (isset($pageConfig['children'])) {
@@ -184,6 +187,9 @@ class PageHierarchyService
     {
         $codes = [];
         foreach ($children as $child) {
+            if ($child === null) {
+                continue;
+            }
             if (is_array($child)) {
                 // Nested container - recursively extract codes
                 if (isset($child['children'])) {
@@ -197,5 +203,37 @@ class PageHierarchyService
         return $codes;
     }
 
+    /**
+     * Create an empty page placeholder for pages defined in config but not in DB.
+     */
+    private function createEmptyPage(string $pageCode, string $rvcode): object
+    {
+        $emptyPage = new \stdClass();
+        $emptyPage->id = null;
+        $emptyPage->uid = 0;
+        $emptyPage->pageCode = $pageCode;
+        $emptyPage->rvcode = $rvcode;
+        $emptyPage->title = ['en' => $this->formatPageTitle($pageCode), 'fr' => $this->formatPageTitle($pageCode)];
+        $emptyPage->content = ['en' => '', 'fr' => ''];
+        $emptyPage->visibility = ['public'];
+        $emptyPage->isEmpty = true;
 
+        return $emptyPage;
+    }
+
+    /**
+     * Format page code into a readable title (e.g., "about" → "about", "editorial-board" → "editorial board").
+     */
+    private function formatPageTitle(string $pageCode): string
+    {
+        return str_replace('-', ' ', $pageCode);
+    }
+
+    /**
+     * Get the page hierarchy configuration.
+     */
+    public function getConfig(): array
+    {
+        return $this->config;
+    }
 }

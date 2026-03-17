@@ -93,16 +93,16 @@ class ReviewManager
      */
     public function getReviewByCode(string $code): ?array
     {
-        if (empty(trim($code))) {
+        if (in_array(trim($code), ['', '0'], true)) {
             return null;
         }
 
         $review = $this->reviewRepository->findOneBy(['code' => $code]);
-        if (!$review) {
+        if (!$review instanceof \App\Entity\Review) {
             return null;
         }
 
-        $reviewCode = $review->getCode();
+        $review->getCode();
 
         return [
             ...$this->convertEntityToArray($review),
@@ -153,7 +153,7 @@ class ReviewManager
      */
     public function searchReviews(string $search): array
     {
-        if (empty(trim($search))) {
+        if (in_array(trim($search), ['', '0'], true)) {
             return [];
         }
 
