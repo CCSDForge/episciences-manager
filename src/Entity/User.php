@@ -42,14 +42,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $firstname = null;
 
 
+    /** @var array<int, array<string, mixed>> */
     private array $rolesDetails = [];
 
+    /**
+     * @param array<int, array<string, mixed>> $rolesDetails
+     */
     public function setRolesDetails(array $rolesDetails): static
     {
         $this->rolesDetails = $rolesDetails;
         return $this;
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function getRolesDetails(): array
     {
         return $this->rolesDetails;

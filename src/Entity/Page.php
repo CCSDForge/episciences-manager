@@ -24,12 +24,15 @@ class Page
     #[ORM\Column(name: 'code', length: 100, nullable: false, options: ['comment' => 'Journal code rvcode'])]
     private ?string $rvcode = null;
 
+    /** @var array<string, string> */
     #[ORM\Column(name: 'title', type: 'json', nullable: false)]
     private array $title = [];
 
+    /** @var array<string, string> */
     #[ORM\Column(name: 'content', type: 'json', nullable: false)]
     private array $content = [];
 
+    /** @var array<int, string> */
     #[ORM\Column(name: 'visibility', type: 'json', nullable: false)]
     private array $visibility = [];
 
@@ -81,11 +84,17 @@ class Page
         return $this;
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function getTitle(): array
     {
         return $this->title;
     }
 
+    /**
+     * @param array<string, string> $title
+     */
     public function setTitle(array $title): static
     {
         $this->title = $title;
@@ -93,11 +102,17 @@ class Page
         return $this;
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function getContent(): array
     {
         return $this->content;
     }
 
+    /**
+     * @param array<string, string> $content
+     */
     public function setContent(array $content): static
     {
         $this->content = $content;
@@ -105,11 +120,17 @@ class Page
         return $this;
     }
 
+    /**
+     * @return array<int, string>
+     */
     public function getVisibility(): array
     {
         return $this->visibility;
     }
 
+    /**
+     * @param array<int, string> $visibility
+     */
     public function setVisibility(array $visibility): static
     {
         $this->visibility = $visibility;
@@ -117,24 +138,24 @@ class Page
         return $this;
     }
 
-    public function getDateCreation(): ?\DateTime
+    public function getDateCreation(): ?\DateTimeInterface
     {
         return $this->date_creation;
     }
 
-    public function setDateCreation(?\DateTime $date_creation): static
+    public function setDateCreation(?\DateTimeInterface $date_creation): static
     {
         $this->date_creation = $date_creation;
 
         return $this;
     }
 
-    public function getDateUpdated(): ?\DateTime
+    public function getDateUpdated(): ?\DateTimeInterface
     {
         return $this->date_updated;
     }
 
-    public function setDateUpdated(\DateTime $date_updated): static
+    public function setDateUpdated(\DateTimeInterface $date_updated): static
     {
         $this->date_updated = $date_updated;
 

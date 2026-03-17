@@ -7,6 +7,7 @@ use App\Entity\Review;
 use App\Entity\User;
 use App\Repository\ReviewRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
 
 class ReviewManager
@@ -20,8 +21,10 @@ class ReviewManager
 
     /**
      * Retrieves active reviews with pagination
+     *
+     * @return PaginationInterface<int, array<string, mixed>>
      */
-    public function getActiveReviewsForDisplayPaginated(PaginatorInterface $paginator, int $page, int $limit = 8 )
+    public function getActiveReviewsForDisplayPaginated(PaginatorInterface $paginator, int $page, int $limit = 8): PaginationInterface
     {
         // Récupérer le QueryBuilder
         $query = $this->reviewRepository->findActiveNewFrontReviews();
@@ -41,6 +44,9 @@ class ReviewManager
 
     /**
      * Enriches review data with URLs and logos
+     *
+     * @param array<string, mixed> $review
+     * @return array<string, mixed>
      */
     private function SingleReview(array $review): array
     {
@@ -76,6 +82,8 @@ class ReviewManager
 
     /**
      * Retrieves all reviews for display
+     *
+     * @return array<int, array<string, mixed>>
      */
     public function getAllReviewsForDisplay(): array
     {
@@ -90,6 +98,8 @@ class ReviewManager
 
     /**
      * Get single review by code with full logo support
+     *
+     * @return array<string, mixed>|null
      */
     public function getReviewByCode(string $code): ?array
     {
@@ -113,6 +123,8 @@ class ReviewManager
 
     /**
      * Converts Review entity to array format
+     *
+     * @return array<string, mixed>
      */
     private function convertEntityToArray(Review $review): array
     {
@@ -127,6 +139,8 @@ class ReviewManager
 
     /**
      * Get all reviews as arrays
+     *
+     * @return array{reviews: array<int, array<string, mixed>>, pagination: PaginationInterface<int, Review>}
      */
     public function getAllReviewsForDisplayPaginated(PaginatorInterface $paginator, int $page, int $limit): array
     {
@@ -150,6 +164,8 @@ class ReviewManager
 
     /**
      * Search reviews and return as arrays
+     *
+     * @return array<int, array<string, mixed>>
      */
     public function searchReviews(string $search): array
     {

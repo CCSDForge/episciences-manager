@@ -17,7 +17,7 @@ readonly class ResourceUsageService
      *
      * @param string $filename The resource filename to search for
      * @param string $rvcode The journal code
-     * @return array Array of pages using the resource with their details
+     * @return array<int, array{page_code: string|null, title: array<string, string>, locations: array<int, array<string, string>>}>
      */
     public function findResourceUsage(string $filename, string $rvcode): array
     {
@@ -43,6 +43,8 @@ readonly class ResourceUsageService
 
     /**
      * Search for resource references in page content
+     *
+     * @return array<int, array<string, string>>
      */
     private function searchInPageContent(Page $page, string $filename, string $rvcode): array
     {
@@ -121,6 +123,8 @@ readonly class ResourceUsageService
 
     /**
      * Get a summary of resource usage
+     *
+     * @return array{inUse: bool, pageCount: int, pages: array<int, array<string, mixed>>}
      */
     public function getResourceUsageSummary(string $filename, string $rvcode): array
     {

@@ -6,6 +6,7 @@ use Symfony\Component\Yaml\Yaml;
 
 class PageHierarchyService
 {
+    /** @var array<string, mixed> */
     private readonly array $config;
 
     public function __construct(
@@ -15,6 +16,10 @@ class PageHierarchyService
         $this->config = Yaml::parseFile($configFile)['page_hierarchies'] ?? [];
     }
 
+    /**
+     * @param array<int, object> $pages
+     * @return array<string, array<int, object>>
+     */
     public function organizePages(array $pages, string $rvcode): array
     {
         // Use journal-specific config, fallback to default config
@@ -49,6 +54,11 @@ class PageHierarchyService
         return $organized;
     }
 
+    /**
+     * @param array<string, mixed> $pageConfig
+     * @param array<string, object> $pagesByCode
+     * @param array<string, array<int, object>> $organized
+     */
     private function processPageConfig(array $pageConfig, array $pagesByCode, array &$organized, ?string $parentKey = null): void
     {
         // Handle container pages (without pagecode)
@@ -138,6 +148,10 @@ class PageHierarchyService
         }
     }
 
+    /**
+     * @param array<string, mixed> $pageConfig
+     * @param array<string, object> $pagesByCode
+     */
     private function hasNestedContainersWithChildren(array $pageConfig, array $pagesByCode): bool
     {
         if (!isset($pageConfig['children'])) {
@@ -165,6 +179,10 @@ class PageHierarchyService
     }
 
 
+    /**
+     * @param array<int, array<string, mixed>|null> $config
+     * @return array<int, string>
+     */
     private function getAllConfiguredCodes(array $config): array
     {
         $codes = [];
@@ -183,6 +201,10 @@ class PageHierarchyService
         return $codes;
     }
 
+    /**
+     * @param array<int, mixed> $children
+     * @return array<int, string>
+     */
     private function extractCodesFromChildren(array $children): array
     {
         $codes = [];
@@ -231,6 +253,8 @@ class PageHierarchyService
 
     /**
      * Get the page hierarchy configuration.
+     *
+     * @return array<string, mixed>
      */
     public function getConfig(): array
     {

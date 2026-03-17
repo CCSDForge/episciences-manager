@@ -344,6 +344,9 @@ final class ResourcesController extends AbstractController
         return $response;
     }
 
+    /**
+     * @return array<int, array{name: string, size: int, modified: int, url: string}>
+     */
     private function getFilesForJournal(string $code, UploadDirectoryService $dirs): array
     {
         $directory = $dirs->getUploadDirectory($code);

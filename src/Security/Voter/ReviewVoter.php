@@ -7,6 +7,9 @@ use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
+/**
+ * @extends Voter<string, Review|array<string, mixed>>
+ */
 final class ReviewVoter extends Voter
 {
     public const VIEW = 'REVIEW_VIEW';

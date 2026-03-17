@@ -9,6 +9,9 @@ use \Symfony\Component\Security\Core\User\UserProviderInterface;
 
 
 
+/**
+ * @implements UserProviderInterface<User>
+ */
 class UserProvider implements UserProviderInterface
 {
     public function __construct(private EntityManagerInterface $em) {}
@@ -58,9 +61,8 @@ class UserProvider implements UserProviderInterface
             $roles = ['ROLE_ANO'];
         }
 
-        //dump($roles);
-        $user->setRoles($roles ?? []);
-        $user->setRolesDetails($rows ?? []);
+        $user->setRoles($roles);
+        $user->setRolesDetails($rows);
 
         return $user;
     }
