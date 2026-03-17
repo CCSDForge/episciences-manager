@@ -360,7 +360,9 @@ function updateLanguageSelectOptions(contentByLocale) {
     if (!contentByLocale) {
       option.hidden = false;
     } else {
-      const hasContent = contentByLocale[option.value] && contentByLocale[option.value].trim() !== '';
+      const hasContent =
+        contentByLocale[option.value] &&
+        contentByLocale[option.value].trim() !== '';
       option.hidden = !hasContent;
     }
   });
@@ -377,38 +379,48 @@ function updateLanguageSelectOptions(contentByLocale) {
  * - "+" icon + empty field if no content
  */
 function updateTranslationsList(titleByLocale, contentByLocale) {
-  document.querySelectorAll('#translations-list .translation-row').forEach(row => {
-    const lang = row.getAttribute('data-lang');
-    const actionBtn = row.querySelector('.translation-action-btn');
-    const titleInput = row.querySelector('.translation-title-input');
-    const icon = actionBtn?.querySelector('i');
+  document
+    .querySelectorAll('#translations-list .translation-row')
+    .forEach(row => {
+      const lang = row.getAttribute('data-lang');
+      const actionBtn = row.querySelector('.translation-action-btn');
+      const titleInput = row.querySelector('.translation-title-input');
+      const icon = actionBtn?.querySelector('i');
 
-    const hasContent = contentByLocale?.[lang]?.trim();
-    const title = titleByLocale?.[lang] || '';
+      const hasContent = contentByLocale?.[lang]?.trim();
+      const title = titleByLocale?.[lang] || '';
 
-    if (hasContent) {
-      if (icon) icon.className = 'fas fa-pencil-alt text-primary';
-      actionBtn?.setAttribute('title', window.journalDetailsData?.translations?.editTranslation || 'Edit');
-      if (titleInput) titleInput.value = title;
-    } else {
-      if (icon) icon.className = 'fas fa-plus text-muted';
-      actionBtn?.setAttribute('title', window.journalDetailsData?.translations?.addTranslation || 'Add');
-      if (titleInput) titleInput.value = '';
-    }
-  });
+      if (hasContent) {
+        if (icon) icon.className = 'fas fa-pencil-alt text-primary';
+        actionBtn?.setAttribute(
+          'title',
+          window.journalDetailsData?.translations?.editTranslation || 'Edit'
+        );
+        if (titleInput) titleInput.value = title;
+      } else {
+        if (icon) icon.className = 'fas fa-plus text-muted';
+        actionBtn?.setAttribute(
+          'title',
+          window.journalDetailsData?.translations?.addTranslation || 'Add'
+        );
+        if (titleInput) titleInput.value = '';
+      }
+    });
 }
 
 /**
  * Reset the translations list to initial empty state (flags stay from Twig).
  */
 function resetTranslationsList() {
-  document.querySelectorAll('#translations-list .translation-row').forEach(row => {
-    const icon = row.querySelector('.translation-action-btn i');
-    const titleInput = row.querySelector('.translation-title-input');
+  document
+    .querySelectorAll('#translations-list .translation-row')
+    .forEach(row => {
+      const icon = row.querySelector('.translation-action-btn i');
+      const titleInput = row.querySelector('.translation-title-input');
 
-    if (icon) icon.className = 'fas fa-plus text-muted';
-    if (titleInput) titleInput.value = '';
-  });
+      if (icon) icon.className = 'fas fa-plus text-muted';
+      if (titleInput) titleInput.value = '';
+    });
 }
 
 // Make functions globally available for the header script
@@ -534,7 +546,9 @@ document.addEventListener('DOMContentLoaded', function () {
   let isInlineEdit = false;
   let editingLocale = null;
 
-  const sidebarLanguageSelect = document.getElementById('sidebar-language-select');
+  const sidebarLanguageSelect = document.getElementById(
+    'sidebar-language-select'
+  );
 
   if (sidebarLanguageSelect) {
     sidebarLanguageSelect.addEventListener('change', async function () {
@@ -557,7 +571,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
           updatePageView(data, selectedLang);
           updateTranslationsList(data.title, data.content);
-
         } catch (error) {
           console.error('Error loading page content:', error);
         }
@@ -565,7 +578,9 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Toggle chevron icon on collapse
-    const collapseToggle = document.querySelector('[data-bs-target="#languageWidgetBody"]');
+    const collapseToggle = document.querySelector(
+      '[data-bs-target="#languageWidgetBody"]'
+    );
     const languageWidgetBody = document.getElementById('languageWidgetBody');
 
     if (collapseToggle && languageWidgetBody) {
@@ -588,67 +603,75 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // Translation row click: open inline edit for that language
-  document.querySelectorAll('#translations-list .translation-action-btn').forEach(btn => {
-    btn.addEventListener('click', async function () {
-      const row = this.closest('.translation-row');
-      const lang = row?.getAttribute('data-lang');
+  document
+    .querySelectorAll('#translations-list .translation-action-btn')
+    .forEach(btn => {
+      btn.addEventListener('click', async function () {
+        const row = this.closest('.translation-row');
+        const lang = row?.getAttribute('data-lang');
 
-      if (!lang) return;
+        if (!lang) return;
 
-      if (!currentPageCode || !currentJournalCode) {
-        alert(window.translations?.selectPageFirst || 'Please select a page first');
-        return;
-      }
-
-      if (isInlineEdit) {
-        exitInlineEdit();
-        await new Promise(r => setTimeout(r, 200));
-      }
-
-      editingLocale = lang;
-
-      // Fetch existing content for this language
-      let existingTitle = '';
-      let existingContent = '';
-      try {
-        const routeLocale = getCurrentLocale();
-        const pageUrl = `/${routeLocale}/journal/${currentJournalCode}/page/${currentPageCode}`;
-        const response = await fetch(pageUrl, {
-          headers: { 'X-Requested-With': 'XMLHttpRequest' },
-        });
-        if (response.ok) {
-          const data = await response.json();
-          existingTitle = (data.title && data.title[lang]) || '';
-          existingContent = (data.content && data.content[lang]) || '';
+        if (!currentPageCode || !currentJournalCode) {
+          alert(
+            window.translations?.selectPageFirst || 'Please select a page first'
+          );
+          return;
         }
-      } catch (error) {
-        console.error('Error fetching page data:', error);
-      }
 
-      if (pageBody) pageBody.innerHTML = '';
-
-      pageTitleInline.value = existingTitle;
-      pageContent.style.display = 'none';
-      inlineEditContent.style.display = 'block';
-
-      const placeholder = window.translations?.enterContent || 'Enter the content here...';
-      try {
-        const editorPromise = initializeCKEditor('page-content-inline', placeholder);
-        if (editorPromise) {
-          await editorPromise;
-          setEditorContent(existingContent);
-          setTimeout(() => focusEditor(), 100);
+        if (isInlineEdit) {
+          exitInlineEdit();
+          await new Promise(r => setTimeout(r, 200));
         }
-      } catch (error) {
-        console.error('Error initializing CKEditor:', error);
-      }
 
-      const cardFooter = document.querySelector('.card-footer');
-      if (cardFooter) cardFooter.style.display = 'none';
+        editingLocale = lang;
 
-      isInlineEdit = true;
+        // Fetch existing content for this language
+        let existingTitle = '';
+        let existingContent = '';
+        try {
+          const routeLocale = getCurrentLocale();
+          const pageUrl = `/${routeLocale}/journal/${currentJournalCode}/page/${currentPageCode}`;
+          const response = await fetch(pageUrl, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+          });
+          if (response.ok) {
+            const data = await response.json();
+            existingTitle = (data.title && data.title[lang]) || '';
+            existingContent = (data.content && data.content[lang]) || '';
+          }
+        } catch (error) {
+          console.error('Error fetching page data:', error);
+        }
+
+        if (pageBody) pageBody.innerHTML = '';
+
+        pageTitleInline.value = existingTitle;
+        pageContent.style.display = 'none';
+        inlineEditContent.style.display = 'block';
+
+        const placeholder =
+          window.translations?.enterContent || 'Enter the content here...';
+        try {
+          const editorPromise = initializeCKEditor(
+            'page-content-inline',
+            placeholder
+          );
+          if (editorPromise) {
+            await editorPromise;
+            setEditorContent(existingContent);
+            setTimeout(() => focusEditor(), 100);
+          }
+        } catch (error) {
+          console.error('Error initializing CKEditor:', error);
+        }
+
+        const cardFooter = document.querySelector('.card-footer');
+        if (cardFooter) cardFooter.style.display = 'none';
+
+        isInlineEdit = true;
+      });
     });
-  });
 
   // Check if we're on a specific page route on page load
   function initializeCurrentPage() {
@@ -726,17 +749,23 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function updatePageView(data, locale) {
-    const noContentText = window.journalDetailsData?.translations?.noContentAvailable || 'No content available';
+    const noContentText =
+      window.journalDetailsData?.translations?.noContentAvailable ||
+      'No content available';
 
     if (pageHomeContent) pageHomeContent.style.display = 'none';
     if (pageViewFields) pageViewFields.style.display = 'block';
 
     if (pageTitleView) {
-      pageTitleView.value = (data.title && (data.title[locale] || data.title['en'])) || '';
+      pageTitleView.value =
+        (data.title && (data.title[locale] || data.title['en'])) || '';
     }
 
     if (pageBody) {
-      pageBody.innerHTML = (data.content && data.content[locale]) ? data.content[locale] : noContentText;
+      pageBody.innerHTML =
+        data.content && data.content[locale]
+          ? data.content[locale]
+          : noContentText;
     }
   }
 
