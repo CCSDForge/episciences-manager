@@ -101,7 +101,7 @@ journalSettings:
     volumesRender: "Volumes"
     lastVolumeRender: "Dernier volume"
     volumeTypeProceedingsRender: "Actes de conférence"
-    specialIssuesRender: "Numéros spéciaux"
+    specialIssuesRender: "Volumes spéciaux"
     sectionsRender: "Sections"
     newsRender: "Actualités"
     authorsRender: "Auteurs"
@@ -110,6 +110,11 @@ journalSettings:
     journalForReviewersRender: "Pour les relecteurs"
     journalEthicalCharterRender: "Charte éthique"
     journalForConferenceOrganisersRender: "Pour les organisateurs de conférence"
+    journalProposingSpecialIssuesRender: "Proposer des numéros spéciaux"
+    category:
+      articlesAndIssues: "Articles et volumes"
+      about: "À propos"
+      publish: "Publier"
 
   statistics:
     title: "Statistiques"

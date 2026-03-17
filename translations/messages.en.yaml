@@ -205,6 +205,11 @@ journalSettings:
     journalForReviewersRender: "For Reviewers"
     journalEthicalCharterRender: "Ethical Charter"
     journalForConferenceOrganisersRender: "For Conference Organizers"
+    journalProposingSpecialIssuesRender: "Proposing Special Issues"
+    category:
+      articlesAndIssues: "Articles & Issues"
+      about: "About"
+      publish: "Publish"
 
   statistics:
     title: "Statistics"

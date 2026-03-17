@@ -205,18 +205,29 @@
                       <small class="text-muted">({{ 'journalSettings.menu.description'|trans }})</small>
                   </div>
                   <div class="card-body px-5">
-                      <div class="row justify-content-between">
-                          {% for option in menuOptions %}
-                              <div class="col-md-5 mb-3">
-                                  <div class="form-check form-switch">
-                                      <input class="form-check-input menu-option"
-                                             type="checkbox"
-                                             id="menu_{{ option }}"
-                                              {{ setting.menu[option] ? 'checked' : '' }}>
-                                      <label class="form-check-label" for="menu_{{ option }}">
-                                          {{ ('journalSettings.menu.' ~ option)|trans }}
-                                      </label>
-                                  </div>
+                      {% set menuCategories = {
+                          'articlesAndIssues': ['acceptedArticlesRender', 'volumeTypeProceedingsRender', 'authorsRender', 'sectionsRender', 'specialIssuesRender'],
+                          'about': ['journalIndexingRender', 'journalAcknowledgementsRender', 'journalForConferenceOrganisersRender'],
+                          'publish': ['journalEthicalCharterRender', 'journalProposingSpecialIssuesRender', 'journalForReviewersRender']
+                      } %}
+                      <div class="row">
+                          {% for category, options in menuCategories %}
+                              <div class="col-md-4 mb-4">
+                                  <h6 class="text-muted border-bottom pb-2 mb-3">
+                                      <i class="fas fa-folder me-1"></i>
+                                      {{ ('journalSettings.menu.category.' ~ category)|trans }}
+                                  </h6>
+                                  {% for option in options %}
+                                      <div class="form-check form-switch mb-2">
+                                          <input class="form-check-input menu-option"
+                                                 type="checkbox"
+                                                 id="menu_{{ option }}"
+                                                  {{ setting.menu[option] ? 'checked' : '' }}>
+                                          <label class="form-check-label" for="menu_{{ option }}">
+                                              {{ ('journalSettings.menu.' ~ option)|trans }}
+                                          </label>
+                                      </div>
+                                  {% endfor %}
                               </div>
                           {% endfor %}
                       </div>

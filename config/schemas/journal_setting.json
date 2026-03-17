@@ -69,7 +69,8 @@
                 "journalAcknowledgementsRender": { "type": "boolean" },
                 "journalEthicalCharterRender": { "type": "boolean" },
                 "journalForReviewersRender": { "type": "boolean" },
-                "journalForConferenceOrganisersRender": { "type": "boolean" }
+                "journalForConferenceOrganisersRender": { "type": "boolean" },
+                "journalProposingSpecialIssuesRender": { "type": "boolean" }
             }
         },
         "statistics": {

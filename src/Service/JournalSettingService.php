@@ -52,6 +52,7 @@ class JournalSettingService
             'journalEthicalCharterRender',
             'journalForReviewersRender',
             'journalForConferenceOrganisersRender',
+            'journalProposingSpecialIssuesRender',
         ];
     }
 
@@ -109,6 +110,7 @@ class JournalSettingService
                 'journalEthicalCharterRender' => true,
                 'journalForReviewersRender' => false,
                 'journalForConferenceOrganisersRender' => false,
+                'journalProposingSpecialIssuesRender' => false,
             ],
             'statistics' => [
                 'colors' => ['#840909', '#295fba', '#3f557a', '#192132'],
