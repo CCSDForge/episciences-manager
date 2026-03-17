@@ -192,7 +192,13 @@ class JournalSettingService
         $existingSetting = $setting->getSetting();
         $mergedSetting = array_replace_recursive($this->getDefaultSetting(), $existingSetting, $newSetting);
 
-        $setting->setSetting($mergedSetting);
+        // For indexed arrays like languages.accepted, use new value directly instead of merging
+        if (isset($newSetting['languages']['accepted'])) {
+            $mergedSetting['languages']['accepted'] = $newSetting['languages']['accepted'];
+        }
+
+        // Clone array to force Doctrine to detect the change (JSON columns comparison issue)
+        $setting->setSetting(json_decode(json_encode($mergedSetting), true));
         $setting->setUpdatedAt(new \DateTime());
 
         $this->entityManager->flush();
@@ -234,7 +240,14 @@ class JournalSettingService
      */
     private function mergeWithDefaults(array $config): array
     {
-        return array_replace_recursive($this->getDefaultSetting(), $config);
+        $merged = array_replace_recursive($this->getDefaultSetting(), $config);
+
+        // For indexed arrays like languages.accepted, use config value directly instead of merging
+        if (isset($config['languages']['accepted'])) {
+            $merged['languages']['accepted'] = $config['languages']['accepted'];
+        }
+
+        return $merged;
     }
 
 }
