@@ -85,14 +85,14 @@ journalSettings:
     membersCarouselRender: "Carrousel des membres"
     statsRender: "Afficher les statistiques"
     journalIndexationRender: "Afficher l'indexation du journal"
-    specialIssuesRender: "Afficher les numéros spéciaux"
+    specialIssuesRender: "Afficher les volumes spéciaux"
     latestAcceptedArticlesCarouselRender: "Carrousel des articles acceptés récents"
     lastNewsRender: "Afficher les dernières actualités"
     lastInformationRenderType: "Type d'information à afficher"
     lastInformationRenderTypeHint: "Bloc de la page d'accueil, à droite du texte de présentation du journal"
     lastNews: "Dernières actualités"
     lastVolume: "Dernier volume"
-    lastSpecialIssue: "Dernier numéro spécial"
+    lastSpecialIssue: "Dernier volume spécial"
 
   menu:
     title: "Menu"
@@ -110,7 +110,7 @@ journalSettings:
     journalForReviewersRender: "Pour les relecteurs"
     journalEthicalCharterRender: "Charte éthique"
     journalForConferenceOrganisersRender: "Pour les organisateurs de conférence"
-    journalProposingSpecialIssuesRender: "Proposer des numéros spéciaux"
+    journalProposingSpecialIssuesRender: "Proposer des volumes spéciaux"
     category:
       articlesAndIssues: "Articles et volumes"
       about: "À propos"
