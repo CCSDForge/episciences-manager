@@ -20,6 +20,7 @@ DOCKER_COMPOSE ?= docker compose
 NPX            ?= npx
 CNTR_NAME_HTTPD?= episciences-manager-httpd
 CNTR_NAME_PHP  ?= episciences-manager-php-fpm
+SVC_NAME_PHP   ?= php-fpm-manager
 CNTR_APP_DIR   ?= /var/www/htdocs
 CNTR_USER_ID   ?= $(shell id -u):$(shell id -g)
 
@@ -205,19 +206,19 @@ lint-php-file: ## Check PHP syntax of a file (make lint-php-file FILE=src/file.p
 
 phpstan: ## Run PHPStan static analysis (make phpstan [TARGET=path/to/file] [LEVEL=X])
 	@echo -e "$(BLUE)Ensuring PHPStan cache directory exists and is writable...$(NC)"
-	@$(DOCKER_COMPOSE) --env-file .env.local exec -u 0:0 $(CNTR_NAME_PHP) mkdir -p /tmp/phpstan
-	@$(DOCKER_COMPOSE) --env-file .env.local exec -u 0:0 $(CNTR_NAME_PHP) chmod -R 777 /tmp/phpstan
+	@$(DOCKER_COMPOSE) --env-file .env.local exec -u 0:0 $(SVC_NAME_PHP) mkdir -p /tmp/phpstan
+	@$(DOCKER_COMPOSE) --env-file .env.local exec -u 0:0 $(SVC_NAME_PHP) chmod -R 777 /tmp/phpstan
 	@echo -e "$(BLUE)🔍 Running PHPStan static analysis...$(NC)"
-	@$(DOCKER_COMPOSE) --env-file .env.local exec -u $(CNTR_USER_ID) -w $(CNTR_APP_DIR) $(CNTR_NAME_PHP) \
+	@$(DOCKER_COMPOSE) --env-file .env.local exec -u $(CNTR_USER_ID) -w $(CNTR_APP_DIR) $(SVC_NAME_PHP) \
 		./vendor/bin/phpstan analyse --memory-limit=1G $(if $(LEVEL),--level $(LEVEL)) $(TARGET)
 	@echo -e "$(GREEN)✅ PHPStan analysis completed$(NC)"
 
 rector: ## Run Rector refactoring tool (make rector [TARGET=path/to/file] [DRY_RUN=1])
 	@echo -e "$(BLUE)Ensuring Rector cache directories exist and are writable...$(NC)"
-	@$(DOCKER_COMPOSE) --env-file .env.local exec -u 0:0 $(CNTR_NAME_PHP) mkdir -p $(CNTR_APP_DIR)/cache/rector /tmp/cache
-	@$(DOCKER_COMPOSE) --env-file .env.local exec -u 0:0 $(CNTR_NAME_PHP) chmod -R 777 $(CNTR_APP_DIR)/cache/rector /tmp/cache
+	@$(DOCKER_COMPOSE) --env-file .env.local exec -u 0:0 $(SVC_NAME_PHP) mkdir -p $(CNTR_APP_DIR)/cache/rector /tmp/cache
+	@$(DOCKER_COMPOSE) --env-file .env.local exec -u 0:0 $(SVC_NAME_PHP) chmod -R 777 $(CNTR_APP_DIR)/cache/rector /tmp/cache
 	@echo -e "$(BLUE)🔍 Running Rector...$(NC)"
-	@$(DOCKER_COMPOSE) --env-file .env.local exec -u $(CNTR_USER_ID) -w $(CNTR_APP_DIR) $(CNTR_NAME_PHP) \
+	@$(DOCKER_COMPOSE) --env-file .env.local exec -u $(CNTR_USER_ID) -w $(CNTR_APP_DIR) $(SVC_NAME_PHP) \
 		./vendor/bin/rector process $(TARGET) $(if $(DRY_RUN),--dry-run)
 	@echo -e "$(GREEN)✅ Rector completed$(NC)"
 
@@ -240,10 +241,10 @@ fix-all: ## Fix all (lint JS + Prettier)
 # ==========================
 .PHONY: restart-httpd restart-php enter-container-php enter-container-httpd
 restart-httpd: ## Restart Apache httpd (Docker command launched on host)
-	$(DOCKER_COMPOSE) restart $(CNTR_NAME_HTTPD)
+	$(DOCKER_COMPOSE) restart httpd
 
 restart-php: ## Restart PHP-FPM (Docker command launched on host)
-	$(DOCKER_COMPOSE) restart $(CNTR_NAME_PHP)
+	$(DOCKER_COMPOSE) restart $(SVC_NAME_PHP)
 
 enter-container-php: ## Open shell in PHP container (debug)
 	$(DOCKER) exec -it $(CNTR_NAME_PHP) sh -lc "cd /var/www/htdocs && exec bash"
