@@ -62,7 +62,7 @@ Encore
   .enableSingleRuntimeChunk()
 
   // enables Sass/SCSS support
-  .enableSassLoader((options) => {
+  .enableSassLoader(options => {
     options.sassOptions = {
       silenceDeprecations: ['import', 'global-builtin', 'color-functions'],
       quietDeps: true,

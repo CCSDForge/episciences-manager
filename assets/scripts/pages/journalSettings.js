@@ -18,11 +18,11 @@ document.addEventListener('DOMContentLoaded', function() {
             api_domain: document.getElementById('api_domain').value,
             theme: {
                 primaryColor: document.getElementById('theme_primaryColor').value,
-                primaryTextColor: document.getElementById('theme_primaryTextColor').value
+                primaryTextColor: document.getElementById('theme_primaryTextColor').value,
             },
             languages: {
                 accepted: [...document.querySelectorAll('.language-checkbox:checked')].map(el => el.value),
-                default: document.getElementById('languages_default').value
+                default: document.getElementById('languages_default').value,
             },
             homepage: collectHomepageData(),
             homepageRightBlock: collectHomepageRightBlockData(),
@@ -44,16 +44,16 @@ document.addEventListener('DOMContentLoaded', function() {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(data)
+            body: JSON.stringify(data),
         })
             .then(response => {
                 return response.json().then(data => ({
                     ok: response.ok,
                     status: response.status,
-                    data: data
+                    data: data,
                 }));
             })
-            .then(({ok, status, data}) => {
+            .then(({ok, data}) => {
                 if (ok && data.success) {
                     showAlert('success', window.journalSettingsData.translations.saved);
                 } else {
@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', function() {
      */
     function collectHomepageRightBlockData() {
         return {
-            lastInformationRenderType: document.getElementById('homepageRightBlock_lastInformationRenderType').value
+            lastInformationRenderType: document.getElementById('homepageRightBlock_lastInformationRenderType').value,
         };
     }
 
@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function() {
      */
     function collectStatisticsData() {
         const statistics = {
-            colors: []
+            colors: [],
         };
 
         // Collect colors
@@ -208,7 +208,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return result ? {
             r: parseInt(result[1], 16),
             g: parseInt(result[2], 16),
-            b: parseInt(result[3], 16)
+            b: parseInt(result[3], 16),
         } : null;
     }
 
