@@ -1,8 +1,11 @@
 <?php
 
+use Psr\Log\LoggerInterface;
+
 it('can create a page controller instance', function () {
-    $controller = new \App\Controller\PageController();
-    
+    $logger = $this->createMock(LoggerInterface::class);
+    $controller = new \App\Controller\PageController($logger);
+
     expect($controller)->toBeInstanceOf(\App\Controller\PageController::class);
 });
 
