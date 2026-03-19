@@ -42,6 +42,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $firstname = null;
 
 
+    /** @var list<string> */
+    private array $roles = [];
+
     /** @var array<int, array<string, mixed>> */
     private array $rolesDetails = [];
 
@@ -87,11 +90,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @see UserInterface
+     *
+     * @return list<string>
      */
     public function getRoles(): array
     {
-       // return $this->roles ?? ['ROLE_ANO'];
-        return ['ROLE_USER'];
+        return $this->roles !== [] ? $this->roles : ['ROLE_USER'];
     }
 
     /**
@@ -99,6 +103,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function setRoles(array $roles): static
     {
+        $this->roles = $roles;
+
         return $this;
     }
 

@@ -18,7 +18,7 @@ class PageHierarchyService
 
     /**
      * @param array<int, object> $pages
-     * @return array<string, array<int, object>>
+     * @return array{main: list<object>, sub: array<string, list<object>>}
      */
     public function organizePages(array $pages, string $rvcode): array
     {
@@ -57,7 +57,7 @@ class PageHierarchyService
     /**
      * @param array<string, mixed> $pageConfig
      * @param array<string, object> $pagesByCode
-     * @param array<string, array<int, object>> $organized
+     * @param array<string, mixed> $organized
      */
     private function processPageConfig(array $pageConfig, array $pagesByCode, array &$organized, ?string $parentKey = null): void
     {

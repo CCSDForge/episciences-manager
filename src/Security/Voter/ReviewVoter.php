@@ -31,13 +31,7 @@ final class ReviewVoter extends Voter
             return false;
         }
 
-        if (is_array($subject)) {
-            $rvid = (int)$subject['rvid'];
-        } elseif ($subject instanceof Review) {
-            $rvid = $subject->getRvid();
-        } else {
-            return false;
-        }
+        $rvid = is_array($subject) ? (int)$subject['rvid'] : $subject->getRvid();
 
         switch ($attribute) {
             case self::VIEW:

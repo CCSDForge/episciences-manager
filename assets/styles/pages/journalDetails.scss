@@ -366,6 +366,7 @@
   grid-template-areas:
     'widget'
     'content';
+  padding-inline: 1rem;
 
   // Tablet (768px - 1199px): sidebar left, widget on top of content
   @media (min-width: 768px) {
@@ -374,6 +375,7 @@
       'sidebar widget'
       'sidebar content';
     gap: 1.5rem;
+    padding-inline: 1.5rem;
   }
 
   // Desktop (1200px+): sidebar left, content center, widget right
