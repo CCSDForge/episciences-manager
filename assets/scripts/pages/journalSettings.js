@@ -56,7 +56,6 @@ document.addEventListener('DOMContentLoaded', function () {
         .then(response => {
           return response.json().then(data => ({
             ok: response.ok,
-            status: response.status,
             data: data,
           }));
         })
