@@ -72,16 +72,8 @@ readonly class ResourceUsageService
         ];
 
         foreach ($content as $locale => $contentData) {
-            if (is_string($contentData)) {
-                $htmlContent = $contentData;
-            } elseif (is_array($contentData) && isset($contentData['html'])) {
-                $htmlContent = $contentData['html'];
-            } else {
-                continue;
-            }
-
             foreach ($patterns as $index => $pattern) {
-                if (preg_match($pattern, $htmlContent, $matches)) {
+                if (preg_match($pattern, $contentData, $matches)) {
                     $patternType = $this->getPatternDescription($index);
                     $locations[] = [
                         'locale' => $locale,
