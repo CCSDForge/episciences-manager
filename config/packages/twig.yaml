@@ -1,7 +1,5 @@
 twig:
     file_name_pattern: '*.twig'
-    globals:
-        logo_suffix: '%env(default::string:LOGO_SUFFIX)%'
 
 when@test:
     twig:
