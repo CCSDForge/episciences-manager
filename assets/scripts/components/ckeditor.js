@@ -3,9 +3,12 @@ import {
   Essentials,
   Bold,
   Italic,
+  Strikethrough,
+  Code,
   Paragraph,
   Heading,
   List,
+  TodoList,
   Link,
   BlockQuote,
   Table,
@@ -56,10 +59,13 @@ export function initializeCKEditor(elementId, placeholder = '') {
       // Basic styles (basicstyles group)
       Bold,
       Italic,
+      Strikethrough,
+      Code,
       RemoveFormat,
 
       // Paragraph formatting (paragraph group)
       List,
+      TodoList,
       Indent,
 
       // Links (links group)
@@ -96,12 +102,15 @@ export function initializeCKEditor(elementId, placeholder = '') {
       '|',
       'bold',
       'italic',
+      'strikethrough',
+      'code',
       'removeFormat',
       '|',
 
       // Paragraph
       'bulletedList',
       'numberedList',
+      'todoList',
       'outdent',
       'indent',
       '|',
