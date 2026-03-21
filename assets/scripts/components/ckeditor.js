@@ -18,6 +18,7 @@ import {
   FindAndReplace, // editing > find and replace
   RemoveFormat, // basic styles > remove format
   SpecialCharacters, // insert > special characters
+  SpecialCharactersEssentials, // arrows, currency, mathematical, latin, text
   HorizontalLine, // insert > horizontal line
   Image, // insert > image
   ImageBlock, // image as block element
@@ -76,6 +77,7 @@ export function initializeCKEditor(elementId, placeholder = '') {
       Table,
       HorizontalLine,
       SpecialCharacters,
+      SpecialCharactersEssentials,
       Image,
       ImageBlock,
       ImageInline,
