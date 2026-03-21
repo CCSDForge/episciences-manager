@@ -1,6 +1,3 @@
-parameters:
-  app.log_dir: '%kernel.logs_dir%'
-
 monolog:
   handlers:
     main:
@@ -11,7 +8,7 @@ monolog:
       buffer_size: 50
     nested:
       type: stream
-      path: "%env(default:app.log_dir:LOG_PATH)%/%kernel.environment%.log"
+      path: "%env(LOG_PATH)%/%kernel.environment%.log"
       level: debug
     deprecation:
       type: stream
