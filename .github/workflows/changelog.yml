@@ -45,43 +45,121 @@ jobs:
             echo "ref=$FIRST_COMMIT" >> $GITHUB_OUTPUT
           fi
 
-      # Build changelog (PR-based)
-      - name: Generate changelog
+      # Build changelog from conventional commits
+      - name: Generate changelog from commits
         id: changelog
-        uses: mikepenz/release-changelog-builder-action@v5
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          fromTag: ${{ steps.fromref.outputs.ref }}
-          toTag: HEAD
-          configuration: ".github/release-changelog-builder-config.json"
-
-      # Skip if output is empty
-      - name: Skip if changelog is empty
+        env:
+          FROM_REF: ${{ steps.fromref.outputs.ref }}
+          BRANCH_NAME: ${{ github.ref_name }}
         run: |
-          if [ -z "${{ steps.changelog.outputs.changelog }}" ]; then
-            echo "Empty changelog; skipping."
+          DATE_UTC=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
+
+          # Get commits since last tag/ref
+          COMMITS=$(git log ${FROM_REF}..HEAD --pretty=format:"%h|%s|%an" --no-merges | grep -v "chore(changelog)")
+
+          if [ -z "$COMMITS" ]; then
+            echo "No commits to process"
+            echo "has_changes=false" >> $GITHUB_OUTPUT
             exit 0
           fi
 
-      # Prepend the new block to a single global CHANGELOG.md
-      - name: Save changelog (prepend to global file)
-        env:
-          BRANCH_NAME: ${{ github.ref_name }}
-        run: |
+          echo "has_changes=true" >> $GITHUB_OUTPUT
+
+          # Create changelog content
           NEW_FILE=NEW_CHANGELOG.md
-          DATE_UTC=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
           {
             echo "## Update — ${DATE_UTC} (branch: ${BRANCH_NAME})"
             echo
-            echo "${{ steps.changelog.outputs.changelog }}"
-            echo
+
+            # Features
+            FEATS=$(echo "$COMMITS" | grep -E "^[a-f0-9]+\|feat" || true)
+            if [ -n "$FEATS" ]; then
+              echo "### ✨ Features"
+              echo "$FEATS" | while IFS='|' read -r hash msg author; do
+                echo "- ${msg} (\`${hash}\`) by @${author}"
+              done
+              echo
+            fi
+
+            # Bug fixes
+            FIXES=$(echo "$COMMITS" | grep -E "^[a-f0-9]+\|fix" || true)
+            if [ -n "$FIXES" ]; then
+              echo "### 🐛 Bug Fixes"
+              echo "$FIXES" | while IFS='|' read -r hash msg author; do
+                echo "- ${msg} (\`${hash}\`) by @${author}"
+              done
+              echo
+            fi
+
+            # Performance
+            PERFS=$(echo "$COMMITS" | grep -E "^[a-f0-9]+\|perf" || true)
+            if [ -n "$PERFS" ]; then
+              echo "### ⚡ Performance"
+              echo "$PERFS" | while IFS='|' read -r hash msg author; do
+                echo "- ${msg} (\`${hash}\`) by @${author}"
+              done
+              echo
+            fi
+
+            # Documentation
+            DOCS=$(echo "$COMMITS" | grep -E "^[a-f0-9]+\|docs" || true)
+            if [ -n "$DOCS" ]; then
+              echo "### 📝 Documentation"
+              echo "$DOCS" | while IFS='|' read -r hash msg author; do
+                echo "- ${msg} (\`${hash}\`) by @${author}"
+              done
+              echo
+            fi
+
+            # Style
+            STYLES=$(echo "$COMMITS" | grep -E "^[a-f0-9]+\|style" || true)
+            if [ -n "$STYLES" ]; then
+              echo "### 🎨 Style"
+              echo "$STYLES" | while IFS='|' read -r hash msg author; do
+                echo "- ${msg} (\`${hash}\`) by @${author}"
+              done
+              echo
+            fi
+
+            # Refactor/Chore/Build
+            CHORES=$(echo "$COMMITS" | grep -E "^[a-f0-9]+\|(chore|refactor|build)" || true)
+            if [ -n "$CHORES" ]; then
+              echo "### 🧰 Maintenance"
+              echo "$CHORES" | while IFS='|' read -r hash msg author; do
+                echo "- ${msg} (\`${hash}\`) by @${author}"
+              done
+              echo
+            fi
+
+            # CI
+            CIS=$(echo "$COMMITS" | grep -E "^[a-f0-9]+\|ci" || true)
+            if [ -n "$CIS" ]; then
+              echo "### ⚙️ CI/CD"
+              echo "$CIS" | while IFS='|' read -r hash msg author; do
+                echo "- ${msg} (\`${hash}\`) by @${author}"
+              done
+              echo
+            fi
+
+            # Tests
+            TESTS=$(echo "$COMMITS" | grep -E "^[a-f0-9]+\|test" || true)
+            if [ -n "$TESTS" ]; then
+              echo "### 🧪 Tests"
+              echo "$TESTS" | while IFS='|' read -r hash msg author; do
+                echo "- ${msg} (\`${hash}\`) by @${author}"
+              done
+              echo
+            fi
+
             echo "---"
             echo
           } > "$NEW_FILE"
+
           [ -f CHANGELOG.md ] && cat CHANGELOG.md >> "$NEW_FILE"
           mv "$NEW_FILE" CHANGELOG.md
 
       - name: Commit changelog
+        if: steps.changelog.outputs.has_changes == 'true'
         run: |
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
