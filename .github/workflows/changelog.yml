@@ -45,7 +45,7 @@ jobs:
             echo "ref=$FIRST_COMMIT" >> $GITHUB_OUTPUT
           fi
 
-      # Build changelog (PR-based)
+      # Build changelog (commit-based)
       - name: Generate changelog
         id: changelog
         uses: mikepenz/release-changelog-builder-action@v5
@@ -53,6 +53,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           fromTag: ${{ steps.fromref.outputs.ref }}
           toTag: HEAD
+          commitMode: true
           configuration: ".github/release-changelog-builder-config.json"
 
       # Skip if output is empty
