@@ -62,6 +62,7 @@ jobs:
           if [ -z "${{ steps.changelog.outputs.changelog }}" ]; then
             echo "Empty changelog; skipping."
             exit 0
+          
           fi
 
       # Prepend the new block to a single global CHANGELOG.md

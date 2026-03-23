@@ -339,8 +339,6 @@ function updateLanguageSelectOptions(contentByLocale) {
   const select = document.getElementById('sidebar-language-select');
   if (!select) return;
 
-  const currentLocale = getCurrentLocale();
-
   Array.from(select.options).forEach(option => {
     if (!contentByLocale) {
       option.hidden = false;
