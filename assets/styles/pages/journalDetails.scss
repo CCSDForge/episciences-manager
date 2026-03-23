@@ -61,7 +61,7 @@
       transition: transform 0.2s ease;
     }
 
-    &[aria-expanded="true"] .fa-chevron-down {
+    &[aria-expanded='true'] .fa-chevron-down {
       transform: rotate(180deg);
     }
   }
@@ -349,10 +349,10 @@
 // Offcanvas sidebar styles
 #sidebarOffcanvas {
   .offcanvas-body {
-      padding: 0;
+    padding: 0;
     .sidebar-menu {
-     padding: 1rem;
-       }
+      padding: 1rem;
+    }
   }
 }
 
@@ -364,16 +364,16 @@
   // Mobile (<768px): widget on top, then content
   grid-template-columns: 1fr;
   grid-template-areas:
-    "widget"
-    "content";
+    'widget'
+    'content';
   padding-inline: 1rem;
 
   // Tablet (768px - 1199px): sidebar left, widget on top of content
   @media (min-width: 768px) {
     grid-template-columns: minmax(200px, 250px) 1fr;
     grid-template-areas:
-      "sidebar widget"
-      "sidebar content";
+      'sidebar widget'
+      'sidebar content';
     gap: 1.5rem;
     padding-inline: 1.5rem;
   }
@@ -381,8 +381,7 @@
   // Desktop (1200px+): sidebar left, content center, widget right
   @media (min-width: 1200px) {
     grid-template-columns: minmax(200px, 280px) 1fr 220px;
-    grid-template-areas:
-      "sidebar content widget";
+    grid-template-areas: 'sidebar content widget';
     gap: 1.5rem;
   }
 

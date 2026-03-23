@@ -95,5 +95,4 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     });
   }
-
 });
