@@ -97,7 +97,7 @@ class DefaultController extends AbstractController
         $logger->info('User after CAS login', ['user' => $user instanceof \Symfony\Component\Security\Core\User\UserInterface ? $user->getUserIdentifier() : 'null']);
 
         //return $this->redirectToRoute('user_profile');
-        return $this->redirectToRoute('app_home');
+        return $this->redirectToRoute('app_journal');
 
     }
 

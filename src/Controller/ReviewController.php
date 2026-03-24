@@ -22,35 +22,32 @@ final class ReviewController extends AbstractController
     {
         $user = $this->getUser();
 
-        if (!$user instanceof \Symfony\Component\Security\Core\User\UserInterface) {
+        if (!$user instanceof \App\Entity\User) {
             throw $this->createAccessDeniedException('You must be logged in');
         }
 
         $search = $request->query->get('search', '');
         $page = $request->query->getInt('page', 1);
 
-        $activeJournalsCount = $reviewManager->getActiveReviewsCount();
+        // Count only reviews where user has a valid role
+        $result = $reviewManager->getReviewsForUserPaginated($user, $paginator, $page, 10);
+        $userJournalsCount = count($result['pagination']);
 
         if (!empty($search)) {
-            $reviews = $reviewManager->searchReviews($search);
+            $reviews = $reviewManager->searchReviewsForUser($user, $search);
             $pagination = null;
         } else {
-            $result = $reviewManager->getAllReviewsForDisplayPaginated($paginator,$page,10);
-                $reviews = $result['reviews'];
-                $pagination = $result['pagination'];
-
+            $reviews = $result['reviews'];
+            $pagination = $result['pagination'];
         }
 
-        //dd($reviews);
-
-        //dd($user);
         return $this->render('review/journal.html.twig', [
             'reviews' => $reviews,
             'pagination' => $pagination,
             'search' => $search,
             'user' => $user,
             'current_page' => $page,
-            'activeJournalsCount' => $activeJournalsCount,
+            'activeJournalsCount' => $userJournalsCount,
         ]);
     }
 
