@@ -191,4 +191,90 @@ class ReviewManager
         return $this->entityManager->getRepository(Review::class)
             ->count(['status' => 1]);
     }
+
+    /**
+     * Get reviews where user has a valid role (epiadmin, administrator, chief_editor, secretary)
+     *
+     * @return array{reviews: array<int, array<string, mixed>>, pagination: PaginationInterface<int, Review>}
+     */
+    public function getReviewsForUserPaginated(User $user, PaginatorInterface $paginator, int $page, int $limit): array
+    {
+        $allowedRoles = ['epiadmin', 'administrator', 'chief_editor', 'secretary'];
+
+        // Get RVID list where user has a valid role
+        $userRvids = [];
+        foreach ($user->getRolesDetails() as $role) {
+            if (in_array($role['ROLEID'], $allowedRoles, true)) {
+                $userRvids[] = (int)$role['RVID'];
+            }
+        }
+
+        // Remove duplicates
+        $userRvids = array_unique($userRvids);
+
+        if ($userRvids === []) {
+            return [
+                'reviews' => [],
+                'pagination' => $paginator->paginate([], $page, $limit)
+            ];
+        }
+
+        // Get reviews filtered by user's RVID
+        $allReviews = $this->reviewRepository->findBy(['rvid' => $userRvids]);
+        $paginatedReviews = $paginator->paginate($allReviews, $page, $limit);
+
+        $reviews = [];
+        foreach ($paginatedReviews->getItems() as $review) {
+            $reviewArray = $this->getReviewByCode($review->getCode());
+            if ($reviewArray) {
+                $reviews[] = $reviewArray;
+            }
+        }
+
+        return [
+            'reviews' => $reviews,
+            'pagination' => $paginatedReviews
+        ];
+    }
+
+    /**
+     * Search reviews filtered by user's roles
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function searchReviewsForUser(User $user, string $search): array
+    {
+        if (in_array(trim($search), ['', '0'], true)) {
+            return [];
+        }
+
+        $allowedRoles = ['epiadmin', 'administrator', 'chief_editor', 'secretary'];
+
+        // Get RVID list where user has a valid role
+        $userRvids = [];
+        foreach ($user->getRolesDetails() as $role) {
+            if (in_array($role['ROLEID'], $allowedRoles, true)) {
+                $userRvids[] = (int)$role['RVID'];
+            }
+        }
+
+        if ($userRvids === []) {
+            return [];
+        }
+
+        $reviewBySearch = $this->reviewRepository->findByCodeOrName($search);
+        $reviews = [];
+
+        foreach ($reviewBySearch as $review) {
+            // Only include if user has role for this review
+            if (in_array($review->getRvid(), $userRvids, true)) {
+                $reviewArray = $this->getReviewByCode($review->getCode());
+                if ($reviewArray) {
+                    $reviews[] = $reviewArray;
+                }
+            }
+        }
+
+        return $reviews;
+    }
 }
