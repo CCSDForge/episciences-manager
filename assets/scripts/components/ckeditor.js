@@ -1,3 +1,4 @@
+import { Markdown } from '@ckeditor/ckeditor5-markdown-gfm';
 import {
   ClassicEditor,
   Essentials,
@@ -93,6 +94,7 @@ export function initializeCKEditor(elementId, placeholder = '') {
 
       // Editing (editing group)
       FindAndReplace,
+      Markdown,
     ],
     toolbar: [
       // Document/Mode

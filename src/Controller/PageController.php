@@ -75,6 +75,7 @@ final class PageController extends AbstractController
                 return new JsonResponse([
                     'title' => ['en' => ucwords(str_replace('-', ' ', $actualPageCode)), 'fr' => ucwords(str_replace('-', ' ', $actualPageCode))],
                     'content' => ['en' => '', 'fr' => ''],
+                    'markdownContent' => ['en' => '', 'fr' => ''],
                     'pageCode' => $actualPageCode,
                     'isEmpty' => true
                 ]);
@@ -86,6 +87,7 @@ final class PageController extends AbstractController
             return new JsonResponse([
                 'title' => $page->getTitle(),
                 'content' => $htmlContent,
+                'markdownContent' => $page->getContent(),
                 'pageCode' => $page->getPageCode()
             ]);
         }
@@ -169,24 +171,9 @@ final class PageController extends AbstractController
             return new JsonResponse(['success' => false, 'message' => 'Missing content or locale'], 400);
         }
 
-        $htmlContent = (string) $data['content']; // CKEditor HTML
+        $markdownContent = (string) $data['content'];
         $locale      = (string) $data['locale'];
         $title       = isset($data['title']) ? (string) $data['title'] : null;
-
-        // Convert HTML -> Markdown
-        try {
-            $markdownContent = $markdownService->toMarkdown($htmlContent);
-        } catch (\Throwable $e) {
-            $this->logger->error('Error converting content', [
-                'exception' => $e->getMessage(),
-                'code' => $code,
-                'pageTitle' => $pageTitle,
-            ]);
-            return new JsonResponse([
-                'success' => false,
-                'message' => 'Error converting content'
-            ], 500);
-        }
 
         // Save markdown per locale
         $currentContent = $page->getContent();
@@ -238,7 +225,7 @@ final class PageController extends AbstractController
 
         // Set the locale for the translator
         $request->setLocale($locale);
-        
+
         $translations = [
             'selectPageFirst' => $translator->trans('journalDetails.select_page_first', [], 'messages', $locale),
             'missingPageInfo' => $translator->trans('journalDetails.missing_page_info', [], 'messages', $locale),
