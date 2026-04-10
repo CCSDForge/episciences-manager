@@ -153,7 +153,7 @@
 
 // Markdown/CKEditor rendered content inside readonly view
 #page-body {
-  // Tables can be wider than the card on mobile
+  min-height: 200px;
   overflow-x: auto;
 
   table {
