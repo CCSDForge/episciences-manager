@@ -554,6 +554,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
           updatePageView(data, selectedLang);
           updateTranslationsList(data.title, data.content);
+          // Update stored Markdown content for editing
+          currentMarkdownContent = data.markdownContent || {};
         } catch (error) {
           console.error('Error loading page content:', error);
         }
