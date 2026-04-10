@@ -1123,17 +1123,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const activeLink = document.querySelector('.page-nav-link.active');
             if (activeLink && updatedTitle) {
-              activeLink.textContent = updatedTitle;
+              // Update the title attribute for the content language being saved
+              activeLink.setAttribute(`data-current-title-${locale}`, updatedTitle);
 
-              const currentLocale = getCurrentLocale();
-
-              if (currentLocale === 'fr') {
-                activeLink.setAttribute('data-current-title-fr', updatedTitle);
-              } else {
-                activeLink.setAttribute('data-current-title-en', updatedTitle);
+              // Update displayed text only if editing in the current UI language
+              const uiLocale = getCurrentLocale();
+              if (locale === uiLocale) {
+                activeLink.textContent = updatedTitle;
               }
 
-              updateBreadcrumbLanguage(currentLocale);
+              updateBreadcrumbLanguage(uiLocale);
             }
 
             // Exit inline edit mode

@@ -68,14 +68,22 @@ final class PageController extends AbstractController
             'page_code' => $actualPageCode
         ]);
 
+        // Get accepted languages for this journal
+        $setting = $settingService->getSettingArray($review['rvid']);
+        $acceptedLanguages = $setting['languages']['accepted'] ?? ['en', 'fr'];
+
         // If it's an AJAX request, return JSON
         if ($request->isXmlHttpRequest()) {
             // If page doesn't exist, return empty content
             if (!$page instanceof \App\Entity\Page) {
+                $defaultTitle = ucwords(str_replace('-', ' ', $actualPageCode));
+                $title = array_fill_keys($acceptedLanguages, $defaultTitle);
+                $emptyContent = array_fill_keys($acceptedLanguages, '');
+
                 return new JsonResponse([
-                    'title' => ['en' => ucwords(str_replace('-', ' ', $actualPageCode)), 'fr' => ucwords(str_replace('-', ' ', $actualPageCode))],
-                    'content' => ['en' => '', 'fr' => ''],
-                    'markdownContent' => ['en' => '', 'fr' => ''],
+                    'title' => $title,
+                    'content' => $emptyContent,
+                    'markdownContent' => $emptyContent,
                     'pageCode' => $actualPageCode,
                     'isEmpty' => true
                 ]);
@@ -99,9 +107,6 @@ final class PageController extends AbstractController
         // Get all pages for the journal
         $allPages = $pageRepository->findBy(['rvcode' => $code]);
         $organizedPages = $hierarchyService->organizePages($allPages, $code);
-
-        $setting = $settingService->getSettingArray($review['rvid']);
-        $acceptedLanguages = $setting['languages']['accepted'] ?? ['en', 'fr'];
 
         return $this->render('review/journalDetails.html.twig', [
             'review' => $review,
