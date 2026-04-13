@@ -624,7 +624,8 @@ document.addEventListener('DOMContentLoaded', function () {
             const data = await response.json();
             existingTitle = (data.title && data.title[lang]) || '';
             // Use raw Markdown for editing, not HTML
-            existingContent = (data.markdownContent && data.markdownContent[lang]) || '';
+            existingContent =
+              (data.markdownContent && data.markdownContent[lang]) || '';
           }
         } catch (error) {
           console.error('Error fetching page data:', error);
@@ -1126,7 +1127,10 @@ document.addEventListener('DOMContentLoaded', function () {
             const activeLink = document.querySelector('.page-nav-link.active');
             if (activeLink && updatedTitle) {
               // Update the title attribute for the content language being saved
-              activeLink.setAttribute(`data-current-title-${locale}`, updatedTitle);
+              activeLink.setAttribute(
+                `data-current-title-${locale}`,
+                updatedTitle
+              );
 
               // Update displayed text only if editing in the current UI language
               const uiLocale = getCurrentLocale();
