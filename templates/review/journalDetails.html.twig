@@ -123,8 +123,7 @@
                                        aria-expanded="false"
                                        aria-controls="{{ collapseId }}"
                                        {% if isContainer %}
-                                           data-title-en="{{ page.title.en ?? page.title }}"
-                                           data-title-fr="{{ page.title.fr ?? page.title.en ?? page.title }}"
+                                           {% for lang in acceptedLanguages %}data-title-{{ lang }}="{{ page.title[lang] ?? page.title.en ?? page.title }}" {% endfor %}
                                            data-is-container="true"
                                        {% endif %}>
                                         <span>
@@ -153,8 +152,7 @@
                                                        aria-expanded="false"
                                                        aria-controls="{{ subCollapseId }}"
                                                        {% if isSubContainer %}
-                                                           data-title-en="{{ subPage.title.en ?? subPage.title }}"
-                                                           data-title-fr="{{ subPage.title.fr ?? subPage.title.en ?? subPage.title }}"
+                                                           {% for lang in acceptedLanguages %}data-title-{{ lang }}="{{ subPage.title[lang] ?? subPage.title.en ?? subPage.title }}" {% endfor %}
                                                            data-is-container="true"
                                                        {% endif %}>
                                                         <span>
@@ -174,12 +172,9 @@
                                                                    href="#"
                                                                    data-page-code="{{ nestedPage.pageCode|page_slug }}"
                                                                    data-journal-code="{{ code }}"
-                                                                   data-grandparent-title-en="{{ page.title.en ?? page.title }}"
-                                                                   data-grandparent-title-fr="{{ page.title.fr ?? page.title.en ?? page.title }}"
-                                                                   data-parent-title-en="{{ subPage.title.en ?? subPage.title }}"
-                                                                   data-parent-title-fr="{{ subPage.title.fr ?? subPage.title.en ?? subPage.title }}"
-                                                                   data-current-title-en="{{ nestedPage.title.en ?? nestedPage.pageCode }}"
-                                                                   data-current-title-fr="{{ nestedPage.title.fr ?? nestedPage.title.en ?? nestedPage.pageCode }}">
+                                                                   {% for lang in acceptedLanguages %}data-grandparent-title-{{ lang }}="{{ page.title[lang] ?? page.title.en ?? page.title }}" {% endfor %}
+                                                                   {% for lang in acceptedLanguages %}data-parent-title-{{ lang }}="{{ subPage.title[lang] ?? subPage.title.en ?? subPage.title }}" {% endfor %}
+                                                                   {% for lang in acceptedLanguages %}data-current-title-{{ lang }}="{{ nestedPage.title[lang] ?? nestedPage.title.en ?? nestedPage.pageCode }}" {% endfor %}>
                                                                     {{ nestedPage.title[app.request.locale] ?? nestedPage.title['en'] ?? nestedPage.pageCode }}
                                                                 </a>
                                                             {% endfor %}
@@ -191,10 +186,8 @@
                                                        href="#"
                                                        data-page-code="{{ subPage.pageCode|page_slug }}"
                                                        data-journal-code="{{ code }}"
-                                                       data-parent-title-en="{% if isContainer %}{{ page.title.en ?? page.title }}{% else %}{{ page.title.en ?? page.pageCode }}{% endif %}"
-                                                       data-parent-title-fr="{% if isContainer %}{{ page.title.fr ?? page.title.en ?? page.title }}{% else %}{{ page.title.fr ?? page.title.en ?? page.pageCode }}{% endif %}"
-                                                       data-current-title-en="{{ subPage.title.en ?? subPage.pageCode }}"
-                                                       data-current-title-fr="{{ subPage.title.fr ?? subPage.title.en ?? subPage.pageCode }}">
+                                                       {% for lang in acceptedLanguages %}data-parent-title-{{ lang }}="{% if isContainer %}{{ page.title[lang] ?? page.title.en ?? page.title }}{% else %}{{ page.title[lang] ?? page.title.en ?? page.pageCode }}{% endif %}" {% endfor %}
+                                                       {% for lang in acceptedLanguages %}data-current-title-{{ lang }}="{{ subPage.title[lang] ?? subPage.title.en ?? subPage.pageCode }}" {% endfor %}>
                                                         {{ subPage.title[app.request.locale] ?? subPage.title['en'] ?? subPage.pageCode }}
                                                     </a>
                                                 {% endif %}
@@ -208,12 +201,10 @@
                                            href="#"
                                            data-page-code="{{ page.pageCode|page_slug }}"
                                            data-journal-code="{{ code }}"
-                                           data-current-title-en="{{ page.title.en ?? page.pageCode }}"
-                                           data-current-title-fr="{{ page.title.fr ?? page.title.en ?? page.pageCode }}"
+                                           {% for lang in acceptedLanguages %}data-current-title-{{ lang }}="{{ page.title[lang] ?? page.title.en ?? page.pageCode }}" {% endfor %}
                                        {% else %}
                                            href="#"
-                                           data-title-en="{{ page.title.en ?? page.title }}"
-                                           data-title-fr="{{ page.title.fr ?? page.title.en ?? page.title }}"
+                                           {% for lang in acceptedLanguages %}data-title-{{ lang }}="{{ page.title[lang] ?? page.title.en ?? page.title }}" {% endfor %}
                                            data-is-container="true"
                                        {% endif %}>
                                         {% if isContainer %}
@@ -298,7 +289,7 @@
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label text-primary fw-semibold">{{ 'journalDetails.content' | trans }}</label>
-                                            <div id="page-body" class="form-control" style="height: auto; min-height: 200px;"></div>
+                                            <div id="page-body" class="ck-content"></div>
                                         </div>
                                     </div>
                                     <div id="page-home-content">

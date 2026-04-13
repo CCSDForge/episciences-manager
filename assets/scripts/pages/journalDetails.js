@@ -545,6 +545,7 @@ document.addEventListener('DOMContentLoaded', function () {
   let currentJournalCode = null;
   let isInlineEdit = false;
   let editingLocale = null;
+  let currentMarkdownContent = {}; // Store raw Markdown per locale for editing
 
   const sidebarLanguageSelect = document.getElementById(
     'sidebar-language-select'
@@ -571,6 +572,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
           updatePageView(data, selectedLang);
           updateTranslationsList(data.title, data.content);
+          // Update stored Markdown content for editing
+          currentMarkdownContent = data.markdownContent || {};
         } catch (error) {
           console.error('Error loading page content:', error);
         }
@@ -638,7 +641,9 @@ document.addEventListener('DOMContentLoaded', function () {
           if (response.ok) {
             const data = await response.json();
             existingTitle = (data.title && data.title[lang]) || '';
-            existingContent = (data.content && data.content[lang]) || '';
+            // Use raw Markdown for editing, not HTML
+            existingContent =
+              (data.markdownContent && data.markdownContent[lang]) || '';
           }
         } catch (error) {
           console.error('Error fetching page data:', error);
@@ -735,6 +740,8 @@ document.addEventListener('DOMContentLoaded', function () {
           pageBody.innerHTML = '<p class="text-danger">Page not found</p>';
         } else {
           updatePageView(data, locale);
+          // Store raw Markdown for editing
+          currentMarkdownContent = data.markdownContent || {};
         }
         pageContent.style.display = 'block';
 
@@ -853,6 +860,8 @@ document.addEventListener('DOMContentLoaded', function () {
             pageBody.innerHTML = '<p class="text-danger">Page not found</p>';
           } else {
             updatePageView(data, locale);
+            // Store raw Markdown for editing
+            currentMarkdownContent = data.markdownContent || {};
           }
           pageContent.style.display = 'block';
 
@@ -901,7 +910,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     const pageTitle = (pageTitleView && pageTitleView.value) || currentPageCode;
-    const currentContent = pageBody.innerHTML || '';
+    // Use stored Markdown content for the current locale
+    const currentLocale = editingLocale || getCurrentLocale();
+    const markdownForEdit = currentMarkdownContent[currentLocale] || '';
 
     // Populate inline edit form
     pageTitleInline.value = pageTitle;
@@ -930,11 +941,8 @@ document.addEventListener('DOMContentLoaded', function () {
         editorPromise
           .then(() => {
             console.log('CKEditor initialized successfully');
-            // Convert the HTML into cleaner content for the editor
-            const cleanContent = currentContent
-              .replace(/<div class="text-center[^>]*>[\s\S]*?<\/div>/g, '')
-              .trim();
-            setEditorContent(cleanContent || '');
+            // Use raw Markdown content directly (CKEditor with Markdown plugin expects MD)
+            setEditorContent(markdownForEdit);
 
             // Focus on the editor after a short delay
             setTimeout(() => {
@@ -953,7 +961,7 @@ document.addEventListener('DOMContentLoaded', function () {
             textarea.id = 'page-content-fallback';
             textarea.rows = 10;
             textarea.placeholder = placeholder;
-            textarea.value = currentContent.replace(/<[^>]*>/g, '');
+            textarea.value = markdownForEdit;
 
             parentElement.replaceChild(textarea, editorElement);
           });
@@ -1136,17 +1144,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const activeLink = document.querySelector('.page-nav-link.active');
             if (activeLink && updatedTitle) {
-              activeLink.textContent = updatedTitle;
+              // Update the title attribute for the content language being saved
+              activeLink.setAttribute(
+                `data-current-title-${locale}`,
+                updatedTitle
+              );
 
-              const currentLocale = getCurrentLocale();
-
-              if (currentLocale === 'fr') {
-                activeLink.setAttribute('data-current-title-fr', updatedTitle);
-              } else {
-                activeLink.setAttribute('data-current-title-en', updatedTitle);
+              // Update displayed text only if editing in the current UI language
+              const uiLocale = getCurrentLocale();
+              if (locale === uiLocale) {
+                activeLink.textContent = updatedTitle;
               }
 
-              updateBreadcrumbLanguage(currentLocale);
+              updateBreadcrumbLanguage(uiLocale);
             }
 
             // Exit inline edit mode
