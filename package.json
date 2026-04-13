@@ -3,7 +3,7 @@
     "@babel/core": "^7.17.0",
     "@babel/preset-env": "^7.16.0",
     "@playwright/test": "^1.54.2",
-    "@symfony/webpack-encore": "^5.0.0",
+    "@symfony/webpack-encore": "^6.0.0",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.6.4",
     "@types/node": "^24.2.1",
