@@ -29,6 +29,29 @@ class ReviewRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * Count all reviews.
+     */
+    public function countAllReviews(): int
+    {
+        return (int) $this->createQueryBuilder('r')
+            ->select('COUNT(r.rvid)')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    /**
+     * Count active reviews (status = 1)
+     */
+    public function countActiveReviews(): int
+    {
+        return (int) $this->createQueryBuilder('r')
+            ->select('COUNT(r.rvid)')
+            ->where('r.status = :active')
+            ->setParameter('active', 1)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 
     /**
      * Create a QueryBuilder for active reviews with new front switched on.

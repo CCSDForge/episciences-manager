@@ -20,7 +20,7 @@ nav:
   statistics: "Statistiques"
 
 home:
-  welcome_title: "Bienvenue sur notre plateforme Episciences"
+  welcome_title: "Bienvenue sur la plateforme Episciences"
   total_journals: "Revues au total"
   no_journals_available: "Aucune revue disponible pour le moment."
 
@@ -32,7 +32,7 @@ flash:
 
 journal:
   title: "Revues au total"
-  journal_list: "Liste des journaux"
+  journal_list: "Liste des revues"
   active_journals: "Journaux actifs"
   table_name: "Nom"
   table_code: "Code"

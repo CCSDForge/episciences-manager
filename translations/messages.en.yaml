@@ -20,12 +20,12 @@ nav:
   statistics: "Statistics"
 
 home:
-  welcome_title: "Welcome to our Episciences platform"
+  welcome_title: "Welcome to the Episciences platform"
   total_journals: "Total journals"
   no_journals_available: "No journals available at the moment."
 
 reviews:
-  list_title: "List of reviews"
+  list_title: "List of journals"
 
 flash:
   logout_success: "You have been successfully logged out"

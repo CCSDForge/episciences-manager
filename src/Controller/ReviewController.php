@@ -4,6 +4,7 @@ namespace App\Controller;
 
 
 use App\Repository\PageRepository;
+use App\Repository\ReviewRepository;
 use App\Service\JournalSettingService;
 use App\Service\ReviewManager;
 use App\Service\PageHierarchyService;
@@ -18,7 +19,7 @@ final class ReviewController extends AbstractController
 {
 
     #[Route('/journal', name: 'app_journal')]
-    public function index(Request $request, ReviewManager $reviewManager,PaginatorInterface $paginator): Response
+    public function index(Request $request, ReviewManager $reviewManager, PaginatorInterface $paginator, ReviewRepository $reviewRepository): Response
     {
         $user = $this->getUser();
 
@@ -30,8 +31,10 @@ final class ReviewController extends AbstractController
         $page = $request->query->getInt('page', 1);
 
         // Count only reviews where user has a valid role
-        $result = $reviewManager->getReviewsForUserPaginated($user, $paginator, $page, 10);
-        $userJournalsCount = count($result['pagination']);
+        $result = $reviewManager->getReviewsForUserPaginated($user, $paginator, $page, 30);
+
+        $totalReviews = $reviewRepository->countAllReviews();
+        $totalActiveReviews = $reviewRepository->countActiveReviews();
 
         if (!empty($search)) {
             $reviews = $reviewManager->searchReviewsForUser($user, $search);
@@ -47,7 +50,8 @@ final class ReviewController extends AbstractController
             'search' => $search,
             'user' => $user,
             'current_page' => $page,
-            'activeJournalsCount' => $userJournalsCount,
+            'totalReviews' => $totalReviews,
+            'totalActiveReviews' => $totalActiveReviews,
         ]);
     }
 

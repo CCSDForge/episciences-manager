@@ -25,11 +25,7 @@
                             <div class="col-lg-2 col-md-3 col-sm-6">
                                 <div class="stat-card p-4 rounded-3" style="background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);">
                                     <div class="text-center text-white">
-                                        {% if pagination %}
-                                        <h3 class="display-8 fw-bold mb-2">{{ pagination.totalItemCount|default('0') }}</h3>
-                                        {% else %}
-                                        <h3 class="display-8 fw-bold mb-2">{{ reviews|length }}</h3>
-                                        {% endif %}
+                                        <h3 class="display-8 fw-bold mb-2">{{ totalReviews|default(0) }}</h3>
                                         <p class="h5 mb-0">{{ 'journal.title' | trans }}</p>
                                     </div>
                                 </div>
@@ -38,20 +34,8 @@
                             <div class="col-lg-2 col-md-3 col-sm-6">
                                 <div class="stat-card p-4 rounded-3" style="background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);">
                                     <div class="text-center text-white">
-                                        {% if pagination %}
-                                            {# If pagination, we must count from all reviews, not only the current page #}
-                                            {# Calculate in the controller #}
-                                            <h3 class="display-8 fw-bold mb-2">{{ activeJournalsCount|default(0) }}</h3>
-                                        {% else %}
-                                            {% set activeCount = 0 %}
-                                            {% for review in reviews %}
-                                                {% if review.status == 1 %}
-                                                    {% set activeCount = activeCount + 1 %}
-                                                {% endif %}
-                                            {% endfor %}
-                                            <h3 class="display-8 fw-bold mb-2">{{ activeCount }}</h3>
-                                        {% endif %}
-                                             <p class="h5 mb-0">{{ 'journal.active_journals' | trans }}</p>
+                                        <h3 class="display-8 fw-bold mb-2">{{ totalActiveReviews|default(0) }}</h3>
+                                        <p class="h5 mb-0">{{ 'journal.active_journals' | trans }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -99,13 +83,21 @@
                                 {% for review in reviews %}
                                     <tr>
                                         <td>
-                                            <div class="fw-semibold">{{ review.name }}</div>
+                                            {% if is_granted('REVIEW_VIEW', review) %}
+                                                <a href="{{ path('app_journal_detail', {code: review.code}) }}" class="fw-semibold text-decoration-none">{{ review.name }}</a>
+                                            {% else %}
+                                                <div class="fw-semibold">{{ review.name }}</div>
+                                            {% endif %}
                                         </td>
                                         <td>
-                                            <span class="badge bg-primary">{{ review.code }}</span>
+                                            {% if is_granted('REVIEW_VIEW', review) %}
+                                                <a href="{{ path('app_journal_detail', {code: review.code}) }}"><span class="badge bg-primary">{{ review.code }}</span></a>
+                                            {% else %}
+                                                <span class="badge bg-primary">{{ review.code }}</span>
+                                            {% endif %}
                                         </td>
                                         <td class="text-center">
-                                            {# View details button - only for epiadmin #}
+                                            {# View details button - only for epiadmin, administrator, chief_editor, secretary #}
                                             {% if is_granted('REVIEW_VIEW', review) %}
                                                 <a href="{{ path('app_journal_detail', {code: review.code}) }}"
                                                    class="action-btn"
