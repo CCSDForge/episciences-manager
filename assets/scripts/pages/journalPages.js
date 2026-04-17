@@ -408,21 +408,6 @@ function updateTranslationsList(titleByLocale, contentByLocale) {
     });
 }
 
-/**
- * Reset the translations list to initial empty state (flags stay from Twig).
- */
-function resetTranslationsList() {
-  document
-    .querySelectorAll('#translations-list .translation-row')
-    .forEach(row => {
-      const icon = row.querySelector('.translation-action-btn i');
-      const titleInput = row.querySelector('.translation-title-input');
-
-      if (icon) icon.className = 'fas fa-plus text-muted';
-      if (titleInput) titleInput.value = '';
-    });
-}
-
 // Make functions globally available for the header script
 window.updateInlineEditTranslations = updateInlineEditTranslations;
 window.updateContainerTitles = updateContainerTitles;
@@ -774,27 +759,6 @@ document.addEventListener('DOMContentLoaded', function () {
           ? data.content[locale]
           : noContentText;
     }
-  }
-
-  function resetToHomeState() {
-    if (isInlineEdit) {
-      exitInlineEdit();
-    }
-
-    currentPageCode = null;
-    currentJournalCode = null;
-
-    pageLinks.forEach(l => l.classList.remove('active'));
-
-    hidePreviewButton();
-
-    if (pageViewFields) pageViewFields.style.display = 'none';
-    if (pageHomeContent) pageHomeContent.style.display = 'block';
-
-    pageContent.style.display = 'block';
-
-    resetTranslationsList();
-    updateLanguageSelectOptions(null);
   }
 
   // Initialize current page if we're on a page route
@@ -1439,13 +1403,6 @@ document.addEventListener('DOMContentLoaded', function () {
         previewButtonContainer.style.display = 'none';
         console.log('DEBUG: Preview button hidden - condition failed');
       }
-    }
-  }
-
-  // Function to hide preview button when going to home
-  function hidePreviewButton() {
-    if (previewButtonContainer) {
-      previewButtonContainer.style.display = 'none';
     }
   }
 
