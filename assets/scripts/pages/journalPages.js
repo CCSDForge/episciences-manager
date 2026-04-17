@@ -758,27 +758,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
-  function resetToHomeState() {
-    if (isInlineEdit) {
-      exitInlineEdit();
-    }
-
-    currentPageCode = null;
-    currentJournalCode = null;
-
-    pageLinks.forEach(l => l.classList.remove('active'));
-
-    hidePreviewButton();
-
-    if (pageViewFields) pageViewFields.style.display = 'none';
-    if (pageHomeContent) pageHomeContent.style.display = 'block';
-
-    pageContent.style.display = 'block';
-
-    resetTranslationsList();
-    updateLanguageSelectOptions(null);
-  }
-
   // Initialize current page if we're on a page route
   initializeCurrentPage();
 

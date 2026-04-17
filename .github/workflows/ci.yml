@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [ main, develop, preprod ]
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   # Tests and quality checks
   ci:
