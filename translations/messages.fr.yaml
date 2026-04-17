@@ -38,7 +38,7 @@ journal:
   table_code: "Code"
   table_action: "Action"
   no_journals: "Aucun journal trouvé"
-  search_placeholder: "Rechercher un journal par nom ou code"
+  search_placeholder: "Nom ou code du journal"
   clear_search: "Vider la recherche"
   see_details: "Voir les détails (epiadmin uniquement)"
 
@@ -225,7 +225,6 @@ resources:
 
 footer:
   about_title: "À propos d'Episciences"
-  blog: "Blog"
   contact: "Contact"
   support_title: "Support"
   documentation: "Documentation"
