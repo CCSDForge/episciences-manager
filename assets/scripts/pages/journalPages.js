@@ -390,21 +390,6 @@ function updateTranslationsList(titleByLocale, contentByLocale) {
     });
 }
 
-/**
- * Reset the translations list to initial empty state (flags stay from Twig).
- */
-function resetTranslationsList() {
-  document
-    .querySelectorAll('#translations-list .translation-row')
-    .forEach(row => {
-      const icon = row.querySelector('.translation-action-btn i');
-      const titleInput = row.querySelector('.translation-title-input');
-
-      if (icon) icon.className = 'fas fa-plus text-muted';
-      if (titleInput) titleInput.value = '';
-    });
-}
-
 // Make functions globally available for the header script
 window.updateInlineEditTranslations = updateInlineEditTranslations;
 window.updateContainerTitles = updateContainerTitles;
@@ -1399,13 +1384,6 @@ document.addEventListener('DOMContentLoaded', function () {
         previewButtonContainer.style.display = 'none';
         console.log('DEBUG: Preview button hidden - condition failed');
       }
-    }
-  }
-
-  // Function to hide preview button when going to home
-  function hidePreviewButton() {
-    if (previewButtonContainer) {
-      previewButtonContainer.style.display = 'none';
     }
   }
 
