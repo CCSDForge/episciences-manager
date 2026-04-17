@@ -789,7 +789,9 @@ document.addEventListener('DOMContentLoaded', function () {
       console.log('Link clicked - navigating to view route');
 
       const pageCode = this.getAttribute('data-page-code');
-      const journalCode = this.getAttribute('data-journal-code') || window.journalPagesData?.journalCode;
+      const journalCode =
+        this.getAttribute('data-journal-code') ||
+        window.journalPagesData?.journalCode;
 
       if (!pageCode || !journalCode) {
         console.error('Missing pageCode or journalCode');
@@ -809,13 +811,20 @@ document.addEventListener('DOMContentLoaded', function () {
   const journalCodeFromData = window.journalPagesData?.journalCode;
 
   if (initialPageCode && journalCodeFromData) {
-    console.log('Loading page from route:', initialPageCode, 'editMode:', initialEditMode);
+    console.log(
+      'Loading page from route:',
+      initialPageCode,
+      'editMode:',
+      initialEditMode
+    );
 
     currentPageCode = initialPageCode;
     currentJournalCode = journalCodeFromData;
 
     // Find and activate the corresponding sidebar link
-    const targetLink = document.querySelector(`.page-nav-link[data-page-code="${initialPageCode}"]`);
+    const targetLink = document.querySelector(
+      `.page-nav-link[data-page-code="${initialPageCode}"]`
+    );
     if (targetLink) {
       pageLinks.forEach(l => l.classList.remove('active'));
       targetLink.classList.add('active');
@@ -833,37 +842,36 @@ document.addEventListener('DOMContentLoaded', function () {
         'X-Requested-With': 'XMLHttpRequest',
       },
     })
-        .then(response => {
-          console.log('Response status:', response.status);
-          return response.json();
-        })
-        .then(data => {
-          console.log('Data received:', JSON.stringify(data, null, 2));
-          console.log('Current locale:', locale);
-          if (data.error) {
-            pageBody.innerHTML = '<p class="text-danger">Page not found</p>';
-          } else {
-            updatePageView(data, locale);
-            // Store raw Markdown for editing
-            currentMarkdownContent = data.markdownContent || {};
-          }
-          pageContent.style.display = 'block';
+      .then(response => {
+        console.log('Response status:', response.status);
+        return response.json();
+      })
+      .then(data => {
+        console.log('Data received:', JSON.stringify(data, null, 2));
+        console.log('Current locale:', locale);
+        if (data.error) {
+          pageBody.innerHTML = '<p class="text-danger">Page not found</p>';
+        } else {
+          updatePageView(data, locale);
+          // Store raw Markdown for editing
+          currentMarkdownContent = data.markdownContent || {};
+        }
+        pageContent.style.display = 'block';
 
-          updateTranslationsList(data.title, data.content);
-          updateLanguageSelectOptions(data.content);
+        updateTranslationsList(data.title, data.content);
+        updateLanguageSelectOptions(data.content);
 
-          // If editMode is true, switch to edit mode after loading content
-          if (initialEditMode) {
-            console.log('Switching to edit mode');
-            switchToInlineEdit();
-          }
-        })
-        .catch(error => {
-          console.error('Fetch error:', error);
-          pageBody.innerHTML =
-            '<p class="text-danger">Error loading content</p>';
-          pageContent.style.display = 'block';
-        });
+        // If editMode is true, switch to edit mode after loading content
+        if (initialEditMode) {
+          console.log('Switching to edit mode');
+          switchToInlineEdit();
+        }
+      })
+      .catch(error => {
+        console.error('Fetch error:', error);
+        pageBody.innerHTML = '<p class="text-danger">Error loading content</p>';
+        pageContent.style.display = 'block';
+      });
   }
 
   // Home link handler - navigates to pages home
@@ -885,7 +893,9 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log('Edit button clicked');
 
     if (!currentPageCode) {
-      alert(window.translations?.selectPageFirst || 'Please select a page first');
+      alert(
+        window.translations?.selectPageFirst || 'Please select a page first'
+      );
       return;
     }
 
