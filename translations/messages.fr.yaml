@@ -140,6 +140,7 @@ journalDetails:
   edit_pages: "Éditer les pages"
   back_to_home: "Retour à l'accueil"
   welcome_backoffice: "Bienvenue dans le backoffice de gestion du journal"
+  news: "Actualités"
 
 journalPages:
   home: "Accueil"
