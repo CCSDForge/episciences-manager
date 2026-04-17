@@ -49,8 +49,8 @@ page_hierarchies:
         order: 4
       - code: "custom-page"
         order: 5
-      - code: "News"
-        order: 6
+      #- code: "News"
+        #order: 6
 
 
   # Specific configuration for a particular journal (optional)

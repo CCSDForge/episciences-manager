@@ -14,7 +14,7 @@
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item">
-                            <a href="{{ path('app_journal_detail', {'code': journal_code}) }}">{{ 'resources.backToJournal'|trans }}</a>
+                            <a href="{{ path('app_journal_pages', {'code': journal_code}) }}">{{ 'resources.backToJournal'|trans }}</a>
                         </li>
                         <li class="breadcrumb-item active" aria-current="page">{{ 'resources.fileManagement'|trans }}</li>
                     </ol>
@@ -55,14 +55,14 @@
                             </div>
                         </div>
                     </form>
-                    
+
                     <!-- Upload Progress -->
                     <div id="uploadProgress" class="mt-3" style="display: none;">
                         <div class="progress">
                             <div class="progress-bar" role="progressbar" style="width: 0%"></div>
                         </div>
                     </div>
-                    
+
                     <!-- Upload Messages -->
                     <div id="uploadMessages" class="mt-3"></div>
                 </div>
@@ -104,8 +104,8 @@
                                             <td>
                                                 <div class="input-group input-group-sm">
                                                     <input type="text" class="form-control" value="{{ file.url }}" readonly>
-                                                    <button class="btn btn-outline-secondary copy-url-btn" type="button" 
-                                                            data-url="{{ file.url }}" 
+                                                    <button class="btn btn-outline-secondary copy-url-btn" type="button"
+                                                            data-url="{{ file.url }}"
                                                             title="{{ 'resources.copyUrl'|trans }}">
                                                         <i class="fas fa-copy"></i>
                                                     </button>
@@ -129,7 +129,7 @@
                                             <td>{% if app.request.locale == 'en' %}{{ file.modified|date('Y-m-d g:i A') }}{% else %}{{ file.modified|date('Y-m-d H:i') }}{% endif %}</td>
                                             <td>{{ file.size|file_size }}</td>
                                             <td class="text-center">
-                                                <button class="btn btn-sm btn-danger delete-file-btn" 
+                                                <button class="btn btn-sm btn-danger delete-file-btn"
                                                         data-filename="{{ file.name }}"
                                                         title="{{ 'resources.deleteFile'|trans }}">
                                                     <i class="fas fa-trash"></i>
@@ -224,7 +224,7 @@
                 </div>
                 <p class="mb-4" id="defaultConflictText">{{ 'resources.existingFile'|trans }}: <strong id="conflictFileName"></strong></p>
                 <p class="mb-4" id="customConflictText" style="display: none;">{{ 'resources.customNameConflictText'|trans({'%filename%': '<strong id="conflictFileNameCustom"></strong>'}) | raw }}</p>
-                
+
                 <div class="row g-3">
                     <div class="col-md-6">
                         <div class="card action-card" data-action="replace" style="cursor: pointer;">

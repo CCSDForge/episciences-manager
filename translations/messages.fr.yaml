@@ -20,7 +20,7 @@ nav:
   statistics: "Statistiques"
 
 home:
-  welcome_title: "Bienvenue sur notre plateforme Episciences"
+  welcome_title: "Bienvenue sur la plateforme Episciences"
   total_journals: "Revues au total"
   no_journals_available: "Aucune revue disponible pour le moment."
 
@@ -32,13 +32,13 @@ flash:
 
 journal:
   title: "Revues au total"
-  journal_list: "Liste des journaux"
+  journal_list: "Liste des revues"
   active_journals: "Journaux actifs"
   table_name: "Nom"
   table_code: "Code"
   table_action: "Action"
   no_journals: "Aucun journal trouvé"
-  search_placeholder: "Rechercher un journal par nom ou code"
+  search_placeholder: "Nom ou code du journal"
   clear_search: "Vider la recherche"
   see_details: "Voir les détails (epiadmin uniquement)"
 
@@ -137,9 +137,16 @@ journalSettings:
     preview.other: "Autre statut"
 
 journalDetails:
+  edit_pages: "Éditer les pages"
+  back_to_home: "Retour à l'accueil"
+  welcome_backoffice: "Bienvenue dans le backoffice de gestion du journal"
+  news: "Actualités"
+
+journalPages:
   home: "Accueil"
   menu: "Menu"
-  welcome_backoffice: "Bienvenue dans le backoffice de gestion du journal"
+  welcome_title: "Bienvenue dans l’interface d’édition des pages"
+  back: "Retour"
   noContentAvailable: "Aucun contenu disponible"
   edit: "Éditer"
   edit_page_content: "Éditer le contenu de la page"
@@ -225,7 +232,6 @@ resources:
 
 footer:
   about_title: "À propos d'Episciences"
-  blog: "Blog"
   contact: "Contact"
   support_title: "Support"
   documentation: "Documentation"
