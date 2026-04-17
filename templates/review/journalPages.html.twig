@@ -406,8 +406,11 @@
     <script>
       window.journalPagesData = {
         locale: {{ app.request.locale|json_encode|raw }},
+        journalCode: {{ code|json_encode|raw }},
         acceptedLanguages: {{ acceptedLanguages|default(['en', 'fr'])|json_encode|raw }},
         csrfToken: {{ csrf_token('page-edit')|json_encode|raw }},
+        currentPage: {{ currentPage|default('')|json_encode|raw }},
+        editMode: {{ editMode|default(false)|json_encode|raw }},
         translations: {
           noContentAvailable: {{ 'journalPages.noContentAvailable'|trans|json_encode|raw }},
           translations: {{ 'journalPages.translations'|trans|default('Traductions')|json_encode|raw }},

@@ -10,7 +10,6 @@ use App\Service\ReviewManager;
 use App\Service\PageHierarchyService;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -104,6 +103,60 @@ final class ReviewController extends AbstractController
             'code' => $code,
             'pages' => $organizedPages,
             'acceptedLanguages' => $acceptedLanguages,
+        ]);
+    }
+
+    #[Route('/journal/{code}/pages/{pageCode}/edit', name: 'app_journal_page_edit', requirements: ['code' => '[\w\-]+', 'pageCode' => '[\w\-]+'])]
+    public function pageEdit(string $code, string $pageCode, ReviewManager $reviewManager, PageRepository $pageRepository, PageHierarchyService $hierarchyService, JournalSettingService $settingService): Response
+    {
+        $review = $reviewManager->getReviewByCode($code);
+
+        if (!$review) {
+            throw $this->createNotFoundException('Review not found');
+        }
+
+        $this->denyAccessUnlessGranted('REVIEW_VIEW', $review);
+
+        $pages = $pageRepository->findBy(['rvcode' => $code]);
+        $organizedPages = $hierarchyService->organizePages($pages, $code);
+
+        $setting = $settingService->getSettingArray($review['rvid']);
+        $acceptedLanguages = $setting['languages']['accepted'] ?? ['en', 'fr'];
+
+        return $this->render('review/journalPages.html.twig', [
+            'review' => $review,
+            'code' => $code,
+            'pages' => $organizedPages,
+            'acceptedLanguages' => $acceptedLanguages,
+            'currentPage' => $pageCode,
+            'editMode' => true,
+        ]);
+    }
+
+    #[Route('/journal/{code}/pages/{pageCode}', name: 'app_journal_page_view', requirements: ['code' => '[\w\-]+', 'pageCode' => '[\w\-]+'])]
+    public function pageView(string $code, string $pageCode, ReviewManager $reviewManager, PageRepository $pageRepository, PageHierarchyService $hierarchyService, JournalSettingService $settingService): Response
+    {
+        $review = $reviewManager->getReviewByCode($code);
+
+        if (!$review) {
+            throw $this->createNotFoundException('Review not found');
+        }
+
+        $this->denyAccessUnlessGranted('REVIEW_VIEW', $review);
+
+        $pages = $pageRepository->findBy(['rvcode' => $code]);
+        $organizedPages = $hierarchyService->organizePages($pages, $code);
+
+        $setting = $settingService->getSettingArray($review['rvid']);
+        $acceptedLanguages = $setting['languages']['accepted'] ?? ['en', 'fr'];
+
+        return $this->render('review/journalPages.html.twig', [
+            'review' => $review,
+            'code' => $code,
+            'pages' => $organizedPages,
+            'acceptedLanguages' => $acceptedLanguages,
+            'currentPage' => $pageCode,
+            'editMode' => false,
         ]);
     }
 

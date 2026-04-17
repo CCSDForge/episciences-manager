@@ -777,70 +777,62 @@ document.addEventListener('DOMContentLoaded', function () {
 
     resetTranslationsList();
     updateLanguageSelectOptions(null);
-
-    // Update URL to remove page parameter
-    const locale = getCurrentLocale();
-    const journalCode =
-      document.querySelector('[data-journal-code]')?.dataset.journalCode || '';
-    if (journalCode) {
-      const pagesUrl = `/${locale}/journal/${journalCode}/pages`;
-      history.pushState({}, '', pagesUrl);
-    }
   }
 
   // Initialize current page if we're on a page route
   initializeCurrentPage();
 
+  // Sidebar link clicks - navigate to view route (HTML navigation)
   pageLinks.forEach(link => {
     link.addEventListener('click', function (e) {
       e.preventDefault();
-      console.log('Link clicked');
+      console.log('Link clicked - navigating to view route');
 
       const pageCode = this.getAttribute('data-page-code');
-      const journalCode = this.getAttribute('data-journal-code');
-
-      console.log('Page code:', pageCode);
-      console.log('Journal code:', journalCode);
+      const journalCode = this.getAttribute('data-journal-code') || window.journalPagesData?.journalCode;
 
       if (!pageCode || !journalCode) {
         console.error('Missing pageCode or journalCode');
         return;
       }
 
-      // Exit inline edit mode if active
-      if (isInlineEdit) {
-        exitInlineEdit();
-      }
+      // Navigate to the view route (full page load)
+      const locale = getCurrentLocale();
+      const viewUrl = `/${locale}/journal/${journalCode}/pages/${pageCode}`;
+      window.location.href = viewUrl;
+    });
+  });
 
-      // Store current page info for editing
-      currentPageCode = pageCode;
-      currentJournalCode = journalCode;
+  // Load current page content if currentPage is set (from route)
+  const initialPageCode = window.journalPagesData?.currentPage;
+  const initialEditMode = window.journalPagesData?.editMode;
+  const journalCodeFromData = window.journalPagesData?.journalCode;
 
-      // Remove active class from all links
+  if (initialPageCode && journalCodeFromData) {
+    console.log('Loading page from route:', initialPageCode, 'editMode:', initialEditMode);
+
+    currentPageCode = initialPageCode;
+    currentJournalCode = journalCodeFromData;
+
+    // Find and activate the corresponding sidebar link
+    const targetLink = document.querySelector(`.page-nav-link[data-page-code="${initialPageCode}"]`);
+    if (targetLink) {
       pageLinks.forEach(l => l.classList.remove('active'));
-      // Add active class to clicked link
-      this.classList.add('active');
+      targetLink.classList.add('active');
+      updateBreadcrumb(targetLink);
+      updatePreviewButton(initialPageCode, targetLink);
+    }
 
-      // Update breadcrumb
-      updateBreadcrumb(this);
-      // Extract the locale from the URL, or use the document's locale if it has been changed
-      let locale = getCurrentLocale();
-      const pageUrl = `/${locale}/journal/${journalCode}/page/${pageCode}`;
-      console.log('Fetching:', pageUrl);
+    // Fetch page content via AJAX
+    const locale = getCurrentLocale();
+    const pageUrl = `/${locale}/journal/${journalCodeFromData}/page/${initialPageCode}`;
+    console.log('Fetching page content:', pageUrl);
 
-      // Update the URL in the browser without reloading (stay on /pages route)
-      const pagesUrl = `/${locale}/journal/${journalCode}/pages?page=${pageCode}`;
-      console.log('Current URL:', window.location.href);
-      console.log('New URL will be:', pagesUrl);
-      history.pushState({ pageCode: pageCode }, '', pagesUrl);
-      console.log('URL after pushState:', window.location.href);
-
-      // Fetch page content via AJAX
-      fetch(pageUrl, {
-        headers: {
-          'X-Requested-With': 'XMLHttpRequest',
-        },
-      })
+    fetch(pageUrl, {
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+      },
+    })
         .then(response => {
           console.log('Response status:', response.status);
           return response.json();
@@ -859,6 +851,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
           updateTranslationsList(data.title, data.content);
           updateLanguageSelectOptions(data.content);
+
+          // If editMode is true, switch to edit mode after loading content
+          if (initialEditMode) {
+            console.log('Switching to edit mode');
+            switchToInlineEdit();
+          }
         })
         .catch(error => {
           console.error('Fetch error:', error);
@@ -866,25 +864,42 @@ document.addEventListener('DOMContentLoaded', function () {
             '<p class="text-danger">Error loading content</p>';
           pageContent.style.display = 'block';
         });
-    });
-  });
+  }
 
-  // Home link handler - shows welcome content
+  // Home link handler - navigates to pages home
   if (homeLink) {
     homeLink.addEventListener('click', function (e) {
       e.preventDefault();
-      console.log('Home link clicked');
+      console.log('Home link clicked - navigating to pages home');
 
-      resetToHomeState();
+      const locale = getCurrentLocale();
+      const journalCode = window.journalPagesData?.journalCode;
+      const pagesUrl = `/${locale}/journal/${journalCode}/pages`;
+      window.location.href = pagesUrl;
     });
   }
 
-  // Edit button handler - launches inline edit directly
+  // Edit button handler - navigates to edit route
   editButton.addEventListener('click', function (e) {
     e.preventDefault();
-    console.log('Edit button clicked - launching inline edit');
+    console.log('Edit button clicked');
 
-    switchToInlineEdit();
+    if (!currentPageCode) {
+      alert(window.translations?.selectPageFirst || 'Please select a page first');
+      return;
+    }
+
+    // If already in edit mode, just switch to inline edit
+    if (window.journalPagesData?.editMode) {
+      switchToInlineEdit();
+      return;
+    }
+
+    // Navigate to edit route
+    const locale = getCurrentLocale();
+    const journalCode = window.journalPagesData?.journalCode;
+    const editUrl = `/${locale}/journal/${journalCode}/pages/${currentPageCode}/edit`;
+    window.location.href = editUrl;
   });
 
   // Function to switch to inline edit mode
@@ -1242,12 +1257,14 @@ document.addEventListener('DOMContentLoaded', function () {
     breadcrumbParent.style.display = 'none';
     breadcrumbCurrent.style.display = 'none';
 
-    // Handle home link click
+    // Handle home link click - navigate to pages home
     homeLink.addEventListener('click', function (e) {
       e.preventDefault();
-      breadcrumbNav.style.display = 'none';
 
-      resetToHomeState();
+      const locale = getCurrentLocale();
+      const journalCode = window.journalPagesData?.journalCode;
+      const pagesUrl = `/${locale}/journal/${journalCode}/pages`;
+      window.location.href = pagesUrl;
     });
 
     if (grandparentTitle && parentTitle) {
@@ -1403,17 +1420,5 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
-  // Check for page query parameter on load and auto-select the page
-  const urlParams = new URLSearchParams(window.location.search);
-  const pageParam = urlParams.get('page');
-  if (pageParam) {
-    // Find the page link with matching page code and click it
-    const targetLink = document.querySelector(
-      `.page-nav-link[data-page-code="${pageParam}"]`
-    );
-    if (targetLink) {
-      console.log('Auto-loading page from URL parameter:', pageParam);
-      targetLink.click();
-    }
-  }
+  // Page loading is now handled via window.journalPagesData.currentPage (from route)
 });
