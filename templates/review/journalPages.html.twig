@@ -80,27 +80,25 @@
 
             <!-- Main Layout -->
             <div class="mt-4">
-                <!-- Row 1: Logo + Title (Desktop only) -->
-                <div class="d-none d-md-flex align-items-center mb-4">
-                    <!-- Logo -->
-                    <div class="flex-shrink-0 text-center" style="width: 20%; min-width: 200px; max-width: 300px;">
+                <!-- Row 1: Logo + Title + Back (Desktop only) - aligned with grid below -->
+                <div class="journal-header d-none d-md-grid align-items-center mb-4">
+                    <!-- Logo (aligned with sidebar) -->
+                    <div class="text-center">
                         <img src="{{ asset('build/images/logo-' ~ review.code ~ '.svg') }}"
                              onerror="this.onerror=null; this.src='{{ asset('build/images/logo-' ~ review.code ~ '-preprod.svg') }}';"
                              alt="{{ review.name }} Logo" class="img-fluid logo">
                     </div>
-                    <!-- Title -->
-                    <div class="flex-grow-1 ms-4">
+                    <!-- Title (aligned with content) -->
+                    <div class="ps-3">
                         <h1 class="h3 mb-0 text-primary fw-bold">{{ review.name }}</h1>
                     </div>
-
-                    <!-- Back button -->
-                    <div class="flex-shrink-0 ms-auto">
+                    <!-- Back button (aligned with widget) -->
+                    <div class="text-end">
                         <a href="{{ path('app_journal_detail', {'code': code}) }}" class="btn btn-outline-secondary">
                             <i class="fas fa-arrow-left me-1"></i>
                             {{ 'journalPages.back'|trans }}
                         </a>
                     </div>
-
                 </div>
 
                 <!-- Row 2: Sidebar + Content + Language Widget -->

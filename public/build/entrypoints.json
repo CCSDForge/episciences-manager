@@ -1,0 +1,134 @@
+{
+  "entrypoints": {
+    "app": {
+      "js": [
+        "/build/runtime.a8c7a714.js",
+        "/build/336.c20e8aa6.js",
+        "/build/66.1a3bb024.js",
+        "/build/app.82accb8e.js"
+      ],
+      "css": [
+        "/build/184.4208adf0.css"
+      ]
+    },
+    "nav": {
+      "js": [
+        "/build/runtime.a8c7a714.js",
+        "/build/834.4d0899a0.js",
+        "/build/nav.a996e8a3.js"
+      ]
+    },
+    "headerJs": {
+      "js": [
+        "/build/runtime.a8c7a714.js",
+        "/build/834.4d0899a0.js",
+        "/build/headerJs.0eca7af7.js"
+      ]
+    },
+    "home": {
+      "js": [
+        "/build/runtime.a8c7a714.js",
+        "/build/336.c20e8aa6.js",
+        "/build/home.41db9f29.js"
+      ]
+    },
+    "journalJs": {
+      "js": [
+        "/build/runtime.a8c7a714.js",
+        "/build/834.4d0899a0.js",
+        "/build/journalJs.2d917a90.js"
+      ]
+    },
+    "journalPagesJs": {
+      "js": [
+        "/build/runtime.a8c7a714.js",
+        "/build/834.4d0899a0.js",
+        "/build/343.e1bc9f3a.js",
+        "/build/journalPagesJs.78eac8e2.js"
+      ],
+      "css": [
+        "/build/343.09fdc0fd.css"
+      ]
+    },
+    "resourcesJs": {
+      "js": [
+        "/build/runtime.a8c7a714.js",
+        "/build/834.4d0899a0.js",
+        "/build/336.c20e8aa6.js",
+        "/build/resourcesJs.457590e3.js"
+      ]
+    },
+    "journalSettingsJs": {
+      "js": [
+        "/build/runtime.a8c7a714.js",
+        "/build/834.4d0899a0.js",
+        "/build/journalSettingsJs.03288c9b.js"
+      ]
+    },
+    "main": {
+      "js": [
+        "/build/runtime.a8c7a714.js"
+      ],
+      "css": [
+        "/build/184.4208adf0.css"
+      ]
+    },
+    "navbar": {
+      "js": [
+        "/build/runtime.a8c7a714.js"
+      ],
+      "css": [
+        "/build/navbar.3d926f2b.css"
+      ]
+    },
+    "footer": {
+      "js": [
+        "/build/runtime.a8c7a714.js"
+      ],
+      "css": [
+        "/build/footer.ece663d2.css"
+      ]
+    },
+    "index": {
+      "js": [
+        "/build/runtime.a8c7a714.js"
+      ],
+      "css": [
+        "/build/index.442e3b94.css"
+      ]
+    },
+    "journal": {
+      "js": [
+        "/build/runtime.a8c7a714.js"
+      ],
+      "css": [
+        "/build/journal.3c5135ea.css"
+      ]
+    },
+    "journalPages": {
+      "js": [
+        "/build/runtime.a8c7a714.js"
+      ],
+      "css": [
+        "/build/556.09fdc0fd.css",
+        "/build/journalPages.195e35ad.css"
+      ]
+    },
+    "header": {
+      "js": [
+        "/build/runtime.a8c7a714.js"
+      ],
+      "css": [
+        "/build/header.aeb104bb.css"
+      ]
+    },
+    "resources": {
+      "js": [
+        "/build/runtime.a8c7a714.js"
+      ],
+      "css": [
+        "/build/resources.571e1931.css"
+      ]
+    }
+  }
+}
