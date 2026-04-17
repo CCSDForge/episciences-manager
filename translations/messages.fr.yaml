@@ -137,9 +137,15 @@ journalSettings:
     preview.other: "Autre statut"
 
 journalDetails:
+  edit_pages: "Éditer les pages"
+  back_to_home: "Retour à l'accueil"
+  welcome_backoffice: "Bienvenue dans le backoffice de gestion du journal"
+
+journalPages:
   home: "Accueil"
   menu: "Menu"
-  welcome_backoffice: "Bienvenue dans le backoffice de gestion du journal"
+  welcome_title: "Bienvenue dans l’interface d’édition des pages"
+  back: "Retour"
   noContentAvailable: "Aucun contenu disponible"
   edit: "Éditer"
   edit_page_content: "Éditer le contenu de la page"

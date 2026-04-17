@@ -42,12 +42,16 @@ journal:
   clear_search: "Clear search"
   see_details: "See Details (epiadmin only)"
 
-
-
 journalDetails:
+  edit_pages: "Edit Pages"
+  back_to_home: "Back to Home"
+  welcome_backoffice: "Welcome to the journal management backoffice"
+
+journalPages:
   home: "Home"
   menu: "Menu"
-  welcome_backoffice: "Welcome to the journal management backoffice"
+  welcome_title: "Welcome to the page editing interface"
+  back: "Back"
   noContentAvailable: "No content available"
   edit: "Edit"
   edit_content: "Edit Content"

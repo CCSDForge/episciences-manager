@@ -55,8 +55,28 @@ final class ReviewController extends AbstractController
         ]);
     }
 
+
     #[Route('/journal/{code}', name: 'app_journal_detail', requirements: ['code' => '[\w\-]+'])]
     public function getJournal(string $code, ReviewManager $reviewManager, PageRepository $pageRepository, PageHierarchyService $hierarchyService, JournalSettingService $settingService): Response
+    {
+        // Get the review by its code
+        $review = $reviewManager->getReviewByCode($code);
+
+        if (!$review) {
+            throw $this->createNotFoundException('Review not found');
+        }
+
+        // Check if user has permission to view this specific review
+        $this->denyAccessUnlessGranted('REVIEW_VIEW', $review);
+
+        return $this->render('review/journalDetails.html.twig', [
+            'review' => $review,
+            'code' => $code,
+        ]);
+    }
+
+    #[Route('/journal/{code}/pages', name: 'app_journal_pages', requirements: ['code' => '[\w\-]+'])]
+    public function pages(string $code, ReviewManager $reviewManager, PageRepository $pageRepository, PageHierarchyService $hierarchyService, JournalSettingService $settingService): Response
     {
         // Get the review by its code
         $review = $reviewManager->getReviewByCode($code);
@@ -79,7 +99,7 @@ final class ReviewController extends AbstractController
         $setting = $settingService->getSettingArray($review['rvid']);
         $acceptedLanguages = $setting['languages']['accepted'] ?? ['en', 'fr'];
 
-        return $this->render('review/journalDetails.html.twig', [
+        return $this->render('review/journalPages.html.twig', [
             'review' => $review,
             'code' => $code,
             'pages' => $organizedPages,
