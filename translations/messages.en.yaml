@@ -20,12 +20,12 @@ nav:
   statistics: "Statistics"
 
 home:
-  welcome_title: "Welcome to our Episciences platform"
+  welcome_title: "Welcome to the Episciences platform"
   total_journals: "Total journals"
   no_journals_available: "No journals available at the moment."
 
 reviews:
-  list_title: "List of reviews"
+  list_title: "List of journals"
 
 flash:
   logout_success: "You have been successfully logged out"
@@ -38,16 +38,21 @@ journal:
   table_code: "Code"
   table_action: "Action"
   no_journals: "No journals found"
-  search_placeholder: "Search for a journal by name or code"
+  search_placeholder: "Journal name or code"
   clear_search: "Clear search"
   see_details: "See Details (epiadmin only)"
 
-
-
 journalDetails:
+  edit_pages: "Edit Pages"
+  back_to_home: "Back to Home"
+  welcome_backoffice: "Welcome to the journal management backoffice"
+  news: "News"
+
+journalPages:
   home: "Home"
   menu: "Menu"
-  welcome_backoffice: "Welcome to the journal management backoffice"
+  welcome_title: "Welcome to the page editing interface"
+  back: "Back"
   noContentAvailable: "No content available"
   edit: "Edit"
   edit_content: "Edit Content"
@@ -233,7 +238,6 @@ journalSettings:
 
 footer:
   about_title: "About Episciences"
-  blog: "Blog"
   contact: "Contact"
   support: "Support"
   documentation: "Documentation"

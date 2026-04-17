@@ -26,7 +26,7 @@ Encore
   .addEntry('headerJs', './assets/scripts/partials/_header.js')
   .addEntry('home', './assets/scripts/pages/index.js')
   .addEntry('journalJs', './assets/scripts/pages/journal.js')
-  .addEntry('journalDetailsJs', './assets/scripts/pages/journalDetails.js')
+  .addEntry('journalPagesJs', './assets/scripts/pages/journalPages.js')
   .addEntry('resourcesJs', './assets/scripts/pages/resources.js')
   .addEntry('journalSettingsJs', './assets/scripts/pages/journalSettings.js')
 
@@ -35,7 +35,7 @@ Encore
   .addStyleEntry('footer', './assets/styles/partials/_footer.scss')
   .addStyleEntry('index', './assets/styles/pages/index.scss')
   .addStyleEntry('journal', './assets/styles/pages/journal.scss')
-  .addStyleEntry('journalDetails', './assets/styles/pages/journalDetails.scss')
+  .addStyleEntry('journalPages', './assets/styles/pages/journalPages.scss')
   .addStyleEntry('header', './assets/styles/partials/_header.scss')
   .addStyleEntry('resources', './assets/styles/pages/resources.scss')
 

@@ -136,7 +136,7 @@ class DefaultController extends AbstractController
         $reviews = $this->reviewManager->getActiveReviewsForDisplayPaginated(
             $paginator,
             $request->query->getInt('page', 1),
-            8
+            30
         );
 
         $showLogoutMessage = $request->query->get('logout') === 'success';
