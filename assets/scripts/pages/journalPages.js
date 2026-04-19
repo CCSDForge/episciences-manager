@@ -536,6 +536,11 @@ document.addEventListener('DOMContentLoaded', function () {
     'sidebar-language-select'
   );
 
+  // Initialize editingLocale with the widget's default value (defaultLanguage from backend)
+  if (sidebarLanguageSelect) {
+    editingLocale = sidebarLanguageSelect.value;
+  }
+
   if (sidebarLanguageSelect) {
     sidebarLanguageSelect.addEventListener('change', async function () {
       const selectedLang = this.value;
@@ -724,7 +729,9 @@ document.addEventListener('DOMContentLoaded', function () {
         if (data.error) {
           pageBody.innerHTML = '<p class="text-danger">Page not found</p>';
         } else {
-          updatePageView(data, locale);
+          // Use content language from widget instead of UI locale
+          const contentLang = sidebarLanguageSelect?.value || locale;
+          updatePageView(data, contentLang);
           // Store raw Markdown for editing
           currentMarkdownContent = data.markdownContent || {};
         }
@@ -830,11 +837,13 @@ document.addEventListener('DOMContentLoaded', function () {
       })
       .then(data => {
         console.log('Data received:', JSON.stringify(data, null, 2));
-        console.log('Current locale:', locale);
+        // Use content language from widget instead of UI locale
+        const contentLang = sidebarLanguageSelect?.value || locale;
+        console.log('Content language:', contentLang);
         if (data.error) {
           pageBody.innerHTML = '<p class="text-danger">Page not found</p>';
         } else {
-          updatePageView(data, locale);
+          updatePageView(data, contentLang);
           // Store raw Markdown for editing
           currentMarkdownContent = data.markdownContent || {};
         }
