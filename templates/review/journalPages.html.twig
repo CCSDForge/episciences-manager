@@ -360,7 +360,7 @@
                                     <label for="sidebar-language-select" class="form-label small text-muted mb-1">{{ 'journalPages.language'|trans|default('Langue') }}</label>
                                     <select class="form-select form-select-sm language-switch-select" id="sidebar-language-select">
                                         {% for lang in acceptedLanguages|default(['en', 'fr']) %}
-                                            <option value="{{ lang }}" {{ app.request.locale == lang ? 'selected' : '' }}>{{ langNames[lang]|default(lang) }}</option>
+                                            <option value="{{ lang }}" {{ defaultLanguage == lang ? 'selected' : '' }}>{{ langNames[lang]|default(lang) }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>

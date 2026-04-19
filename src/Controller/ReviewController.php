@@ -98,11 +98,14 @@ final class ReviewController extends AbstractController
         $setting = $settingService->getSettingArray($review['rvid']);
         $acceptedLanguages = $setting['languages']['accepted'] ?? ['en', 'fr'];
 
+        $defaultLanguage = $setting['languages']['default'] ?? 'en';
+
         return $this->render('review/journalPages.html.twig', [
             'review' => $review,
             'code' => $code,
             'pages' => $organizedPages,
             'acceptedLanguages' => $acceptedLanguages,
+            'defaultLanguage' => $defaultLanguage,
         ]);
     }
 
@@ -123,11 +126,14 @@ final class ReviewController extends AbstractController
         $setting = $settingService->getSettingArray($review['rvid']);
         $acceptedLanguages = $setting['languages']['accepted'] ?? ['en', 'fr'];
 
+        $defaultLanguage = $setting['languages']['default'] ?? 'en';
+
         return $this->render('review/journalPages.html.twig', [
             'review' => $review,
             'code' => $code,
             'pages' => $organizedPages,
             'acceptedLanguages' => $acceptedLanguages,
+            'defaultLanguage' => $defaultLanguage,
             'currentPage' => $pageCode,
             'editMode' => true,
         ]);
@@ -150,11 +156,14 @@ final class ReviewController extends AbstractController
         $setting = $settingService->getSettingArray($review['rvid']);
         $acceptedLanguages = $setting['languages']['accepted'] ?? ['en', 'fr'];
 
+        $defaultLanguage = $setting['languages']['default'] ?? 'en';
+
         return $this->render('review/journalPages.html.twig', [
             'review' => $review,
             'code' => $code,
             'pages' => $organizedPages,
             'acceptedLanguages' => $acceptedLanguages,
+            'defaultLanguage' => $defaultLanguage,
             'currentPage' => $pageCode,
             'editMode' => false,
         ]);
