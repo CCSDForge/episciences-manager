@@ -1,42 +1,49 @@
 {% extends 'base.html.twig' %}
 
  {% block body %}
-     <div class="container">
-         <div class="row justify-content-center">
-             <div class="col-12 col-md-8 col-lg-6 text-center py-5">
-                 <!-- Logo -->
-                 <img src="{{ asset('build/images/logo-' ~ review.code ~ '.svg') }}"
-                      onerror="this.onerror=null; this.src='{{ asset('build/images/logo-' ~ review.code ~
-                          '-preprod.svg') }}';"
-                      alt="{{ review.name }} Logo" class="img-fluid mb-4" style="max-width: 200px;">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 pt-4">
+                <a href="{{ path('app_journal') }}" class="btn btn-outline-secondary btn-sm">
+                    <i class="fas fa-arrow-left me-2"></i>{{ 'journalDetails.back_to_journal_list' | trans }}
+                </a>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8 col-lg-6 text-center py-5">
+                <!-- Logo -->
+                <img src="{{ asset('build/images/logo-' ~ review.code ~ '.svg') }}"
+                     onerror="this.onerror=null; this.src='{{ asset('build/images/logo-' ~ review.code ~
+                         '-preprod.svg') }}';"
+                     alt="{{ review.name }} Logo" class="img-fluid mb-4" style="max-width: 200px;">
 
-                 <!-- Titre -->
-                 <h1 class="h3 mb-3 text-primary fw-bold">{{ review.name }}</h1>
+                <!-- Titre -->
+                <h1 class="h3 mb-3 text-primary fw-bold">{{ review.name }}</h1>
 
-                 <!-- Message -->
-                 <p class="text-muted mb-4">{{ 'journalDetails.welcome_backoffice' | trans }}</p>
+                <!-- Message -->
+                <p class="text-muted mb-4">{{ 'journalDetails.welcome_backoffice' | trans }}</p>
 
-                 <!-- Boutons -->
-                 <div class="d-flex justify-content-center gap-3 flex-wrap">
-                     <a href="{{ path('app_journal_pages', {'code': code}) }}"
-                        class="btn btn-primary btn-lg">
-                         <i class="fas fa-edit me-2"></i>
-                         {{ 'journalDetails.edit_pages' | trans }}
-                     </a>
+                <!-- Boutons -->
+                <div class="d-flex justify-content-center gap-3 flex-wrap">
+                    <a href="{{ path('app_journal_pages', {'code': code}) }}"
+                       class="btn btn-primary btn-lg">
+                        <i class="fas fa-edit me-2"></i>
+                        {{ 'journalDetails.edit_pages' | trans }}
+                    </a>
 
-                     <a href="{{ path('app_journal_settings', {'code': code}) }}"
-                        class="btn btn-outline-secondary btn-lg">
-                         <i class="fas fa-cog me-2"></i>
-                         {{ 'journalSettings.title' | trans }}
-                     </a>
+                    <a href="{{ path('app_journal_settings', {'code': code}) }}"
+                       class="btn btn-outline-secondary btn-lg">
+                        <i class="fas fa-cog me-2"></i>
+                        {{ 'journalSettings.title' | trans }}
+                    </a>
 
-                     <a href="#" class="btn btn-outline-info btn-lg disabled">
-                         <i class="fas fa-newspaper me-2"></i>
-                         {{ 'journalDetails.news' | trans }}
-                     </a>
+                    <a href="#" class="btn btn-outline-info btn-lg disabled">
+                        <i class="fas fa-newspaper me-2"></i>
+                        {{ 'journalDetails.news' | trans }}
+                    </a>
 
-                 </div>
-             </div>
-         </div>
-     </div>
+                </div>
+            </div>
+        </div>
+    </div>
  {% endblock %}

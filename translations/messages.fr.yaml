@@ -139,6 +139,7 @@ journalSettings:
 journalDetails:
   edit_pages: "Éditer les pages"
   back_to_home: "Retour à l'accueil"
+  back_to_journal_list: "Retour à la liste des revues"
   welcome_backoffice: "Bienvenue dans le backoffice de gestion du journal"
   news: "Actualités"
 

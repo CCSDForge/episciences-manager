@@ -45,6 +45,7 @@ journal:
 journalDetails:
   edit_pages: "Edit Pages"
   back_to_home: "Back to Home"
+  back_to_journal_list: "Back to Journal List"
   welcome_backoffice: "Welcome to the journal management backoffice"
   news: "News"
 
