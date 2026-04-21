@@ -1,0 +1,99 @@
+@use 'sass:color';
+@use '../components/variables' as *;
+@import '~ckeditor5/ckeditor5.css';
+
+// News content - aligned with header title column
+.news-content {
+  padding-inline: 1.5rem;
+
+  //@media (min-width: 768px) {
+    // Offset = logo column width + gap (aligned with title)
+    //margin-left: calc(250px + 1.5rem);
+  //}
+
+  //@media (min-width: 1200px) {
+    //margin-left: calc(280px + 1.5rem);
+    // Don't extend into widget area
+    //margin-right: calc(220px + 1.5rem);
+  //}
+}
+
+// Language widget - collapsible panel
+.language-widget {
+  background: #fff;
+
+  .collapse-icon {
+    transition: transform 0.2s ease;
+  }
+
+  .btn-link[aria-expanded="false"] .collapse-icon {
+    transform: rotate(180deg);
+  }
+
+  .translation-row {
+    .translation-lang {
+      font-weight: 500;
+    }
+
+    .translation-title-input {
+      background-color: #fff;
+      border: 1px solid #dee2e6;
+    }
+  }
+}
+
+// News list columns
+.news-list {
+  .news-header,
+  .news-item {
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+  }
+
+  .news-header {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+
+  .news-status {
+    width: 80px;
+    flex-shrink: 0;
+  }
+
+  .news-title-col {
+    width: 150px;
+    flex-shrink: 0;
+  }
+
+  .news-content-col {
+    flex-grow: 1;
+    min-width: 0; // Allow text-truncate to work
+  }
+
+  .news-actions-col,
+  .news-actions {
+    width: 180px;
+    flex-shrink: 0;
+  }
+}
+
+// Journal Header - aligned with journal-layout grid
+.journal-header {
+  display: grid;
+  gap: 1rem;
+  padding-inline: 1rem;
+
+  // Tablet (768px - 1199px): 2 columns (logo+title, back button hidden or small)
+  @media (min-width: 768px) {
+    grid-template-columns: minmax(200px, 250px) 1fr auto;
+    gap: 1.5rem;
+    padding-inline: 1.5rem;
+  }
+
+  // Desktop (1200px+): 3 columns aligned with journal-layout
+  @media (min-width: 1200px) {
+    grid-template-columns: minmax(200px, 280px) 1fr 220px;
+    gap: 1.5rem;
+  }
+}

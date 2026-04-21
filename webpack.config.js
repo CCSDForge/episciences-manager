@@ -38,6 +38,7 @@ Encore
   .addStyleEntry('journalPages', './assets/styles/pages/journalPages.scss')
   .addStyleEntry('header', './assets/styles/partials/_header.scss')
   .addStyleEntry('resources', './assets/styles/pages/resources.scss')
+  .addStyleEntry('news', './assets/styles/pages/news.scss')
 
   // Add ESLint to the Webpack/Encore pipeline
   .addPlugin(

@@ -1,0 +1,165 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="row gx-4">
+        <div class="col-1 d-none d-xl-block"></div>
+        <div class="col-12 col-xl-10">
+            <!-- Header (3-column grid) -->
+            <div class="journal-header d-none d-md-grid align-items-center mb-4 mt-4">
+                <!-- Logo -->
+                <div class="text-center">
+                    <img src="{{ asset('build/images/logo-' ~ review.code ~ '.svg') }}"
+                         onerror="this.onerror=null; this.src='{{ asset('build/images/logo-' ~ review.code ~ '-preprod.svg') }}';"
+                         alt="{{ review.name }} Logo" class="img-fluid logo">
+                </div>
+                <!-- Title -->
+                <div class="ps-3">
+                    <h1 class="h3 mb-0 text-primary fw-bold">{{ review.name }}</h1>
+                </div>
+                <!-- Back button -->
+                <div class="text-end">
+                    <a href="{{ path('app_journal_detail', {'code': code} ) }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-1"></i>
+                        {{ 'journalPages.back'|trans }}
+                    </a>
+                </div>
+            </div>
+
+            <!-- News section (aligned with title column) -->
+            <div class="news-content">
+                <h2 class="pb-2 mb-4 border-bottom border-primary border-3">
+                    {{ 'news.title'|trans }} <small class="text-muted fw-normal fs-6">{{ 'news.description'|trans }}</small>
+                </h2>
+
+             <div class="d-flex justify-content-between align-items-stretch gap-4">
+                 <!-- Add news button -->
+                 <div class="bg-light rounded p-4 flex-grow-1 d-flex align-items-center justify-content-center">
+                    <button type="button" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>
+                        {{ 'news.addNews'|trans }}
+                    </button>
+                </div>
+                 <!-- Languages widget (collapsible) -->
+                 <div class="language-widget mb-4 border rounded">
+                     <button class="btn btn-link w-100 d-flex justify-content-between align-items-center px-3 py-2 text-decoration-none" type="button" data-bs-toggle="collapse" data-bs-target="#languagesPanel" aria-expanded="true">
+                         <span class="fw-semibold text-dark">{{ 'news.languages'|trans }}</span>
+                         <i class="fas fa-chevron-up collapse-icon"></i>
+                     </button>
+                     <div class="collapse show" id="languagesPanel">
+                         <div class="px-3 py-2 border-top">
+                             <label class="form-label small text-muted mb-1">{{ 'news.language'|trans }}</label>
+                             <select class="form-select form-select-sm" id="content-language-select">
+                                 {% for lang in acceptedLanguages %}
+                                     <option value="{{ lang }}" {{ defaultLanguage == lang ? 'selected' : '' }}>
+                                         {{ langNames[lang]|default(lang|capitalize) }}
+                                     </option>
+                                 {% endfor %}
+                             </select>
+                         </div>
+                         <div class="px-3 py-2 border-top">
+                             <label class="form-label small text-muted mb-1">{{ 'news.translations'|trans }}</label>
+                             <div id="translations-list" class="translations-list">
+                                 {% for lang in acceptedLanguages %}
+                                     <div class="translation-row d-flex align-items-center gap-2 mb-1" data-lang="{{ lang }}">
+                                         <span class="translation-lang text-muted small" style="width: 24px;">{{ lang|capitalize }}</span>
+                                         <button class="btn btn-link btn-sm p-0 translation-action-btn" type="button" title="{{ 'news.add_translation'|trans }}">
+                                             <i class="fas fa-plus text-muted"></i>
+                                         </button>
+                                         <input type="text" class="form-control form-control-sm translation-title-input flex-grow-1" readonly placeholder="{{ langNames[lang]|default(lang|capitalize) }}" aria-label="{{ langNames[lang]|default(lang) }}">
+                                     </div>
+                                 {% endfor %}
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+
+             </div>
+
+                <!-- News list -->
+                <div class="news-list mt-4">
+                    <!-- Header -->
+                    <div class="news-header py-2 border-bottom bg-light py-4 fw-bold fs-5">
+                        <div class="news-status">{{ 'news.header.status'|trans }}</div>
+                        <div class="news-title-col">{{ 'news.header.title'|trans }}</div>
+                        <div class="news-content-col">{{ 'news.header.content'|trans }}</div>
+                        <div class="news-actions-col">{{ 'news.header.actions'|trans }}</div>
+                    </div>
+                    {% for news in newsList %}
+                        <div class="news-item py-3 border-bottom">
+                            <!-- Status -->
+                            <div class="news-status">
+                                {% if 'public' in news.visibility %}
+                                    <span class="badge bg-success">{{ 'news.status.online'|trans }}</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">{{ 'news.status.offline'|trans }}</span>
+                                {% endif %}
+                            </div>
+
+                            <!-- Title -->
+                            <div class="news-title-col" {% for lang in acceptedLanguages %}data-title-{{ lang }}="{{ news.title[lang]|default('') }}"{% endfor %}>
+                                <span class="news-title-text">{{ news.title[defaultLanguage] ?? news.title['en'] ?? 'No title' }}</span>
+                                <small class="text-muted d-block">{{ news.dateCreation|date('d/m/Y') }}</small>
+                            </div>
+
+                            <!-- Content -->
+                            <div class="news-content-col text-muted text-truncate" {% for lang in acceptedLanguages %}data-content-{{ lang }}="{{ news.content[lang]|default('')|striptags|slice(0, 100) }}"{% endfor %}>
+                                <span class="news-content-text">{{ news.content[defaultLanguage]|default(news.content['en']|default(''))|striptags|slice(0, 100) }}{% if news.content[defaultLanguage]|default('')|length > 100 %}...{% endif %}</span>
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="news-actions d-flex gap-2">
+                                <a href="{{ path('app_news_edit', {code:code, id: news.id}) }}" class="btn btn-outline-secondary btn-sm">
+                                    <i class="fas fa-pencil-alt me-1"></i>
+                                    {{ 'news.edit'|trans }}
+                                </a>
+                                <button type="button" class="btn btn-outline-danger btn-sm" data-news-id="{{ news.id }}">
+                                    <i class="fas fa-trash me-1"></i>
+                                    {{ 'news.delete'|trans }}
+                                </button>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="text-center text-muted py-4">
+                            {{ 'news.noNews'|trans }}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="col-1 d-none d-xl-block"></div>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('news') }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const languageSelect = document.getElementById('content-language-select');
+
+            languageSelect.addEventListener('change', function() {
+                const selectedLang = this.value;
+
+                // Update all titles
+                document.querySelectorAll('.news-title-col').forEach(function(el) {
+                    const title = el.dataset['title' + selectedLang.charAt(0).toUpperCase() + selectedLang.slice(1)] ||
+                                  el.dataset.titleEn ||
+                                  'No title';
+                    el.querySelector('.news-title-text').textContent = title;
+                });
+
+                // Update all content
+                document.querySelectorAll('.news-content-col').forEach(function(el) {
+                    const content = el.dataset['content' + selectedLang.charAt(0).toUpperCase() + selectedLang.slice(1)] ||
+                                    el.dataset.contentEn ||
+                                    '';
+                    el.querySelector('.news-content-text').textContent = content;
+                });
+            });
+        });
+    </script>
+{% endblock %}

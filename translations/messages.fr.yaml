@@ -143,6 +143,24 @@ journalDetails:
   welcome_backoffice: "Bienvenue dans le backoffice de gestion du journal"
   news: "Actualités"
 
+news:
+  title: "Actualités"
+  description: "Ajout / modifications d'actualités pour le site"
+  addNews: "Ajouter une actualité"
+  languages: "Langues"
+  language: "Langue"
+  translations: "Traductions"
+  add_translation: "Ajouter une traduction"
+  edit: "Modifier"
+  delete: "Supprimer"
+  header:
+    status: "Statut"
+    title: "Titre"
+    content: "Contenu"
+    actions: "Actions"
+  status:
+    online: "en ligne"
+    offline: "hors ligne"
 journalPages:
   home: "Accueil"
   menu: "Menu"
