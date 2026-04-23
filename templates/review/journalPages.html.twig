@@ -345,8 +345,6 @@
                     </div>
 
                     <!-- Language Widget (Responsive) -->
-                    {% set langCodes = { en: 'En', fr: 'Fr', es: 'Es', de: 'De', it: 'It', pt: 'Pt', nl: 'Nl', ar: 'Ar', zh: 'Zh', ja: 'Ja' } %}
-                    {% set langNames = { en: 'English', fr: 'Français', es: 'Español', de: 'Deutsch', it: 'Italiano', pt: 'Português', nl: 'Nederlands', ar: 'العربية', zh: '中文', ja: '日本語' } %}
                     <div class="journal-layout__widget">
                         <div class="language-widget">
                             <div class="language-widget-header bg-light d-flex justify-content-between align-items-center border" id="languageWidgetHeader">
@@ -360,7 +358,7 @@
                                     <label for="sidebar-language-select" class="form-label small text-muted mb-1">{{ 'journalPages.language'|trans|default('Langue') }}</label>
                                     <select class="form-select form-select-sm language-switch-select" id="sidebar-language-select">
                                         {% for lang in acceptedLanguages|default(['en', 'fr']) %}
-                                            <option value="{{ lang }}" {{ defaultLanguage == lang ? 'selected' : '' }}>{{ langNames[lang]|default(lang) }}</option>
+                                            <option value="{{ lang }}" {{ defaultLanguage == lang ? 'selected' : '' }}>{{ lang|language_name(lang) }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
@@ -370,11 +368,11 @@
                                     <div id="translations-list" class="translations-list">
                                         {% for lang in acceptedLanguages|default(['en', 'fr']) %}
                                             <div class="translation-row d-flex align-items-center" data-lang="{{ lang }}">
-                                                <span class="translation-flag" title="{{ langNames[lang]|default(lang) }}">{{ langCodes[lang]|default('') }}</span>
+                                                <span class="translation-flag" title="{{ lang|language_name(lang) }}">{{ lang|capitalize }}</span>
                                                 <button class="btn btn-link btn-sm p-0 translation-action-btn" type="button" title="{{ 'journalPages.add_translation'|trans|default('Ajouter') }}">
                                                     <i class="fas fa-plus text-muted"></i>
                                                 </button>
-                                                <input type="text" class="form-control form-control-sm translation-title-input" readonly placeholder="{{ langNames[lang]|default(lang) }}" aria-label="{{ langNames[lang]|default(lang) }}">
+                                                <input type="text" class="form-control form-control-sm translation-title-input" readonly placeholder="{{ lang|language_name(lang) }}" aria-label="{{ lang|language_name(lang) }}">
                                             </div>
                                         {% endfor %}
                                     </div>
