@@ -160,7 +160,22 @@ news:
     actions: "Actions"
   status:
     online: "en ligne"
-    offline: "hors ligne"
+    offline: "hors ligne" # sur la liste?
+    invisible: "Invisible"
+  createTitle: "Ajouter une actualité"
+  requiredFields: "Champs obligatoires"
+  languageHint: "Cliquez sur une langue pour ajouter ou modifier sa traduction"
+  editLanguage: "Langue à modifier"
+  noContent: "Aucun contenu"
+  form:
+    title: "Titre"
+    content: "Contenu"
+    link: "Lien"
+    cancel: "Annuler"
+    save: "Enregistrer"
+    status: "État"
+    invisible: "Invisible"
+
 journalPages:
   home: "Accueil"
   menu: "Menu"

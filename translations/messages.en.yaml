@@ -67,6 +67,19 @@ news:
   status:
     online: "online"
     offline: "offline"
+    invisible: "Invisible"
+  createTitle: "Ajouter une actualité"
+  requiredFields: "Required fields"
+  languageHint: "Click on a language to edit its translation"
+  editLanguage: "Language to edit"
+  noContent: "No content"
+  form:
+    title: "Title"
+    content: "Content"
+    link: "Link"
+    cancel: "Cancel"
+    save: "Save"
+    status: "Status"
 
 journalPages:
   home: "Home"

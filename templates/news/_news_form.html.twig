@@ -1,0 +1,122 @@
+
+{#
+News Form Component (for create and edit)
+Parameters:
+- code: journal code
+- acceptedLanguages: array
+- defaultLanguage: string
+- news: (optional) News entity for edit mode
+- formAction: URL for form submission
+- csrfTokenId: CSRF token identifier
+#}
+
+  {% set isEdit = news is defined and news is not null %}
+
+<div class="collapse {% if showCreateForm|default(false) %}show{% endif %} mt-4" id="newsCreateForm">
+    <div class="card">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">
+                {% if isEdit %}
+                    <i class="fas fa-edit me-2"></i>{{ 'news.editTitle'|trans }}
+                {% else %}
+                    <i class="fas fa-plus me-2"></i>{{ 'news.createTitle'|trans }}
+                {% endif %}
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <!-- Form column -->
+                <div class="col-md-9">
+                    <form id="news-form" method="post" action="{{ formAction }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token(csrfTokenId) }}">
+                        <input type="hidden" name="language" id="form-language" value="{{ defaultLanguage
+                        }}">
+
+                        <p class="text-muted mb-3">
+                            <span class="text-danger">*</span> {{ 'news.requiredFields'|trans }}
+                        </p>
+
+                        <!-- Title -->
+                        <div class="mb-3">
+                            <label for="news_title" class="form-label">
+                                {{ 'news.form.title'|trans }} <span class="text-danger" aria-hidden="true">*</span>
+                            </label>
+                            <input type="text"
+                                   class="form-control"
+                                   id="news_title"
+                                   name="title"
+                                   value="{% if isEdit %}{{ news.title[defaultLanguage]|default('') }}{%
+                                       endif %}"
+                                   required>
+                        </div>
+
+                        <!-- Content -->
+                        <div class="mb-3">
+                            <label for="news_content" class="form-label">
+                                {{ 'news.form.content'|trans }}
+                            </label>
+                            <textarea class="form-control"
+                                      id="news_content"
+                                      name="content"
+                                      rows="4">{% if isEdit %}{{ news.content[defaultLanguage]|default('')
+                                }}{% endif %}</textarea>
+                        </div>
+
+                        <!-- Link -->
+                        <div class="mb-3">
+                            <label for="news_link" class="form-label">
+                                {{ 'news.form.link'|trans }}
+                            </label>
+                            <input type="url"
+                                   class="form-control"
+                                   id="news_link"
+                                   name="link"
+                                   placeholder="https://"
+                                   value="{% if isEdit %}{{ news.link[defaultLanguage]|default('') }}{%
+                                       endif %}">
+                        </div>
+
+                        <!-- Status -->
+                        <div class="mb-3">
+                            <label for="news_status" class="form-label">
+                                {{ 'news.form.status'|trans }}
+                            </label>
+                            <select class="form-select" id="news_status" name="status">
+                                <option value="invisible" {% if isEdit and 'public' not in news.visibility
+                                %}selected{% endif %}>
+                                    {{ 'news.status.invisible'|trans }}
+                                </option>
+                                <option value="public" {% if isEdit and 'public' in news.visibility
+                                %}selected{% endif %}>
+                                    {{ 'news.status.online'|trans }}
+                                </option>
+                            </select>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="d-flex gap-2 mt-4">
+                            <button type="button" class="btn btn-outline-secondary"
+                                    data-bs-toggle="collapse" data-bs-target="#newsCreateForm">
+                                {{ 'news.form.cancel'|trans }}
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-1"></i>
+                                {{ 'news.form.save'|trans }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Language widget column -->
+                <div class="col-md-3">
+                    {% include 'news/_language_widget.html.twig' with {
+                        acceptedLanguages: acceptedLanguages,
+                        defaultLanguage: defaultLanguage,
+                        mode: news is defined ? 'edit' : 'create',
+                        currentNews: news|default(null)
+                    } %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

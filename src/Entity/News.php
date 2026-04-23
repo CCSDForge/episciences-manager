@@ -25,10 +25,7 @@ class News
     private ?int $legacy_id = null;
     #[ORM\Column(name: 'code', length: 100, nullable: false, options: ['comment' => 'Journal code rvcode'])]
     private ?string $rvcode = null;
-
-    #[ORM\Column(name: 'uid', type: 'integer', nullable: false, options: ['unsigned' => true])]
-    private ?int $uid = null;
-
+    
     #[ORM\Column(name: 'title', type: 'json', nullable: false, options: ['comment' => 'Page title'])]
     private array $title = [];
 
@@ -73,18 +70,6 @@ class News
     public function setRvcode(string $rvcode): static
     {
         $this->rvcode = $rvcode;
-
-        return $this;
-    }
-
-    public function getUid(): ?int
-    {
-        return $this->uid;
-    }
-
-    public function setUid(int $uid): static
-    {
-        $this->uid = $uid;
 
         return $this;
     }

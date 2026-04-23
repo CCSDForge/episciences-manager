@@ -34,46 +34,29 @@
              <div class="d-flex justify-content-between align-items-stretch gap-4">
                  <!-- Add news button -->
                  <div class="bg-light rounded p-4 flex-grow-1 d-flex align-items-center justify-content-center">
-                    <button type="button" class="btn btn-primary">
-                        <i class="fas fa-plus me-2"></i>
+                     <button type="button" class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#newsCreateForm">
+                     <i class="fas fa-plus me-2"></i>
                         {{ 'news.addNews'|trans }}
-                    </button>
-                </div>
-                 <!-- Languages widget (collapsible) -->
-                 <div class="language-widget mb-4 border rounded">
-                     <button class="btn btn-link w-100 d-flex justify-content-between align-items-center px-3 py-2 text-decoration-none" type="button" data-bs-toggle="collapse" data-bs-target="#languagesPanel" aria-expanded="true">
-                         <span class="fw-semibold text-dark">{{ 'news.languages'|trans }}</span>
-                         <i class="fas fa-chevron-up collapse-icon"></i>
                      </button>
-                     <div class="collapse show" id="languagesPanel">
-                         <div class="px-3 py-2 border-top">
-                             <label class="form-label small text-muted mb-1">{{ 'news.language'|trans }}</label>
-                             <select class="form-select form-select-sm" id="content-language-select">
-                                 {% for lang in acceptedLanguages %}
-                                     <option value="{{ lang }}" {{ defaultLanguage == lang ? 'selected' : '' }}>
-                                         {{ langNames[lang]|default(lang|capitalize) }}
-                                     </option>
-                                 {% endfor %}
-                             </select>
-                         </div>
-                         <div class="px-3 py-2 border-top">
-                             <label class="form-label small text-muted mb-1">{{ 'news.translations'|trans }}</label>
-                             <div id="translations-list" class="translations-list">
-                                 {% for lang in acceptedLanguages %}
-                                     <div class="translation-row d-flex align-items-center gap-2 mb-1" data-lang="{{ lang }}">
-                                         <span class="translation-lang text-muted small" style="width: 24px;">{{ lang|capitalize }}</span>
-                                         <button class="btn btn-link btn-sm p-0 translation-action-btn" type="button" title="{{ 'news.add_translation'|trans }}">
-                                             <i class="fas fa-plus text-muted"></i>
-                                         </button>
-                                         <input type="text" class="form-control form-control-sm translation-title-input flex-grow-1" readonly placeholder="{{ langNames[lang]|default(lang|capitalize) }}" aria-label="{{ langNames[lang]|default(lang) }}">
-                                     </div>
-                                 {% endfor %}
-                             </div>
-                         </div>
-                     </div>
                  </div>
-
+                 <!-- Language widget for view mode (list) -->
+                 {% include 'news/_language_widget.html.twig' with {
+                     acceptedLanguages: acceptedLanguages,
+                     defaultLanguage: defaultLanguage,
+                     mode: 'view'
+                 } %}
              </div>
+                {# Creation form #}
+                {% include 'news/_news_form.html.twig' with {
+                    code: code,
+                    acceptedLanguages: acceptedLanguages,
+                    defaultLanguage: defaultLanguage,
+                    formAction: path('app_news_create', {'code': code}),
+                    csrfTokenId: 'news-create',
+                    showCreateForm: showCreateForm|default(false)
+                } %}
+
+            </div>
 
                 <!-- News list -->
                 <div class="news-list mt-4">
@@ -138,28 +121,5 @@
 {% block javascripts %}
     {{ parent() }}
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const languageSelect = document.getElementById('content-language-select');
-
-            languageSelect.addEventListener('change', function() {
-                const selectedLang = this.value;
-
-                // Update all titles
-                document.querySelectorAll('.news-title-col').forEach(function(el) {
-                    const title = el.dataset['title' + selectedLang.charAt(0).toUpperCase() + selectedLang.slice(1)] ||
-                                  el.dataset.titleEn ||
-                                  'No title';
-                    el.querySelector('.news-title-text').textContent = title;
-                });
-
-                // Update all content
-                document.querySelectorAll('.news-content-col').forEach(function(el) {
-                    const content = el.dataset['content' + selectedLang.charAt(0).toUpperCase() + selectedLang.slice(1)] ||
-                                    el.dataset.contentEn ||
-                                    '';
-                    el.querySelector('.news-content-text').textContent = content;
-                });
-            });
-        });
     </script>
 {% endblock %}

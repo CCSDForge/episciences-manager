@@ -15,16 +15,13 @@ class NewsRepository extends ServiceEntityRepository
         parent::__construct($registry, News::class);
     }
 
-    public function findAll(): array
+    public function findByRvcode(string $rvcode): array
     {
         return $this->createQueryBuilder('n')
-            ->select( 'n.code', 'n.date_creation', 'n.title', 'n.content', 'n.link', 'n.visibility')
+            ->where('n.rvcode = :rvcode')
+            ->setParameter('rvcode', $rvcode)
+            ->orderBy('n.dateCreation', 'DESC')
             ->getQuery()
             ->getResult();
-    }
-
-    public function findByJournalId(int $rvid): array
-    {
-        return $this->findBy(['rvid' => $rvid], ['createdAt' => 'DESC']);
     }
 }
