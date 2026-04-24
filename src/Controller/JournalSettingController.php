@@ -3,7 +3,9 @@ namespace App\Controller;
 
 use App\Service\JournalSettingService;
 use App\Service\ReviewManager;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -73,11 +75,21 @@ class JournalSettingController extends AbstractController
         string $code,
         Request $request,
         ReviewManager $reviewManager,
-        JournalSettingService $settingService
+        JournalSettingService $settingService,
+        LoggerInterface $logger,
+        CsrfTokenManagerInterface $csrfTokenManager
     ): JsonResponse {
         // Validate CSRF token from query parameter
         $token = $request->query->get('_token');
+        $expectedToken = $csrfTokenManager->getToken('journal-settings')->getValue();
+        file_put_contents('/tmp/csrf_debug.log', date('Y-m-d H:i:s') . "\n  Token reçu:   " . var_export($token, true) . "\n  Token attendu: " . $expectedToken . "\n  Valide: " . ($this->isCsrfTokenValid('journal-settings', $token) ? 'OUI' : 'NON') . "\n\n", FILE_APPEND);
+        $logger->info('CSRF Token validation', [
+            'token_received' => $token,
+            'token_id' => 'journal-settings',
+            'is_valid' => $this->isCsrfTokenValid('journal-settings', $token),
+        ]);
         if (!$this->isCsrfTokenValid('journal-settings', $token)) {
+            $logger->warning('Invalid CSRF token', ['token' => $token]);
             return new JsonResponse(
                 ['success' => false, 'message' => 'Invalid CSRF token'],
                 Response::HTTP_FORBIDDEN
