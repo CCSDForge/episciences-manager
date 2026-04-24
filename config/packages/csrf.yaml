@@ -9,4 +9,4 @@ framework:
             - submit
             - authenticate
             - logout
-            - journal-settings
+            # - journal-settings  # Désactivé pour debug
