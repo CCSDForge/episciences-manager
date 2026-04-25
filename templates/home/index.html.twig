@@ -5,7 +5,7 @@
 {% block body %}
     <div class="container  review-container">
         {% if app.user and app.user.userIdentifier != '__NO_USER__' %}
-            {% include 'partials/_navbar.html.twig' %}
+            {% include 'partials/navbar.html.twig' %}
         {% endif %}
         <div class="text-center my-5">
         <h1>{{ 'home.welcome_title' |trans }}</h1>

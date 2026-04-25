@@ -80,19 +80,33 @@ final class NewsController extends AbstractController
                 throw $this->createAccessDeniedException('Invalid CSRF token');
             }
 
-            $language = $request->request->get('language', 'en');
-            $title = $request->request->get('title');
-            $content = $request->request->get('content');
-            $link = $request->request->get('link');
             $status = $request->request->get('status');
+            $translations = $request->request->all('translations');
+
+            // Build multilingual arrays from translations
+            $titles = [];
+            $contents = [];
+            $links = [];
+
+            foreach ($translations as $lang => $data) {
+                if (!empty($data['title'])) {
+                    $titles[$lang] = $data['title'];
+                }
+                if (!empty($data['content'])) {
+                    $contents[$lang] = $data['content'];
+                }
+                if (!empty($data['link'])) {
+                    $links[$lang] = $data['link'];
+                }
+            }
 
             // Create new News entity
             $news = new News();
             $news->setRvcode($code);
             $news->setCreator($user);
-            $news->setTitle([$language => $title]);
-            $news->setContent($content ? [$language => $content] : []);
-            $news->setLink($link ? [$language => $link] : []);
+            $news->setTitle($titles);
+            $news->setContent($contents);
+            $news->setLink($links);
             $news->setVisibility($status === 'public' ? ['public'] : []);
             $news->setDateCreation(new \DateTime());
             $news->setDateUpdated(new \DateTime());

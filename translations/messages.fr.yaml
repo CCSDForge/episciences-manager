@@ -264,6 +264,12 @@ resources:
   safeToDelete: "Il peut être supprimé en toute sécurité"
   generateAutomatically: "Générer automatiquement"
 
+widget:
+  languages: "Langues"
+  language: "Langue"
+  translations: "Traductions"
+  add_translation: "Ajouter une traduction"
+
 footer:
   about_title: "À propos d'Episciences"
   contact: "Contact"

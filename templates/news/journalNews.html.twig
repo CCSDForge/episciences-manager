@@ -40,7 +40,8 @@
                      </button>
                  </div>
                  <!-- Language widget for view mode (list) -->
-                 {% include 'news/_language_widget.html.twig' with {
+                 {% include 'components/language_widget.html.twig' with {
+                     widgetId: 'news-view',
                      acceptedLanguages: acceptedLanguages,
                      defaultLanguage: defaultLanguage,
                      mode: 'view'
@@ -120,6 +121,12 @@
 
 {% block javascripts %}
     {{ parent() }}
+    {{ encore_entry_script_tags('newsJs') }}
     <script>
+        window.newsLanguageConfig = {
+            acceptedLanguages: {{ acceptedLanguages|json_encode|raw }},
+            defaultLanguage: '{{ defaultLanguage }}',
+            mode: 'create'
+        };
     </script>
 {% endblock %}

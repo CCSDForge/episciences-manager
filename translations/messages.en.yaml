@@ -269,6 +269,12 @@ journalSettings:
     preview.accepted: "Accepted articles"
     preview.other: "Other status"
 
+widget:
+  languages: "Languages"
+  language: "Language"
+  translations: "Translations"
+  add_translation: "Add translation"
+
 footer:
   about_title: "About Episciences"
   contact: "Contact"

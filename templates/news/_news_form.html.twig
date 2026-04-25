@@ -29,8 +29,17 @@ Parameters:
                 <div class="col-md-9">
                     <form id="news-form" method="post" action="{{ formAction }}">
                         <input type="hidden" name="_token" value="{{ csrf_token(csrfTokenId) }}">
-                        <input type="hidden" name="language" id="form-language" value="{{ defaultLanguage
-                        }}">
+                        <input type="hidden" name="language" id="form-language" value="{{ defaultLanguage }}">
+
+                        {# Hidden inputs for multilingual translations #}
+                        {% for lang in acceptedLanguages %}
+                            <input type="hidden" name="translations[{{ lang }}][title]" id="translation-title-{{ lang }}"
+                                   value="{% if isEdit %}{{ news.title[lang]|default('') }}{% endif %}">
+                            <input type="hidden" name="translations[{{ lang }}][content]" id="translation-content-{{ lang }}"
+                                   value="{% if isEdit %}{{ news.content[lang]|default('') }}{% endif %}">
+                            <input type="hidden" name="translations[{{ lang }}][link]" id="translation-link-{{ lang }}"
+                                   value="{% if isEdit %}{{ news.link[lang]|default('') }}{% endif %}">
+                        {% endfor %}
 
                         <p class="text-muted mb-3">
                             <span class="text-danger">*</span> {{ 'news.requiredFields'|trans }}
@@ -109,7 +118,8 @@ Parameters:
 
                 <!-- Language widget column -->
                 <div class="col-md-3">
-                    {% include 'news/_language_widget.html.twig' with {
+                    {% include 'components/language_widget.html.twig' with {
+                        widgetId: 'news-form',
                         acceptedLanguages: acceptedLanguages,
                         defaultLanguage: defaultLanguage,
                         mode: news is defined ? 'edit' : 'create',

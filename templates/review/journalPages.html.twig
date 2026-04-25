@@ -343,46 +343,15 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- Language Widget (Responsive) -->
-                    <div class="journal-layout__widget">
-                        <div class="language-widget">
-                            <div class="language-widget-header bg-light d-flex justify-content-between align-items-center border" id="languageWidgetHeader">
-                                <span class="fw-semibold small">{{ 'journalPages.languages'|trans|default('Langues') }}</span>
-                                <button class="btn btn-link btn-sm p-0 text-muted d-none d-xl-inline-block" type="button" data-bs-toggle="collapse" data-bs-target="#languageWidgetBody" aria-expanded="true">
-                                    <i class="fas fa-chevron-up fa-xs"></i>
-                                </button>
-                            </div>
-                            <div class="collapse show" id="languageWidgetBody">
-                                <div class="language-select-section bg-white border border-top-0 px-3 py-2">
-                                    <label for="sidebar-language-select" class="form-label small text-muted mb-1">{{ 'journalPages.language'|trans|default('Langue') }}</label>
-                                    <select class="form-select form-select-sm language-switch-select" id="sidebar-language-select">
-                                        {% for lang in acceptedLanguages|default(['en', 'fr']) %}
-                                            <option value="{{ lang }}" {{ defaultLanguage == lang ? 'selected' : '' }}>{{ lang|language_name(lang) }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                                <!-- Traductions section -->
-                                <div class="translations-section bg-white border border-top-0 rounded-bottom px-3 py-2">
-                                    <label class="form-label small text-muted mb-1">{{ 'journalPages.translations'|trans|default('Traductions') }}</label>
-                                    <div id="translations-list" class="translations-list">
-                                        {% for lang in acceptedLanguages|default(['en', 'fr']) %}
-                                            <div class="translation-row d-flex align-items-center" data-lang="{{ lang }}">
-                                                <span class="translation-flag" title="{{ lang|language_name(lang) }}">{{ lang|capitalize }}</span>
-                                                <button class="btn btn-link btn-sm p-0 translation-action-btn" type="button" title="{{ 'journalPages.add_translation'|trans|default('Ajouter') }}">
-                                                    <i class="fas fa-plus text-muted"></i>
-                                                </button>
-                                                <input type="text" class="form-control form-control-sm translation-title-input" readonly placeholder="{{ lang|language_name(lang) }}" aria-label="{{ lang|language_name(lang) }}">
-                                            </div>
-                                        {% endfor %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    {{ include('components/language_widget.html.twig', {
+                        widgetId: 'sidebar',
+                        acceptedLanguages: acceptedLanguages|default(['en', 'fr']),
+                        defaultLanguage: defaultLanguage
+                    }) }}
+                </div>
                     </div>
                 </div>
             </div>
-        </div>
 
         <!-- Right empty column (matches left) -->
         <div class="col-1 d-none d-xl-block">
