@@ -1,5 +1,5 @@
 import { initLanguageWidget } from '../components/language-widget.js';
-
+import { Collapse } from 'bootstrap';
 document.addEventListener('DOMContentLoaded', () => {
   // ===================
   // CONFIGURATION
@@ -213,4 +213,69 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Initialize translations immediately (for early input events)
   initTranslations();
+
+  // ===================
+  // EDIT BUTTON HANDLER
+  // ===================
+  document.querySelectorAll('.btn-edit-news').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const newsItem = btn.closest('.news-item');
+      const editUrl = btn.dataset.editUrl;
+
+      // Fill translations from data attributes
+      config.acceptedLanguages.forEach(lang => {
+        const titleKey = `title${lang.charAt(0).toUpperCase() + lang.slice(1)}`;
+        const contentKey = `content${lang.charAt(0).toUpperCase() + lang.slice(1)}`;
+        const linkKey = `link${lang.charAt(0).toUpperCase() + lang.slice(1)}`;
+
+        translations[lang] = {
+          title: newsItem.dataset[titleKey] || '',
+          content: newsItem.dataset[contentKey] || '',
+          link: newsItem.dataset[linkKey] || '',
+        };
+
+        // Update hidden inputs
+        const titleHidden = document.getElementById(
+          `translation-title-${lang}`
+        );
+        const contentHidden = document.getElementById(
+          `translation-content-${lang}`
+        );
+        const linkHidden = document.getElementById(`translation-link-${lang}`);
+
+        if (titleHidden) titleHidden.value = translations[lang].title;
+        if (contentHidden) contentHidden.value = translations[lang].content;
+        if (linkHidden) linkHidden.value = translations[lang].link;
+      });
+
+      // Load default language
+      loadLanguage(config.defaultLanguage);
+
+      // Update status
+      const statusSelect = document.getElementById('news_status');
+      if (statusSelect) statusSelect.value = newsItem.dataset.visibility;
+
+      // Change form action
+      const form = document.getElementById('news-form');
+      if (form) form.action = editUrl;
+
+      // Change CSRF token
+      const tokenInput = form?.querySelector('input[name="_token"]');
+      const editToken = document.getElementById('csrf-token-edit');
+      if (tokenInput && editToken) tokenInput.value = editToken.value;
+
+      // Initialize widget if needed
+      initFormWidget();
+      updateFormWidgetDisplay();
+
+      // Open collapse
+      const collapseEl = document.getElementById('newsCreateForm');
+      if (collapseEl) {
+        const bsCollapse = new Collapse(collapseEl, {
+          toggle: false,
+        });
+        bsCollapse.show();
+      }
+    });
+  });
 });

@@ -59,16 +59,6 @@
                     defaultCreateUrl: path('app_news_create', {'code': code})
                 } %}
 
-                {# Creation form #}
-                {% include 'news/_news_form.html.twig' with {
-                    code: code,
-                    acceptedLanguages: acceptedLanguages,
-                    defaultLanguage: defaultLanguage,
-                    formAction: path('app_news_create', {'code': code}),
-                    csrfTokenId: 'news-create',
-                    showCreateForm: showCreateForm|default(false)
-                } %}
-
             </div>
 
             <!-- News list -->

@@ -147,7 +147,8 @@ final class NewsController extends AbstractController
         NewsRepository $newsRepository,
         Security $security,
         Request $request,
-        JournalSettingService $settingService
+        JournalSettingService $settingService,
+        EntityManagerInterface $entityManager
     ): Response
     {
         // Récupérer le journal
@@ -166,18 +167,44 @@ final class NewsController extends AbstractController
             throw $this->createNotFoundException('News not found');
         }
 
-        // Get accepted languages for this journal
-        $setting = $settingService->getSettingArray($review['rvid']);
-        $acceptedLanguages = $setting['languages']['accepted'] ?? ['en', 'fr'];
+// Valider le token CSRF
+        $token = $request->request->get('_token');
+        if (!$this->isCsrfTokenValid('news-edit', $token)) {
+            throw $this->createAccessDeniedException('Invalid CSRF token');
+        }
 
-        $defaultLanguage = $setting['languages']['default'] ?? 'en';
+        // Récupérer les données
+        $status = $request->request->get('status');
+        $translations = $request->request->all('translations');
 
-        return $this->render('news/editNews.html.twig', [
-            'review' => $review,
-            'code' => $code,
-            'news' => $news,
-            'acceptedLanguages' => $acceptedLanguages,
-            'defaultLanguage' => $defaultLanguage,
-        ]);
-    }
+        // Construire les tableaux multilingues
+        $titles = [];
+        $contents = [];
+        $links = [];
+
+        foreach ($translations as $lang => $data) {
+            if (!empty($data['title'])) {
+                $titles[$lang] = $data['title'];
+            }
+            if (!empty($data['content'])) {
+                $contents[$lang] = $data['content'];
+            }
+            if (!empty($data['link'])) {
+                $links[$lang] = $data['link'];
+            }
+        }
+
+        // Mettre à jour l'entité News
+            $news->setTitle($titles);
+            $news->setContent($contents);
+            $news->setLink($links);
+            $news->setVisibility($status === 'public' ? ['public'] : []);
+            $news->setDateUpdated(new \DateTime());
+
+            $entityManager->flush();
+
+            $this->addFlash('success', 'News updated successfully');
+
+            return $this->redirectToRoute('app_news_show', ['code' => $code]);
+        }
 }
