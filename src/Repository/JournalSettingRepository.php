@@ -20,4 +20,9 @@ class JournalSettingRepository extends ServiceEntityRepository
     {
         return $this->findOneBy(['rvid' => $rvid]);
     }
+
+    public function findByCode(?string $code = null): ?JournalSetting
+    {
+        return $this->findOneBy(['code' => $code]);
+    }
 }

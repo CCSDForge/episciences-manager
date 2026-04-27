@@ -137,15 +137,24 @@ class JournalSettingService
     }
 
     /**
+     * Get a setting entity by its RVID.
+     */
+    public function getByCode(?string $code = null): ?JournalSetting
+    {
+        return $this->repository->findByCode($code);
+    }
+
+    /**
      * Get the setting for the given RVID or create it with default values.
      */
-    public function getOrCreateSetting(int $rvid): JournalSetting
+    public function getOrCreateSetting(int $rvid, ?string $code = null): JournalSetting
     {
         $setting = $this->repository->findByRvid($rvid);
 
         if (!$setting instanceof \App\Entity\JournalSetting) {
             $setting = new JournalSetting();
             $setting->setRvid($rvid);
+            $setting->setCode($code);
             $setting->setSetting($this->getDefaultSetting());
             $setting->setCreatedAt(new \DateTime());
             $setting->setUpdatedAt(new \DateTime());
@@ -179,7 +188,7 @@ class JournalSettingService
      *     setting?: JournalSetting
      * }
      */
-    public function updateSetting(int $rvid, array $newSetting): array
+    public function updateSetting(int $rvid, ?string $code = null, array $newSetting): array
     {
 
         $errors = $this->validateSetting($newSetting);
@@ -191,7 +200,7 @@ class JournalSettingService
             ];
         }
 
-        $setting = $this->getOrCreateSetting($rvid);
+        $setting = $this->getOrCreateSetting($rvid,$code);
 
         // Merge new settings with existing and default settings
         $existingSetting = $setting->getSetting();

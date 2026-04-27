@@ -19,6 +19,9 @@ class JournalSetting
     #[ORM\Column(name: 'RVID', type: 'integer', unique: true)]
     private ?int $rvid = null;
 
+    #[ORM\Column(name: 'CODE', type: 'string', length: 50, nullable: true)]
+    private ?string $code = null;
+
     /** @var array<string, mixed> */
     #[ORM\Column(name: 'SETTING', type: 'json')]
     private array $setting = [];
@@ -43,6 +46,17 @@ class JournalSetting
     {
         $this->rvid = $rvid;
 
+        return $this;
+    }
+
+    public function getCode(): ?string
+    {
+        return $this->code;
+    }
+
+    public function setCode(?string $code): static
+    {
+        $this->code = $code;
         return $this;
     }
 
