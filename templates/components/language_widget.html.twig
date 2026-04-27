@@ -12,7 +12,7 @@ Parameters:
 <!-- Language Widget (Responsive) -->
 <div class="journal-layout__widget">
     <div class="language-widget">
-        <div class="language-widget-header bg-light d-flex justify-content-between align-items-center border" id="{{ wid }}-widget-header">
+        <div class="language-widget-header bg-light d-flex justify-content-between align-items-center border px-3 py-2" id="{{ wid }}-widget-header">
             <span class="fw-semibold small">{{ 'widget.languages'|trans }}</span>
             <button class="btn btn-link btn-sm p-0 text-muted d-none d-xl-inline-block" type="button" data-bs-toggle="collapse" data-bs-target="#{{ wid }}-widget-body" aria-expanded="true">
                 <i class="fas fa-chevron-up fa-xs"></i>
@@ -32,7 +32,7 @@ Parameters:
                 <label class="form-label small text-muted mb-1">{{ 'widget.translations'|trans }}</label>
                 <div id="{{ wid }}-translations-list" class="translations-list">
                     {% for lang in acceptedLanguages|default(['en', 'fr']) %}
-                        <div class="translation-row d-flex align-items-center" data-lang="{{ lang }}">
+                        <div class="translation-row d-flex align-items-center gap-2 mb-2" data-lang="{{ lang }}">
                             <span class="translation-flag" title="{{ lang|language_name(lang) }}">{{ lang|capitalize }}</span>
                             <button class="btn btn-link btn-sm p-0 translation-action-btn" type="button" title="{{ 'widget.add_translation'|trans }}">
                                 <i class="fas fa-plus text-muted"></i>
