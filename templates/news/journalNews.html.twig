@@ -28,25 +28,37 @@
             <!-- News section (aligned with title column) -->
             <div class="news-content">
                 <h2 class="pb-2 mb-4 border-bottom border-primary border-3">
-                    {{ 'news.title'|trans }} <small class="text-muted fw-normal fs-6">{{ 'news.description'|trans }}</small>
+                    {{ 'news.title'|trans }} <small
+                            class="text-muted fw-normal fs-6">{{ 'news.description'|trans }}</small>
                 </h2>
 
-             <div class="d-flex justify-content-between align-items-stretch gap-4">
-                 <!-- Add news button -->
-                 <div class="bg-light rounded p-4 flex-grow-1 d-flex align-items-center justify-content-center">
-                     <button type="button" class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#newsCreateForm">
-                     <i class="fas fa-plus me-2"></i>
-                        {{ 'news.addNews'|trans }}
-                     </button>
-                 </div>
-                 <!-- Language widget for view mode (list) -->
-                 {% include 'components/language_widget.html.twig' with {
-                     widgetId: 'news-view',
-                     acceptedLanguages: acceptedLanguages,
-                     defaultLanguage: defaultLanguage,
-                     mode: 'view'
-                 } %}
-             </div>
+                <div class="d-flex justify-content-between align-items-stretch gap-4">
+                    <!-- Add news button -->
+                    <div class="bg-light rounded p-4 flex-grow-1 d-flex align-items-center justify-content-center">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="collapse"
+                                data-bs-target="#newsCreateForm">
+                            <i class="fas fa-plus me-2"></i>
+                            {{ 'news.addNews'|trans }}
+                        </button>
+                    </div>
+                    <!-- Language widget for view mode (list) -->
+                    {% include 'components/language_widget.html.twig' with {
+                        widgetId: 'news-view',
+                        acceptedLanguages: acceptedLanguages,
+                        defaultLanguage: defaultLanguage,
+                        mode: 'view'
+                    } %}
+                </div>
+                {% include 'news/_news_form.html.twig' with {
+                    code: code,
+                    acceptedLanguages: acceptedLanguages,
+                    defaultLanguage: defaultLanguage,
+                    formAction: path('app_news_create', {'code': code}),
+                    csrfTokenId: 'news-create',
+                    showCreateForm: showCreateForm|default(false),
+                    defaultCreateUrl: path('app_news_create', {'code': code})
+                } %}
+
                 {# Creation form #}
                 {% include 'news/_news_form.html.twig' with {
                     code: code,
@@ -59,59 +71,75 @@
 
             </div>
 
-                <!-- News list -->
-                <div class="news-list mt-4">
-                    <!-- Header -->
-                    <div class="news-header py-2 border-bottom bg-light py-4 fw-bold fs-5">
-                        <div class="news-status">{{ 'news.header.status'|trans }}</div>
-                        <div class="news-title-col">{{ 'news.header.title'|trans }}</div>
-                        <div class="news-content-col">{{ 'news.header.content'|trans }}</div>
-                        <div class="news-actions-col">{{ 'news.header.actions'|trans }}</div>
-                    </div>
-                    {% for news in newsList %}
-                        <div class="news-item py-3 border-bottom">
-                            <!-- Status -->
-                            <div class="news-status">
-                                {% if 'public' in news.visibility %}
-                                    <span class="badge bg-success">{{ 'news.status.online'|trans }}</span>
-                                {% else %}
-                                    <span class="badge bg-secondary">{{ 'news.status.offline'|trans }}</span>
-                                {% endif %}
-                            </div>
-
-                            <!-- Title -->
-                            <div class="news-title-col" {% for lang in acceptedLanguages %}data-title-{{ lang }}="{{ news.title[lang]|default('') }}"{% endfor %}>
-                                <span class="news-title-text">{{ news.title[defaultLanguage] ?? news.title['en'] ?? 'No title' }}</span>
-                                <small class="text-muted d-block">{{ news.dateCreation|date('d/m/Y') }}</small>
-                            </div>
-
-                            <!-- Content -->
-                            <div class="news-content-col text-muted text-truncate" {% for lang in acceptedLanguages %}data-content-{{ lang }}="{{ news.content[lang]|default('')|striptags|slice(0, 100) }}"{% endfor %}>
-                                <span class="news-content-text">{{ news.content[defaultLanguage]|default(news.content['en']|default(''))|striptags|slice(0, 100) }}{% if news.content[defaultLanguage]|default('')|length > 100 %}...{% endif %}</span>
-                            </div>
-
-                            <!-- Actions -->
-                            <div class="news-actions d-flex gap-2">
-                                <a href="{{ path('app_news_edit', {code:code, id: news.id}) }}" class="btn btn-outline-secondary btn-sm">
-                                    <i class="fas fa-pencil-alt me-1"></i>
-                                    {{ 'news.edit'|trans }}
-                                </a>
-                                <button type="button" class="btn btn-outline-danger btn-sm" data-news-id="{{ news.id }}">
-                                    <i class="fas fa-trash me-1"></i>
-                                    {{ 'news.delete'|trans }}
-                                </button>
-                            </div>
-                        </div>
-                    {% else %}
-                        <div class="text-center text-muted py-4">
-                            {{ 'news.noNews'|trans }}
-                        </div>
-                    {% endfor %}
+            <!-- News list -->
+            <div class="news-list mt-4">
+                <!-- Header -->
+                <div class="news-header py-2 border-bottom bg-light py-4 fw-bold fs-5">
+                    <div class="news-status">{{ 'news.header.status'|trans }}</div>
+                    <div class="news-title-col">{{ 'news.header.title'|trans }}</div>
+                    <div class="news-content-col">{{ 'news.header.content'|trans }}</div>
+                    <div class="news-creation-col">{{ 'news.header.creationDate'|trans }}</div>
+                    <div class="news-actions-col">{{ 'news.header.actions'|trans }}</div>
                 </div>
+                {% for news in newsList %}
+                    <div class="news-item py-3 border-bottom"
+                         data-news-id="{{ news.id }}"
+                            {% for lang in acceptedLanguages %}
+                                data-title-{{ lang }}="{{ news.title[lang]|default('') }}"
+                                data-content-{{ lang }}="{{ news.content[lang]|default('') }}"
+                                data-link-{{ lang }}="{{ news.link[lang]|default('') }}"
+                            {% endfor %}
+                         data-visibility="{{ 'public' in news.visibility ? 'public' : 'invisible' }}">
+                    <!-- Status -->
+                        <div class="news-status">
+                            {% if 'public' in news.visibility %}
+                                <span class="badge bg-success">{{ 'news.status.online'|trans }}</span>
+                            {% else %}
+                                <span class="badge bg-secondary">{{ 'news.status.offline'|trans }}</span>
+                            {% endif %}
+                        </div>
+
+                        <!-- Title -->
+                        <div class="news-title-col"
+                             {% for lang in acceptedLanguages %}data-title-{{ lang }}="{{ news.title[lang]|default('') }}"{% endfor %}>
+                            <span class="news-title-text">{{ news.title[defaultLanguage] ?? news.title['en'] ?? 'No title' }}</span>
+                            <small class="text-muted d-block">{{ news.dateCreation|date('d/m/Y') }}</small>
+                        </div>
+
+                        <!-- Content -->
+                        <div class="news-content-col text-muted text-truncate"
+                             {% for lang in acceptedLanguages %}data-content-{{ lang }}="{{ news.content[lang]|default('')|striptags|slice(0, 100) }}"{% endfor %}>
+                            <span class="news-content-text">{{ news.content[defaultLanguage]|default(news.content['en']|default(''))|striptags|slice(0, 100) }}{% if news.content[defaultLanguage]|default('')|length > 100 %}...{% endif %}</span>
+                        </div>
+
+                        <!-- Creation date -->
+                        <div class="news-creation-col">
+                            <span class="news-creation-text">{{ news.dateCreation|date('d/m/Y') }}</span>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="news-actions d-flex gap-2">
+                            <button type="button"
+                                    class="btn btn-outline-secondary btn-sm btn-edit-news"
+                                    data-edit-url="{{ path('app_news_edit', {code: code, id: news.id}) }}">
+                            <i class="fas fa-pencil-alt me-1"></i>
+                                {{ 'news.edit'|trans }}
+                            </button>
+                            <button type="button" class="btn btn-outline-danger btn-sm" data-news-id="{{ news.id }}">
+                                <i class="fas fa-trash me-1"></i>
+                                {{ 'news.delete'|trans }}
+                            </button>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="text-center text-muted py-4">
+                        {{ 'news.noNews'|trans }}
+                    </div>
+                {% endfor %}
             </div>
         </div>
-        <div class="col-1 d-none d-xl-block"></div>
     </div>
+    <div class="col-1 d-none d-xl-block"></div>
 {% endblock %}
 
 {% block stylesheets %}
@@ -123,10 +151,10 @@
     {{ parent() }}
     {{ encore_entry_script_tags('newsJs') }}
     <script>
-        window.newsLanguageConfig = {
-            acceptedLanguages: {{ acceptedLanguages|json_encode|raw }},
-            defaultLanguage: '{{ defaultLanguage }}',
-            mode: 'create'
-        };
+      window.newsLanguageConfig = {
+        acceptedLanguages: {{ acceptedLanguages|json_encode|raw }},
+        defaultLanguage: '{{ defaultLanguage }}',
+        mode: 'create',
+      };
     </script>
 {% endblock %}

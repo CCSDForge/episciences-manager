@@ -53,10 +53,6 @@ news:
   title: "News"
   description: "Add / edit the website news"
   addNews: "Add news"
-  languages: "Languages"
-  language: "Language"
-  translations: "Translations"
-  add_translation: "Add translation"
   edit: "Edit"
   delete: "Delete"
   header:
@@ -64,6 +60,7 @@ news:
     title: "Title"
     content: "Content"
     actions: "Actions"
+    creationDate: "Creation date"
   status:
     online: "online"
     offline: "offline"

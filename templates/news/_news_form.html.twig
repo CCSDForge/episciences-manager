@@ -29,7 +29,11 @@ Parameters:
                 <div class="col-md-9">
                     <form id="news-form" method="post" action="{{ formAction }}">
                         <input type="hidden" name="_token" value="{{ csrf_token(csrfTokenId) }}">
+                        <input type="hidden" id="csrf-token-edit" value="{{ csrf_token('news-edit') }}">
+                        <input type="hidden" id="csrf-token-create" value="{{ csrf_token('news-create') }}">
+
                         <input type="hidden" name="language" id="form-language" value="{{ defaultLanguage }}">
+                        <input type="hidden" id="default-create-url" value="{{ defaultCreateUrl|default(formAction) }}">
 
                         {# Hidden inputs for multilingual translations #}
                         {% for lang in acceptedLanguages %}

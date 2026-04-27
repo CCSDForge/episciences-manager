@@ -147,16 +147,13 @@ news:
   title: "Actualités"
   description: "Ajout / modifications d'actualités pour le site"
   addNews: "Ajouter une actualité"
-  languages: "Langues"
-  language: "Langue"
-  translations: "Traductions"
-  add_translation: "Ajouter une traduction"
   edit: "Modifier"
   delete: "Supprimer"
   header:
     status: "Statut"
     title: "Titre"
     content: "Contenu"
+    creationDate: "Date de création"
     actions: "Actions"
   status:
     online: "en ligne"
