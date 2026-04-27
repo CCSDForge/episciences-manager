@@ -207,4 +207,46 @@ final class NewsController extends AbstractController
 
             return $this->redirectToRoute('app_news_show', ['code' => $code]);
         }
+
+    #[Route('/journal/{code}/news/{id}/delete', name: 'app_news_delete', methods: ['POST'])]
+    public function delete(
+        string $code,
+        int $id,
+        Request $request,
+        ReviewManager $reviewManager,
+        NewsRepository $newsRepository,
+        EntityManagerInterface $entityManager
+    ): Response
+    {
+        // Récupérer le journal
+        $review = $reviewManager->getReviewByCode($code);
+
+        if (!$review) {
+            throw $this->createNotFoundException('Review not found');
+        }
+
+        $this->denyAccessUnlessGranted('REVIEW_VIEW', $review);
+
+        // Récupérer la news
+        $news = $newsRepository->find($id);
+
+        if (!$news || $news->getRvcode() !== $code) {
+            throw $this->createNotFoundException('News not found');
+        }
+
+        // Valider le token CSRF
+        $token = $request->request->get('_token');
+        if (!$this->isCsrfTokenValid('news-delete', $token)) {
+            throw $this->createAccessDeniedException('Invalid CSRF token');
+        }
+
+        // Supprimer la news
+        $entityManager->remove($news);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'News deleted successfully');
+
+        return $this->redirectToRoute('app_news_show', ['code' => $code]);
+    }
+
 }

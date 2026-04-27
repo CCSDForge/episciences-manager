@@ -1,5 +1,5 @@
 import { initLanguageWidget } from '../components/language-widget.js';
-import { Collapse } from 'bootstrap';
+import { Collapse, Modal } from 'bootstrap';
 document.addEventListener('DOMContentLoaded', () => {
   // ===================
   // CONFIGURATION
@@ -278,4 +278,35 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   });
+
+  // ===================
+  // DELETE BUTTON HANDLER
+  // ===================
+
+  const deleteModal = document.getElementById('deleteNewsModal');
+  const deleteForm = document.getElementById('delete-news-form');
+  const deleteNewsTitle = document.getElementById('delete-news-title');
+
+  if (deleteModal && deleteForm) {
+    const bsDeleteModal = new Modal(deleteModal);
+
+    document.querySelectorAll('.btn-delete-news').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const newsId = btn.dataset.newsId;
+        const deleteUrl = btn.dataset.deleteUrl;
+        const newsTitle = btn.dataset.newsTitle;
+
+        // Set form action
+        deleteForm.action = deleteUrl;
+
+        // Display news title in modal
+        if (deleteNewsTitle) {
+          deleteNewsTitle.textContent = newsTitle;
+        }
+
+        // Show modal
+        bsDeleteModal.show();
+      });
+    });
+  }
 });

@@ -163,7 +163,8 @@ news:
   requiredFields: "Champs obligatoires"
   languageHint: "Cliquez sur une langue pour ajouter ou modifier sa traduction"
   editLanguage: "Langue à modifier"
-  noContent: "Aucun contenu"
+  deleteConfirmTitle: "Supprimer l'actualité"
+  deleteConfirmMessage: "Êtes-vous sûr de vouloir supprimer cette actualité ?"
   form:
     title: "Titre"
     content: "Contenu"

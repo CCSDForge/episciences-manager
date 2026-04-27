@@ -80,7 +80,7 @@
                                 data-link-{{ lang }}="{{ news.link[lang]|default('') }}"
                             {% endfor %}
                          data-visibility="{{ 'public' in news.visibility ? 'public' : 'invisible' }}">
-                    <!-- Status -->
+                        <!-- Status -->
                         <div class="news-status">
                             {% if 'public' in news.visibility %}
                                 <span class="badge bg-success">{{ 'news.status.online'|trans }}</span>
@@ -112,10 +112,14 @@
                             <button type="button"
                                     class="btn btn-outline-secondary btn-sm btn-edit-news"
                                     data-edit-url="{{ path('app_news_edit', {code: code, id: news.id}) }}">
-                            <i class="fas fa-pencil-alt me-1"></i>
+                                <i class="fas fa-pencil-alt me-1"></i>
                                 {{ 'news.edit'|trans }}
                             </button>
-                            <button type="button" class="btn btn-outline-danger btn-sm" data-news-id="{{ news.id }}">
+                            <button type="button"
+                                    class="btn btn-outline-danger btn-sm btn-delete-news"
+                                    data-news-id="{{ news.id }}"
+                                    data-delete-url="{{ path('app_news_delete', {code: code, id: news.id}) }}"
+                                    data-news-title="{{ news.title[defaultLanguage]|default('') }}">
                                 <i class="fas fa-trash me-1"></i>
                                 {{ 'news.delete'|trans }}
                             </button>
@@ -130,6 +134,34 @@
         </div>
     </div>
     <div class="col-1 d-none d-xl-block"></div>
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteNewsModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ 'news.deleteConfirmTitle'|trans }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>{{ 'news.deleteConfirmMessage'|trans }}</p>
+                    <p class="fw-bold" id="delete-news-title"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        {{ 'news.form.cancel'|trans }}
+                    </button>
+                    <form id="delete-news-form" method="post" style="display: inline;">
+                        <input type="hidden" name="_token" id="delete-csrf-token"
+                               value="{{ csrf_token('news-delete') }}">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash me-1"></i>
+                            {{ 'news.delete'|trans }}
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block stylesheets %}

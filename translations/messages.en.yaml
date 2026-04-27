@@ -69,7 +69,8 @@ news:
   requiredFields: "Required fields"
   languageHint: "Click on a language to edit its translation"
   editLanguage: "Language to edit"
-  noContent: "No content"
+  deleteConfirmTitle: "Delete News"
+  deleteConfirmMessage: "Are you sure you want to delete this news?"
   form:
     title: "Title"
     content: "Content"
