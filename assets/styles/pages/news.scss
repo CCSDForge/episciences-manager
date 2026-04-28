@@ -44,16 +44,45 @@
 
 // News list columns
 .news-list {
+  background: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: 0.5rem;
+  overflow: hidden;
+
+  .news-items {
+    .news-item:nth-child(odd) {
+      background: #fff;
+    }
+
+    .news-item:nth-child(even) {
+      background: #f8f9fa; // close to Bootstrap bg-light
+    }
+  }
+
   .news-header,
   .news-item {
     display: flex;
     align-items: center;
     gap: 3rem;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
   }
 
   .news-header {
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
+    // keep header a bit wider than rows if needed
+  }
+
+  .news-item {
+    padding-top: 1.1rem;
+    padding-bottom: 1.1rem;
+    transition:
+      background-color 140ms ease-in-out,
+      box-shadow 140ms ease-in-out;
+
+    &:hover {
+      background-color: rgba(13, 110, 253, 0.14); // more visible primary tint
+      box-shadow: inset 4px 0 0 rgba(13, 110, 253, 0.55);
+    }
   }
 
   .news-status {

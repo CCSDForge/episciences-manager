@@ -18,6 +18,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 final class NewsController extends AbstractController
 {
+    private const NEWS_PER_PAGE = 20;
+
     /**
      * Convert news list with Markdown content to include HTML content
      */
@@ -67,7 +69,7 @@ final class NewsController extends AbstractController
         $pagination = $paginator->paginate(
             $newsRepository->queryByRvcode($code),
             $page,
-            10
+            self::NEWS_PER_PAGE
         );
         $newsListWithHtml = $this->convertNewsListToHtml($pagination->getItems(), $markdownService);
         $pagination->setItems($newsListWithHtml);
@@ -165,7 +167,7 @@ final class NewsController extends AbstractController
         $pagination = $paginator->paginate(
             $newsRepository->queryByRvcode($code),
             $request->query->getInt('page', 1),
-            20
+            self::NEWS_PER_PAGE
         );
         $newsListWithHtml = $this->convertNewsListToHtml($pagination->getItems(), $markdownService);
         $pagination->setItems($newsListWithHtml);
