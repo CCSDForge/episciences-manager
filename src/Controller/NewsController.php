@@ -9,6 +9,7 @@ use App\Service\JournalSettingService;
 use App\Service\MarkdownService;
 use App\Service\ReviewManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -42,6 +43,8 @@ final class NewsController extends AbstractController
         string $code,
         ReviewManager $reviewManager,
         NewsRepository $newsRepository,
+        PaginatorInterface $paginator,
+        Request $request,
         Security $security,
         JournalSettingService $settingService,
         MarkdownService $markdownService
@@ -60,8 +63,14 @@ final class NewsController extends AbstractController
         // Check if user has permission to view this specific review
         $this->denyAccessUnlessGranted('REVIEW_VIEW', $review);
 
-        $newsList = $newsRepository->findByRvcode($code);
-        $newsListWithHtml = $this->convertNewsListToHtml($newsList, $markdownService);
+        $page = $request->query->getInt('page', 1);
+        $pagination = $paginator->paginate(
+            $newsRepository->queryByRvcode($code),
+            $page,
+            10
+        );
+        $newsListWithHtml = $this->convertNewsListToHtml($pagination->getItems(), $markdownService);
+        $pagination->setItems($newsListWithHtml);
 
         // Get accepted languages for this journal
         $setting = $settingService->getSettingArray($review['rvid']);
@@ -72,7 +81,7 @@ final class NewsController extends AbstractController
         return $this->render('news/journalNews.html.twig', [
             'review' => $review,
             'code' => $code,
-            'newsList' => $newsListWithHtml,
+            'newsList' => $pagination,
             'acceptedLanguages' => $acceptedLanguages,
             'defaultLanguage' => $defaultLanguage,
             'currentUser' => $user,
@@ -85,6 +94,7 @@ final class NewsController extends AbstractController
         Request $request,
         ReviewManager $reviewManager,
         NewsRepository $newsRepository,
+        PaginatorInterface $paginator,
         Security $security,
         JournalSettingService $settingService,
         EntityManagerInterface $entityManager,
@@ -152,8 +162,13 @@ final class NewsController extends AbstractController
         }
 
         // GET request - show the page with form
-        $newsList = $newsRepository->findByRvcode($code);
-        $newsListWithHtml = $this->convertNewsListToHtml($newsList, $markdownService);
+        $pagination = $paginator->paginate(
+            $newsRepository->queryByRvcode($code),
+            $request->query->getInt('page', 1),
+            20
+        );
+        $newsListWithHtml = $this->convertNewsListToHtml($pagination->getItems(), $markdownService);
+        $pagination->setItems($newsListWithHtml);
 
         // Get accepted languages for this journal
         $setting = $settingService->getSettingArray($review['rvid']);
@@ -163,7 +178,7 @@ final class NewsController extends AbstractController
         return $this->render('news/journalNews.html.twig', [
             'review' => $review,
             'code' => $code,
-            'newsList' => $newsListWithHtml,
+            'newsList' => $pagination,
             'acceptedLanguages' => $acceptedLanguages,
             'defaultLanguage' => $defaultLanguage,
             'currentUser' => $user,

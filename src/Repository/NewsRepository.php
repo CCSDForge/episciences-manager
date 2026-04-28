@@ -3,6 +3,7 @@ namespace App\Repository;
 
 use App\Entity\News;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -17,11 +18,14 @@ class NewsRepository extends ServiceEntityRepository
 
     public function findByRvcode(string $rvcode): array
     {
+        return $this->queryByRvcode($rvcode)->getQuery()->getResult();
+    }
+
+    public function queryByRvcode(string $rvcode): QueryBuilder
+    {
         return $this->createQueryBuilder('n')
             ->where('n.rvcode = :rvcode')
             ->setParameter('rvcode', $rvcode)
-            ->orderBy('n.dateCreation', 'DESC')
-            ->getQuery()
-            ->getResult();
+            ->orderBy('n.dateCreation', 'DESC');
     }
 }
