@@ -57,8 +57,10 @@ export function updateTranslationsList(
 
     const hasContent = contentByLocale?.[lang]?.trim();
     const title = titleByLocale?.[lang] || '';
+    const hasTitle = title.trim() !== '';
 
-    if (hasContent) {
+    // Show pencil if either title OR content exists
+    if (hasContent || hasTitle) {
       if (icon) icon.className = 'fas fa-pencil-alt text-primary';
       actionBtn?.setAttribute(
         'title',

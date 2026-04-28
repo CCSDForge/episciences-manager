@@ -15,10 +15,39 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class NewsController extends AbstractController
 {
     private const NEWS_PER_PAGE = 20;
+    private const NEWS_CONTENT_MAX_LENGTH = 5000;
+
+    /**
+     * Get plain text length from HTML content (strips tags)
+     */
+    private function getPlainTextLength(string $content): int
+    {
+        $plainText = strip_tags($content);
+        $plainText = html_entity_decode($plainText, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        return mb_strlen($plainText);
+    }
+
+    /**
+     * Validate content length for all languages
+     * @return bool True if valid, false if any content exceeds limit
+     */
+    private function validateContentLength(array $translations): bool
+    {
+        foreach ($translations as $lang => $data) {
+            if (!empty($data['content'])) {
+                $length = $this->getPlainTextLength($data['content']);
+                if ($length > self::NEWS_CONTENT_MAX_LENGTH) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
     /**
      * Convert news list with Markdown content to include HTML content
@@ -100,7 +129,8 @@ final class NewsController extends AbstractController
         Security $security,
         JournalSettingService $settingService,
         EntityManagerInterface $entityManager,
-        MarkdownService $markdownService
+        MarkdownService $markdownService,
+        TranslatorInterface $translator
     ): Response
     {
         // Récupérer l'utilisateur connecté (via CAS)
@@ -126,6 +156,12 @@ final class NewsController extends AbstractController
 
             $status = $request->request->get('status');
             $translations = $request->request->all('translations');
+
+            // Validate content length
+            if (!$this->validateContentLength($translations)) {
+                $this->addFlash('error', $translator->trans('news.validation.contentTooLong', ['%limit%' => self::NEWS_CONTENT_MAX_LENGTH]));
+                return $this->redirectToRoute('app_news_show', ['code' => $code]);
+            }
 
             // Build multilingual arrays from translations
             $titles = [];
@@ -223,6 +259,13 @@ final class NewsController extends AbstractController
         // Get form data
         $status = $request->request->get('status');
         $translations = $request->request->all('translations');
+
+        // Validate content length
+        $validationError = $this->validateContentLength($translations);
+        if ($validationError !== null) {
+            $this->addFlash('error', $validationError);
+            return $this->redirectToRoute('app_news_show', ['code' => $code]);
+        }
 
         // Build multilingual arrays
         $titles = [];

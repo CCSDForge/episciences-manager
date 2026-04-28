@@ -66,9 +66,9 @@
                             <div class="news-item py-3 border-bottom"
                                  data-news-id="{{ news.id }}"
                                     {% for lang in acceptedLanguages %}
-                                        data-title-{{ lang }}="{{ news.title[lang]|default('') }}"
-                                        data-content-{{ lang }}="{{ news.htmlContent[lang]|default(news.htmlContent['en']|default(''))|raw }}"
-                                        data-link-{{ lang }}="{{ news.link[lang]|default('') }}"
+                                        data-title-{{ lang }}="{{ news.title[lang]|default('')|e('html_attr') }}"
+                                        data-content-{{ lang }}="{{ news.htmlContent[lang]|default('')|e('html_attr') }}"
+                                        data-link-{{ lang }}="{{ news.link[lang]|default('')|e('html_attr') }}"
                                     {% endfor %}
                                  data-visibility="{{ 'public' in news.visibility ? 'public' : 'invisible' }}">
                                 <!-- Status -->
@@ -82,13 +82,13 @@
 
                                 <!-- Title -->
                                 <div class="news-title-col"
-                                     {% for lang in acceptedLanguages %}data-title-{{ lang }}="{{ news.title[lang]|default('') }}"{% endfor %}>
+                                     {% for lang in acceptedLanguages %}data-title-{{ lang }}="{{ news.title[lang]|default('')|e('html_attr') }}"{% endfor %}>
                                     <span class="news-title-text">{{ news.title[defaultLanguage] ?? news.title['en'] ?? 'No title' }}</span>
                                 </div>
 
                                 <!-- Content -->
                                 <div class="news-content-col text-muted text-truncate"
-                                     {% for lang in acceptedLanguages %}data-content-{{ lang }}="{{ news.content[lang]|default('')|striptags|slice(0, 100) }}"{% endfor %}>
+                                     {% for lang in acceptedLanguages %}data-content-{{ lang }}="{{ news.content[lang]|default('')|striptags|slice(0, 100)|e('html_attr') }}"{% endfor %}>
                                     <span class="news-content-text">
                                         {{ news.content[defaultLanguage]|default(news.content['en']|default(''))|striptags|slice(0, 100) }}
                                         {% if news.content[defaultLanguage]|default('')|length > 100 %}...{% endif %}</span>
@@ -178,6 +178,10 @@
         acceptedLanguages: {{ acceptedLanguages|json_encode|raw }},
         defaultLanguage: '{{ defaultLanguage }}',
         mode: 'create',
+        contentMaxLength: 5000,
+        translations: {
+          contentTooLong: '{{ 'news.validation.contentTooLong'|trans({'%limit%': 5000}) }}'
+        }
       };
     </script>
 {% endblock %}

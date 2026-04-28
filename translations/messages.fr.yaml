@@ -166,6 +166,7 @@ news:
   deleteConfirmTitle: "Supprimer l'actualité"
   deleteConfirmMessage: "Êtes-vous sûr de vouloir supprimer cette actualité ?"
   form:
+    header: ""
     title: "Titre"
     content: "Contenu"
     link: "Lien"
@@ -173,6 +174,9 @@ news:
     save: "Enregistrer"
     status: "État"
     invisible: "Invisible"
+  validation:
+    contentTooLong: "Le contenu dépasse la limite de %limit% caractères."
+  noNews: "Aucune actualité pour le moment"
 
 journalPages:
   home: "Accueil"

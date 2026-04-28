@@ -5,6 +5,7 @@ import {
   getEditorContent,
   setEditorContent,
   destroyEditor,
+  isOverLimit,
 } from '../components/ckeditor';
 document.addEventListener('DOMContentLoaded', () => {
   // ===================
@@ -152,12 +153,22 @@ document.addEventListener('DOMContentLoaded', () => {
   // CKEDITOR INITIALIZATION
   // ===================
 
+  const NEWS_CONTENT_MAX_LENGTH = config.contentMaxLength || 5000;
+
   async function initNewsEditor() {
     if (editorInitialized) return;
 
     const placeholder = 'Enter news content...';
     try {
-      await initializeCKEditor('news_content', placeholder);
+      // Pass onChange callback to update translations when content changes
+      // Pass maxLength for character counter (5000 for news)
+      await initializeCKEditor('news_content', placeholder, (content) => {
+        if (!translations[currentLang]) {
+          translations[currentLang] = { title: '', content: '', link: '' };
+        }
+        translations[currentLang].content = content;
+        updateFormWidgetDisplay();
+      }, NEWS_CONTENT_MAX_LENGTH);
       editorInitialized = true;
 
       // Load current language content into editor
@@ -175,6 +186,61 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // ===================
+  // RESET FORM FOR CREATE MODE
+  // ===================
+
+  function resetFormForCreate() {
+    // Clear translations object
+    config.acceptedLanguages.forEach(lang => {
+      translations[lang] = { title: '', content: '', link: '' };
+
+      // Clear hidden inputs
+      const titleHidden = getElement(`translation-title-${lang}`);
+      const contentHidden = getElement(`translation-content-${lang}`);
+      const linkHidden = getElement(`translation-link-${lang}`);
+
+      if (titleHidden) titleHidden.value = '';
+      if (contentHidden) contentHidden.value = '';
+      if (linkHidden) linkHidden.value = '';
+    });
+
+    // Clear visible form fields
+    const titleInput = getTitleInput();
+    const contentInput = getContentInput();
+    const linkInput = getLinkInput();
+
+    if (titleInput) titleInput.value = '';
+    if (contentInput) contentInput.value = '';
+    if (linkInput) linkInput.value = '';
+
+    // Reset status to default (invisible)
+    const statusSelect = getElement('news_status');
+    if (statusSelect) statusSelect.value = 'invisible';
+
+    // Reset form action to create URL
+    const form = getElement('news-form');
+    const defaultCreateUrl = getElement('default-create-url');
+    if (form && defaultCreateUrl) {
+      form.action = defaultCreateUrl.value;
+    }
+
+    // Reset CSRF token to create token
+    const tokenInput = form?.querySelector('input[name="_token"]');
+    const createToken = getElement('csrf-token-create');
+    if (tokenInput && createToken) {
+      tokenInput.value = createToken.value;
+    }
+
+    // Clear CKEditor content if initialized
+    if (editorInitialized) {
+      setEditorContent('');
+    }
+
+    // Update widget display
+    updateFormWidgetDisplay();
+  }
+
   // Initialize when collapse is shown
   const newsCreateForm = getElement('newsCreateForm');
   if (newsCreateForm) {
@@ -185,11 +251,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     newsCreateForm.addEventListener('hidden.bs.collapse', () => {
       destroyNewsEditor();
+      // Reset form when closing to prepare for next "Add News"
+      resetFormForCreate();
     });
     // If form is already visible (showCreateForm=true), init immediately
     if (newsCreateForm.classList.contains('show')) {
       initFormWidget();
     }
+  }
+
+  // Handle "Add News" button click - reset form before opening
+  const addNewsButton = document.querySelector('[data-bs-target="#newsCreateForm"]');
+  if (addNewsButton && !addNewsButton.classList.contains('btn-outline-secondary')) {
+    // Only the main "Add News" button (not the cancel button which also targets the collapse)
+    addNewsButton.addEventListener('click', () => {
+      resetFormForCreate();
+    });
   }
 
   // ===================
@@ -250,7 +327,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Save before form submit
   document.addEventListener('submit', e => {
-    if (e.target.closest('form')) {
+    if (e.target.closest('#news-form')) {
+      // Check if content exceeds limit
+      if (isOverLimit()) {
+        e.preventDefault();
+        const message = config.translations?.contentTooLong ||
+          `Content exceeds the limit of ${NEWS_CONTENT_MAX_LENGTH} characters.`;
+        alert(message);
+        return;
+      }
       saveCurrentLanguage();
       config.acceptedLanguages.forEach(lang => updateHiddenInputs(lang));
     }

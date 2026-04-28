@@ -78,6 +78,9 @@ news:
     cancel: "Cancel"
     save: "Save"
     status: "Status"
+  validation:
+    contentTooLong: "Content exceeds the limit of %limit% characters."
+  noNews: "No news available"
 
 journalPages:
   home: "Home"
