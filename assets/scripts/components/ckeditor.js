@@ -181,7 +181,7 @@ export function initializeCKEditor(elementId, placeholder = '') {
     const editableEl = editor.ui.view.editable.element;
     const updateMinHeight = () => {
       if (!editableEl) return;
-      const h = Math.max(200, editableEl.scrollHeight || 0);
+      const h = Math.max(420, editableEl.scrollHeight || 0);
       editableEl.style.minHeight = h + 'px';
     };
 

@@ -12,8 +12,8 @@ Parameters:
 
   {% set isEdit = news is defined and news is not null %}
 
-<div class="collapse {% if showCreateForm|default(false) %}show{% endif %} mt-4" id="newsCreateForm">
-    <div class="card">
+<div class="collapse {% if showCreateForm|default(false) %}show{% endif %} mt-4 news-form-collapse" id="newsCreateForm">
+    <div class="card news-form-card">
         <div class="card-header bg-light">
             <h5 class="mb-0">
                 {% if isEdit %}

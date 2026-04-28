@@ -27,20 +27,17 @@
 
             <!-- News section (aligned with title column) -->
             <div class="news-content">
-                <h2 class="pb-2 mb-4 border-bottom border-primary border-3">
-                    {{ 'news.title'|trans }} <small
-                            class="text-muted fw-normal fs-6">{{ 'news.description'|trans }}</small>
-                </h2>
+                <div class="d-flex justify-content-between align-items-center gap-3 pb-2 mb-4 border-bottom border-primary border-3">
+                    <h2 class="mb-0">
+                        {{ 'news.title'|trans }}
+                        <small class="text-muted fw-normal fs-6">{{ 'news.description'|trans }}</small>
+                    </h2>
 
-                <div class="d-flex justify-content-between align-items-stretch gap-4">
-                    <!-- Add news button -->
-                    <div class="bg-light rounded p-4 flex-grow-1 d-flex align-items-center justify-content-center">
-                        <button type="button" class="btn btn-primary" data-bs-toggle="collapse"
-                                data-bs-target="#newsCreateForm">
-                            <i class="fas fa-plus me-2"></i>
-                            {{ 'news.addNews'|trans }}
-                        </button>
-                    </div>
+                    <button type="button" class="btn btn-primary flex-shrink-0" data-bs-toggle="collapse"
+                            data-bs-target="#newsCreateForm">
+                        <i class="fas fa-plus me-2"></i>
+                        {{ 'news.addNews'|trans }}
+                    </button>
                 </div>
                 {% include 'news/_news_form.html.twig' with {
                     code: code,

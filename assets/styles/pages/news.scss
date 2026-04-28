@@ -18,6 +18,14 @@
   //}
 }
 
+// News form (collapse) sizing
+.news-form-collapse {
+  .news-form-card {
+    max-width: 1400px;
+    margin-inline: auto;
+  }
+}
+
 // Language widget - collapsible panel
 .language-widget {
   background: #fff;
