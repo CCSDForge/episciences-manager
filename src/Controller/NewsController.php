@@ -5,25 +5,47 @@ namespace App\Controller;
 
 use App\Entity\News;
 use App\Repository\NewsRepository;
-use App\Repository\PageRepository;
 use App\Service\JournalSettingService;
 use App\Service\MarkdownService;
 use App\Service\ReviewManager;
-use App\Service\PageHierarchyService;
 use Doctrine\ORM\EntityManagerInterface;
-use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class NewsController extends AbstractController
 {
-    #[Route('/journal/{code}/news', name: 'app_news_show', methods: ['GET'])]
-    public function index(string $code, ReviewManager $reviewManager,NewsRepository $newsRepository,Security $security, JournalSettingService $settingService): Response
+    /**
+     * Convert news list with Markdown content to include HTML content
+     */
+    private function convertNewsListToHtml(array $newsList, MarkdownService $markdownService): array
     {
+        $newsListWithHtml = [];
+        foreach ($newsList as $news) {
+            $content = $news->getContent() ?? [];
+            $newsListWithHtml[] = [
+                'id' => $news->getId(),
+                'title' => $news->getTitle(),
+                'content' => $content,
+                'htmlContent' => $markdownService->convertContentArray($content),
+                'link' => $news->getLink(),
+                'visibility' => $news->getVisibility(),
+                'dateCreation' => $news->getDateCreation(),
+            ];
+        }
+        return $newsListWithHtml;
+    }
+    #[Route('/journal/{code}/news', name: 'app_news_show', methods: ['GET'])]
+    public function index(
+        string $code,
+        ReviewManager $reviewManager,
+        NewsRepository $newsRepository,
+        Security $security,
+        JournalSettingService $settingService,
+        MarkdownService $markdownService
+    ): Response {
         // Récupérer l'utilisateur connecté (via CAS)
         $user = $security->getUser();
         $uid = $user?->getUid();
@@ -39,6 +61,7 @@ final class NewsController extends AbstractController
         $this->denyAccessUnlessGranted('REVIEW_VIEW', $review);
 
         $newsList = $newsRepository->findByRvcode($code);
+        $newsListWithHtml = $this->convertNewsListToHtml($newsList, $markdownService);
 
         // Get accepted languages for this journal
         $setting = $settingService->getSettingArray($review['rvid']);
@@ -49,7 +72,7 @@ final class NewsController extends AbstractController
         return $this->render('news/journalNews.html.twig', [
             'review' => $review,
             'code' => $code,
-            'newsList' => $newsList,
+            'newsList' => $newsListWithHtml,
             'acceptedLanguages' => $acceptedLanguages,
             'defaultLanguage' => $defaultLanguage,
             'currentUser' => $user,
@@ -57,7 +80,16 @@ final class NewsController extends AbstractController
     }
 
     #[Route('/journal/{code}/news/create', name: 'app_news_create', methods: ['GET', 'POST'])]
-    public function create(string $code, Request $request, ReviewManager $reviewManager, NewsRepository $newsRepository, Security $security, JournalSettingService $settingService, EntityManagerInterface $entityManager): Response
+    public function create(
+        string $code,
+        Request $request,
+        ReviewManager $reviewManager,
+        NewsRepository $newsRepository,
+        Security $security,
+        JournalSettingService $settingService,
+        EntityManagerInterface $entityManager,
+        MarkdownService $markdownService
+    ): Response
     {
         // Récupérer l'utilisateur connecté (via CAS)
         $user = $security->getUser();
@@ -121,17 +153,17 @@ final class NewsController extends AbstractController
 
         // GET request - show the page with form
         $newsList = $newsRepository->findByRvcode($code);
+        $newsListWithHtml = $this->convertNewsListToHtml($newsList, $markdownService);
 
         // Get accepted languages for this journal
         $setting = $settingService->getSettingArray($review['rvid']);
         $acceptedLanguages = $setting['languages']['accepted'] ?? ['en', 'fr'];
-
         $defaultLanguage = $setting['languages']['default'] ?? 'en';
 
         return $this->render('news/journalNews.html.twig', [
             'review' => $review,
             'code' => $code,
-            'newsList' => $newsList,
+            'newsList' => $newsListWithHtml,
             'acceptedLanguages' => $acceptedLanguages,
             'defaultLanguage' => $defaultLanguage,
             'currentUser' => $user,
@@ -145,13 +177,11 @@ final class NewsController extends AbstractController
         int $id,
         ReviewManager $reviewManager,
         NewsRepository $newsRepository,
-        Security $security,
         Request $request,
-        JournalSettingService $settingService,
         EntityManagerInterface $entityManager
     ): Response
     {
-        // Récupérer le journal
+        // Get the journal
         $review = $reviewManager->getReviewByCode($code);
 
         if (!$review) {
@@ -160,24 +190,24 @@ final class NewsController extends AbstractController
 
         $this->denyAccessUnlessGranted('REVIEW_VIEW', $review);
 
-        // Récupérer la news
+        // Get the news
         $news = $newsRepository->find($id);
 
         if (!$news || $news->getRvcode() !== $code) {
             throw $this->createNotFoundException('News not found');
         }
 
-// Valider le token CSRF
+        // Validate CSRF token
         $token = $request->request->get('_token');
         if (!$this->isCsrfTokenValid('news-edit', $token)) {
             throw $this->createAccessDeniedException('Invalid CSRF token');
         }
 
-        // Récupérer les données
+        // Get form data
         $status = $request->request->get('status');
         $translations = $request->request->all('translations');
 
-        // Construire les tableaux multilingues
+        // Build multilingual arrays
         $titles = [];
         $contents = [];
         $links = [];
@@ -194,7 +224,7 @@ final class NewsController extends AbstractController
             }
         }
 
-        // Mettre à jour l'entité News
+        // Update the News entity
             $news->setTitle($titles);
             $news->setContent($contents);
             $news->setLink($links);

@@ -76,7 +76,7 @@
                          data-news-id="{{ news.id }}"
                             {% for lang in acceptedLanguages %}
                                 data-title-{{ lang }}="{{ news.title[lang]|default('') }}"
-                                data-content-{{ lang }}="{{ news.content[lang]|default('') }}"
+                                data-content-{{ lang }}="{{ news.htmlContent[lang]|default(news.htmlContent['en']|default(''))|raw }}"
                                 data-link-{{ lang }}="{{ news.link[lang]|default('') }}"
                             {% endfor %}
                          data-visibility="{{ 'public' in news.visibility ? 'public' : 'invisible' }}">
@@ -93,13 +93,14 @@
                         <div class="news-title-col"
                              {% for lang in acceptedLanguages %}data-title-{{ lang }}="{{ news.title[lang]|default('') }}"{% endfor %}>
                             <span class="news-title-text">{{ news.title[defaultLanguage] ?? news.title['en'] ?? 'No title' }}</span>
-                            <small class="text-muted d-block">{{ news.dateCreation|date('d/m/Y') }}</small>
                         </div>
 
                         <!-- Content -->
                         <div class="news-content-col text-muted text-truncate"
                              {% for lang in acceptedLanguages %}data-content-{{ lang }}="{{ news.content[lang]|default('')|striptags|slice(0, 100) }}"{% endfor %}>
-                            <span class="news-content-text">{{ news.content[defaultLanguage]|default(news.content['en']|default(''))|striptags|slice(0, 100) }}{% if news.content[defaultLanguage]|default('')|length > 100 %}...{% endif %}</span>
+                            <span class="news-content-text">
+                                {{ news.content[defaultLanguage]|default(news.content['en']|default(''))|striptags|slice(0, 100) }}
+                                {% if news.content[defaultLanguage]|default('')|length > 100 %}...{% endif %}</span>
                         </div>
 
                         <!-- Creation date -->

@@ -1,5 +1,11 @@
 import { initLanguageWidget } from '../components/language-widget.js';
 import { Collapse, Modal } from 'bootstrap';
+import {
+  initializeCKEditor,
+  getEditorContent,
+  setEditorContent,
+  destroyEditor,
+} from '../components/ckeditor';
 document.addEventListener('DOMContentLoaded', () => {
   // ===================
   // CONFIGURATION
@@ -28,6 +34,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const translations = {};
   let currentLang = config.defaultLanguage;
   let formWidget = null;
+  //Ajouter une variable pour l'état de l'éditeur
+  let editorInitialized = false;
 
   // Initialize translations from hidden inputs
   function initTranslations() {
@@ -48,12 +56,15 @@ document.addEventListener('DOMContentLoaded', () => {
   // CORE FUNCTIONS
   // ===================
 
+
   function saveCurrentLanguage() {
     if (!currentLang) return;
 
     translations[currentLang] = {
       title: getTitleInput()?.value || '',
-      content: getContentInput()?.value || '',
+      content: editorInitialized
+        ? getEditorContent()
+        : getContentInput()?.value || '',
       link: getLinkInput()?.value || '',
     };
 
@@ -73,6 +84,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (contentInput) contentInput.value = data.content;
     if (linkInput) linkInput.value = data.link;
     if (formLanguageInput) formLanguageInput.value = lang;
+
+    // Update CKEditor content
+    if (editorInitialized) {
+      setEditorContent(data.content || '');
+    } else {
+      const contentInput = getContentInput();
+      if (contentInput) contentInput.value = data.content;
+    }
   }
 
   function updateHiddenInputs(lang) {
@@ -129,13 +148,44 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // ===================
+  // CKEDITOR INITIALIZATION
+  // ===================
+
+  async function initNewsEditor() {
+    if (editorInitialized) return;
+
+    const placeholder = 'Enter news content...';
+    try {
+      await initializeCKEditor('news_content', placeholder);
+      editorInitialized = true;
+
+      // Load current language content into editor
+      const currentContent = translations[currentLang]?.content || '';
+      setEditorContent(currentContent);
+    } catch (error) {
+      console.error('Failed to initialize CKEditor:', error);
+    }
+  }
+
+  function destroyNewsEditor() {
+    if (editorInitialized) {
+      destroyEditor();
+      editorInitialized = false;
+    }
+  }
+
   // Initialize when collapse is shown
   const newsCreateForm = getElement('newsCreateForm');
   if (newsCreateForm) {
-    newsCreateForm.addEventListener('shown.bs.collapse', () => {
+    newsCreateForm.addEventListener('shown.bs.collapse', async () => {
       initFormWidget();
+      await initNewsEditor();
     });
 
+    newsCreateForm.addEventListener('hidden.bs.collapse', () => {
+      destroyNewsEditor();
+    });
     // If form is already visible (showCreateForm=true), init immediately
     if (newsCreateForm.classList.contains('show')) {
       initFormWidget();
@@ -218,7 +268,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // EDIT BUTTON HANDLER
   // ===================
   document.querySelectorAll('.btn-edit-news').forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', async() => {
       const newsItem = btn.closest('.news-item');
       const editUrl = btn.dataset.editUrl;
 
@@ -264,8 +314,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const editToken = document.getElementById('csrf-token-edit');
       if (tokenInput && editToken) tokenInput.value = editToken.value;
 
-      // Initialize widget if needed
+      // Initialize widget and editor
       initFormWidget();
+      await initNewsEditor();
+
+      // Load content into editor
+      if (editorInitialized) {
+        setEditorContent(translations[config.defaultLanguage]?.content || '');
+      }
       updateFormWidgetDisplay();
 
       // Open collapse
@@ -291,7 +347,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const bsDeleteModal = new Modal(deleteModal);
 
     document.querySelectorAll('.btn-delete-news').forEach(btn => {
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', async() => {
         const newsId = btn.dataset.newsId;
         const deleteUrl = btn.dataset.deleteUrl;
         const newsTitle = btn.dataset.newsTitle;

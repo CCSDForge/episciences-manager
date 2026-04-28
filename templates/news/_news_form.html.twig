@@ -68,11 +68,8 @@ Parameters:
                             <label for="news_content" class="form-label">
                                 {{ 'news.form.content'|trans }}
                             </label>
-                            <textarea class="form-control"
-                                      id="news_content"
-                                      name="content"
-                                      rows="4">{% if isEdit %}{{ news.content[defaultLanguage]|default('')
-                                }}{% endif %}</textarea>
+                            <div id="news_content" class="form-control" style="min-height: 200px;">  {% if isEdit %}{{ news.content[defaultLanguage]|default('')
+                                }}{% endif %}</div>
                         </div>
 
                         <!-- Link -->
