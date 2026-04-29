@@ -10,7 +10,10 @@
  * @param {Object|null} contentByLocale - Object with locale keys and content values
  * @param {string} selectId - ID of the select element
  */
-export function updateLanguageSelectOptions(contentByLocale, selectId = 'sidebar-language-select') {
+export function updateLanguageSelectOptions(
+  contentByLocale,
+  selectId = 'sidebar-language-select'
+) {
   const select = document.getElementById(selectId);
   if (!select) return;
 
@@ -62,17 +65,11 @@ export function updateTranslationsList(
     // Show pencil if either title OR content exists
     if (hasContent || hasTitle) {
       if (icon) icon.className = 'fas fa-pencil-alt text-primary';
-      actionBtn?.setAttribute(
-        'title',
-        translations.editTranslation || 'Edit'
-      );
+      actionBtn?.setAttribute('title', translations.editTranslation || 'Edit');
       if (titleInput) titleInput.value = title;
     } else {
       if (icon) icon.className = 'fas fa-plus text-muted';
-      actionBtn?.setAttribute(
-        'title',
-        translations.addTranslation || 'Add'
-      );
+      actionBtn?.setAttribute('title', translations.addTranslation || 'Add');
       if (titleInput) titleInput.value = '';
     }
   });
