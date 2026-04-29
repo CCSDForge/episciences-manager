@@ -105,7 +105,21 @@
 
   .news-content-col {
     flex-grow: 1;
-    min-width: 0; // Allow text-truncate to work
+    min-width: 0;
+
+    .news-content-text {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      line-height: 1.5;
+    }
+  }
+
+  .news-creation-col {
+    width: 140px;
+    flex-shrink: 0;
+    text-align: left;
   }
 
   .news-actions-col,

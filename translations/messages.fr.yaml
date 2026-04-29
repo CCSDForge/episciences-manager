@@ -153,13 +153,14 @@ news:
     status: "Statut"
     title: "Titre"
     content: "Contenu"
-    creationDate: "Date de création"
+    createdAt: "Créé le"
     actions: "Actions"
   status:
     online: "en ligne"
     offline: "hors ligne" # sur la liste?
     invisible: "Invisible"
   createTitle: "Ajouter une actualité"
+  editTitle: "Modifier une actualité"
   requiredFields: "Champs obligatoires"
   languageHint: "Cliquez sur une langue pour ajouter ou modifier sa traduction"
   editLanguage: "Langue à modifier"

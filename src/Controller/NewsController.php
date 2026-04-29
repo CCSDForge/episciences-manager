@@ -157,9 +157,8 @@ final class NewsController extends AbstractController
             $status = $request->request->get('status');
             $translations = $request->request->all('translations');
 
-            // Validate content length
+            // Validate content length (security check - JS validation can be bypassed)
             if (!$this->validateContentLength($translations)) {
-                $this->addFlash('error', $translator->trans('news.validation.contentTooLong', ['%limit%' => self::NEWS_CONTENT_MAX_LENGTH]));
                 return $this->redirectToRoute('app_news_show', ['code' => $code]);
             }
 
@@ -231,7 +230,8 @@ final class NewsController extends AbstractController
         ReviewManager $reviewManager,
         NewsRepository $newsRepository,
         Request $request,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        TranslatorInterface $translator
     ): Response
     {
         // Get the journal
@@ -260,10 +260,8 @@ final class NewsController extends AbstractController
         $status = $request->request->get('status');
         $translations = $request->request->all('translations');
 
-        // Validate content length
-        $validationError = $this->validateContentLength($translations);
-        if ($validationError !== null) {
-            $this->addFlash('error', $validationError);
+        // Validate content length (security check - JS validation can be bypassed)
+        if (!$this->validateContentLength($translations)) {
             return $this->redirectToRoute('app_news_show', ['code' => $code]);
         }
 

@@ -25,6 +25,17 @@
                 </div>
             </div>
 
+            <!-- Flash messages (success only) - centered on screen -->
+            {% for message in app.flashes('success') %}
+                <div class="position-fixed top-50 start-50 translate-middle" style="z-index: 1050;">
+                    <div class="alert alert-success alert-dismissible fade show shadow-lg text-center px-5 py-3" role="alert">
+                        <i class="fas fa-check-circle me-2 fs-5"></i>
+                        <span class="fs-5">{{ message }}</span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                </div>
+            {% endfor %}
+
             <!-- News section (aligned with title column) -->
             <div class="news-content">
                 <div class="d-flex justify-content-between align-items-center gap-3 pb-2 mb-4 border-bottom border-primary border-3">
@@ -58,7 +69,7 @@
                         <div class="news-status">{{ 'news.header.status'|trans }}</div>
                         <div class="news-title-col">{{ 'news.header.title'|trans }}</div>
                         <div class="news-content-col">{{ 'news.header.content'|trans }}</div>
-                        <div class="news-creation-col">{{ 'news.header.creationDate'|trans }}</div>
+                        <div class="news-creation-col">{{ 'news.header.createdAt'|trans }}</div>
                         <div class="news-actions-col">{{ 'news.header.actions'|trans }}</div>
                     </div>
                     <div class="news-items">
@@ -87,11 +98,11 @@
                                 </div>
 
                                 <!-- Content -->
-                                <div class="news-content-col text-muted text-truncate"
-                                     {% for lang in acceptedLanguages %}data-content-{{ lang }}="{{ news.content[lang]|default('')|striptags|slice(0, 100)|e('html_attr') }}"{% endfor %}>
+                                <div class="news-content-col text-muted"
+                                     {% for lang in acceptedLanguages %}data-content-{{ lang }}="{{ news.content[lang]|default('')|striptags|e('html_attr') }}"{% endfor %}>
                                     <span class="news-content-text">
-                                        {{ news.content[defaultLanguage]|default(news.content['en']|default(''))|striptags|slice(0, 100) }}
-                                        {% if news.content[defaultLanguage]|default('')|length > 100 %}...{% endif %}</span>
+                                        {{ news.content[defaultLanguage]|default(news.content['en']|default(''))|striptags }}
+                                    </span>
                                 </div>
 
                                 <!-- Creation date -->

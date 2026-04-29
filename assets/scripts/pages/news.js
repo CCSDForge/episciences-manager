@@ -232,6 +232,13 @@ document.addEventListener('DOMContentLoaded', () => {
       tokenInput.value = createToken.value;
     }
 
+    // Reset form title to "Create"
+    const formTitle = getElement('news-form-title');
+    if (formTitle) {
+      const createTitle = formTitle.dataset.createTitle || 'Add news';
+      formTitle.innerHTML = `<i class="fas fa-plus me-2"></i>${createTitle}`;
+    }
+
     // Clear CKEditor content if initialized
     if (editorInitialized) {
       setEditorContent('');
@@ -398,6 +405,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const tokenInput = form?.querySelector('input[name="_token"]');
       const editToken = document.getElementById('csrf-token-edit');
       if (tokenInput && editToken) tokenInput.value = editToken.value;
+
+      // Update form title to "Edit"
+      const formTitle = document.getElementById('news-form-title');
+      if (formTitle) {
+        const editTitle = formTitle.dataset.editTitle || 'Edit news';
+        formTitle.innerHTML = `<i class="fas fa-edit me-2"></i>${editTitle}`;
+      }
 
       // Initialize widget and editor
       initFormWidget();
