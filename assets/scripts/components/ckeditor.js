@@ -39,16 +39,70 @@ import {
 import 'ckeditor5/ckeditor5.css';
 
 let editorInstance = null;
+let onChangeCallback = null;
+let charCounterElement = null;
+let maxCharLimit = 0;
 
 // Track processed inserts to prevent duplicates
 const processedInserts = new Set();
 
-export function initializeCKEditor(elementId, placeholder = '') {
+/**
+ * Get plain text character count from editor content
+ */
+function getCharCount() {
+  if (!editorInstance) return 0;
+  const content = editorInstance.getData();
+  // Remove HTML tags and decode entities for accurate count
+  const plainText = content.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+  return plainText.length;
+}
+
+/**
+ * Update the character counter display
+ */
+function updateCharCounter() {
+  if (!charCounterElement || maxCharLimit <= 0) return;
+
+  const count = getCharCount();
+  charCounterElement.textContent = `${count} / ${maxCharLimit}`;
+
+  // Change color based on limit
+  charCounterElement.classList.remove('text-danger', 'text-warning', 'text-muted', 'fw-bold');
+  if (count > maxCharLimit) {
+    charCounterElement.classList.add('text-danger', 'fw-bold');
+  } else if (count > maxCharLimit * 0.9) {
+    charCounterElement.classList.add('text-warning');
+  } else {
+    charCounterElement.classList.add('text-muted');
+  }
+}
+
+/**
+ * Create character counter element
+ */
+function createCharCounter(editorElement) {
+  // Remove existing counter if any
+  const existingCounter = editorElement.parentNode?.querySelector('.char-counter');
+  if (existingCounter) existingCounter.remove();
+
+  // Create new counter
+  charCounterElement = document.createElement('div');
+  charCounterElement.className = 'char-counter text-muted small mt-1 text-end';
+  editorElement.parentNode?.appendChild(charCounterElement);
+
+  updateCharCounter();
+}
+
+export function initializeCKEditor(elementId, placeholder = '', onChange = null, maxLength = 0) {
   const element = document.getElementById(elementId);
   if (!element) {
     console.error(`Element with ID ${elementId} not found`);
     return null;
   }
+
+  // Store the onChange callback and maxLength for later use
+  onChangeCallback = onChange;
+  maxCharLimit = maxLength;
 
   const config = {
     licenseKey: 'GPL', // Free license for open source usage
@@ -223,13 +277,33 @@ export function initializeCKEditor(elementId, placeholder = '') {
     const editableEl = editor.ui.view.editable.element;
     const updateMinHeight = () => {
       if (!editableEl) return;
-      const h = Math.max(200, editableEl.scrollHeight || 0);
+      const h = Math.max(420, editableEl.scrollHeight || 0);
       editableEl.style.minHeight = h + 'px';
     };
 
     editor.editing.view.document.on('change', updateMinHeight);
     // Initial adjustment
     setTimeout(updateMinHeight, 0);
+
+    // Create character counter if maxLength is set
+    if (maxCharLimit > 0) {
+      createCharCounter(element);
+    }
+
+    // Listen for content changes
+    editor.model.document.on('change:data', () => {
+      const content = editor.getData();
+
+      // Update character counter
+      if (maxCharLimit > 0) {
+        updateCharCounter();
+      }
+
+      // Call the onChange callback if provided
+      if (onChangeCallback) {
+        onChangeCallback(content);
+      }
+    });
 
     return editor;
   });
@@ -253,6 +327,10 @@ export function getEditorContent() {
 export function setEditorContent(content) {
   if (editorInstance) {
     editorInstance.setData(content || '');
+    // Update character counter after setting content
+    if (maxCharLimit > 0) {
+      updateCharCounter();
+    }
   }
 }
 
@@ -262,6 +340,12 @@ export function destroyEditor() {
       .destroy()
       .then(() => {
         editorInstance = null;
+        // Clean up character counter
+        if (charCounterElement) {
+          charCounterElement.remove();
+          charCounterElement = null;
+        }
+        maxCharLimit = 0;
         console.log('CKEditor destroyed');
       })
       .catch(error => {
@@ -276,6 +360,16 @@ export function focusEditor() {
     editorInstance.focus();
   }
 }
+
+/**
+ * Check if content exceeds the max length limit
+ * @returns {boolean} true if over limit, false otherwise
+ */
+export function isOverLimit() {
+  if (maxCharLimit <= 0) return false;
+  return getCharCount() > maxCharLimit;
+}
+
 export function insertImageIntoEditor(imageUrl, altText = '') {
   if (!editorInstance || !imageUrl) return;
 

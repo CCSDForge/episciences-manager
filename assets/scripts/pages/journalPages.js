@@ -6,6 +6,8 @@ import {
   focusEditor,
 } from '../components/ckeditor.js';
 
+import { initLanguageWidget } from '../components/language-widget.js';
+
 // Security: Helper function to escape HTML special characters to prevent XSS
 function escapeHtml(text) {
   if (text === null || text === undefined) {
@@ -347,67 +349,6 @@ function updateBreadcrumbLanguage(locale) {
   }
 }
 
-/**
- * Update the sidebar language select visibility:
- * show only languages that have existing content for the current page.
- * When no page is selected (contentByLocale is null), show all accepted languages.
- */
-function updateLanguageSelectOptions(contentByLocale) {
-  const select = document.getElementById('sidebar-language-select');
-  if (!select) return;
-
-  Array.from(select.options).forEach(option => {
-    if (!contentByLocale) {
-      option.hidden = false;
-    } else {
-      const hasContent =
-        contentByLocale[option.value] &&
-        contentByLocale[option.value].trim() !== '';
-      option.hidden = !hasContent;
-    }
-  });
-
-  if (select.selectedOptions[0]?.hidden) {
-    const firstVisible = Array.from(select.options).find(o => !o.hidden);
-    if (firstVisible) firstVisible.selected = true;
-  }
-}
-
-/**
- * Update the translations list in the sidebar widget.
- * - Pencil icon + title if content exists for that language
- * - "+" icon + empty field if no content
- */
-function updateTranslationsList(titleByLocale, contentByLocale) {
-  document
-    .querySelectorAll('#translations-list .translation-row')
-    .forEach(row => {
-      const lang = row.getAttribute('data-lang');
-      const actionBtn = row.querySelector('.translation-action-btn');
-      const titleInput = row.querySelector('.translation-title-input');
-      const icon = actionBtn?.querySelector('i');
-
-      const hasContent = contentByLocale?.[lang]?.trim();
-      const title = titleByLocale?.[lang] || '';
-
-      if (hasContent) {
-        if (icon) icon.className = 'fas fa-pencil-alt text-primary';
-        actionBtn?.setAttribute(
-          'title',
-          window.journalPagesData?.translations?.editTranslation || 'Edit'
-        );
-        if (titleInput) titleInput.value = title;
-      } else {
-        if (icon) icon.className = 'fas fa-plus text-muted';
-        actionBtn?.setAttribute(
-          'title',
-          window.journalPagesData?.translations?.addTranslation || 'Add'
-        );
-        if (titleInput) titleInput.value = '';
-      }
-    });
-}
-
 // Make functions globally available for the header script
 window.updateInlineEditTranslations = updateInlineEditTranslations;
 window.updateContainerTitles = updateContainerTitles;
@@ -541,14 +482,14 @@ document.addEventListener('DOMContentLoaded', function () {
     editingLocale = sidebarLanguageSelect.value;
   }
 
-  if (sidebarLanguageSelect) {
-    sidebarLanguageSelect.addEventListener('change', async function () {
-      const selectedLang = this.value;
-      const routeLocale = getCurrentLocale();
-
+  // Initialize language widget with callbacks
+  const languageWidget = initLanguageWidget({
+    widgetId: 'sidebar',
+    onLanguageChange: async selectedLang => {
       editingLocale = selectedLang;
 
       if (currentPageCode && currentJournalCode) {
+        const routeLocale = getCurrentLocale();
         const pageUrl = `/${routeLocale}/journal/${currentJournalCode}/page/${currentPageCode}`;
 
         try {
@@ -561,112 +502,152 @@ document.addEventListener('DOMContentLoaded', function () {
           const data = await response.json();
 
           updatePageView(data, selectedLang);
-          updateTranslationsList(data.title, data.content);
+          languageWidget?.updateTranslations(
+            data.title,
+            data.content,
+            window.journalPagesData?.translations || {}
+          );
           // Update stored Markdown content for editing
           currentMarkdownContent = data.markdownContent || {};
         } catch (error) {
           console.error('Error loading page content:', error);
         }
       }
-    });
+    },
+    onTranslationClick: async lang => {
+      if (!currentPageCode || !currentJournalCode) {
+        alert(
+          window.translations?.selectPageFirst || 'Please select a page first'
+        );
+        return;
+      }
 
-    // Toggle chevron icon on collapse
-    const collapseToggle = document.querySelector(
-      '[data-bs-target="#languageWidgetBody"]'
-    );
-    const languageWidgetBody = document.getElementById('languageWidgetBody');
+      if (isInlineEdit) {
+        exitInlineEdit();
+        await new Promise(r => setTimeout(r, 200));
+      }
 
-    if (collapseToggle && languageWidgetBody) {
-      languageWidgetBody.addEventListener('shown.bs.collapse', function () {
-        const icon = collapseToggle.querySelector('i');
-        if (icon) {
-          icon.classList.remove('fa-chevron-down');
-          icon.classList.add('fa-chevron-up');
+      editingLocale = lang;
+
+      // Fetch existing content for this language
+      let existingTitle = '';
+      let existingContent = '';
+      try {
+        const routeLocale = getCurrentLocale();
+        const pageUrl = `/${routeLocale}/journal/${currentJournalCode}/page/${currentPageCode}`;
+        const response = await fetch(pageUrl, {
+          headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          existingTitle = (data.title && data.title[lang]) || '';
+          existingContent =
+            (data.markdownContent && data.markdownContent[lang]) || '';
         }
-      });
+      } catch (error) {
+        console.error('Error fetching page data:', error);
+      }
 
-      languageWidgetBody.addEventListener('hidden.bs.collapse', function () {
-        const icon = collapseToggle.querySelector('i');
-        if (icon) {
-          icon.classList.remove('fa-chevron-up');
-          icon.classList.add('fa-chevron-down');
+      if (pageBody) pageBody.innerHTML = '';
+
+      pageTitleInline.value = existingTitle;
+      pageContent.style.display = 'none';
+      inlineEditContent.style.display = 'block';
+
+      const placeholder =
+        window.translations?.enterContent || 'Enter the content here...';
+      try {
+        const editorPromise = initializeCKEditor(
+          'page-content-inline',
+          placeholder
+        );
+        if (editorPromise) {
+          await editorPromise;
+          setEditorContent(existingContent);
+          setTimeout(() => focusEditor(), 100);
         }
-      });
+      } catch (error) {
+        console.error('Error initializing CKEditor:', error);
+      }
+
+      const cardFooter = document.querySelector('.card-footer');
+      if (cardFooter) cardFooter.style.display = 'none';
+
+      isInlineEdit = true;
+    },
+  });
+
+  // Helper function to update page view (defined here to be accessible)
+  function updatePageView(data, locale) {
+    const noContentText =
+      window.journalPagesData?.translations?.noContentAvailable ||
+      'No content available';
+
+    if (pageHomeContent) pageHomeContent.style.display = 'none';
+    if (pageViewFields) pageViewFields.style.display = 'block';
+
+    if (pageTitleView) {
+      pageTitleView.value =
+        (data.title && (data.title[locale] || data.title['en'])) || '';
+    }
+
+    if (pageBody) {
+      pageBody.innerHTML =
+        data.content && data.content[locale]
+          ? data.content[locale]
+          : noContentText;
     }
   }
 
-  // Translation row click: open inline edit for that language
-  document
-    .querySelectorAll('#translations-list .translation-action-btn')
-    .forEach(btn => {
-      btn.addEventListener('click', async function () {
-        const row = this.closest('.translation-row');
-        const lang = row?.getAttribute('data-lang');
+  // Helper function to exit inline edit (defined here to be accessible)
+  function exitInlineEdit() {
+    destroyEditor().then(() => {
+      const fallbackTextarea = document.getElementById('page-content-fallback');
+      if (fallbackTextarea) {
+        const parentElement = fallbackTextarea.parentNode;
+        const originalDiv = document.createElement('div');
+        originalDiv.id = 'page-content-inline';
+        originalDiv.setAttribute(
+          'data-placeholder',
+          window.translations?.enterContent || 'Enter the content here...'
+        );
+        parentElement.replaceChild(originalDiv, fallbackTextarea);
+      }
 
-        if (!lang) return;
+      pageContent.style.display = 'block';
+      inlineEditContent.style.display = 'none';
 
-        if (!currentPageCode || !currentJournalCode) {
-          alert(
-            window.translations?.selectPageFirst || 'Please select a page first'
-          );
-          return;
-        }
+      const cardFooter = document.querySelector('.card-footer');
+      if (cardFooter) {
+        cardFooter.style.display = 'block';
+      }
 
-        if (isInlineEdit) {
-          exitInlineEdit();
-          await new Promise(r => setTimeout(r, 200));
-        }
+      isInlineEdit = false;
+      if (sidebarLanguageSelect) {
+        editingLocale = sidebarLanguageSelect.value;
+      }
 
-        editingLocale = lang;
-
-        // Fetch existing content for this language
-        let existingTitle = '';
-        let existingContent = '';
-        try {
-          const routeLocale = getCurrentLocale();
-          const pageUrl = `/${routeLocale}/journal/${currentJournalCode}/page/${currentPageCode}`;
-          const response = await fetch(pageUrl, {
-            headers: { 'X-Requested-With': 'XMLHttpRequest' },
-          });
-          if (response.ok) {
-            const data = await response.json();
-            existingTitle = (data.title && data.title[lang]) || '';
-            // Use raw Markdown for editing, not HTML
-            existingContent =
-              (data.markdownContent && data.markdownContent[lang]) || '';
-          }
-        } catch (error) {
-          console.error('Error fetching page data:', error);
-        }
-
-        if (pageBody) pageBody.innerHTML = '';
-
-        pageTitleInline.value = existingTitle;
-        pageContent.style.display = 'none';
-        inlineEditContent.style.display = 'block';
-
-        const placeholder =
-          window.translations?.enterContent || 'Enter the content here...';
-        try {
-          const editorPromise = initializeCKEditor(
-            'page-content-inline',
-            placeholder
-          );
-          if (editorPromise) {
-            await editorPromise;
-            setEditorContent(existingContent);
-            setTimeout(() => focusEditor(), 100);
-          }
-        } catch (error) {
-          console.error('Error initializing CKEditor:', error);
-        }
-
-        const cardFooter = document.querySelector('.card-footer');
-        if (cardFooter) cardFooter.style.display = 'none';
-
-        isInlineEdit = true;
-      });
+      // Reload page content to restore view after edit/cancel
+      if (currentPageCode && currentJournalCode) {
+        const displayLang = editingLocale || getCurrentLocale();
+        const routeLocale = getCurrentLocale();
+        const pageUrl = `/${routeLocale}/journal/${currentJournalCode}/page/${currentPageCode}`;
+        fetch(pageUrl, {
+          headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        })
+          .then(r => r.json())
+          .then(data => {
+            updatePageView(data, displayLang);
+            languageWidget?.updateTranslations(
+              data.title,
+              data.content,
+              window.journalPagesData?.translations || {}
+            );
+          })
+          .catch(() => {});
+      }
     });
+  }
 
   // Check if we're on a specific page route on page load
   function initializeCurrentPage() {
@@ -737,35 +718,18 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         pageContent.style.display = 'block';
 
-        updateTranslationsList(data.title, data.content);
-        updateLanguageSelectOptions(data.content);
+        languageWidget?.updateTranslations(
+          data.title,
+          data.content,
+          window.journalPagesData?.translations || {}
+        );
+        languageWidget?.updateOptions(data.content);
       })
       .catch(error => {
         console.error('Error loading current page content:', error);
         pageBody.innerHTML = '<p class="text-danger">Error loading content</p>';
         pageContent.style.display = 'block';
       });
-  }
-
-  function updatePageView(data, locale) {
-    const noContentText =
-      window.journalPagesData?.translations?.noContentAvailable ||
-      'No content available';
-
-    if (pageHomeContent) pageHomeContent.style.display = 'none';
-    if (pageViewFields) pageViewFields.style.display = 'block';
-
-    if (pageTitleView) {
-      pageTitleView.value =
-        (data.title && (data.title[locale] || data.title['en'])) || '';
-    }
-
-    if (pageBody) {
-      pageBody.innerHTML =
-        data.content && data.content[locale]
-          ? data.content[locale]
-          : noContentText;
-    }
   }
 
   // Initialize current page if we're on a page route
@@ -849,8 +813,12 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         pageContent.style.display = 'block';
 
-        updateTranslationsList(data.title, data.content);
-        updateLanguageSelectOptions(data.content);
+        languageWidget?.updateTranslations(
+          data.title,
+          data.content,
+          window.journalPagesData?.translations || {}
+        );
+        languageWidget?.updateOptions(data.content);
 
         // If editMode is true, switch to edit mode after loading content
         if (initialEditMode) {
@@ -989,51 +957,6 @@ document.addEventListener('DOMContentLoaded', function () {
     // Let CSS handle the height naturally - no forced JavaScript heights
 
     isInlineEdit = true;
-  }
-
-  function exitInlineEdit() {
-    destroyEditor().then(() => {
-      const fallbackTextarea = document.getElementById('page-content-fallback');
-      if (fallbackTextarea) {
-        const parentElement = fallbackTextarea.parentNode;
-        const originalDiv = document.createElement('div');
-        originalDiv.id = 'page-content-inline';
-        originalDiv.setAttribute(
-          'data-placeholder',
-          window.translations?.enterContent || 'Enter the content here...'
-        );
-        parentElement.replaceChild(originalDiv, fallbackTextarea);
-      }
-
-      pageContent.style.display = 'block';
-      inlineEditContent.style.display = 'none';
-
-      const cardFooter = document.querySelector('.card-footer');
-      if (cardFooter) {
-        cardFooter.style.display = 'block';
-      }
-
-      isInlineEdit = false;
-      if (sidebarLanguageSelect) {
-        editingLocale = sidebarLanguageSelect.value;
-      }
-
-      // Reload page content to restore view after edit/cancel
-      if (currentPageCode && currentJournalCode) {
-        const displayLang = editingLocale || getCurrentLocale();
-        const routeLocale = getCurrentLocale();
-        const pageUrl = `/${routeLocale}/journal/${currentJournalCode}/page/${currentPageCode}`;
-        fetch(pageUrl, {
-          headers: { 'X-Requested-With': 'XMLHttpRequest' },
-        })
-          .then(r => r.json())
-          .then(data => {
-            updatePageView(data, displayLang);
-            updateTranslationsList(data.title, data.content);
-          })
-          .catch(() => {});
-      }
-    });
   }
 
   // Cancel inline edit handler
@@ -1178,8 +1101,12 @@ document.addEventListener('DOMContentLoaded', function () {
             })
               .then(r => r.json())
               .then(pageData => {
-                updateTranslationsList(pageData.title, pageData.content);
-                updateLanguageSelectOptions(pageData.content);
+                languageWidget?.updateTranslations(
+                  pageData.title,
+                  pageData.content,
+                  window.journalPagesData?.translations || {}
+                );
+                languageWidget?.updateOptions(pageData.content);
               })
               .catch(() => {});
 
