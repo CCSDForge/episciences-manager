@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const translations = {};
   let currentLang = config.defaultLanguage;
   let formWidget = null;
-  //Ajouter une variable pour l'état de l'éditeur
+  // Track editor initialization state
   let editorInitialized = false;
 
   // Initialize translations from hidden inputs
@@ -162,7 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       // Pass onChange callback to update translations when content changes
       // Pass maxLength for character counter (5000 for news)
-      await initializeCKEditor('news_content', placeholder, (content) => {
+      await initializeCKEditor('news_content', placeholder, content => {
         if (!translations[currentLang]) {
           translations[currentLang] = { title: '', content: '', link: '' };
         }
@@ -447,7 +447,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelectorAll('.btn-delete-news').forEach(btn => {
       btn.addEventListener('click', async() => {
-        const newsId = btn.dataset.newsId;
         const deleteUrl = btn.dataset.deleteUrl;
         const newsTitle = btn.dataset.newsTitle;
 

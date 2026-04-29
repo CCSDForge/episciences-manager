@@ -328,13 +328,6 @@ export function isOverLimit() {
   return getCharCount() > maxCharLimit;
 }
 
-/**
- * Get current character count
- * @returns {number} character count
- */
-export function getCharacterCount() {
-  return getCharCount();
-}
 export function insertImageIntoEditor(imageUrl, altText = '') {
   if (!editorInstance || !imageUrl) return;
 

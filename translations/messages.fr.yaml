@@ -178,6 +178,10 @@ news:
   validation:
     contentTooLong: "Le contenu dépasse la limite de %limit% caractères."
   noNews: "Aucune actualité pour le moment"
+  flash:
+    created: "Actualité créée avec succès"
+    updated: "Actualité mise à jour avec succès"
+    deleted: "Actualité supprimée avec succès"
 
 journalPages:
   home: "Accueil"

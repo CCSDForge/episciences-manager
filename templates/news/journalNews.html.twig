@@ -101,13 +101,14 @@
                                 <div class="news-content-col text-muted"
                                      {% for lang in acceptedLanguages %}data-content-{{ lang }}="{{ news.content[lang]|default('')|striptags|e('html_attr') }}"{% endfor %}>
                                     <span class="news-content-text">
-                                        {{ news.content[defaultLanguage]|default(news.content['en']|default(''))|striptags }}
+                                        {% set contentText = news.content[defaultLanguage]|default(news.content['en']|default(''))|striptags %}
+                                        {{ contentText|length > 300 ? contentText|slice(0, 300) ~ '…' : contentText }}
                                     </span>
                                 </div>
 
                                 <!-- Creation date -->
                                 <div class="news-creation-col">
-                                    <span class="news-creation-text">{{ news.dateCreation|date('d/m/Y') }}</span>
+                                    <span class="news-creation-text">{{ news.dateCreation|date('Y-m-d') }}</span>
                                 </div>
 
                                 <!-- Actions -->

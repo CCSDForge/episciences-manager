@@ -80,7 +80,7 @@ final class NewsController extends AbstractController
         JournalSettingService $settingService,
         MarkdownService $markdownService
     ): Response {
-        // Récupérer l'utilisateur connecté (via CAS)
+        // Get the logged-in user (via CAS)
         $user = $security->getUser();
         $uid = $user?->getUid();
 
@@ -133,7 +133,7 @@ final class NewsController extends AbstractController
         TranslatorInterface $translator
     ): Response
     {
-        // Récupérer l'utilisateur connecté (via CAS)
+        // Get the logged-in user (via CAS)
         $user = $security->getUser();
 
         // Get the review by its code
@@ -179,6 +179,11 @@ final class NewsController extends AbstractController
                 }
             }
 
+            // Validate at least one title exists (security check - JS validation can be bypassed)
+            if (empty($titles)) {
+                return $this->redirectToRoute('app_news_show', ['code' => $code]);
+            }
+
             // Create new News entity
             $news = new News();
             $news->setRvcode($code);
@@ -193,7 +198,7 @@ final class NewsController extends AbstractController
             $entityManager->persist($news);
             $entityManager->flush();
 
-            $this->addFlash('success', 'News created successfully');
+            $this->addFlash('success', $translator->trans('news.flash.created'));
 
             return $this->redirectToRoute('app_news_show', ['code' => $code]);
         }
@@ -223,7 +228,7 @@ final class NewsController extends AbstractController
         ]);
     }
 
-    #[Route('/journal/{code}/news/{id}/edit', name: 'app_news_edit', methods: ['GET', 'POST'])]
+    #[Route('/journal/{code}/news/{id}/edit', name: 'app_news_edit', methods: ['POST'])]
     public function edit(
         string $code,
         int $id,
@@ -282,18 +287,23 @@ final class NewsController extends AbstractController
             }
         }
 
-        // Update the News entity
-            $news->setTitle($titles);
-            $news->setContent($contents);
-            $news->setLink($links);
-            $news->setVisibility($status === 'public' ? ['public'] : []);
-            $news->setDateUpdated(new \DateTime());
-
-            $entityManager->flush();
-
-            $this->addFlash('success', 'News updated successfully');
-
+        // Validate at least one title exists (security check - JS validation can be bypassed)
+        if (empty($titles)) {
             return $this->redirectToRoute('app_news_show', ['code' => $code]);
+        }
+
+        // Update the News entity
+        $news->setTitle($titles);
+        $news->setContent($contents);
+        $news->setLink($links);
+        $news->setVisibility($status === 'public' ? ['public'] : []);
+        $news->setDateUpdated(new \DateTime());
+
+        $entityManager->flush();
+
+        $this->addFlash('success', $translator->trans('news.flash.updated'));
+
+        return $this->redirectToRoute('app_news_show', ['code' => $code]);
         }
 
     #[Route('/journal/{code}/news/{id}/delete', name: 'app_news_delete', methods: ['POST'])]
@@ -303,10 +313,11 @@ final class NewsController extends AbstractController
         Request $request,
         ReviewManager $reviewManager,
         NewsRepository $newsRepository,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        TranslatorInterface $translator
     ): Response
     {
-        // Récupérer le journal
+        // Get the journal
         $review = $reviewManager->getReviewByCode($code);
 
         if (!$review) {
@@ -315,24 +326,24 @@ final class NewsController extends AbstractController
 
         $this->denyAccessUnlessGranted('REVIEW_VIEW', $review);
 
-        // Récupérer la news
+        // Get the news
         $news = $newsRepository->find($id);
 
         if (!$news || $news->getRvcode() !== $code) {
             throw $this->createNotFoundException('News not found');
         }
 
-        // Valider le token CSRF
+        // Validate CSRF token
         $token = $request->request->get('_token');
         if (!$this->isCsrfTokenValid('news-delete', $token)) {
             throw $this->createAccessDeniedException('Invalid CSRF token');
         }
 
-        // Supprimer la news
+        // Delete the news
         $entityManager->remove($news);
         $entityManager->flush();
 
-        $this->addFlash('success', 'News deleted successfully');
+        $this->addFlash('success', $translator->trans('news.flash.deleted'));
 
         return $this->redirectToRoute('app_news_show', ['code' => $code]);
     }

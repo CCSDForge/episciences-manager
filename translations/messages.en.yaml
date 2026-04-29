@@ -82,6 +82,10 @@ news:
   validation:
     contentTooLong: "Content exceeds the limit of %limit% characters."
   noNews: "No news available"
+  flash:
+    created: "News created successfully"
+    updated: "News updated successfully"
+    deleted: "News deleted successfully"
 
 journalPages:
   home: "Home"
