@@ -143,6 +143,46 @@ journalDetails:
   welcome_backoffice: "Bienvenue dans le backoffice de gestion du journal"
   news: "Actualités"
 
+news:
+  title: "Actualités"
+  description: "Ajout / modifications d'actualités pour le site"
+  addNews: "Ajouter une actualité"
+  edit: "Modifier"
+  delete: "Supprimer"
+  header:
+    status: "Statut"
+    title: "Titre"
+    content: "Contenu"
+    createdAt: "Créé le"
+    actions: "Actions"
+  status:
+    online: "en ligne"
+    offline: "hors ligne" # sur la liste?
+    invisible: "Invisible"
+  createTitle: "Ajouter une actualité"
+  editTitle: "Modifier une actualité"
+  requiredFields: "Champs obligatoires"
+  languageHint: "Cliquez sur une langue pour ajouter ou modifier sa traduction"
+  editLanguage: "Langue à modifier"
+  deleteConfirmTitle: "Supprimer l'actualité"
+  deleteConfirmMessage: "Êtes-vous sûr de vouloir supprimer cette actualité ?"
+  form:
+    header: ""
+    title: "Titre"
+    content: "Contenu"
+    link: "Lien"
+    cancel: "Annuler"
+    save: "Enregistrer"
+    status: "État"
+    invisible: "Invisible"
+  validation:
+    contentTooLong: "Le contenu dépasse la limite de %limit% caractères."
+  noNews: "Aucune actualité pour le moment"
+  flash:
+    created: "Actualité créée avec succès"
+    updated: "Actualité mise à jour avec succès"
+    deleted: "Actualité supprimée avec succès"
+
 journalPages:
   home: "Accueil"
   menu: "Menu"
@@ -230,6 +270,12 @@ resources:
   fileNotInUse: "Ce fichier n'est utilisé dans aucune page"
   safeToDelete: "Il peut être supprimé en toute sécurité"
   generateAutomatically: "Générer automatiquement"
+
+widget:
+  languages: "Langues"
+  language: "Langue"
+  translations: "Traductions"
+  add_translation: "Ajouter une traduction"
 
 footer:
   about_title: "À propos d'Episciences"

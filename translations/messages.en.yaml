@@ -49,6 +49,44 @@ journalDetails:
   welcome_backoffice: "Welcome to the journal management backoffice"
   news: "News"
 
+news:
+  title: "News"
+  description: "Add / edit the website news"
+  addNews: "Add news"
+  edit: "Edit"
+  delete: "Delete"
+  header:
+    status: "Status"
+    title: "Title"
+    content: "Content"
+    actions: "Actions"
+    createdAt: "Created at"
+  status:
+    online: "online"
+    offline: "offline"
+    invisible: "Invisible"
+  createTitle: "Add news"
+  editTitle: "Edit a news article"
+  requiredFields: "Required fields"
+  languageHint: "Click on a language to edit its translation"
+  editLanguage: "Language to edit"
+  deleteConfirmTitle: "Delete News"
+  deleteConfirmMessage: "Are you sure you want to delete this news?"
+  form:
+    title: "Title"
+    content: "Content"
+    link: "Link"
+    cancel: "Cancel"
+    save: "Save"
+    status: "Status"
+  validation:
+    contentTooLong: "Content exceeds the limit of %limit% characters."
+  noNews: "No news available"
+  flash:
+    created: "News created successfully"
+    updated: "News updated successfully"
+    deleted: "News deleted successfully"
+
 journalPages:
   home: "Home"
   menu: "Menu"
@@ -236,6 +274,12 @@ journalSettings:
     preview.rejected: "Rejected articles"
     preview.accepted: "Accepted articles"
     preview.other: "Other status"
+
+widget:
+  languages: "Languages"
+  language: "Language"
+  translations: "Translations"
+  add_translation: "Add translation"
 
 footer:
   about_title: "About Episciences"
