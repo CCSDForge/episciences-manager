@@ -8,6 +8,16 @@ import {
 
 import { initLanguageWidget } from '../components/language-widget.js';
 
+// Security: Helper function to escape HTML special characters to prevent XSS
+function escapeHtml(text) {
+  if (text === null || text === undefined) {
+    return '';
+  }
+  const div = document.createElement('div');
+  div.textContent = String(text);
+  return div.innerHTML;
+}
+
 // Function to update inline edit translations dynamically
 function updateInlineEditTranslations() {
   console.log(
@@ -28,8 +38,9 @@ function updateInlineEditTranslations() {
   console.log('Edit button found:', !!editButton);
   if (editButton && window.translations.edit) {
     console.log('Updating edit button:', window.translations.edit);
+    // Security: Escape translation to prevent XSS
     editButton.innerHTML =
-      '<i class="fas fa-edit me-1"></i>' + window.translations.edit;
+      '<i class="fas fa-edit me-1"></i>' + escapeHtml(window.translations.edit);
   }
 
   // Update inline edit title
@@ -41,9 +52,10 @@ function updateInlineEditTranslations() {
       window.translations.editPageContent
     );
     const oldContent = inlineEditTitle.innerHTML;
+    // Security: Escape translation to prevent XSS
     inlineEditTitle.innerHTML =
       '<i class="fas fa-edit me-2"></i>' +
-      window.translations.editPageContent +
+      escapeHtml(window.translations.editPageContent) +
       '<i class="fas fa-file-alt ms-2"></i>';
     console.log(
       'Title updated from:',
@@ -101,8 +113,10 @@ function updateInlineEditTranslations() {
   console.log('Cancel button found:', !!cancelButton);
   if (cancelButton && window.translations.cancel) {
     console.log('Updating cancel button:', window.translations.cancel);
+    // Security: Escape translation to prevent XSS
     cancelButton.innerHTML =
-      '<i class="fas fa-times me-1"></i>' + window.translations.cancel;
+      '<i class="fas fa-times me-1"></i>' +
+      escapeHtml(window.translations.cancel);
   }
 
   // Update save button (inline edit)
@@ -110,8 +124,9 @@ function updateInlineEditTranslations() {
   console.log('Save button found:', !!saveButton);
   if (saveButton && window.translations.save) {
     console.log('Updating save button:', window.translations.save);
+    // Security: Escape translation to prevent XSS
     saveButton.innerHTML =
-      '<i class="fas fa-save me-1"></i>' + window.translations.save;
+      '<i class="fas fa-save me-1"></i>' + escapeHtml(window.translations.save);
   }
 
   // Update preview page button
@@ -127,9 +142,10 @@ function updateInlineEditTranslations() {
       'Updating preview page button:',
       window.translations.previewPage
     );
+    // Security: Escape translation to prevent XSS
     previewPageButton.innerHTML =
       '<i class="fas fa-external-link-alt me-1"></i>' +
-      window.translations.previewPage;
+      escapeHtml(window.translations.previewPage);
   } else {
     console.log(
       'Preview page button NOT updated. Button exists:',
@@ -243,11 +259,13 @@ function updateHomeLinks(locale) {
         newHomeText
       );
 
+      // Security: Escape text from data attributes to prevent XSS
       if (icon) {
-        breadcrumbHome.innerHTML = icon.outerHTML + ' ' + newHomeText;
+        breadcrumbHome.innerHTML =
+          icon.outerHTML + ' ' + escapeHtml(newHomeText);
       } else {
         breadcrumbHome.innerHTML =
-          '<i class="fas fa-home me-1"></i> ' + newHomeText;
+          '<i class="fas fa-home me-1"></i> ' + escapeHtml(newHomeText);
       }
     }
   }
@@ -1307,10 +1325,11 @@ document.addEventListener('DOMContentLoaded', function () {
       previewButtonContainer.style.display = 'block';
 
       // Update button text with current translation
+      // Security: Escape translation to prevent XSS
       if (window.translations && window.translations.previewPage) {
         previewPageButton.innerHTML =
           '<i class="fas fa-external-link-alt me-1"></i>' +
-          window.translations.previewPage;
+          escapeHtml(window.translations.previewPage);
       }
 
       console.log('DEBUG: Preview button shown with URL:', previewUrl);
