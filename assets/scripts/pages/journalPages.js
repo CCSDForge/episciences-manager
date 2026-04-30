@@ -550,7 +550,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
       if (pageBody) pageBody.innerHTML = '';
 
-      pageTitleInline.value = existingTitle;
+      pageTitleInline.textContent = existingTitle;
       pageContent.style.display = 'none';
       inlineEditContent.style.display = 'block';
 
@@ -891,7 +891,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const markdownForEdit = currentMarkdownContent[currentLocale] || '';
 
     // Populate inline edit form
-    pageTitleInline.value = pageTitle;
+    pageTitleInline.textContent = pageTitle;
 
     // Hide page content and show inline edit
     pageContent.style.display = 'none';
@@ -984,10 +984,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
       //const newContent = pageContentInline.value;
       const newContent = getEditorContent();
-      const newTitle = pageTitleInline.value;
 
       console.log('Content from editor:', newContent);
-      console.log('Title from input:', newTitle);
       console.log('Editor content length:', newContent?.length || 0);
 
       // editingLocale = target language for translation (e.g. "es"), otherwise current route locale
@@ -1005,7 +1003,6 @@ document.addEventListener('DOMContentLoaded', function () {
         JSON.stringify(
           {
             content: newContent,
-            title: newTitle,
             locale: locale,
           },
           null,
@@ -1022,7 +1019,6 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         body: JSON.stringify({
           content: newContent,
-          title: newTitle,
           locale: locale,
         }),
       })

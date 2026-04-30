@@ -76,8 +76,9 @@ final class PageController extends AbstractController
         if ($request->isXmlHttpRequest()) {
             // If page doesn't exist, return empty content
             if (!$page instanceof \App\Entity\Page) {
-                $defaultTitle = ucwords(str_replace('-', ' ', $actualPageCode));
-                $title = array_fill_keys($acceptedLanguages, $defaultTitle);
+                // Get title from YAML config
+                $yamlTitle = $hierarchyService->getTitleForPageCode($actualPageCode, $code);
+                $title = $yamlTitle ?? array_fill_keys($acceptedLanguages, ucwords(str_replace('-', ' ', $actualPageCode)));
                 $emptyContent = array_fill_keys($acceptedLanguages, '');
 
                 return new JsonResponse([
@@ -178,18 +179,11 @@ final class PageController extends AbstractController
 
         $markdownContent = (string) $data['content'];
         $locale      = (string) $data['locale'];
-        $title       = isset($data['title']) ? (string) $data['title'] : null;
 
         // Save markdown per locale
         $currentContent = $page->getContent();
         $currentContent[$locale] = $markdownContent;
         $page->setContent($currentContent);
-
-        if ($title !== null) {
-            $currentTitle = $page->getTitle();
-            $currentTitle[$locale] = $title;
-            $page->setTitle($currentTitle);
-        }
 
         // Always update the date_updated timestamp
         $page->setDateUpdated(new \DateTime());
@@ -205,7 +199,6 @@ final class PageController extends AbstractController
                 'success'      => true,
                 'message'      => 'Page updated successfully',
                 'htmlContent'  => $htmlForLocale,
-                'updatedTitle' => $title !== null ? ($page->getTitle()[$locale] ?? '') : null
             ]);
         } catch (\Throwable $e) {
             $this->logger->error('Error saving page', [

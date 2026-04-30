@@ -72,12 +72,30 @@ class PageHierarchyService
 
             if (isset($pageConfig['children'])) {
                 foreach ($pageConfig['children'] as $child) {
-                    // Check if child is a nested container (array) or a simple page code (string)
                     if (is_array($child)) {
-                        // Nested container - mark for recursive processing
-                        $childrenInfo[] = ['type' => 'container', 'config' => $child];
-                    } elseif (isset($pagesByCode[$child])) {
-                        // Simple page code
+                        // Array: either a nested container or a page with code+title
+                        if (isset($child['type']) && $child['type'] === 'container') {
+                            // Nested container - mark for recursive processing
+                            $childrenInfo[] = ['type' => 'container', 'config' => $child];
+                        } elseif (isset($child['code'])) {
+                            // Page with code + title from YAML
+                            $pageCode = $child['code'];
+                            if (isset($pagesByCode[$pageCode])) {
+                                $page = $pagesByCode[$pageCode];
+                                // Inject title from YAML into page
+                                if (isset($child['title'])) {
+                                    if (method_exists($page, 'setTitle')) {
+                                        $page->setTitle($child['title']);
+                                    } else {
+                                        // stdClass (empty page)
+                                        $page->title = $child['title'];
+                                    }
+                                }
+                                $childrenInfo[] = ['type' => 'page', 'page' => $page];
+                            }
+                        }
+                    } elseif (is_string($child) && isset($pagesByCode[$child])) {
+                        // Simple string page code (backward compatibility)
                         $childrenInfo[] = ['type' => 'page', 'page' => $pagesByCode[$child]];
                     }
                 }
@@ -163,7 +181,12 @@ class PageHierarchyService
                 // Check if nested container has any existing children
                 if (isset($child['children'])) {
                     foreach ($child['children'] as $nestedChild) {
+                        // Check for simple string code
                         if (is_string($nestedChild) && isset($pagesByCode[$nestedChild])) {
+                            return true;
+                        }
+                        // Check for page with code+title format
+                        if (is_array($nestedChild) && isset($nestedChild['code']) && isset($pagesByCode[$nestedChild['code']])) {
                             return true;
                         }
                     }
@@ -213,12 +236,17 @@ class PageHierarchyService
                 continue;
             }
             if (is_array($child)) {
-                // Nested container - recursively extract codes
+                // Array: either a page with code+title or a nested container
+                if (isset($child['code'])) {
+                    // Page with code + title
+                    $codes[] = $child['code'];
+                }
                 if (isset($child['children'])) {
+                    // Nested container - recursively extract codes
                     $codes = array_merge($codes, $this->extractCodesFromChildren($child['children']));
                 }
-            } else {
-                // Simple page code
+            } elseif (is_string($child)) {
+                // Simple page code (backward compatibility)
                 $codes[] = $child;
             }
         }
@@ -249,6 +277,37 @@ class PageHierarchyService
     private function formatPageTitle(string $pageCode): string
     {
         return str_replace('-', ' ', $pageCode);
+    }
+
+    /**
+     * Get title for a page code from YAML config
+     * @return array<string, string>|null Title array by locale or null if not found
+     */
+    public function getTitleForPageCode(string $pageCode, string $rvcode): ?array
+    {
+        $journalConfig = $this->config[$rvcode]['main_pages']
+            ?? $this->config['default']['main_pages']
+            ?? [];
+
+        return $this->findTitleInConfig($pageCode, $journalConfig);
+    }
+
+    private function findTitleInConfig(string $pageCode, array $config): ?array
+    {
+        foreach ($config as $item) {
+            // Check if this item has the code we're looking for
+            if (isset($item['code']) && $item['code'] === $pageCode && isset($item['title'])) {
+                return $item['title'];
+            }
+            // Check children
+            if (isset($item['children'])) {
+                $result = $this->findTitleInConfig($pageCode, $item['children']);
+                if ($result !== null) {
+                    return $result;
+                }
+            }
+        }
+        return null;
     }
 
     /**
