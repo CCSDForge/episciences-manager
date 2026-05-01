@@ -39,13 +39,17 @@ export function updateLanguageSelectOptions(contentByLocale, selectId = 'sidebar
  * @param {Object} contentByLocale - Object with locale keys and content values
  * @param {string} listId - ID of the translations list container
  * @param {Object} translations - Translation strings for tooltips
+ * @param {Object} options - Additional options
+ * @param {boolean} options.iconBasedOnContentOnly - If true, icon is based only on content (not title)
  */
 export function updateTranslationsList(
   titleByLocale,
   contentByLocale,
   listId = 'translations-list',
-  translations = {}
+  translations = {},
+  options = {}
 ) {
+  const { iconBasedOnContentOnly = false } = options;
   const list = document.getElementById(listId);
   if (!list) return;
 
@@ -59,22 +63,26 @@ export function updateTranslationsList(
     const title = titleByLocale?.[lang] || '';
     const hasTitle = title.trim() !== '';
 
-    // Show pencil if either title OR content exists
-    if (hasContent || hasTitle) {
+    // Determine if we should show pencil or plus icon
+    // If iconBasedOnContentOnly is true, only check content (for journalPages with YAML titles)
+    // Otherwise, check both title and content (for news where user enters both)
+    const showPencil = iconBasedOnContentOnly ? hasContent : (hasContent || hasTitle);
+
+    if (showPencil) {
       if (icon) icon.className = 'fas fa-pencil-alt text-primary';
       actionBtn?.setAttribute(
         'title',
         translations.editTranslation || 'Edit'
       );
-      if (titleInput) titleInput.value = title;
     } else {
       if (icon) icon.className = 'fas fa-plus text-muted';
       actionBtn?.setAttribute(
         'title',
         translations.addTranslation || 'Add'
       );
-      if (titleInput) titleInput.value = '';
     }
+    // Always show title if available (from YAML or DB)
+    if (titleInput) titleInput.value = title;
   });
 }
 
@@ -87,6 +95,7 @@ export function updateTranslationsList(
  * @param {string} [options.collapseTargetId] - Override ID of the collapsible body
  * @param {Function} [options.onLanguageChange] - Callback when language changes
  * @param {Function} [options.onTranslationClick] - Callback when translation button is clicked
+ * @param {boolean} [options.iconBasedOnContentOnly=false] - If true, icon (+/pencil) is based only on content existence
  * @returns {Object|null} - Widget API or null if initialization failed
  */
 export function initLanguageWidget(options = {}) {
@@ -97,6 +106,7 @@ export function initLanguageWidget(options = {}) {
     collapseTargetId = null,
     onLanguageChange = null,
     onTranslationClick = null,
+    iconBasedOnContentOnly = false,
   } = options;
 
   // Use widgetId to generate default IDs (matching Twig template)
@@ -170,7 +180,8 @@ export function initLanguageWidget(options = {}) {
         titleByLocale,
         contentByLocale,
         finalListId,
-        translations
+        translations,
+        { iconBasedOnContentOnly }
       ),
   };
 }

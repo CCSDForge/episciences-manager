@@ -68,6 +68,11 @@ page_hierarchies:
               en: "Operating Charter"
               fr: "Charte de fonctionnement"
               es: "Carta de funcionamiento"
+          - code: "test-board"
+            title:
+              en: "English Charter"
+              fr: "french fonctionnement"
+              es: "espagnol funcionamiento"
       - title:
           en: "Publish"
           fr: "Publier"

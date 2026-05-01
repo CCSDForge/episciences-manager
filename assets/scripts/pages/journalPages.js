@@ -472,6 +472,7 @@ document.addEventListener('DOMContentLoaded', function () {
   let isInlineEdit = false;
   let editingLocale = null;
   let currentMarkdownContent = {}; // Store raw Markdown per locale for editing
+  let currentTitleData = {}; // Store title data per locale for editing
 
   const sidebarLanguageSelect = document.getElementById(
     'sidebar-language-select'
@@ -483,8 +484,10 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // Initialize language widget with callbacks
+  // iconBasedOnContentOnly: true means show "+" if no content in DB (even if YAML title exists)
   const languageWidget = initLanguageWidget({
     widgetId: 'sidebar',
+    iconBasedOnContentOnly: true,
     onLanguageChange: async selectedLang => {
       editingLocale = selectedLang;
 
@@ -507,8 +510,9 @@ document.addEventListener('DOMContentLoaded', function () {
             data.content,
             window.journalPagesData?.translations || {}
           );
-          // Update stored Markdown content for editing
+          // Update stored Markdown content and title for editing
           currentMarkdownContent = data.markdownContent || {};
+          currentTitleData = data.title || {};
         } catch (error) {
           console.error('Error loading page content:', error);
         }
@@ -713,8 +717,9 @@ document.addEventListener('DOMContentLoaded', function () {
           // Use content language from widget instead of UI locale
           const contentLang = sidebarLanguageSelect?.value || locale;
           updatePageView(data, contentLang);
-          // Store raw Markdown for editing
+          // Store raw Markdown and title for editing
           currentMarkdownContent = data.markdownContent || {};
+          currentTitleData = data.title || {};
         }
         pageContent.style.display = 'block';
 
@@ -808,8 +813,9 @@ document.addEventListener('DOMContentLoaded', function () {
           pageBody.innerHTML = '<p class="text-danger">Page not found</p>';
         } else {
           updatePageView(data, contentLang);
-          // Store raw Markdown for editing
+          // Store raw Markdown and title for editing
           currentMarkdownContent = data.markdownContent || {};
+          currentTitleData = data.title || {};
         }
         pageContent.style.display = 'block';
 
@@ -885,9 +891,12 @@ document.addEventListener('DOMContentLoaded', function () {
       return;
     }
 
-    const pageTitle = (pageTitleView && pageTitleView.value) || currentPageCode;
-    // Use stored Markdown content for the current locale
+    // Use stored title data for the current locale, with fallbacks
     const currentLocale = editingLocale || getCurrentLocale();
+    const pageTitle =
+      (currentTitleData && (currentTitleData[currentLocale] || currentTitleData['en'])) ||
+      (pageTitleView && pageTitleView.value) ||
+      currentPageCode;
     const markdownForEdit = currentMarkdownContent[currentLocale] || '';
 
     // Populate inline edit form
@@ -984,9 +993,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
       //const newContent = pageContentInline.value;
       const newContent = getEditorContent();
+      const newTitle = pageTitleInline.textContent || '';
 
       console.log('Content from editor:', newContent);
       console.log('Editor content length:', newContent?.length || 0);
+      console.log('Title:', newTitle);
 
       // editingLocale = target language for translation (e.g. "es"), otherwise current route locale
       let locale = editingLocale || getCurrentLocale();
@@ -1003,6 +1014,7 @@ document.addEventListener('DOMContentLoaded', function () {
         JSON.stringify(
           {
             content: newContent,
+            title: newTitle,
             locale: locale,
           },
           null,
@@ -1019,6 +1031,7 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         body: JSON.stringify({
           content: newContent,
+          title: newTitle,
           locale: locale,
         }),
       })

@@ -93,8 +93,28 @@ final class PageController extends AbstractController
             // Convert markdown content to HTML
             $htmlContent = $markdownService->convertContentArray($page->getContent());
 
+            // Merge YAML titles with DB titles (DB takes priority)
+            // This ensures all accepted languages have titles even if not in DB
+            $yamlTitle = $hierarchyService->getTitleForPageCode($actualPageCode, $code);
+            $dbTitle = $page->getTitle();
+
+            // Start with YAML titles as base, then override with DB titles
+            $mergedTitle = $yamlTitle ?? [];
+            foreach ($dbTitle as $lang => $title) {
+                if (!empty($title)) {
+                    $mergedTitle[$lang] = $title;
+                }
+            }
+
+            // Ensure all accepted languages have at least a fallback title
+            foreach ($acceptedLanguages as $lang) {
+                if (empty($mergedTitle[$lang])) {
+                    $mergedTitle[$lang] = $mergedTitle['en'] ?? ucwords(str_replace('-', ' ', $actualPageCode));
+                }
+            }
+
             return new JsonResponse([
-                'title' => $page->getTitle(),
+                'title' => $mergedTitle,
                 'content' => $htmlContent,
                 'markdownContent' => $page->getContent(),
                 'pageCode' => $page->getPageCode()
@@ -179,11 +199,19 @@ final class PageController extends AbstractController
 
         $markdownContent = (string) $data['content'];
         $locale      = (string) $data['locale'];
+        $title       = isset($data['title']) ? (string) $data['title'] : null;
 
         // Save markdown per locale
         $currentContent = $page->getContent();
         $currentContent[$locale] = $markdownContent;
         $page->setContent($currentContent);
+
+        // Save title per locale if provided
+        if ($title !== null) {
+            $currentTitle = $page->getTitle();
+            $currentTitle[$locale] = $title;
+            $page->setTitle($currentTitle);
+        }
 
         // Always update the date_updated timestamp
         $page->setDateUpdated(new \DateTime());
@@ -199,6 +227,7 @@ final class PageController extends AbstractController
                 'success'      => true,
                 'message'      => 'Page updated successfully',
                 'htmlContent'  => $htmlForLocale,
+                'updatedTitle' => $page->getTitle()[$locale] ?? $title,
             ]);
         } catch (\Throwable $e) {
             $this->logger->error('Error saving page', [
