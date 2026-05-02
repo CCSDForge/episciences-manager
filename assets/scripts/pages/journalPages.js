@@ -591,7 +591,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (pageViewFields) pageViewFields.style.display = 'block';
 
     if (pageTitleView) {
-      pageTitleView.value =
+      pageTitleView.textContent =
         (data.title && (data.title[locale] || data.title['en'])) || '';
     }
 
@@ -895,7 +895,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const currentLocale = editingLocale || getCurrentLocale();
     const pageTitle =
       (currentTitleData && (currentTitleData[currentLocale] || currentTitleData['en'])) ||
-      (pageTitleView && pageTitleView.value) ||
+      (pageTitleView && pageTitleView.textContent) ||
       currentPageCode;
     const markdownForEdit = currentMarkdownContent[currentLocale] || '';
 
@@ -1079,7 +1079,7 @@ document.addEventListener('DOMContentLoaded', function () {
             pageBody.innerHTML = htmlContent || newContent;
 
             if (updatedTitle && pageTitleView) {
-              pageTitleView.value = updatedTitle;
+              pageTitleView.textContent = updatedTitle;
             }
 
             const activeLink = document.querySelector('.page-nav-link.active');
@@ -1101,6 +1101,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Exit inline edit mode
             exitInlineEdit();
+
+            // Update URL to remove /edit (so refresh won't open in edit mode)
+            const viewUrl = `/${getCurrentLocale()}/journal/${currentJournalCode}/pages/${currentPageCode}`;
+            history.replaceState(null, '', viewUrl);
 
             // Refresh translation list after save
             const routeLocale = getCurrentLocale();

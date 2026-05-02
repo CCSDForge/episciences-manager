@@ -284,12 +284,12 @@
                                 <div id="page-content" class="ck-content" style="display: block;">
                                     <div id="page-view-fields" style="display: none;">
                                         <div class="mb-3">
-                                            <label class="form-label text-primary fw-semibold">{{ 'journalPages.page_title' | trans }}</label>
-                                            <input type="text" class="form-control" id="page-title-view" readonly>
+                                            <label class="form-label text-primary fw-semibold">{{ 'journalPages.page_title' | trans }} <span class="text-muted fw-normal">({{ 'journalPages.not_editable' | trans }})</span></label>
+                                            <p class="form-control bg-light" id="page-title-view"></p>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label text-primary fw-semibold">{{ 'journalPages.content' | trans }}</label>
-                                            <div id="page-body" class="ck-content"></div>
+                                            <div id="page-body" class="ck-content form-control bg-light" style="height: auto;"></div>
                                         </div>
                                     </div>
                                     <div id="page-home-content">

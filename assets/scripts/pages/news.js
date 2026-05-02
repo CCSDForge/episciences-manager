@@ -111,14 +111,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const titleByLocale = {};
     const contentByLocale = {};
+    const hasDataByLocale = {};
 
     config.acceptedLanguages.forEach(lang => {
       titleByLocale[lang] = translations[lang]?.title || '';
       contentByLocale[lang] = translations[lang]?.content || '';
+      // For dropdown: show language if it has title or content
+      hasDataByLocale[lang] = titleByLocale[lang] || contentByLocale[lang];
     });
 
     formWidget.updateTranslations(titleByLocale, contentByLocale, {});
-    formWidget.updateOptions(contentByLocale);
+    formWidget.updateOptions(hasDataByLocale);
   }
 
   // ===================
