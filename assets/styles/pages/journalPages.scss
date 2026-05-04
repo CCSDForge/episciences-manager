@@ -2,19 +2,6 @@
 @use '../components/variables' as *;
 @import '~ckeditor5/ckeditor5.css';
 
-.container .d-flex {
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  width: auto;
-
-  @media (min-width: 768px) {
-    flex-direction: row;
-    align-items: flex-start;
-    text-align: left;
-  }
-}
-
 .journal-logo {
   margin: 1.5rem 1rem;
   .logo {
@@ -88,40 +75,6 @@
 
   hr {
     border-color: rgba(0, 0, 0, 0.1);
-  }
-}
-
-// Specific navigation for the pages (legacy horizontal - kept for compatibility)
-.navbar .page-nav-link {
-  padding: 8px 16px;
-  border-radius: 5px;
-  text-decoration: none;
-  color: $primary-color;
-  transition: all 0.3s ease;
-
-  &:hover {
-    background-color: $primary-color !important;
-    color: $white !important;
-  }
-
-  &.active {
-    background-color: $primary-color !important;
-    color: $white !important;
-  }
-}
-
-// Expand icon styles
-.expand-icon {
-  cursor: pointer;
-  transition:
-    color 0.2s ease,
-    transform 0.2s ease;
-  opacity: 0.7;
-
-  &:hover {
-    opacity: 1;
-    transform: scale(1.1);
-    color: $primary-color;
   }
 }
 
@@ -370,12 +323,35 @@
   }
 }
 
-// Offcanvas sidebar styles
-#sidebarOffcanvas {
-  .offcanvas-body {
-    padding: 0;
-    .sidebar-menu {
-      padding: 1rem;
+// Responsive sidebar with offcanvas-md
+.journal-layout__sidebar {
+  .offcanvas-md {
+    @media (min-width: 768px) {
+      position: sticky !important;
+      top: 20px;
+      height: fit-content;
+      background: transparent !important;
+
+      .offcanvas-header {
+        display: none;
+      }
+
+      .offcanvas-body {
+        padding: 0;
+        overflow-y: visible;
+      }
+    }
+
+    // Mobile offcanvas styles
+    @media (max-width: 767.98px) {
+      .offcanvas-body {
+        padding: 0;
+
+        .sidebar-menu {
+          padding: 1rem;
+          max-height: none;
+        }
+      }
     }
   }
 }
@@ -442,5 +418,3 @@
     grid-area: widget;
   }
 }
-
-

@@ -437,11 +437,34 @@ function initializeTranslations() {
   window.currentLocale = currentLocale;
 }
 
+// Setup responsive menu behavior - auto-close offcanvas on mobile
+function setupResponsiveMenuBehavior() {
+  const sidebarMenu = document.getElementById('sidebarMenu');
+  if (!sidebarMenu) return;
+
+  const pageLinks = sidebarMenu.querySelectorAll('.page-nav-link, .home-nav-link');
+
+  pageLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      // Only close on mobile (< 768px)
+      if (window.innerWidth < 768) {
+        const offcanvasInstance = bootstrap.Offcanvas.getInstance(sidebarMenu);
+        if (offcanvasInstance) {
+          offcanvasInstance.hide();
+        }
+      }
+    });
+  });
+}
+
 document.addEventListener('DOMContentLoaded', function () {
   console.log('DOM loaded');
 
   // Initialize with fallback translations (no API call)
   initializeTranslations();
+
+  // Setup responsive menu behavior
+  setupResponsiveMenuBehavior();
 
   // Update UI elements with translations
   updateInlineEditTranslations();
