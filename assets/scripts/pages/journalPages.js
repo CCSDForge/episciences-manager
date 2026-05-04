@@ -18,6 +18,39 @@ function escapeHtml(text) {
   return div.innerHTML;
 }
 
+// Alert container for flash messages
+let alertsContainer = null;
+
+/**
+ * Show alert message (Bootstrap flash style)
+ * @param {string} type - Alert type (success, danger, warning, info)
+ * @param {string} message - Message to display
+ * @param {boolean} isHtmlSafe - If true, message is already escaped and can contain safe HTML
+ */
+function showAlert(type, message, isHtmlSafe = false) {
+  if (!alertsContainer) {
+    alertsContainer = document.getElementById('pages-alerts');
+  }
+  if (!alertsContainer) return;
+
+  const validTypes = ['success', 'danger', 'warning', 'info'];
+  const safeType = validTypes.includes(type) ? type : 'info';
+  const safeMessage = isHtmlSafe ? message : escapeHtml(message);
+
+  alertsContainer.innerHTML = `
+    <div class="alert alert-${safeType} alert-dismissible fade show" role="alert">
+      ${safeMessage}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  `;
+
+  // Auto-hide after 5 seconds
+  setTimeout(() => {
+    const alert = alertsContainer.querySelector('.alert');
+    if (alert) alert.remove();
+  }, 5000);
+}
+
 // Function to update inline edit translations dynamically
 function updateInlineEditTranslations() {
   console.log(
@@ -543,7 +576,8 @@ document.addEventListener('DOMContentLoaded', function () {
     },
     onTranslationClick: async lang => {
       if (!currentPageCode || !currentJournalCode) {
-        alert(
+        showAlert(
+          'warning',
           window.translations?.selectPageFirst || 'Please select a page first'
         );
         return;
@@ -881,7 +915,8 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log('Edit button clicked');
 
     if (!currentPageCode) {
-      alert(
+      showAlert(
+        'warning',
         window.translations?.selectPageFirst || 'Please select a page first'
       );
       return;
@@ -908,7 +943,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (!currentPageCode || !currentJournalCode) {
       console.log('Missing page info - showing alert');
-      alert(
+      showAlert(
+        'warning',
         window.translations?.selectPageFirst || 'Please select a page first'
       );
       return;
@@ -1008,7 +1044,8 @@ document.addEventListener('DOMContentLoaded', function () {
           currentPageCode,
           currentJournalCode,
         });
-        alert(
+        showAlert(
+          'danger',
           window.translations?.missingPageInfo || 'Missing page information'
         );
         return;
@@ -1146,9 +1183,10 @@ document.addEventListener('DOMContentLoaded', function () {
               })
               .catch(() => {});
 
-            alert(window.translations?.saveSuccess || 'Saved successfully');
+            showAlert('success', window.translations?.saveSuccess || 'Saved successfully');
           } else {
-            alert(
+            showAlert(
+              'danger',
               (window.translations?.saveError || 'Save error: ') +
                 (data.message || 'Unknown error')
             );
@@ -1156,7 +1194,8 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .catch(error => {
           console.error('Save error:', error);
-          alert(
+          showAlert(
+            'danger',
             (window.translations?.saveError || 'Save error: ') + error.message
           );
         });

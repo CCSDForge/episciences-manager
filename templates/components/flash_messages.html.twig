@@ -1,0 +1,38 @@
+{#
+Flash Messages Component - Bottom-right toast style
+Parameters:
+- types: array of flash message types to display (default: ['success', 'error', 'warning', 'info', 'logout_success'])
+- autoClose: time in ms to auto-close the message (default: 5000)
+
+Usage:
+{% include 'components/flash_messages.html.twig' %}
+{% include 'components/flash_messages.html.twig' with {types: ['success', 'error']} %}
+{% include 'components/flash_messages.html.twig' with {autoClose: 3000} %}
+#}
+
+{% set flashTypes = types|default(['success', 'error', 'warning', 'info', 'logout_success']) %}
+{% set autoCloseTime = autoClose|default(5000) %}
+
+{% set typeConfig = {
+    'success': {'icon': 'fa-check-circle', 'class': 'alert-success'},
+    'logout_success': {'icon': 'fa-check-circle', 'class': 'alert-success'},
+    'error': {'icon': 'fa-exclamation-circle', 'class': 'alert-danger'},
+    'warning': {'icon': 'fa-exclamation-triangle', 'class': 'alert-warning'},
+    'info': {'icon': 'fa-info-circle', 'class': 'alert-info'}
+} %}
+
+{% set defaultConfig = {'icon': 'fa-info-circle', 'class': 'alert-info'} %}
+
+{# Container for all flash messages - positioned bottom-right via CSS #}
+<div id="flash-messages-container">
+    {% for type in flashTypes %}
+        {% set config = typeConfig[type]|default(defaultConfig) %}
+        {% for message in app.flashes(type) %}
+            <div class="alert {{ config.class }} alert-dismissible fade show" role="alert" data-auto-close="{{ autoCloseTime }}">
+                <i class="fas {{ config.icon }} me-2"></i>
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endfor %}
+</div>

@@ -8,7 +8,6 @@ page_hierarchies:
       - title:
           en: "About"
           fr: "À propos"
-          es: "Acerca de"
         type: "container"
         order: 1
         children:
@@ -103,12 +102,12 @@ page_hierarchies:
             title:
               en: "For Reviewers"
               fr: "Pour les évaluateurs"
-              es: "Para revisores"
+              es: "Para les revisores"
           - code: "for-conference-organisers"
             title:
               en: "For Conference Organisers"
               fr: "Pour les organisateurs de conférences"
-              es: "Para organizadores de conferencias"
+              es: "Para los organizadores de congresos"
           - code: "for-submissions-committee"
             title:
               en: "For Submissions Committee"

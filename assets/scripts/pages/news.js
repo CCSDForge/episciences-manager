@@ -7,6 +7,47 @@ import {
   destroyEditor,
   isOverLimit,
 } from '../components/ckeditor';
+// Security: Helper function to escape HTML special characters to prevent XSS
+function escapeHtml(text) {
+  if (text === null || text === undefined) {
+    return '';
+  }
+  const div = document.createElement('div');
+  div.textContent = String(text);
+  return div.innerHTML;
+}
+
+// Alert container for flash messages
+let newsAlertsContainer = null;
+
+/**
+ * Show alert message (Bootstrap flash style)
+ * @param {string} type - Alert type (success, danger, warning, info)
+ * @param {string} message - Message to display
+ */
+function showNewsAlert(type, message) {
+  if (!newsAlertsContainer) {
+    newsAlertsContainer = document.getElementById('news-alerts');
+  }
+  if (!newsAlertsContainer) return;
+
+  const validTypes = ['success', 'danger', 'warning', 'info'];
+  const safeType = validTypes.includes(type) ? type : 'info';
+
+  newsAlertsContainer.innerHTML = `
+    <div class="alert alert-${safeType} alert-dismissible fade show" role="alert">
+      ${escapeHtml(message)}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  `;
+
+  // Auto-hide after 5 seconds
+  setTimeout(() => {
+    const alert = newsAlertsContainer.querySelector('.alert');
+    if (alert) alert.remove();
+  }, 5000);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   // ===================
   // CONFIGURATION
@@ -343,7 +384,7 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         const message = config.translations?.contentTooLong ||
           `Content exceeds the limit of ${NEWS_CONTENT_MAX_LENGTH} characters.`;
-        alert(message);
+        showNewsAlert('warning', message);
         return;
       }
       saveCurrentLanguage();
