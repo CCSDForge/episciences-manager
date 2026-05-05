@@ -7,14 +7,14 @@
   padding-inline: 1.5rem;
 
   //@media (min-width: 768px) {
-    // Offset = logo column width + gap (aligned with title)
-    //margin-left: calc(250px + 1.5rem);
+  // Offset = logo column width + gap (aligned with title)
+  //margin-left: calc(250px + 1.5rem);
   //}
 
   //@media (min-width: 1200px) {
-    //margin-left: calc(280px + 1.5rem);
-    // Don't extend into widget area
-    //margin-right: calc(220px + 1.5rem);
+  //margin-left: calc(280px + 1.5rem);
+  // Don't extend into widget area
+  //margin-right: calc(220px + 1.5rem);
   //}
 }
 
@@ -34,7 +34,7 @@
     transition: transform 0.2s ease;
   }
 
-  .btn-link[aria-expanded="false"] .collapse-icon {
+  .btn-link[aria-expanded='false'] .collapse-icon {
     transform: rotate(180deg);
   }
 

@@ -52,7 +52,12 @@ function getCharCount() {
   if (!editorInstance) return 0;
   const content = editorInstance.getData();
   // Remove HTML tags and decode entities for accurate count
-  const plainText = content.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+  const plainText = content
+    .replace(/<[^>]*>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>');
   return plainText.length;
 }
 
@@ -66,7 +71,12 @@ function updateCharCounter() {
   charCounterElement.textContent = `${count} / ${maxCharLimit}`;
 
   // Change color based on limit
-  charCounterElement.classList.remove('text-danger', 'text-warning', 'text-muted', 'fw-bold');
+  charCounterElement.classList.remove(
+    'text-danger',
+    'text-warning',
+    'text-muted',
+    'fw-bold'
+  );
   if (count > maxCharLimit) {
     charCounterElement.classList.add('text-danger', 'fw-bold');
   } else if (count > maxCharLimit * 0.9) {
@@ -81,7 +91,8 @@ function updateCharCounter() {
  */
 function createCharCounter(editorElement) {
   // Remove existing counter if any
-  const existingCounter = editorElement.parentNode?.querySelector('.char-counter');
+  const existingCounter =
+    editorElement.parentNode?.querySelector('.char-counter');
   if (existingCounter) existingCounter.remove();
 
   // Create new counter
@@ -92,7 +103,12 @@ function createCharCounter(editorElement) {
   updateCharCounter();
 }
 
-export function initializeCKEditor(elementId, placeholder = '', onChange = null, maxLength = 0) {
+export function initializeCKEditor(
+  elementId,
+  placeholder = '',
+  onChange = null,
+  maxLength = 0
+) {
   const element = document.getElementById(elementId);
   if (!element) {
     console.error(`Element with ID ${elementId} not found`);

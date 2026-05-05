@@ -7,6 +7,7 @@ import {
 } from '../components/ckeditor.js';
 
 import { initLanguageWidget } from '../components/language-widget.js';
+import { Offcanvas } from 'bootstrap';
 
 // Security: Helper function to escape HTML special characters to prevent XSS
 function escapeHtml(text) {
@@ -475,13 +476,15 @@ function setupResponsiveMenuBehavior() {
   const sidebarMenu = document.getElementById('sidebarMenu');
   if (!sidebarMenu) return;
 
-  const pageLinks = sidebarMenu.querySelectorAll('.page-nav-link, .home-nav-link');
+  const pageLinks = sidebarMenu.querySelectorAll(
+    '.page-nav-link, .home-nav-link'
+  );
 
   pageLinks.forEach(link => {
     link.addEventListener('click', () => {
       // Only close on mobile (< 768px)
       if (window.innerWidth < 768) {
-        const offcanvasInstance = bootstrap.Offcanvas.getInstance(sidebarMenu);
+        const offcanvasInstance = Offcanvas.getInstance(sidebarMenu);
         if (offcanvasInstance) {
           offcanvasInstance.hide();
         }
@@ -953,7 +956,8 @@ document.addEventListener('DOMContentLoaded', function () {
     // Use stored title data for the current locale, with fallbacks
     const currentLocale = editingLocale || getCurrentLocale();
     const pageTitle =
-      (currentTitleData && (currentTitleData[currentLocale] || currentTitleData['en'])) ||
+      (currentTitleData &&
+        (currentTitleData[currentLocale] || currentTitleData['en'])) ||
       (pageTitleView && pageTitleView.textContent) ||
       currentPageCode;
     const markdownForEdit = currentMarkdownContent[currentLocale] || '';
@@ -1183,7 +1187,10 @@ document.addEventListener('DOMContentLoaded', function () {
               })
               .catch(() => {});
 
-            showAlert('success', window.translations?.saveSuccess || 'Saved successfully');
+            showAlert(
+              'success',
+              window.translations?.saveSuccess || 'Saved successfully'
+            );
           } else {
             showAlert(
               'danger',

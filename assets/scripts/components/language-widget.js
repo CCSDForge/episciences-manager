@@ -10,7 +10,10 @@
  * @param {Object|null} contentByLocale - Object with locale keys and content values
  * @param {string} selectId - ID of the select element
  */
-export function updateLanguageSelectOptions(contentByLocale, selectId = 'sidebar-language-select') {
+export function updateLanguageSelectOptions(
+  contentByLocale,
+  selectId = 'sidebar-language-select'
+) {
   const select = document.getElementById(selectId);
   if (!select) return;
 
@@ -66,20 +69,16 @@ export function updateTranslationsList(
     // Determine if we should show pencil or plus icon
     // If iconBasedOnContentOnly is true, only check content (for journalPages with YAML titles)
     // Otherwise, check both title and content (for news where user enters both)
-    const showPencil = iconBasedOnContentOnly ? hasContent : (hasContent || hasTitle);
+    const showPencil = iconBasedOnContentOnly
+      ? hasContent
+      : hasContent || hasTitle;
 
     if (showPencil) {
       if (icon) icon.className = 'fas fa-pencil-alt text-primary';
-      actionBtn?.setAttribute(
-        'title',
-        translations.editTranslation || 'Edit'
-      );
+      actionBtn?.setAttribute('title', translations.editTranslation || 'Edit');
     } else {
       if (icon) icon.className = 'fas fa-plus text-muted';
-      actionBtn?.setAttribute(
-        'title',
-        translations.addTranslation || 'Add'
-      );
+      actionBtn?.setAttribute('title', translations.addTranslation || 'Add');
     }
     // Always show title if available (from YAML or DB)
     if (titleInput) titleInput.value = title;

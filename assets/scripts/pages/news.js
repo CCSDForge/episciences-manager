@@ -376,6 +376,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // Prevent submit button click from propagating to collapse
+  const submitButton = document.querySelector('#news-form button[type="submit"]');
+  if (submitButton) {
+    submitButton.addEventListener('click', e => {
+      e.stopPropagation();
+    });
+  }
+
   // Save before form submit
   document.addEventListener('submit', e => {
     if (e.target.closest('#news-form')) {
