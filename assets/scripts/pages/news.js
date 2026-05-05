@@ -98,7 +98,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // CORE FUNCTIONS
   // ===================
 
-
   function saveCurrentLanguage() {
     if (!currentLang) return;
 
@@ -206,13 +205,18 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       // Pass onChange callback to update translations when content changes
       // Pass maxLength for character counter (5000 for news)
-      await initializeCKEditor('news_content', placeholder, content => {
-        if (!translations[currentLang]) {
-          translations[currentLang] = { title: '', content: '', link: '' };
-        }
-        translations[currentLang].content = content;
-        updateFormWidgetDisplay();
-      }, NEWS_CONTENT_MAX_LENGTH);
+      await initializeCKEditor(
+        'news_content',
+        placeholder,
+        content => {
+          if (!translations[currentLang]) {
+            translations[currentLang] = { title: '', content: '', link: '' };
+          }
+          translations[currentLang].content = content;
+          updateFormWidgetDisplay();
+        },
+        NEWS_CONTENT_MAX_LENGTH
+      );
       editorInitialized = true;
 
       // Load current language content into editor
@@ -312,8 +316,13 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Handle "Add News" button click - reset form before opening
-  const addNewsButton = document.querySelector('[data-bs-target="#newsCreateForm"]');
-  if (addNewsButton && !addNewsButton.classList.contains('btn-outline-secondary')) {
+  const addNewsButton = document.querySelector(
+    '[data-bs-target="#newsCreateForm"]'
+  );
+  if (
+    addNewsButton &&
+    !addNewsButton.classList.contains('btn-outline-secondary')
+  ) {
     // Only the main "Add News" button (not the cancel button which also targets the collapse)
     addNewsButton.addEventListener('click', () => {
       resetFormForCreate();
@@ -377,7 +386,9 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Prevent submit button click from propagating to collapse
-  const submitButton = document.querySelector('#news-form button[type="submit"]');
+  const submitButton = document.querySelector(
+    '#news-form button[type="submit"]'
+  );
   if (submitButton) {
     submitButton.addEventListener('click', e => {
       e.stopPropagation();
@@ -390,7 +401,8 @@ document.addEventListener('DOMContentLoaded', () => {
       // Check if content exceeds limit
       if (isOverLimit()) {
         e.preventDefault();
-        const message = config.translations?.contentTooLong ||
+        const message =
+          config.translations?.contentTooLong ||
           `Content exceeds the limit of ${NEWS_CONTENT_MAX_LENGTH} characters.`;
         showNewsAlert('warning', message);
         return;
@@ -412,7 +424,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // EDIT BUTTON HANDLER
   // ===================
   document.querySelectorAll('.btn-edit-news').forEach(btn => {
-    btn.addEventListener('click', async() => {
+    btn.addEventListener('click', async () => {
       const newsItem = btn.closest('.news-item');
       const editUrl = btn.dataset.editUrl;
 
@@ -498,7 +510,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const bsDeleteModal = new Modal(deleteModal);
 
     document.querySelectorAll('.btn-delete-news').forEach(btn => {
-      btn.addEventListener('click', async() => {
+      btn.addEventListener('click', async () => {
         const deleteUrl = btn.dataset.deleteUrl;
         const newsTitle = btn.dataset.newsTitle;
 
