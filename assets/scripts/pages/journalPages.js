@@ -7,6 +7,50 @@ import {
 } from '../components/ckeditor.js';
 
 import { initLanguageWidget } from '../components/language-widget.js';
+import { Offcanvas } from 'bootstrap';
+
+// Security: Helper function to escape HTML special characters to prevent XSS
+function escapeHtml(text) {
+  if (text === null || text === undefined) {
+    return '';
+  }
+  const div = document.createElement('div');
+  div.textContent = String(text);
+  return div.innerHTML;
+}
+
+// Alert container for flash messages
+let alertsContainer = null;
+
+/**
+ * Show alert message (Bootstrap flash style)
+ * @param {string} type - Alert type (success, danger, warning, info)
+ * @param {string} message - Message to display
+ * @param {boolean} isHtmlSafe - If true, message is already escaped and can contain safe HTML
+ */
+function showAlert(type, message, isHtmlSafe = false) {
+  if (!alertsContainer) {
+    alertsContainer = document.getElementById('pages-alerts');
+  }
+  if (!alertsContainer) return;
+
+  const validTypes = ['success', 'danger', 'warning', 'info'];
+  const safeType = validTypes.includes(type) ? type : 'info';
+  const safeMessage = isHtmlSafe ? message : escapeHtml(message);
+
+  alertsContainer.innerHTML = `
+    <div class="alert alert-${safeType} alert-dismissible fade show" role="alert">
+      ${safeMessage}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  `;
+
+  // Auto-hide after 5 seconds
+  setTimeout(() => {
+    const alert = alertsContainer.querySelector('.alert');
+    if (alert) alert.remove();
+  }, 5000);
+}
 
 // Security: Helper function to escape HTML special characters to prevent XSS
 function escapeHtml(text) {
@@ -437,11 +481,36 @@ function initializeTranslations() {
   window.currentLocale = currentLocale;
 }
 
+// Setup responsive menu behavior - auto-close offcanvas on mobile
+function setupResponsiveMenuBehavior() {
+  const sidebarMenu = document.getElementById('sidebarMenu');
+  if (!sidebarMenu) return;
+
+  const pageLinks = sidebarMenu.querySelectorAll(
+    '.page-nav-link, .home-nav-link'
+  );
+
+  pageLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      // Only close on mobile (< 768px)
+      if (window.innerWidth < 768) {
+        const offcanvasInstance = Offcanvas.getInstance(sidebarMenu);
+        if (offcanvasInstance) {
+          offcanvasInstance.hide();
+        }
+      }
+    });
+  });
+}
+
 document.addEventListener('DOMContentLoaded', function () {
   console.log('DOM loaded');
 
   // Initialize with fallback translations (no API call)
   initializeTranslations();
+
+  // Setup responsive menu behavior
+  setupResponsiveMenuBehavior();
 
   // Update UI elements with translations
   updateInlineEditTranslations();
@@ -472,6 +541,7 @@ document.addEventListener('DOMContentLoaded', function () {
   let isInlineEdit = false;
   let editingLocale = null;
   let currentMarkdownContent = {}; // Store raw Markdown per locale for editing
+  let currentTitleData = {}; // Store title data per locale for editing
 
   const sidebarLanguageSelect = document.getElementById(
     'sidebar-language-select'
@@ -483,8 +553,10 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // Initialize language widget with callbacks
+  // iconBasedOnContentOnly: true means show "+" if no content in DB (even if YAML title exists)
   const languageWidget = initLanguageWidget({
     widgetId: 'sidebar',
+    iconBasedOnContentOnly: true,
     onLanguageChange: async selectedLang => {
       editingLocale = selectedLang;
 
@@ -507,8 +579,9 @@ document.addEventListener('DOMContentLoaded', function () {
             data.content,
             window.journalPagesData?.translations || {}
           );
-          // Update stored Markdown content for editing
+          // Update stored Markdown content and title for editing
           currentMarkdownContent = data.markdownContent || {};
+          currentTitleData = data.title || {};
         } catch (error) {
           console.error('Error loading page content:', error);
         }
@@ -516,7 +589,8 @@ document.addEventListener('DOMContentLoaded', function () {
     },
     onTranslationClick: async lang => {
       if (!currentPageCode || !currentJournalCode) {
-        alert(
+        showAlert(
+          'warning',
           window.translations?.selectPageFirst || 'Please select a page first'
         );
         return;
@@ -550,7 +624,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
       if (pageBody) pageBody.innerHTML = '';
 
-      pageTitleInline.value = existingTitle;
+      pageTitleInline.textContent = existingTitle;
       pageContent.style.display = 'none';
       inlineEditContent.style.display = 'block';
 
@@ -587,7 +661,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (pageViewFields) pageViewFields.style.display = 'block';
 
     if (pageTitleView) {
-      pageTitleView.value =
+      pageTitleView.textContent =
         (data.title && (data.title[locale] || data.title['en'])) || '';
     }
 
@@ -713,8 +787,9 @@ document.addEventListener('DOMContentLoaded', function () {
           // Use content language from widget instead of UI locale
           const contentLang = sidebarLanguageSelect?.value || locale;
           updatePageView(data, contentLang);
-          // Store raw Markdown for editing
+          // Store raw Markdown and title for editing
           currentMarkdownContent = data.markdownContent || {};
+          currentTitleData = data.title || {};
         }
         pageContent.style.display = 'block';
 
@@ -808,8 +883,9 @@ document.addEventListener('DOMContentLoaded', function () {
           pageBody.innerHTML = '<p class="text-danger">Page not found</p>';
         } else {
           updatePageView(data, contentLang);
-          // Store raw Markdown for editing
+          // Store raw Markdown and title for editing
           currentMarkdownContent = data.markdownContent || {};
+          currentTitleData = data.title || {};
         }
         pageContent.style.display = 'block';
 
@@ -852,7 +928,8 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log('Edit button clicked');
 
     if (!currentPageCode) {
-      alert(
+      showAlert(
+        'warning',
         window.translations?.selectPageFirst || 'Please select a page first'
       );
       return;
@@ -879,19 +956,24 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (!currentPageCode || !currentJournalCode) {
       console.log('Missing page info - showing alert');
-      alert(
+      showAlert(
+        'warning',
         window.translations?.selectPageFirst || 'Please select a page first'
       );
       return;
     }
 
-    const pageTitle = (pageTitleView && pageTitleView.value) || currentPageCode;
-    // Use stored Markdown content for the current locale
+    // Use stored title data for the current locale, with fallbacks
     const currentLocale = editingLocale || getCurrentLocale();
+    const pageTitle =
+      (currentTitleData &&
+        (currentTitleData[currentLocale] || currentTitleData['en'])) ||
+      (pageTitleView && pageTitleView.textContent) ||
+      currentPageCode;
     const markdownForEdit = currentMarkdownContent[currentLocale] || '';
 
     // Populate inline edit form
-    pageTitleInline.value = pageTitle;
+    pageTitleInline.textContent = pageTitle;
 
     // Hide page content and show inline edit
     pageContent.style.display = 'none';
@@ -976,7 +1058,8 @@ document.addEventListener('DOMContentLoaded', function () {
           currentPageCode,
           currentJournalCode,
         });
-        alert(
+        showAlert(
+          'danger',
           window.translations?.missingPageInfo || 'Missing page information'
         );
         return;
@@ -984,11 +1067,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
       //const newContent = pageContentInline.value;
       const newContent = getEditorContent();
-      const newTitle = pageTitleInline.value;
+      const newTitle = pageTitleInline.textContent || '';
 
       console.log('Content from editor:', newContent);
-      console.log('Title from input:', newTitle);
       console.log('Editor content length:', newContent?.length || 0);
+      console.log('Title:', newTitle);
 
       // editingLocale = target language for translation (e.g. "es"), otherwise current route locale
       let locale = editingLocale || getCurrentLocale();
@@ -1070,7 +1153,7 @@ document.addEventListener('DOMContentLoaded', function () {
             pageBody.innerHTML = htmlContent || newContent;
 
             if (updatedTitle && pageTitleView) {
-              pageTitleView.value = updatedTitle;
+              pageTitleView.textContent = updatedTitle;
             }
 
             const activeLink = document.querySelector('.page-nav-link.active');
@@ -1093,6 +1176,10 @@ document.addEventListener('DOMContentLoaded', function () {
             // Exit inline edit mode
             exitInlineEdit();
 
+            // Update URL to remove /edit (so refresh won't open in edit mode)
+            const viewUrl = `/${getCurrentLocale()}/journal/${currentJournalCode}/pages/${currentPageCode}`;
+            history.replaceState(null, '', viewUrl);
+
             // Refresh translation list after save
             const routeLocale = getCurrentLocale();
             const refreshUrl = `/${routeLocale}/journal/${currentJournalCode}/page/${currentPageCode}`;
@@ -1110,9 +1197,13 @@ document.addEventListener('DOMContentLoaded', function () {
               })
               .catch(() => {});
 
-            alert(window.translations?.saveSuccess || 'Saved successfully');
+            showAlert(
+              'success',
+              window.translations?.saveSuccess || 'Saved successfully'
+            );
           } else {
-            alert(
+            showAlert(
+              'danger',
               (window.translations?.saveError || 'Save error: ') +
                 (data.message || 'Unknown error')
             );
@@ -1120,7 +1211,8 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .catch(error => {
           console.error('Save error:', error);
-          alert(
+          showAlert(
+            'danger',
             (window.translations?.saveError || 'Save error: ') + error.message
           );
         });

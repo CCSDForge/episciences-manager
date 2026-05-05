@@ -76,8 +76,9 @@ final class PageController extends AbstractController
         if ($request->isXmlHttpRequest()) {
             // If page doesn't exist, return empty content
             if (!$page instanceof \App\Entity\Page) {
-                $defaultTitle = ucwords(str_replace('-', ' ', $actualPageCode));
-                $title = array_fill_keys($acceptedLanguages, $defaultTitle);
+                // Get title from YAML config
+                $yamlTitle = $hierarchyService->getTitleForPageCode($actualPageCode, $code);
+                $title = $yamlTitle ?? array_fill_keys($acceptedLanguages, ucwords(str_replace('-', ' ', $actualPageCode)));
                 $emptyContent = array_fill_keys($acceptedLanguages, '');
 
                 return new JsonResponse([
@@ -92,8 +93,28 @@ final class PageController extends AbstractController
             // Convert markdown content to HTML
             $htmlContent = $markdownService->convertContentArray($page->getContent());
 
+            // Merge YAML titles with DB titles (DB takes priority)
+            // This ensures all accepted languages have titles even if not in DB
+            $yamlTitle = $hierarchyService->getTitleForPageCode($actualPageCode, $code);
+            $dbTitle = $page->getTitle();
+
+            // Start with YAML titles as base, then override with DB titles
+            $mergedTitle = $yamlTitle ?? [];
+            foreach ($dbTitle as $lang => $title) {
+                if (!empty($title)) {
+                    $mergedTitle[$lang] = $title;
+                }
+            }
+
+            // Ensure all accepted languages have at least a fallback title
+            foreach ($acceptedLanguages as $lang) {
+                if (empty($mergedTitle[$lang])) {
+                    $mergedTitle[$lang] = $mergedTitle['en'] ?? ucwords(str_replace('-', ' ', $actualPageCode));
+                }
+            }
+
             return new JsonResponse([
-                'title' => $page->getTitle(),
+                'title' => $mergedTitle,
                 'content' => $htmlContent,
                 'markdownContent' => $page->getContent(),
                 'pageCode' => $page->getPageCode()
@@ -185,6 +206,7 @@ final class PageController extends AbstractController
         $currentContent[$locale] = $markdownContent;
         $page->setContent($currentContent);
 
+        // Save title per locale if provided
         if ($title !== null) {
             $currentTitle = $page->getTitle();
             $currentTitle[$locale] = $title;
@@ -205,7 +227,7 @@ final class PageController extends AbstractController
                 'success'      => true,
                 'message'      => 'Page updated successfully',
                 'htmlContent'  => $htmlForLocale,
-                'updatedTitle' => $title !== null ? ($page->getTitle()[$locale] ?? '') : null
+                'updatedTitle' => $page->getTitle()[$locale] ?? $title,
             ]);
         } catch (\Throwable $e) {
             $this->logger->error('Error saving page', [

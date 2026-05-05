@@ -1,0 +1,91 @@
+// Variables
+$alert-margin-bottom: 1.5rem;
+$alert-icon-margin: 0.5rem;
+$alert-success-icon-color: #155724;
+
+// Main styles
+.alert {
+  margin-bottom: $alert-margin-bottom;
+
+  // Icons in alerts
+  .fa {
+    margin-right: $alert-icon-margin;
+  }
+
+  // Success alert
+  &.alert-success {
+    .fa {
+      color: $alert-success-icon-color;
+    }
+  }
+
+  // Alerts with close button
+  &.alert-dismissible {
+    .btn-close {
+      transition: opacity 0.3s ease;
+
+      &:hover {
+        opacity: 0.7;
+      }
+    }
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .alert {
+    margin-bottom: 1rem;
+
+    .fa {
+      margin-right: 0.25rem;
+    }
+  }
+}
+
+// ===================
+// Alert Containers (Toast-style, bottom-right)
+// Includes: JS alerts + Symfony flash messages
+// ===================
+#pages-alerts,
+#news-alerts,
+#settings-alerts,
+#flash-messages-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1055; // Above Bootstrap modals (1050)
+  max-width: 400px;
+  min-width: 280px;
+
+  .alert {
+    margin-bottom: 0.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    animation: slideInRight 0.3s ease-out;
+  }
+}
+
+// Slide-in animation
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+// Responsive: full width on mobile
+@media (max-width: 576px) {
+  #pages-alerts,
+  #news-alerts,
+  #settings-alerts,
+  #flash-messages-container {
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    max-width: none;
+    min-width: auto;
+  }
+}

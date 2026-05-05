@@ -7,47 +7,128 @@ page_hierarchies:
     main_pages:
       - title:
           en: "About"
-          fr: "À Propos"
+          fr: "À propos"
         type: "container"
         order: 1
         children:
-          - "about"
-          - "journal-indexing"
-          - "journal-acknowledgements"
+          - code: "about"
+            title:
+              en: "The jounral"
+              fr: "La revue"
+              es: "La revista"
+          - code: "journal-indexing"
+            title:
+              en: "Indexing"
+              fr: "Indexation"
+              es: "Indexación"
+          - code: "journal-acknowledgements"
+            title:
+              en: "Acknowledgements"
+              fr: "Remerciements"
+              es: "Agradecimientos"
       - title:
           en: "Boards"
           fr: "Comités"
         type: "container"
         order: 2
         children:
-          - "introduction-board"
-          - "scientific-advisory-board"
-          - "editorial-board"
-          - "technical-board"
-          - "reviewers-board"
-          - "former-members"
-          - "operating-charter-board"
+          - code: "introduction-board"
+            title:
+              en: "Board presentation"
+              fr: "Présentation des comités"
+              es: "Presentación de los comités"
+          - code: "scientific-advisory-board"
+            title:
+              en: "Scientific Advisory Board"
+              fr: "Comité scientifique"
+              es: "Comité Científico"
+          - code: "editorial-board"
+            title:
+              en: "Editorial Board"
+              fr: "Comité éditorial"
+              es: "Comité Editorial"
+          - code: "technical-board"
+            title:
+              en: "Technical Board"
+              fr: "Comité technique"
+              es: "Comité Técnico"
+          - code: "reviewers-board"
+            title:
+              en: "Peer review committee"
+              fr: "Comité de relecture"
+              es: "Comité de revisión por pares"
+          - code: "former-members"
+            title:
+              en: "Former Member"
+              fr: "Ancien/Ancienne membre"
+              es: "Antiguo/Antigua miembro"
+          - code: "operating-charter-board"
+            title:
+              en: "Operating Charter"
+              fr: "Charte de fonctionnement"
+              es: "Estatutos de funcionamiento"
       - title:
           en: "Publish"
           fr: "Publier"
         type: "container"
         order: 3
         children:
-          - "ethical-charter"
+          - code: "ethical-charter"
+            title:
+              en: "Ethical Charter"
+              fr: "Charte éthique"
+              es: "Carta ética"
           - title:
-              en: "For authors"
+              en: "For Authors"
               fr: "Pour les auteurs/autrices"
             type: "container"
             children:
-              - "prepare-submission"
-              - "editorial-workflow"
-          - "for-reviewers"
-          - "for-conference-organisers"
-          - "for-submissions-committee"
-          - "proposing-special-issues"
+              - code: "prepare-submission"
+                title:
+                  en: "Prepare Your Submission"
+                  fr: "Préparer votre soumission"
+                  es: "Preparar su envío"
+              - code: "editorial-workflow"
+                title:
+                  en: "Editorial Workflow"
+                  fr: "Flux éditorial"
+                  es: "Flujo de trabajo editorial"
+          - code: "for-reviewers"
+            title:
+              en: "For Reviewers"
+              fr: "Pour les évaluateurs"
+              es: "Para les revisores"
+          - code: "for-conference-organisers"
+            title:
+              en: "For Conference Organisers"
+              fr: "Pour les organisateurs de conférences"
+              es: "Para los organizadores de congresos"
+          - code: "for-submissions-committee"
+            title:
+              en: "For Submissions Committee"
+              fr: "Pour le comité des soumissions"
+              es: "Comité de evaluación de envíos"
+          - code: "proposing-special-issues"
+            title:
+              en: "Proposing Special Issues"
+              fr: "Proposer des numéros spéciaux"
+              es: "Proponer números especiales"
+          - code: "test"
+            title:
+              en: "english"
+              fr: "french"
+              es: "espagnol"
       - code: "credits"
+        title:
+          en: "Credits"
+          fr: "Crédits"
+          es: "Créditos"
         order: 4
       - code: "custom-page"
+        title:
+          en: "Custom Page"
+          fr: "Page personnalisée"
+          es: "Página personalizada"
         order: 5
       #- code: "News"
         #order: 6
