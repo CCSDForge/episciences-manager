@@ -12,14 +12,7 @@
             <h2 class="review-title text-center">{{ 'reviews.list_title'|trans }}</h2>
             <div>
 
-                {# Messages flash #}
-                {% for message in app.flashes('logout_success') %}
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        <i class="fa fa-check-circle me-2"></i>
-                        <strong>{{ 'flash.logout_success' |trans }}</strong>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                {% endfor %}
+                {% include 'components/flash_messages.html.twig' with {types: ['logout_success', 'success']} %}
 
                 {% if reviews is defined and reviews.items is not empty %}
                     {# Affichage du total #}
