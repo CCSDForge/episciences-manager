@@ -52,16 +52,6 @@ function showAlert(type, message, isHtmlSafe = false) {
   }, 5000);
 }
 
-// Security: Helper function to escape HTML special characters to prevent XSS
-function escapeHtml(text) {
-  if (text === null || text === undefined) {
-    return '';
-  }
-  const div = document.createElement('div');
-  div.textContent = String(text);
-  return div.innerHTML;
-}
-
 // Function to update inline edit translations dynamically
 function updateInlineEditTranslations() {
   console.log(
