@@ -115,9 +115,9 @@ page_hierarchies:
               es: "Proponer números especiales"
           - code: "test"
             title:
-              en: "english"
-              fr: "french"
-              es: "espagnol"
+              en: "english title"
+              fr: "french titre"
+              es: "espagnol titre"
       - code: "credits"
         title:
           en: "Credits"

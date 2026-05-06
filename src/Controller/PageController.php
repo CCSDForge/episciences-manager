@@ -41,7 +41,7 @@ final class PageController extends AbstractController
     }
 
     #[Route('/journal/{code}/page/{pageTitle}', name: 'app_page_show', methods: ['GET'])]
-    public function showPage(string $code, string $pageTitle, PageRepository $pageRepository, MarkdownService $markdownService, ReviewManager $reviewManager, PageHierarchyService $hierarchyService, JournalSettingService $settingService, Request $request): Response
+    public function showPage(string $code, string $pageTitle, PageRepository $pageRepository, MarkdownService $markdownService, ReviewManager $reviewManager, PageHierarchyService $hierarchyService, JournalSettingService $settingService, EntityManagerInterface $entityManager, Request $request): Response
     {
         // Check permissions first
         $review = $reviewManager->getReviewByCode($code);
@@ -93,18 +93,29 @@ final class PageController extends AbstractController
             // Convert markdown content to HTML
             $htmlContent = $markdownService->convertContentArray($page->getContent());
 
-            // Merge YAML titles with DB titles (DB takes priority)
-            // This ensures all accepted languages have titles even if not in DB
+            // Get YAML title (source of truth for pages defined in YAML)
             $yamlTitle = $hierarchyService->getTitleForPageCode($actualPageCode, $code);
             $dbTitle = $page->getTitle();
 
-            // Start with YAML titles as base, then override with DB titles
-            $mergedTitle = $yamlTitle ?? [];
-            foreach ($dbTitle as $lang => $title) {
-                if (!empty($title)) {
-                    $mergedTitle[$lang] = $title;
+            // If page is defined in YAML, sync YAML titles to DB if different
+            if ($yamlTitle !== null) {
+                $needsUpdate = false;
+                foreach ($yamlTitle as $lang => $title) {
+                    if (!isset($dbTitle[$lang]) || $dbTitle[$lang] !== $title) {
+                        $needsUpdate = true;
+                        break;
+                    }
+                }
+                if ($needsUpdate) {
+                    // Update DB with YAML titles
+                    $page->setTitle($yamlTitle);
+                    $entityManager->flush();
+                    $dbTitle = $yamlTitle;
                 }
             }
+
+            // Use YAML title if available, otherwise DB title
+            $mergedTitle = $yamlTitle ?? $dbTitle;
 
             // Ensure all accepted languages have at least a fallback title
             foreach ($acceptedLanguages as $lang) {
