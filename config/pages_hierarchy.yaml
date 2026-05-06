@@ -113,11 +113,6 @@ page_hierarchies:
               en: "Proposing Special Issues"
               fr: "Proposer des numéros spéciaux"
               es: "Proponer números especiales"
-          - code: "test"
-            title:
-              en: "english title"
-              fr: "french titre"
-              es: "espagnol titre"
       - code: "credits"
         title:
           en: "Credits"
