@@ -18,6 +18,17 @@ function escapeHtml(text) {
   return div.innerHTML;
 }
 
+/**
+ * Get localized text based on current locale
+ * @param {string} textEn - English text
+ * @param {string} textFr - French text (optional)
+ * @param {string} locale - Current locale ('en' or 'fr')
+ * @returns {string} Localized text (falls back to English if French not available)
+ */
+function getLocalizedText(textEn, textFr, locale) {
+  return (locale === 'fr' && textFr) ? textFr : textEn;
+}
+
 // Alert container for flash messages
 let alertsContainer = null;
 
@@ -205,8 +216,8 @@ function updateContainerTitles(locale) {
     const titleEn = link.getAttribute('data-title-en');
     const titleFr = link.getAttribute('data-title-fr');
 
-    if (titleEn && titleFr) {
-      const newTitle = locale === 'fr' ? titleFr : titleEn;
+    if (titleEn) {
+      const newTitle = getLocalizedText(titleEn, titleFr, locale);
       console.log(
         'Updating container title from:',
         link.textContent.trim(),
@@ -241,8 +252,8 @@ function updateSubPageLinks(locale) {
     const currentTitleEn = link.getAttribute('data-current-title-en');
     const currentTitleFr = link.getAttribute('data-current-title-fr');
 
-    if (currentTitleEn && currentTitleFr) {
-      const newTitle = locale === 'fr' ? currentTitleFr : currentTitleEn;
+    if (currentTitleEn) {
+      const newTitle = getLocalizedText(currentTitleEn, currentTitleFr, locale);
       console.log(
         'Updating sub-page title from:',
         link.textContent.trim(),
@@ -264,8 +275,8 @@ function updateHomeLinks(locale) {
     const homeTextEn = homeNavLink.getAttribute('data-home-text-en');
     const homeTextFr = homeNavLink.getAttribute('data-home-text-fr');
 
-    if (homeTextEn && homeTextFr) {
-      const newHomeText = locale === 'fr' ? homeTextFr : homeTextEn;
+    if (homeTextEn) {
+      const newHomeText = getLocalizedText(homeTextEn, homeTextFr, locale);
       console.log(
         'Updating home nav link from:',
         homeNavLink.textContent.trim(),
@@ -282,8 +293,8 @@ function updateHomeLinks(locale) {
     const homeTextEn = breadcrumbHome.getAttribute('data-home-text-en');
     const homeTextFr = breadcrumbHome.getAttribute('data-home-text-fr');
 
-    if (homeTextEn && homeTextFr) {
-      const newHomeText = locale === 'fr' ? homeTextFr : homeTextEn;
+    if (homeTextEn) {
+      const newHomeText = getLocalizedText(homeTextEn, homeTextFr, locale);
       const icon = breadcrumbHome.querySelector('i.fas.fa-home');
       console.log(
         'Updating breadcrumb home link from:',
@@ -336,10 +347,7 @@ function updateBreadcrumbLanguage(locale) {
   );
 
   if (grandparentText && grandparentTitleEn) {
-    const newGrandparentTitle =
-      locale === 'fr' && grandparentTitleFr
-        ? grandparentTitleFr
-        : grandparentTitleEn;
+    const newGrandparentTitle = getLocalizedText(grandparentTitleEn, grandparentTitleFr, locale);
     console.log(
       'Updating breadcrumb grandparent from:',
       grandparentText.textContent,
@@ -354,8 +362,7 @@ function updateBreadcrumbLanguage(locale) {
   const parentTitleFr = activeLink.getAttribute('data-parent-title-fr');
 
   if (parentText && parentTitleEn) {
-    const newParentTitle =
-      locale === 'fr' && parentTitleFr ? parentTitleFr : parentTitleEn;
+    const newParentTitle = getLocalizedText(parentTitleEn, parentTitleFr, locale);
     console.log(
       'Updating breadcrumb parent from:',
       parentText.textContent,
@@ -370,8 +377,7 @@ function updateBreadcrumbLanguage(locale) {
   const currentTitleFr = activeLink.getAttribute('data-current-title-fr');
 
   if (currentText && currentTitleEn) {
-    const newCurrentTitle =
-      locale === 'fr' && currentTitleFr ? currentTitleFr : currentTitleEn;
+    const newCurrentTitle = getLocalizedText(currentTitleEn, currentTitleFr, locale);
     console.log(
       'Updating breadcrumb current from:',
       currentText.textContent,
@@ -529,6 +535,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   const pageLinks = document.querySelectorAll('.page-nav-link');
   const homeLink = document.querySelector('a[href*="app_journal_detail"]');
+  const breadcrumbHomeLink = document.querySelector('.breadcrumb-home');
   const pageContent = document.getElementById('page-content');
   const pageViewFields = document.getElementById('page-view-fields');
   const pageHomeContent = document.getElementById('page-home-content');
@@ -934,6 +941,19 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
+  // Breadcrumb home link handler - navigates to pages home
+  if (breadcrumbHomeLink) {
+    breadcrumbHomeLink.addEventListener('click', function (e) {
+      e.preventDefault();
+      console.log('Breadcrumb home clicked - navigating to pages home');
+
+      const locale = getCurrentLocale();
+      const journalCode = window.journalPagesData?.journalCode;
+      const pagesUrl = `/${locale}/journal/${journalCode}/pages`;
+      window.location.href = pagesUrl;
+    });
+  }
+
   // Edit button handler - navigates to edit route
   editButton.addEventListener('click', function (e) {
     e.preventDefault();
@@ -1265,16 +1285,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const currentTitleFr = clickedLink.getAttribute('data-current-title-fr');
 
     // Select title based on current locale
-    const grandparentTitle =
-      currentLocale === 'fr' && grandparentTitleFr
-        ? grandparentTitleFr
-        : grandparentTitleEn;
-    const parentTitle =
-      currentLocale === 'fr' && parentTitleFr ? parentTitleFr : parentTitleEn;
-    const currentTitle =
-      currentLocale === 'fr' && currentTitleFr
-        ? currentTitleFr
-        : currentTitleEn || clickedLink.textContent.trim();
+    const grandparentTitle = getLocalizedText(grandparentTitleEn, grandparentTitleFr, currentLocale);
+    const parentTitle = getLocalizedText(parentTitleEn, parentTitleFr, currentLocale);
+    const currentTitle = getLocalizedText(currentTitleEn, currentTitleFr, currentLocale)
+      || clickedLink.textContent.trim();
 
     console.log('Updating breadcrumb:', {
       pageCode,
@@ -1288,16 +1302,6 @@ document.addEventListener('DOMContentLoaded', function () {
     breadcrumbGrandparent.style.display = 'none';
     breadcrumbParent.style.display = 'none';
     breadcrumbCurrent.style.display = 'none';
-
-    // Handle home link click - navigate to pages home
-    homeLink.addEventListener('click', function (e) {
-      e.preventDefault();
-
-      const locale = getCurrentLocale();
-      const journalCode = window.journalPagesData?.journalCode;
-      const pagesUrl = `/${locale}/journal/${journalCode}/pages`;
-      window.location.href = pagesUrl;
-    });
 
     if (grandparentTitle && parentTitle) {
       // Nested page (3 levels): Show grandparent > parent > current
@@ -1368,7 +1372,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const currentLocale = getCurrentLocale();
         const titleEn = clickedLink.getAttribute('data-title-en');
         const titleFr = clickedLink.getAttribute('data-title-fr');
-        const title = currentLocale === 'fr' && titleFr ? titleFr : titleEn;
+        const title = getLocalizedText(titleEn, titleFr, currentLocale);
 
         // Convert title to URL-friendly format (lowercase, spaces to hyphens, remove special chars)
         const urlTitle = title
@@ -1392,10 +1396,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (parentTitleEn || parentTitleFr) {
           // This is a child page, redirect to parent page
           const currentLocale = getCurrentLocale();
-          const parentTitle =
-            currentLocale === 'fr' && parentTitleFr
-              ? parentTitleFr
-              : parentTitleEn;
+          const parentTitle = getLocalizedText(parentTitleEn, parentTitleFr, currentLocale);
           const urlTitle = parentTitle
             ? parentTitle
                 .toLowerCase()
