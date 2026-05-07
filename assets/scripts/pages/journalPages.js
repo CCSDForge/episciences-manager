@@ -7,7 +7,6 @@ import {
 } from '../components/ckeditor.js';
 
 import { initLanguageWidget } from '../components/language-widget.js';
-import { Offcanvas } from 'bootstrap';
 
 // Security: Helper function to escape HTML special characters to prevent XSS
 function escapeHtml(text) {
@@ -471,26 +470,46 @@ function initializeTranslations() {
   window.currentLocale = currentLocale;
 }
 
-// Setup responsive menu behavior - auto-close offcanvas on mobile
-function setupResponsiveMenuBehavior() {
-  const sidebarMenu = document.getElementById('sidebarMenu');
-  if (!sidebarMenu) return;
+// Close mobile menu when clicking a page link (CSS-only approach)
+function setupMobileMenuAutoClose() {
+  const menuCheckbox = document.getElementById('mobile-menu-toggle');
+  if (!menuCheckbox) return;
 
-  const pageLinks = sidebarMenu.querySelectorAll(
-    '.page-nav-link, .home-nav-link'
-  );
+  const pageLinks = document.querySelectorAll('.page-nav-link, .home-nav-link');
 
   pageLinks.forEach(link => {
     link.addEventListener('click', () => {
-      // Only close on mobile (< 768px)
+      // Close mobile menu on link click (mobile only)
       if (window.innerWidth < 768) {
-        const offcanvasInstance = Offcanvas.getInstance(sidebarMenu);
-        if (offcanvasInstance) {
-          offcanvasInstance.hide();
-        }
+        menuCheckbox.checked = false;
       }
     });
   });
+}
+
+// Auto-expand parent collapse of the active page
+function expandActivePageParent() {
+  // Use currentPage from route data (available before .active class is added)
+  const currentPage = window.journalPagesData?.currentPage;
+  if (!currentPage) return;
+
+  // Find the link for the current page
+  const activeLink = document.querySelector(`.page-nav-link[data-page-code="${currentPage}"]`);
+  if (!activeLink) return;
+
+  // Find all parent collapse elements and expand them
+  let parent = activeLink.parentElement;
+  while (parent) {
+    if (parent.classList.contains('collapse')) {
+      parent.classList.add('show');
+      // Update the toggle button aria-expanded
+      const toggle = document.querySelector(`[href="#${parent.id}"], [data-bs-target="#${parent.id}"]`);
+      if (toggle) {
+        toggle.setAttribute('aria-expanded', 'true');
+      }
+    }
+    parent = parent.parentElement;
+  }
 }
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -499,8 +518,11 @@ document.addEventListener('DOMContentLoaded', function () {
   // Initialize with fallback translations (no API call)
   initializeTranslations();
 
-  // Setup responsive menu behavior
-  setupResponsiveMenuBehavior();
+  // Setup mobile menu auto-close behavior
+  setupMobileMenuAutoClose();
+
+  // Auto-expand parent collapse of active page
+  expandActivePageParent();
 
   // Update UI elements with translations
   updateInlineEditTranslations();

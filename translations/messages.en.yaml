@@ -42,7 +42,7 @@ journal:
   clear_search: "Clear search"
   see_details: "See Details (epiadmin only)"
 
-journalDetails:
+journalDashboard:
   edit_pages: "Edit Pages"
   back_to_home: "Back to Home"
   back_to_journal_list: "Back to Journal List"

@@ -140,7 +140,7 @@ final class PageController extends AbstractController
         $allPages = $pageRepository->findBy(['rvcode' => $code]);
         $organizedPages = $hierarchyService->organizePages($allPages, $code);
 
-        return $this->render('review/journalDetails.html.twig', [
+        return $this->render('review/journalPages.html.twig', [
             'review' => $review,
             'code' => $code,
             'pages' => $organizedPages,
@@ -265,20 +265,20 @@ final class PageController extends AbstractController
         $request->setLocale($locale);
 
         $translations = [
-            'selectPageFirst' => $translator->trans('journalDetails.select_page_first', [], 'messages', $locale),
-            'missingPageInfo' => $translator->trans('journalDetails.missing_page_info', [], 'messages', $locale),
-            'saveSuccess' => $translator->trans('journalDetails.save_success', [], 'messages', $locale),
-            'saveError' => $translator->trans('journalDetails.save_error', [], 'messages', $locale),
-            'edit' => $translator->trans('journalDetails.edit', [], 'messages', $locale),
-            'editPageContent' => $translator->trans('journalDetails.edit_page_content', [], 'messages', $locale),
-            'pageTitle' => $translator->trans('journalDetails.page_title', [], 'messages', $locale),
-            'content' => $translator->trans('journalDetails.content', [], 'messages', $locale),
-            'enterContent' => $translator->trans('journalDetails.enter_content', [], 'messages', $locale),
-            'cancel' => $translator->trans('journalDetails.cancel', [], 'messages', $locale),
-            'save' => $translator->trans('journalDetails.save', [], 'messages', $locale),
-            'welcomeBackoffice' => $translator->trans('journalDetails.welcome_backoffice', [], 'messages', $locale),
-            'previewPage' => $translator->trans('journalDetails.preview_page', [], 'messages', $locale),
-            'noContentAvailable' => $translator->trans('journalDetails.noContentAvailable', [], 'messages', $locale),
+            'selectPageFirst' => $translator->trans('journalPages.select_page_first', [], 'messages', $locale),
+            'missingPageInfo' => $translator->trans('journalPages.missing_page_info', [], 'messages', $locale),
+            'saveSuccess' => $translator->trans('journalPages.save_success', [], 'messages', $locale),
+            'saveError' => $translator->trans('journalPages.save_error', [], 'messages', $locale),
+            'edit' => $translator->trans('journalPages.edit', [], 'messages', $locale),
+            'editPageContent' => $translator->trans('journalPages.edit_page_content', [], 'messages', $locale),
+            'pageTitle' => $translator->trans('journalPages.page_title', [], 'messages', $locale),
+            'content' => $translator->trans('journalPages.content', [], 'messages', $locale),
+            'enterContent' => $translator->trans('journalPages.enter_content', [], 'messages', $locale),
+            'cancel' => $translator->trans('journalPages.cancel', [], 'messages', $locale),
+            'save' => $translator->trans('journalPages.save', [], 'messages', $locale),
+            'welcomeBackoffice' => $translator->trans('journalDashboard.welcome_backoffice', [], 'messages', $locale),
+            'previewPage' => $translator->trans('journalPages.preview_page', [], 'messages', $locale),
+            'noContentAvailable' => $translator->trans('journalPages.noContentAvailable', [], 'messages', $locale),
             'welcome' => $translator->trans('head.welcome', [], 'messages', $locale),
             'login' => $translator->trans('head.login', [], 'messages', $locale),
             'logout' => $translator->trans('head.logout', [], 'messages', $locale)

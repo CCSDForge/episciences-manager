@@ -68,7 +68,7 @@ final class ReviewController extends AbstractController
         // Check if user has permission to view this specific review
         $this->denyAccessUnlessGranted('REVIEW_VIEW', $review);
 
-        return $this->render('review/journalDetails.html.twig', [
+        return $this->render('review/journalDashboard.html.twig', [
             'review' => $review,
             'code' => $code,
         ]);

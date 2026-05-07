@@ -13,7 +13,7 @@ page_hierarchies:
         children:
           - code: "about"
             title:
-              en: "The jounral"
+              en: "The journal"
               fr: "La revue"
               es: "La revista"
           - code: "journal-indexing"

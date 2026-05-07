@@ -326,35 +326,102 @@
   }
 }
 
-// Responsive sidebar with offcanvas-md
+// ========================================
+// CSS-only Mobile Menu (no Bootstrap JS)
+// ========================================
+
+// Hidden checkbox for toggle state
+.mobile-menu-checkbox {
+  display: none;
+}
+
+// Mobile menu button styling
+.mobile-menu-btn {
+  cursor: pointer;
+  user-select: none;
+}
+
+// Backdrop overlay (mobile only)
+.mobile-menu-backdrop {
+  display: none;
+
+  @media (max-width: 767.98px) {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1040;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    cursor: pointer;
+  }
+}
+
+// Mobile header inside sidebar
+.sidebar-mobile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid #dee2e6;
+  background: #f8f9fa;
+}
+
+// Responsive sidebar
 .journal-layout__sidebar {
-  .offcanvas-md {
-    @media (min-width: 768px) {
-      position: sticky !important;
-      top: 20px;
-      height: fit-content;
-      background: transparent !important;
+  // Desktop: always visible, sticky
+  @media (min-width: 768px) {
+    position: sticky;
+    top: 20px;
+    height: fit-content;
 
-      .offcanvas-header {
-        display: none;
-      }
-
-      .offcanvas-body {
-        padding: 0;
-        overflow-y: visible;
-      }
+    .sidebar-mobile-header {
+      display: none;
     }
+  }
 
-    // Mobile offcanvas styles
+  // Mobile: slide-in panel
+  @media (max-width: 767.98px) {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 280px;
+    max-width: 85vw;
+    height: 100vh;
+    background: #fff;
+    z-index: 1045;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    overflow-y: auto;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+
+    .sidebar-menu {
+      padding: 1rem;
+      max-height: none;
+      border-radius: 0;
+    }
+  }
+}
+
+// When checkbox is checked: show menu and backdrop
+// Checkbox is sibling of .mobile-header and .mt-4
+.mobile-menu-checkbox:checked {
+  // Show backdrop (inside .mt-4 > .journal-layout)
+  ~ .mt-4 .mobile-menu-backdrop {
     @media (max-width: 767.98px) {
-      .offcanvas-body {
-        padding: 0;
+      display: block;
+      opacity: 1;
+      visibility: visible;
+    }
+  }
 
-        .sidebar-menu {
-          padding: 1rem;
-          max-height: none;
-        }
-      }
+  // Slide in sidebar (inside .mt-4 > .journal-layout)
+  ~ .mt-4 .journal-layout__sidebar {
+    @media (max-width: 767.98px) {
+      transform: translateX(0);
     }
   }
 }
