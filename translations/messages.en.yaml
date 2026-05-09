@@ -48,6 +48,7 @@ journalDashboard:
   back_to_journal_list: "Back to Journal List"
   welcome_backoffice: "Welcome to the journal management backoffice"
   news: "News"
+  resources: "Resources"
 
 news:
   title: "News"

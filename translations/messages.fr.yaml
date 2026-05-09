@@ -142,6 +142,7 @@ journalDashboard:
   back_to_journal_list: "Retour à la liste des revues"
   welcome_backoffice: "Bienvenue dans le backoffice de gestion du journal"
   news: "Actualités"
+  resources: "Ressources"
 
 news:
   title: "Actualités"

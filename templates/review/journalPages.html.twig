@@ -49,8 +49,12 @@
                     <div class="ps-3">
                         <h1 class="h3 mb-0 text-primary fw-bold">{{ review.name }}</h1>
                     </div>
-                    <!-- Back button (aligned with widget) -->
-                    <div class="text-end">
+                    <!-- Back button and Resources (aligned with widget) -->
+                    <div class="d-flex justify-content-end gap-2">
+                        <a href="{{ path('app_resources_manager', {'code': code}) }}" class="btn btn-outline-success" target="_blank" rel="noopener noreferrer">
+                            <i class="fas fa-folder-open me-1"></i>
+                            {{ 'journalDashboard.resources'|trans }}
+                        </a>
                         <a href="{{ path('app_journal_detail', {'code': code}) }}" class="btn btn-outline-secondary">
                             <i class="fas fa-arrow-left me-1"></i>
                             {{ 'journalPages.back'|trans }}

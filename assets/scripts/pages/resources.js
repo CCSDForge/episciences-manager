@@ -346,8 +346,10 @@ document.addEventListener('DOMContentLoaded', function () {
   // Copy URL buttons
   document.addEventListener('click', function (e) {
     if (e.target.closest('.copy-url-btn')) {
+      console.log('Copy URL button clicked!');
       const button = e.target.closest('.copy-url-btn');
       const url = button.getAttribute('data-url');
+      console.log('URL to copy:', url);
       copyToClipboard(url).catch(console.error);
     }
   });
@@ -668,18 +670,23 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   async function copyToClipboard(text) {
+    console.log('copyToClipboard called with:', text);
+
     // Modern clipboard API
     if (navigator.clipboard && window.isSecureContext) {
       try {
         await navigator.clipboard.writeText(text);
+        console.log('Clipboard API succeeded');
         showMessage(window.resourcesData.translations.copySuccess, 'success');
         return;
       } catch (error) {
         console.warn('Clipboard API failed, trying fallback:', error);
       }
+    } else {
+      console.log('Clipboard API not available, using fallback');
     }
 
-    // Manual fallback without deprecated APIs
+    // Fallback using execCommand (deprecated but still works)
     try {
       const textArea = document.createElement('textarea');
       textArea.value = text;
@@ -690,33 +697,24 @@ document.addEventListener('DOMContentLoaded', function () {
       document.body.appendChild(textArea);
 
       // Select the text
+      textArea.focus();
       textArea.select();
       textArea.setSelectionRange(0, 99999);
 
-      // Try to copy using keyboard shortcut simulation
-      const selection = document.getSelection();
-      const range = document.createRange();
-      range.selectNodeContents(textArea);
-      selection.removeAllRanges();
-      selection.addRange(range);
-
+      // Execute copy command
+      const successful = document.execCommand('copy');
       document.body.removeChild(textArea);
 
-      showMessage(
-        window.resourcesData.translations.copySuccess +
-          ' (Use Ctrl+C to copy manually if needed)',
-        'info'
-      );
-    } catch (error) {
-      console.error('Fallback copy failed:', error);
-
-      // Final fallback: show the text for manual copying
-      const copyText = prompt('Copy this text manually (Ctrl+C):', text);
-      if (copyText !== null) {
+      if (successful) {
+        console.log('execCommand copy succeeded');
         showMessage(window.resourcesData.translations.copySuccess, 'success');
       } else {
+        console.warn('execCommand copy returned false');
         showMessage(window.resourcesData.translations.copyError, 'danger');
       }
+    } catch (error) {
+      console.error('Fallback copy failed:', error);
+      showMessage(window.resourcesData.translations.copyError, 'danger');
     }
   }
 
