@@ -34,7 +34,7 @@ Parameters:
                     {% for lang in acceptedLanguages|default(['en', 'fr']) %}
                         <div class="translation-row d-flex align-items-center gap-2 mb-2" data-lang="{{ lang }}">
                             <span class="translation-flag" title="{{ lang|language_name(lang) }}">{{ lang|capitalize }}</span>
-                            <button class="btn btn-link btn-sm p-0 translation-action-btn" type="button" title="{{ 'widget.add_translation'|trans }}">
+                            <button class="btn btn-link btn-sm p-0 translation-action-btn" type="button" title="{{ 'widget.addTranslation'|trans }}">
                                 <i class="fas fa-plus text-muted"></i>
                             </button>
                             <input type="text" class="form-control form-control-sm translation-title-input" readonly placeholder="{{ lang|language_name(lang) }}" aria-label="{{ lang|language_name(lang) }}">

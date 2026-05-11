@@ -2,13 +2,13 @@
 <html lang="{{ app.request.locale|default('fr') }}">
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}{{ 'meta.default_title'|trans }}{% endblock %}</title>
+        <title>{% block title %}{{ 'meta.defaultTitle'|trans }}{% endblock %}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
         {# SEO Meta tags #}
-        <meta name="description" content="{% block meta_description %}{{ 'meta.default_description'|trans }}{% endblock %}">
-        <meta name="keywords" content="{% block meta_keywords %}{{ 'meta.default_keywords'|trans }}{% endblock %}">
+        <meta name="description" content="{% block meta_description %}{{ 'meta.defaultDescription'|trans }}{% endblock %}">
+        <meta name="keywords" content="{% block meta_keywords %}{{ 'meta.defaultKeywords'|trans }}{% endblock %}">
         <meta name="author" content="Episciences">
         <meta name="robots" content="{% block robots %}index, follow{% endblock %}">
 

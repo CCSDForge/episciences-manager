@@ -95,11 +95,18 @@
 
                                 <!-- Content -->
                                 <div class="news-content-col text-muted"
-                                     {% for lang in acceptedLanguages %}data-content-{{ lang }}="{{ news.content[lang]|default('')|striptags|e('html_attr') }}"{% endfor %}>
-                                    <span class="news-content-text">
-                                        {% set contentText = news.content[defaultLanguage]|default(news.content['en']|default(''))|striptags %}
-                                        {{ contentText|length > 300 ? contentText|slice(0, 300) ~ '…' : contentText }}
-                                    </span>
+                                     {% for lang in acceptedLanguages %}data-content-{{ lang }}="{{ news.htmlContent[lang]|default('')|striptags|e('html_attr') }}"{% endfor %}>
+                                    {% set rawContent = news.htmlContent[defaultLanguage]|default(news.htmlContent['en']|default('')) %}
+                                    {% set firstImage = rawContent|extract_first_image %}
+                                    {% set contentText = rawContent|striptags|decode_entities %}
+                                    <div class="d-flex align-items-start gap-2">
+                                        {% if firstImage %}
+                                            <img src="{{ firstImage }}" alt="" class="news-thumbnail rounded flex-shrink-0">
+                                        {% endif %}
+                                        <span class="news-content-text">
+                                            {{ contentText|length > 300 ? contentText|slice(0, 300) ~ '…' : contentText }}
+                                        </span>
+                                    </div>
                                 </div>
 
                                 <!-- Creation date -->

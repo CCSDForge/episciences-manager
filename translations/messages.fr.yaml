@@ -4,13 +4,13 @@ head:
   welcome: "Bienvenue"
 
 meta:
-  default_title: "Episciences Manager - Plateforme de gestion des journaux scientifiques"
-  default_description: "Interface d'administration pour la gestion des journaux scientifiques Episciences. Accédez aux outils de publication académique en libre accès."
-  default_keywords: "episciences, journaux scientifiques, libre accès, publication académique, recherche, hal"
+  defaultTitle: "Episciences Manager - Plateforme de gestion des journaux scientifiques"
+  defaultDescription: "Interface d'administration pour la gestion des journaux scientifiques Episciences. Accédez aux outils de publication académique en libre accès."
+  defaultKeywords: "episciences, journaux scientifiques, libre accès, publication académique, recherche, hal"
 
 nav:
   home: "Accueil"
-  the_journal: "Le Journal"
+  theJournal: "Le Journal"
   folder: "Dossier"
   dashboard: "Tableau de bord"
   users: "Utilisateurs"
@@ -20,34 +20,65 @@ nav:
   statistics: "Statistiques"
 
 home:
-  welcome_title: "Bienvenue sur la plateforme Episciences"
-  total_journals: "Revues au total"
-  no_journals_available: "Aucune revue disponible pour le moment."
+  welcomeTitle: "Bienvenue sur la plateforme Episciences"
+  totalJournals: "Revues au total"
+  noJournalsAvailable: "Aucune revue disponible pour le moment."
 
 reviews:
-  list_title: "Liste des revues"
+  listTitle: "Liste des revues"
 
 flash:
-  logout_success: "Déconnexion réussie ! Vous êtes maintenant déconnecté(e) du système."
+  logoutSuccess: "Déconnexion réussie ! Vous êtes maintenant déconnecté(e) du système."
 
 journal:
   title: "Revues au total"
-  journal_list: "Liste des revues"
-  active_journals: "Journaux actifs"
-  table_name: "Nom"
-  table_code: "Code"
-  table_action: "Action"
-  no_journals: "Aucun journal trouvé"
-  search_placeholder: "Nom ou code du journal"
-  clear_search: "Vider la recherche"
-  see_details: "Voir les détails (epiadmin uniquement)"
+  journalList: "Liste des revues"
+  activeJournals: "Journaux actifs"
+  tableName: "Nom"
+  tableCode: "Code"
+  tableAction: "Action"
+  noJournals: "Aucun journal trouvé"
+  searchPlaceholder: "Nom ou code du journal"
+  clearSearch: "Vider la recherche"
+  seeDetails: "Voir les détails (epiadmin uniquement)"
+
+journalDashboard:
+  editPages: "Éditer les pages"
+  backToJournalList: "Retour à la liste des revues"
+  welcomeBackoffice: "Bienvenue dans le backoffice de gestion du journal"
+  news: "Actualités"
+  resources: "Ressources"
+
+journalPages:
+  home: "Accueil"
+  menu: "Menu"
+  back: "Retour au tableau de bord"
+  noContentAvailable: "Aucun contenu disponible"
+  edit: "Éditer"
+  editPageContent: "Éditer le contenu de la page"
+  pageTitle: "Titre de la page"
+  notEditable: "lecture seule"
+  content: "Contenu"
+  enterContent: "Saisissez le contenu ici..."
+  cancel: "Annuler"
+  save: "Sauvegarder"
+  selectPageFirst: "Veuillez d'abord sélectionner une page à éditer"
+  missingPageInfo: "Erreur: informations de page manquantes"
+  saveSuccess: "Titre et contenu sauvegardés avec succès!"
+  saveError: "Erreur lors de la sauvegarde: "
+  previewPage: "Aperçu de la page"
+  languages: "Langues"
+  language: "Langue"
+  translations: "Traductions"
+  addTranslation: "Ajouter une traduction"
+  editTranslation: "Modifier la traduction"
 
 journalSettings:
   title: "Paramètres"
   save: "Sauvegarder"
   saved: "Paramètres sauvegardés avec succès"
   error: "Erreur lors de la sauvegarde"
-  readonly_info: "Vous pouvez consulter ces paramètres, mais seul epiadmin peut les modifier."
+  readonlyInfo: "Vous pouvez consulter ces paramètres, mais seul epiadmin peut les modifier."
 
   common:
     back: "Retour"
@@ -136,14 +167,6 @@ journalSettings:
     preview.accepted: "Articles acceptés"
     preview.other: "Autre statut"
 
-journalDashboard:
-  edit_pages: "Éditer les pages"
-  back_to_home: "Retour à l'accueil"
-  back_to_journal_list: "Retour à la liste des revues"
-  welcome_backoffice: "Bienvenue dans le backoffice de gestion du journal"
-  news: "Actualités"
-  resources: "Ressources"
-
 news:
   title: "Actualités"
   description: "Ajout / modifications d'actualités pour le site"
@@ -158,7 +181,7 @@ news:
     actions: "Actions"
   status:
     online: "en ligne"
-    offline: "hors ligne" # sur la liste?
+    offline: "hors ligne"
     invisible: "Invisible"
   createTitle: "Ajouter une actualité"
   editTitle: "Modifier une actualité"
@@ -168,7 +191,6 @@ news:
   deleteConfirmTitle: "Supprimer l'actualité"
   deleteConfirmMessage: "Êtes-vous sûr de vouloir supprimer cette actualité ?"
   form:
-    header: ""
     title: "Titre"
     content: "Contenu"
     link: "Lien"
@@ -183,31 +205,6 @@ news:
     created: "Actualité créée avec succès"
     updated: "Actualité mise à jour avec succès"
     deleted: "Actualité supprimée avec succès"
-
-journalPages:
-  home: "Accueil"
-  menu: "Menu"
-  welcome_title: "Bienvenue dans l’interface d’édition des pages"
-  back: "Retour au tableau de bord"
-  noContentAvailable: "Aucun contenu disponible"
-  edit: "Éditer"
-  edit_page_content: "Éditer le contenu de la page"
-  page_title: "Titre de la page"
-  not_editable: "lecture seule"
-  content: "Contenu"
-  enter_content: "Saisissez le contenu ici..."
-  cancel: "Annuler"
-  save: "Sauvegarder"
-  select_page_first: "Veuillez d'abord sélectionner une page à éditer"
-  missing_page_info: "Erreur: informations de page manquantes"
-  save_success: "Titre et contenu sauvegardés avec succès!"
-  save_error: "Erreur lors de la sauvegarde: "
-  preview_page: "Aperçu de la page"
-  languages: "Langues"
-  language: "Langue"
-  translations: "Traductions"
-  add_translation: "Ajouter une traduction"
-  edit_translation: "Modifier la traduction"
 
 resources:
   title: "Ressources"
@@ -278,21 +275,21 @@ widget:
   languages: "Langues"
   language: "Langue"
   translations: "Traductions"
-  add_translation: "Ajouter une traduction"
+  addTranslation: "Ajouter une traduction"
 
 footer:
-  about_title: "À propos d'Episciences"
+  aboutTitle: "À propos d'Episciences"
   contact: "Contact"
-  support_title: "Support"
+  support: "Support"
   documentation: "Documentation"
-  legal_mentions: "Mentions légales"
+  legalMentions: "Mentions légales"
   privacy: "Confidentialité"
-  user_feedback: "Retours utilisateurs"
-  terms_conditions: "Conditions Générales d'Utilisation"
-  code_dev_title: "Code/Dev"
+  userFeedback: "Retours utilisateurs"
+  termsConditions: "Conditions Générales d'Utilisation"
+  codeDevTitle: "Code/Dev"
   roadmap: "Feuille de route"
-  support_text: "Episciences a reçu le support de"
-  open_aire: "OpenAIRE"
-  services_text: "et ses services, notamment pour l'intégration de son service dans le projet OpenAIRE Nexus : financement de la"
-  grant_text: "Commission Européenne subvention 101017452"
-  nexus_description: "OpenAIRE Nexus - Services de Communication Scientifique OpenAIRE-Nexus pour les utilisateurs EOSC"
+  supportText: "Episciences a reçu le support de"
+  openAire: "OpenAIRE"
+  servicesText: "et ses services, notamment pour l'intégration de son service dans le projet OpenAIRE Nexus : financement de la"
+  grantText: "Commission Européenne subvention 101017452"
+  nexusDescription: "OpenAIRE Nexus - Services de Communication Scientifique OpenAIRE-Nexus pour les utilisateurs EOSC"

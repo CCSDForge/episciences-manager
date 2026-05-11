@@ -11,17 +11,11 @@
                     <i class="fas fa-folder-open me-2"></i>
                     {{ 'resources.title'|trans }}
                 </h1>
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item">
-                            <a href="{{ path('app_journal_dashboard', {'code': journal_code}) }}">
+
+                            <a href="{{ path('app_journal_dashboard', {'code': journal_code}) }}"  class="btn btn-outline-secondary">
                                 <i class="fas fa-arrow-left me-1"></i>
                                 {{ 'journalPages.back'|trans }}
                             </a>
-                        </li>
-                        <li class="breadcrumb-item active" aria-current="page">{{ 'resources.fileManagement'|trans }}</li>
-                    </ol>
-                </nav>
             </div>
 
             <!-- Upload Section -->

@@ -12,10 +12,9 @@
                   <h1 class="h3 mb-0"><i class="fas fa-cog me-2"></i>{{ 'journalSettings.title'|trans }}</h1>
               </div>
               <div class="text-end" style="flex:1;">
-                  <a href="{{ path('app_journal_detail', {'code': code}) }}" class="btn
- btn-outline-secondary">
+                  <a href="{{ path('app_journal_dashboard', {'code': code}) }}" class="btn btn-outline-secondary">
                       <i class="fas fa-arrow-left me-1"></i>
-                      {{ 'journalSettings.common.back'|trans }}
+                      {{ 'journalPages.back'|trans }}
                   </a>
               </div>
 
@@ -336,7 +335,7 @@
               </div>
           {% else %}
               <div class="alert alert-info mt-4 text-center">
-                  {{ 'journalSettings.readonly_info'|trans|default('You can view these settings but only epiadmin can modify them.') }}
+                  {{ 'journalSettings.readonlyInfo'|trans }}
               </div>
           {% endif %}
       </div>

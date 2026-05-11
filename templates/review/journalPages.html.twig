@@ -235,7 +235,7 @@
                                    rel="noopener noreferrer"
                                    class="btn btn-outline-primary btn-sm">
                                     <i class="fas fa-external-link-alt me-1"></i>
-                                    {{ 'journalPages.preview_page' | trans }}
+                                    {{ 'journalPages.previewPage' | trans }}
                                 </a>
                             </div>
                         </div>
@@ -247,7 +247,7 @@
                                 <div id="page-content" class="ck-content" style="display: block;">
                                     <div id="page-view-fields" style="display: none;">
                                         <div class="mb-3">
-                                            <label class="form-label text-primary fw-semibold">{{ 'journalPages.page_title' | trans }} <span class="text-muted fw-normal">({{ 'journalPages.not_editable' | trans }})</span></label>
+                                            <label class="form-label text-primary fw-semibold">{{ 'journalPages.pageTitle' | trans }} <span class="text-muted fw-normal">({{ 'journalPages.notEditable' | trans }})</span></label>
                                             <p class="form-control bg-light" id="page-title-view"></p>
                                         </div>
                                         <div class="mb-3">
@@ -258,8 +258,8 @@
                                     <div id="page-home-content">
                                         <div class="text-center py-5">
                                             <i class="fas fa-home fa-3x text-primary mb-3"></i>
-                                            <h3>{{ 'journalPages.welcome_title' | trans }}</h3>
-                                            <p class="text-muted">{{ 'journalPages.select_page_first' | trans }}</p>
+                                            <h3>{{ 'journalPages.welcomeTitle' | trans }}</h3>
+                                            <p class="text-muted">{{ 'journalPages.selectPageFirst' | trans }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -269,7 +269,7 @@
                                     <div class="d-flex justify-content-between align-items-center mb-3">
                                         <h5 class="mb-0">
                                             <i class="fas fa-edit me-2"></i>
-                                            {{ 'journalPages.edit_page_content' | trans }}
+                                            {{ 'journalPages.editPageContent' | trans }}
                                             <i class="fas fa-file-alt ms-2"></i>
                                         </h5>
                                         <div>
@@ -287,13 +287,13 @@
                                     <form id="inline-edit-form">
                                         <div class="mb-3">
                                             <label class="form-label">
-                                                {{ 'journalPages.page_title' | trans }} <span class="text-muted fw-normal">({{ 'journalPages.not_editable' | trans }})</span>
+                                                {{ 'journalPages.pageTitle' | trans }} <span class="text-muted fw-normal">({{ 'journalPages.notEditable' | trans }})</span>
                                             </label>
                                             <p class="form-control bg-light" id="page-title-inline"></p>
                                         </div>
                                         <div class="mb-3">
                                             <label for="page-content-inline" class="form-label">{{ 'journalPages.content' | trans }}</label>
-                                            <div id="page-content-inline" data-placeholder="{{ 'journals.enter_content' | trans }}"></div>
+                                            <div id="page-content-inline" data-placeholder="{{ 'journals.enterContent' | trans }}"></div>
                                         </div>
                                     </form>
                                 </div>
@@ -342,9 +342,9 @@
         editMode: {{ editMode|default(false)|json_encode|raw }},
         translations: {
           noContentAvailable: {{ 'journalPages.noContentAvailable'|trans|json_encode|raw }},
-          translations: {{ 'journalPages.translations'|trans|default('Traductions')|json_encode|raw }},
-          addTranslation: {{ 'journalPages.add_translation'|trans|default('Ajouter une traduction')|json_encode|raw }},
-          editTranslation: {{ 'journalPages.edit_translation'|trans|default('Modifier la traduction')|json_encode|raw }}
+          translations: {{ 'journalPages.translations'|trans|json_encode|raw }},
+          addTranslation: {{ 'journalPages.addTranslation'|trans|json_encode|raw }},
+          editTranslation: {{ 'journalPages.editTranslation'|trans|json_encode|raw }}
         }
       };
     </script>
