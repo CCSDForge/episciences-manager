@@ -92,7 +92,7 @@ journalPages:
   home: "Home"
   menu: "Menu"
   welcome_title: "Welcome to the page editing interface"
-  back: "Back"
+  back: "Back to Dashboard"
   noContentAvailable: "No content available"
   edit: "Edit"
   edit_content: "Edit Content"
@@ -175,11 +175,12 @@ resources:
   browseFiles: "Browse"
   # New translations for resource usage checking
   fileInUseWarning: "File currently in use"
-  fileInUseMessage: "This file is currently being used in the following pages. Deleting it may break the display of these pages."
+  fileInUseMessage: "This file is currently being used. Deleting it may break the display of pages or news."
   checkingUsage: "Checking usage..."
   pagesUsingFile: "Pages using this file:"
+  newsUsingFile: "News using this file:"
   deleteAnyway: "Delete anyway"
-  fileNotInUse: "This file is not used in any page."
+  fileNotInUse: "This file is not used in any page or news."
   safeToDelete: "It can be safely deleted."
   generateAutomatically: "Generate automatically"
 

@@ -14,7 +14,10 @@
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item">
-                            <a href="{{ path('app_journal_pages', {'code': journal_code}) }}">{{ 'resources.backToJournal'|trans }}</a>
+                            <a href="{{ path('app_journal_dashboard', {'code': journal_code}) }}">
+                                <i class="fas fa-arrow-left me-1"></i>
+                                {{ 'journalPages.back'|trans }}
+                            </a>
                         </li>
                         <li class="breadcrumb-item active" aria-current="page">{{ 'resources.fileManagement'|trans }}</li>
                     </ol>
@@ -368,6 +371,7 @@
             noFiles: '{{ 'resources.noFiles'|trans }}',
             insertLink: '{{ 'resources.insertLink'|trans }}',
             pagesUsingFile: '{{ 'resources.pagesUsingFile'|trans }}',
+            newsUsingFile: '{{ 'resources.newsUsingFile'|trans }}',
             deleteAnyway: '{{ 'resources.deleteAnyway'|trans }}',
             fileNotInUse: '{{ 'resources.fileNotInUse'|trans }}',
             safeToDelete: '{{ 'resources.safeToDelete'|trans }}',

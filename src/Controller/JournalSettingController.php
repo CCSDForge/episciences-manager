@@ -27,7 +27,7 @@ class JournalSettingController extends AbstractController
 
         $setting = $settingService->getSettingArray($review['rvid']);
 
-        return $this->render('journal_settings/index.html.twig', [
+        return $this->render('journalSettings/index.html.twig', [
             'review' => $review,
             'setting' => $setting,
             'code' => $code,

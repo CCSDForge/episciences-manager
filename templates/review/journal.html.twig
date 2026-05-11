@@ -84,14 +84,14 @@
                                     <tr>
                                         <td>
                                             {% if is_granted('REVIEW_VIEW', review) %}
-                                                <a href="{{ path('app_journal_detail', {code: review.code}) }}" class="fw-semibold text-decoration-none">{{ review.name }}</a>
+                                                <a href="{{ path('app_journal_dashboard', {code: review.code}) }}" class="fw-semibold text-decoration-none">{{ review.name }}</a>
                                             {% else %}
                                                 <div class="fw-semibold">{{ review.name }}</div>
                                             {% endif %}
                                         </td>
                                         <td>
                                             {% if is_granted('REVIEW_VIEW', review) %}
-                                                <a href="{{ path('app_journal_detail', {code: review.code}) }}"><span class="badge bg-primary">{{ review.code }}</span></a>
+                                                <a href="{{ path('app_journal_dashboard', {code: review.code}) }}"><span class="badge bg-primary">{{ review.code }}</span></a>
                                             {% else %}
                                                 <span class="badge bg-primary">{{ review.code }}</span>
                                             {% endif %}
@@ -99,7 +99,7 @@
                                         <td class="text-center">
                                             {# View details button - only for epiadmin, administrator, chief_editor, secretary #}
                                             {% if is_granted('REVIEW_VIEW', review) %}
-                                                <a href="{{ path('app_journal_detail', {code: review.code}) }}"
+                                                <a href="{{ path('app_journal_dashboard', {code: review.code}) }}"
                                                    class="action-btn"
                                                    title="{{ 'journal.see_details'|trans }}">
                                                     <i class="fas fa-eye"></i>

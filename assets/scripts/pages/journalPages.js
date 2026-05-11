@@ -534,7 +534,7 @@ document.addEventListener('DOMContentLoaded', function () {
   updateInlineEditTranslations();
 
   const pageLinks = document.querySelectorAll('.page-nav-link');
-  const homeLink = document.querySelector('a[href*="app_journal_detail"]');
+  const homeLink = document.querySelector('a[href*="app_journal_dashboard"]');
   const breadcrumbHomeLink = document.querySelector('.breadcrumb-home');
   const pageContent = document.getElementById('page-content');
   const pageViewFields = document.getElementById('page-view-fields');
