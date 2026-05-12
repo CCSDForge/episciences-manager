@@ -28,7 +28,7 @@
 
 // Language widget - collapsible panel
 .language-widget {
-  background: #fff;
+  background: $white;
 
   .collapse-icon {
     transition: transform 0.2s ease;
@@ -44,26 +44,26 @@
     }
 
     .translation-title-input {
-      background-color: #fff;
-      border: 1px solid #dee2e6;
+      background-color: $white;
+      border: 1px solid $border-color;
     }
   }
 }
 
 // News list columns
 .news-list {
-  background: #fff;
-  border: 1px solid #dee2e6;
+  background: $white;
+  border: 1px solid $border-color;
   border-radius: 0.5rem;
   overflow: hidden;
 
   .news-items {
     .news-item:nth-child(odd) {
-      background: #fff;
+      background: $white;
     }
 
     .news-item:nth-child(even) {
-      background: #f8f9fa; // close to Bootstrap bg-light
+      background: $light-gray;
     }
   }
 
@@ -111,7 +111,7 @@
       width: 80px;
       height: 60px;
       object-fit: cover;
-      border: 1px solid #dee2e6;
+      border: 1px solid $border-color;
     }
 
     .news-content-text {
