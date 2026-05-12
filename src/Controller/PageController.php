@@ -15,7 +15,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class PageController extends AbstractController
 {
@@ -252,39 +251,4 @@ final class PageController extends AbstractController
             ], 500);
         }
     }
-
-
-    #[Route('/api/translations/{locale}', name: 'app_translations', methods: ['GET'])]
-    public function getTranslations(string $locale, TranslatorInterface $translator, Request $request): JsonResponse
-    {
-        if (!$request->isXmlHttpRequest()) {
-            throw $this->createAccessDeniedException('This endpoint only accepts AJAX requests');
-        }
-
-        // Set the locale for the translator
-        $request->setLocale($locale);
-
-        $translations = [
-            'selectPageFirst' => $translator->trans('journalPages.selectPageFirst', [], 'messages', $locale),
-            'missingPageInfo' => $translator->trans('journalPages.missingPageInfo', [], 'messages', $locale),
-            'saveSuccess' => $translator->trans('journalPages.saveSuccess', [], 'messages', $locale),
-            'saveError' => $translator->trans('journalPages.saveError', [], 'messages', $locale),
-            'edit' => $translator->trans('journalPages.edit', [], 'messages', $locale),
-            'editPageContent' => $translator->trans('journalPages.editPageContent', [], 'messages', $locale),
-            'pageTitle' => $translator->trans('journalPages.pageTitle', [], 'messages', $locale),
-            'content' => $translator->trans('journalPages.content', [], 'messages', $locale),
-            'enterContent' => $translator->trans('journalPages.enterContent', [], 'messages', $locale),
-            'cancel' => $translator->trans('journalPages.cancel', [], 'messages', $locale),
-            'save' => $translator->trans('journalPages.save', [], 'messages', $locale),
-            'welcomeBackoffice' => $translator->trans('journalDashboard.welcomeBackoffice', [], 'messages', $locale),
-            'previewPage' => $translator->trans('journalPages.previewPage', [], 'messages', $locale),
-            'noContentAvailable' => $translator->trans('journalPages.noContentAvailable', [], 'messages', $locale),
-            'welcome' => $translator->trans('head.welcome', [], 'messages', $locale),
-            'login' => $translator->trans('head.login', [], 'messages', $locale),
-            'logout' => $translator->trans('head.logout', [], 'messages', $locale)
-        ];
-
-        return new JsonResponse($translations);
-    }
-
 }
