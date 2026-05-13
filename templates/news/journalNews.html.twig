@@ -90,13 +90,13 @@
                                 <!-- Title -->
                                 <div class="news-title-col"
                                      {% for lang in acceptedLanguages %}data-title-{{ lang }}="{{ news.title[lang]|default('')|e('html_attr') }}"{% endfor %}>
-                                    <span class="news-title-text">{{ news.title[defaultLanguage] ?? news.title['en'] ?? 'No title' }}</span>
+                                    <span class="news-title-text">{{ news.title[app.request.locale] ?? news.title[defaultLanguage] ?? 'No title' }}</span>
                                 </div>
 
                                 <!-- Content -->
                                 <div class="news-content-col text-muted"
                                      {% for lang in acceptedLanguages %}data-content-{{ lang }}="{{ news.htmlContent[lang]|default('')|striptags|e('html_attr') }}"{% endfor %}>
-                                    {% set rawContent = news.htmlContent[defaultLanguage]|default(news.htmlContent['en']|default('')) %}
+                                    {% set rawContent = news.htmlContent[app.request.locale]|default(news.htmlContent[defaultLanguage]|default('')) %}
                                     {% set firstImage = rawContent|extract_first_image %}
                                     {% set contentText = rawContent|striptags|decode_entities %}
                                     <div class="d-flex align-items-start gap-2">
