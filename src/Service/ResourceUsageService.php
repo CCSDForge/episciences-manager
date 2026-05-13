@@ -3,12 +3,15 @@
 namespace App\Service;
 
 use App\Entity\Page;
+use App\Entity\News;
 use App\Repository\PageRepository;
+use App\Repository\NewsRepository;
 
 readonly class ResourceUsageService
 {
     public function __construct(
-        private PageRepository $pageRepository
+        private PageRepository $pageRepository,
+        private NewsRepository $newsRepository
     ) {
     }
 
@@ -19,7 +22,7 @@ readonly class ResourceUsageService
      * @param string $rvcode The journal code
      * @return array<int, array{page_code: string|null, title: array<string, string>, locations: array<int, array<string, string>>}>
      */
-    public function findResourceUsage(string $filename, string $rvcode): array
+    public function findResourceUsageInPages(string $filename, string $rvcode): array
     {
         $usage = [];
 
@@ -33,7 +36,8 @@ readonly class ResourceUsageService
                 $usage[] = [
                     'page_code' => $page->getPageCode(),
                     'title' => $page->getTitle(),
-                    'locations' => $foundInContent
+                    'locations' => $foundInContent,
+                    'type' => 'page'
                 ];
             }
         }
@@ -42,40 +46,80 @@ readonly class ResourceUsageService
     }
 
     /**
-     * Search for resource references in page content
+     * Find news that use a specific resource file
      *
+     * @param string $filename The resource filename to search for
+     * @param string $rvcode The journal code
+     * @return array<int, array{news_id: int|null, title: array<string, string>, locations: array<int, array<string, string>>, type: string}>
+     */
+    public function findResourceUsageInNews(string $filename, string $rvcode): array
+    {
+        $usage = [];
+
+        // Search in news content for references to the resource
+        $newsList = $this->newsRepository->findBy(['rvcode' => $rvcode]);
+
+        foreach ($newsList as $news) {
+            $foundInContent = $this->searchInNewsContent($news, $filename, $rvcode);
+
+            if ($foundInContent !== []) {
+                $usage[] = [
+                    'news_id' => $news->getId(),
+                    'title' => $news->getTitle(),
+                    'locations' => $foundInContent,
+                    'type' => 'news'
+                ];
+            }
+        }
+
+        return $usage;
+    }
+
+    /**
+     * Get search patterns for resource references
+     *
+     * @return array<int, string>
+     */
+    private function getSearchPatterns(string $filename, string $rvcode): array
+    {
+        return [
+            // Direct resource URLs: /journal_code/resources/filename
+            "/{$rvcode}\/resources\/" . preg_quote($filename, '/') . "/i",
+            // Relative resource URLs: resources/filename
+            "/resources\/" . preg_quote($filename, '/') . "/i",
+            // HTML img src attributes
+            "/src=[\"'][^\"']*" . preg_quote($filename, '/') . "[\"']/i",
+            // HTML href attributes for links
+            "/href=[\"'][^\"']*" . preg_quote($filename, '/') . "[\"']/i",
+            // Markdown image syntax
+            "/!\[.*?\]\([^)]*" . preg_quote($filename, '/') . "[^)]*\)/i",
+            // Markdown link syntax
+            "/\[.*?\]\([^)]*" . preg_quote($filename, '/') . "[^)]*\)/i",
+            // Just the filename itself (loose match)
+            "/" . preg_quote($filename, '/') . "/i"
+        ];
+    }
+
+    /**
+     * Search for resource references in content array
+     *
+     * @param array<string, string>|null $content
      * @return array<int, array<string, string>>
      */
-    private function searchInPageContent(Page $page, string $filename, string $rvcode): array
+    private function searchInContent(?array $content, string $filename, string $rvcode): array
     {
         $locations = [];
-        $content = $page->getContent();
 
-        // Security: Escape special regex characters in filename to prevent regex injection
-        $escapedFilename = preg_quote($filename, '/');
-        $escapedRvcode = preg_quote($rvcode, '/');
+        if ($content === null) {
+            return $locations;
+        }
 
-        // Search patterns for different ways resources can be referenced
-        $patterns = [
-            // Direct resource URLs: /journal_code/resources/filename
-            "/{$escapedRvcode}\/resources\/{$escapedFilename}/i",
-            // Relative resource URLs: resources/filename
-            "/resources\/{$escapedFilename}/i",
-            // HTML img src attributes
-            "/src=[\"']{$escapedRvcode}\/resources\/{$escapedFilename}[\"']/i",
-            "/src=[\"']resources\/{$escapedFilename}[\"']/i",
-            // HTML href attributes for links
-            "/href=[\"']{$escapedRvcode}\/resources\/{$escapedFilename}[\"']/i",
-            "/href=[\"']resources\/{$escapedFilename}[\"']/i",
-            // Markdown image syntax
-            "/!\[.*?\]\([^)]*{$escapedFilename}[^)]*\)/i",
-            // Markdown link syntax
-            "/\[.*?\]\([^)]*{$escapedFilename}[^)]*\)/i",
-            // Just the filename itself (loose match)
-            "/{$escapedFilename}/i"
-        ];
+        $patterns = $this->getSearchPatterns($filename, $rvcode);
 
         foreach ($content as $locale => $contentData) {
+            if (!is_string($contentData)) {
+                continue;
+            }
             foreach ($patterns as $index => $pattern) {
                 if (preg_match($pattern, $contentData, $matches)) {
                     $patternType = $this->getPatternDescription($index);
@@ -90,6 +134,26 @@ readonly class ResourceUsageService
         }
 
         return $locations;
+    }
+
+    /**
+     * Search for resource references in page content
+     *
+     * @return array<int, array<string, string>>
+     */
+    private function searchInPageContent(Page $page, string $filename, string $rvcode): array
+    {
+        return $this->searchInContent($page->getContent(), $filename, $rvcode);
+    }
+
+    /**
+     * Search for resource references in news content
+     *
+     * @return array<int, array<string, string>>
+     */
+    private function searchInNewsContent(News $news, string $filename, string $rvcode): array
+    {
+        return $this->searchInContent($news->getContent(), $filename, $rvcode);
     }
 
     /**
@@ -114,24 +178,38 @@ readonly class ResourceUsageService
 
 
     /**
-     * Get a summary of resource usage
+     * Get a summary of resource usage (pages and news combined)
      *
-     * @return array{inUse: bool, pageCount: int, pages: array<int, array<string, mixed>>}
+     * @return array{inUse: bool, pageCount: int, newsCount: int, pages: array<int, array<string, mixed>>, news: array<int, array<string, mixed>>}
      */
     public function getResourceUsageSummary(string $filename, string $rvcode): array
     {
-        $usage = $this->findResourceUsage($filename, $rvcode);
+        $pageUsage = $this->findResourceUsageInPages($filename, $rvcode);
+        $newsUsage = $this->findResourceUsageInNews($filename, $rvcode);
+
+        $pagesFormatted = array_map(function($page) {
+            return [
+                'page_code' => $page['page_code'],
+                'title' => $page['title'],
+                'locationCount' => count($page['locations']),
+                'type' => 'page'
+            ];
+        }, $pageUsage);
+
+        $newsFormatted = array_map(function($news) {
+            return [
+                'news_id' => $news['news_id'],
+                'title' => $news['title'],
+                'locationCount' => count($news['locations']),
+                'type' => 'news'
+            ];
+        }, $newsUsage);
 
         return [
-            'inUse' => $usage !== [],
-            'pageCount' => count($usage),
-            'pages' => array_map(function($page) {
-                return [
-                    'page_code' => $page['page_code'],
-                    'title' => $page['title'],
-                    'locationCount' => count($page['locations'])
-                ];
-            }, $usage)
+            'inUse' => $pageUsage !== [] || $newsUsage !== [],
+            'pageCount' => count($pageUsage),
+            'newsCount' => count($newsUsage),
+            'pages' => array_merge($pagesFormatted, $newsFormatted)
         ];
     }
 }

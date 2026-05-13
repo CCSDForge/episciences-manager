@@ -19,7 +19,7 @@
     border-radius: 0.375rem 0.375rem 0 0;
 
     .btn-link {
-      color: #6c757d;
+      color: $secondary-color;
       text-decoration: none;
 
       &:hover {
@@ -101,7 +101,7 @@
 
     // Tablet: compact inline style
     @media (min-width: 768px) and (max-width: 1199px) {
-      background-color: #f8f9fa;
+      background-color: $light-gray;
       padding: 0.375rem 0.5rem;
       border-radius: 0.25rem;
       margin-bottom: 0;
@@ -114,7 +114,7 @@
     // Mobile: slightly larger touch targets
     @media (max-width: 767px) {
       padding: 0.5rem 0;
-      border-bottom: 1px solid #f0f0f0;
+      border-bottom: 1px solid $light-gray;
 
       &:last-child {
         border-bottom: none;
@@ -127,12 +127,12 @@
   }
 
   .card-header {
-    background-color: #f8f9fa;
-    border-bottom: 1px solid #dee2e6;
+    background-color: $light-gray;
+    border-bottom: 1px solid $border-color;
     font-size: 0.8rem;
 
     .btn-link {
-      color: #6c757d;
+      color: $secondary-color;
       text-decoration: none;
 
       &:hover {

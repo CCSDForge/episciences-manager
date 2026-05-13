@@ -15,7 +15,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class PageController extends AbstractController
 {
@@ -140,7 +139,7 @@ final class PageController extends AbstractController
         $allPages = $pageRepository->findBy(['rvcode' => $code]);
         $organizedPages = $hierarchyService->organizePages($allPages, $code);
 
-        return $this->render('review/journalDetails.html.twig', [
+        return $this->render('review/journalPages.html.twig', [
             'review' => $review,
             'code' => $code,
             'pages' => $organizedPages,
@@ -252,39 +251,4 @@ final class PageController extends AbstractController
             ], 500);
         }
     }
-
-
-    #[Route('/api/translations/{locale}', name: 'app_translations', methods: ['GET'])]
-    public function getTranslations(string $locale, TranslatorInterface $translator, Request $request): JsonResponse
-    {
-        if (!$request->isXmlHttpRequest()) {
-            throw $this->createAccessDeniedException('This endpoint only accepts AJAX requests');
-        }
-
-        // Set the locale for the translator
-        $request->setLocale($locale);
-
-        $translations = [
-            'selectPageFirst' => $translator->trans('journalDetails.select_page_first', [], 'messages', $locale),
-            'missingPageInfo' => $translator->trans('journalDetails.missing_page_info', [], 'messages', $locale),
-            'saveSuccess' => $translator->trans('journalDetails.save_success', [], 'messages', $locale),
-            'saveError' => $translator->trans('journalDetails.save_error', [], 'messages', $locale),
-            'edit' => $translator->trans('journalDetails.edit', [], 'messages', $locale),
-            'editPageContent' => $translator->trans('journalDetails.edit_page_content', [], 'messages', $locale),
-            'pageTitle' => $translator->trans('journalDetails.page_title', [], 'messages', $locale),
-            'content' => $translator->trans('journalDetails.content', [], 'messages', $locale),
-            'enterContent' => $translator->trans('journalDetails.enter_content', [], 'messages', $locale),
-            'cancel' => $translator->trans('journalDetails.cancel', [], 'messages', $locale),
-            'save' => $translator->trans('journalDetails.save', [], 'messages', $locale),
-            'welcomeBackoffice' => $translator->trans('journalDetails.welcome_backoffice', [], 'messages', $locale),
-            'previewPage' => $translator->trans('journalDetails.preview_page', [], 'messages', $locale),
-            'noContentAvailable' => $translator->trans('journalDetails.noContentAvailable', [], 'messages', $locale),
-            'welcome' => $translator->trans('head.welcome', [], 'messages', $locale),
-            'login' => $translator->trans('head.login', [], 'messages', $locale),
-            'logout' => $translator->trans('head.logout', [], 'messages', $locale)
-        ];
-
-        return new JsonResponse($translations);
-    }
-
 }

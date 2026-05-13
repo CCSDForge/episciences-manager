@@ -89,7 +89,7 @@ describe('Language Switch System', () => {
   });
 
   describe('AJAX Requests', () => {
-    test('should call fetch with correct parameters', async () => {
+    test('should call fetch with correct parameters for page content', async () => {
       const mockFetch = jest.fn().mockResolvedValue({
         ok: true,
         json: () =>
@@ -101,18 +101,21 @@ describe('Language Switch System', () => {
 
       global.fetch = mockFetch;
 
-      // Simuler un appel AJAX pour changer de langue
-      const response = await fetch('/fr/api/translations/fr', {
+      // Simulate AJAX call to fetch page content
+      const response = await fetch('/fr/journal/test-journal/page/about', {
         headers: {
           'X-Requested-With': 'XMLHttpRequest',
         },
       });
 
-      expect(mockFetch).toHaveBeenCalledWith('/fr/api/translations/fr', {
-        headers: {
-          'X-Requested-With': 'XMLHttpRequest',
-        },
-      });
+      expect(mockFetch).toHaveBeenCalledWith(
+        '/fr/journal/test-journal/page/about',
+        {
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+          },
+        }
+      );
 
       const data = await response.json();
       expect(data).toHaveProperty('title');
@@ -126,7 +129,7 @@ describe('Language Switch System', () => {
       global.fetch = mockFetch;
 
       try {
-        await fetch('/fr/api/translations/fr');
+        await fetch('/fr/journal/test-journal/page/about');
       } catch (error) {
         expect(error.message).toBe('Network error');
       }

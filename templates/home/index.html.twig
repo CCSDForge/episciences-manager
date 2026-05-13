@@ -8,8 +8,8 @@
             {% include 'partials/navbar.html.twig' %}
         {% endif %}
         <div class="text-center my-5">
-            <h1>{{ 'home.welcome_title' |trans }}</h1>
-            <h2 class="review-title text-center">{{ 'reviews.list_title'|trans }}</h2>
+            <h1>{{ 'home.welcomeTitle' |trans }}</h1>
+            <h2 class="review-title text-center">{{ 'reviews.listTitle'|trans }}</h2>
             <div>
 
                 {% include 'components/flash_messages.html.twig' with {types: ['logout_success', 'success']} %}
@@ -18,7 +18,7 @@
                     {# Affichage du total #}
                     <div class="text-center mb-3">
                 <span class="badge bg-primary">
-                    {{ reviews.totalItemCount }} {{ 'home.total_journals'|trans }}
+                    {{ reviews.totalItemCount }} {{ 'home.totalJournals'|trans }}
                 </span>
                     </div>
 
@@ -43,7 +43,7 @@
                 {% else %}
                     <div class="alert alert-info text-center">
                         <i class="fa fa-info-circle"></i>
-                        {{ 'home.no_journals_available'|trans }}
+                        {{ 'home.noJournalsAvailable'|trans }}
                     </div>
                 {% endif %}
             </div>

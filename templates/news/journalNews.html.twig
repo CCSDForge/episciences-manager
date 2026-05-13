@@ -16,9 +16,13 @@
                 <div class="ps-3">
                     <h1 class="h3 mb-0 text-primary fw-bold">{{ review.name }}</h1>
                 </div>
-                <!-- Back button -->
-                <div class="text-end">
-                    <a href="{{ path('app_journal_detail', {'code': code} ) }}" class="btn btn-outline-secondary">
+                <!-- Back button and Resources -->
+                <div class="d-flex justify-content-end gap-2">
+                    <a href="{{ path('app_resources_manager', {'code': code}) }}" class="btn btn-outline-success btn-sm" target="_blank" rel="noopener noreferrer">
+                        <i class="fas fa-folder-open me-1"></i>
+                        {{ 'journalDashboard.resources'|trans }}
+                    </a>
+                    <a href="{{ path('app_journal_dashboard', {'code': code} ) }}" class="btn btn-outline-secondary btn-sm">
                         <i class="fas fa-arrow-left me-1"></i>
                         {{ 'journalPages.back'|trans }}
                     </a>
@@ -86,16 +90,23 @@
                                 <!-- Title -->
                                 <div class="news-title-col"
                                      {% for lang in acceptedLanguages %}data-title-{{ lang }}="{{ news.title[lang]|default('')|e('html_attr') }}"{% endfor %}>
-                                    <span class="news-title-text">{{ news.title[defaultLanguage] ?? news.title['en'] ?? 'No title' }}</span>
+                                    <span class="news-title-text">{{ news.title[app.request.locale] ?? news.title[defaultLanguage] ?? 'No title' }}</span>
                                 </div>
 
                                 <!-- Content -->
                                 <div class="news-content-col text-muted"
-                                     {% for lang in acceptedLanguages %}data-content-{{ lang }}="{{ news.content[lang]|default('')|striptags|e('html_attr') }}"{% endfor %}>
-                                    <span class="news-content-text">
-                                        {% set contentText = news.content[defaultLanguage]|default(news.content['en']|default(''))|striptags %}
-                                        {{ contentText|length > 300 ? contentText|slice(0, 300) ~ '…' : contentText }}
-                                    </span>
+                                     {% for lang in acceptedLanguages %}data-content-{{ lang }}="{{ news.htmlContent[lang]|default('')|striptags|e('html_attr') }}"{% endfor %}>
+                                    {% set rawContent = news.htmlContent[app.request.locale]|default(news.htmlContent[defaultLanguage]|default('')) %}
+                                    {% set firstImage = rawContent|extract_first_image %}
+                                    {% set contentText = rawContent|striptags|decode_entities %}
+                                    <div class="d-flex align-items-start gap-2">
+                                        {% if firstImage %}
+                                            <img src="{{ firstImage }}" alt="" class="news-thumbnail rounded flex-shrink-0">
+                                        {% endif %}
+                                        <span class="news-content-text">
+                                            {{ contentText|length > 300 ? contentText|slice(0, 300) ~ '…' : contentText }}
+                                        </span>
+                                    </div>
                                 </div>
 
                                 <!-- Creation date -->

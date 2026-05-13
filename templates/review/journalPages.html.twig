@@ -11,6 +11,9 @@
 
         <!-- Main column -->
         <div class="col-12 col-xl-10">
+            <!-- Hidden checkbox for mobile menu toggle (CSS-only) -->
+            <input type="checkbox" id="mobile-menu-toggle" class="mobile-menu-checkbox" aria-hidden="true">
+
             <!-- Mobile: Logo + Title stacked -->
             <div class="mobile-header d-md-none mt-3 px-3 text-center">
                 <div class="journal-logo mb-3">
@@ -21,13 +24,13 @@
                 <div class="journal-title">
                     <h1 class="h4 mb-0 text-primary fw-bold">{{ review.name }}</h1>
                 </div>
-                <!-- Mobile Menu Button -->
+                <!-- Mobile Menu Button (label for checkbox) -->
                 {% if pages is defined and pages.main is not empty %}
                     <div class="mt-3">
-                        <button class="btn btn-outline-primary w-100" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu">
+                        <label for="mobile-menu-toggle" class="btn btn-outline-primary w-100 mobile-menu-btn">
                             <i class="fas fa-bars me-2"></i>
                             {{ 'journalPages.menu'|trans|default('Menu') }}
-                        </button>
+                        </label>
                     </div>
                 {% endif %}
             </div>
@@ -46,9 +49,13 @@
                     <div class="ps-3">
                         <h1 class="h3 mb-0 text-primary fw-bold">{{ review.name }}</h1>
                     </div>
-                    <!-- Back button (aligned with widget) -->
-                    <div class="text-end">
-                        <a href="{{ path('app_journal_detail', {'code': code}) }}" class="btn btn-outline-secondary">
+                    <!-- Back button and Resources (aligned with widget) -->
+                    <div class="d-flex justify-content-end gap-2">
+                        <a href="{{ path('app_resources_manager', {'code': code}) }}" class="btn btn-outline-success btn-sm" target="_blank" rel="noopener noreferrer">
+                            <i class="fas fa-folder-open me-1"></i>
+                            {{ 'journalDashboard.resources'|trans }}
+                        </a>
+                        <a href="{{ path('app_journal_dashboard', {'code': code}) }}" class="btn btn-outline-secondary btn-sm">
                             <i class="fas fa-arrow-left me-1"></i>
                             {{ 'journalPages.back'|trans }}
                         </a>
@@ -60,16 +67,19 @@
 
                 <!-- Row 2: Sidebar + Content + Language Widget -->
                 <div class="journal-layout">
-                    <!-- Sidebar with offcanvas-md (responsive) -->
-                    <div class="journal-layout__sidebar">
+                    <!-- Mobile backdrop (CSS-only) -->
+                    <label for="mobile-menu-toggle" class="mobile-menu-backdrop d-md-none"></label>
+
+                    <!-- Sidebar (CSS-only responsive) -->
+                    <div class="journal-layout__sidebar" id="sidebarMenu">
                         {% if pages is defined and pages.main is not empty %}
-                            <div class="offcanvas-md offcanvas-start" tabindex="-1" id="sidebarMenu" aria-labelledby="sidebarMenuLabel">
-                                <div class="offcanvas-header d-md-none">
-                                    <h5 class="offcanvas-title" id="sidebarMenuLabel">{{ 'journalPages.menu'|trans|default('Menu') }}</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                                </div>
-                                <div class="offcanvas-body">
-                                    <nav class="nav flex-column bg-light rounded p-3 sidebar-menu">
+                            <!-- Mobile header -->
+                            <div class="d-flex justify-content-between align-items-center p-3 border-bottom bg-light d-md-none">
+                                <h5 class="mb-0">{{ 'journalPages.menu'|trans|default('Menu') }}</h5>
+                                <label for="mobile-menu-toggle" class="btn-close" aria-label="Close"></label>
+                            </div>
+                            <!-- Sidebar content -->
+                            <nav class="nav flex-column bg-light rounded p-3 sidebar-menu">
                                         <a class="nav-link home-nav-link py-2"
                                            href="{{ path('app_journal_pages', {'code': code, '_locale': app.request.locale}) }}"
                                            data-home-text-en="Home"
@@ -186,19 +196,7 @@
                                             {% endif %}
                                         {% endfor %}
 
-                                        <hr class="my-2">
-
-                                        <a class="nav-link py-2"
-                                           href="{{ path('app_resources_manager', {'code': code}) }}"
-                                           target="_blank"
-                                           rel="noopener noreferrer">
-                                            <i class="fas fa-folder-open me-2"></i>
-                                            {{ 'resources.title'|trans }}
-                                        </a>
-
                                     </nav>
-                                </div>
-                            </div>
                         {% endif %}
                     </div>
 
@@ -237,7 +235,7 @@
                                    rel="noopener noreferrer"
                                    class="btn btn-outline-primary btn-sm">
                                     <i class="fas fa-external-link-alt me-1"></i>
-                                    {{ 'journalPages.preview_page' | trans }}
+                                    {{ 'journalPages.previewPage' | trans }}
                                 </a>
                             </div>
                         </div>
@@ -249,7 +247,7 @@
                                 <div id="page-content" class="ck-content" style="display: block;">
                                     <div id="page-view-fields" style="display: none;">
                                         <div class="mb-3">
-                                            <label class="form-label text-primary fw-semibold">{{ 'journalPages.page_title' | trans }} <span class="text-muted fw-normal">({{ 'journalPages.not_editable' | trans }})</span></label>
+                                            <label class="form-label text-primary fw-semibold">{{ 'journalPages.pageTitle' | trans }} <span class="text-muted fw-normal">({{ 'journalPages.notEditable' | trans }})</span></label>
                                             <p class="form-control bg-light" id="page-title-view"></p>
                                         </div>
                                         <div class="mb-3">
@@ -260,8 +258,8 @@
                                     <div id="page-home-content">
                                         <div class="text-center py-5">
                                             <i class="fas fa-home fa-3x text-primary mb-3"></i>
-                                            <h3>{{ 'journalPages.welcome_title' | trans }}</h3>
-                                            <p class="text-muted">{{ 'journalPages.select_page_first' | trans }}</p>
+                                            <h3>{{ 'journalPages.welcomeTitle' | trans }}</h3>
+                                            <p class="text-muted">{{ 'journalPages.selectPageFirst' | trans }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -271,7 +269,7 @@
                                     <div class="d-flex justify-content-between align-items-center mb-3">
                                         <h5 class="mb-0">
                                             <i class="fas fa-edit me-2"></i>
-                                            {{ 'journalPages.edit_page_content' | trans }}
+                                            {{ 'journalPages.editPageContent' | trans }}
                                             <i class="fas fa-file-alt ms-2"></i>
                                         </h5>
                                         <div>
@@ -289,13 +287,13 @@
                                     <form id="inline-edit-form">
                                         <div class="mb-3">
                                             <label class="form-label">
-                                                {{ 'journalPages.page_title' | trans }} <span class="text-muted fw-normal">({{ 'journalPages.not_editable' | trans }})</span>
+                                                {{ 'journalPages.pageTitle' | trans }} <span class="text-muted fw-normal">({{ 'journalPages.notEditable' | trans }})</span>
                                             </label>
                                             <p class="form-control bg-light" id="page-title-inline"></p>
                                         </div>
                                         <div class="mb-3">
                                             <label for="page-content-inline" class="form-label">{{ 'journalPages.content' | trans }}</label>
-                                            <div id="page-content-inline" data-placeholder="{{ 'journals.enter_content' | trans }}"></div>
+                                            <div id="page-content-inline" data-placeholder="{{ 'journals.enterContent' | trans }}"></div>
                                         </div>
                                     </form>
                                 </div>
@@ -314,9 +312,8 @@
                         defaultLanguage: defaultLanguage
                     }) }}
                 </div>
-                    </div>
-                </div>
             </div>
+        </div>
 
         <!-- Right empty column (matches left) -->
         <div class="col-1 d-none d-xl-block">
@@ -344,10 +341,22 @@
         currentPage: {{ currentPage|default('')|json_encode|raw }},
         editMode: {{ editMode|default(false)|json_encode|raw }},
         translations: {
+          edit: {{ 'journalPages.edit'|trans|json_encode|raw }},
+          editPageContent: {{ 'journalPages.editPageContent'|trans|json_encode|raw }},
+          pageTitle: {{ 'journalPages.pageTitle'|trans|json_encode|raw }},
+          content: {{ 'journalPages.content'|trans|json_encode|raw }},
+          enterContent: {{ 'journalPages.enterContent'|trans|json_encode|raw }},
+          cancel: {{ 'journalPages.cancel'|trans|json_encode|raw }},
+          save: {{ 'journalPages.save'|trans|json_encode|raw }},
+          selectPageFirst: {{ 'journalPages.selectPageFirst'|trans|json_encode|raw }},
+          missingPageInfo: {{ 'journalPages.missingPageInfo'|trans|json_encode|raw }},
+          saveSuccess: {{ 'journalPages.saveSuccess'|trans|json_encode|raw }},
+          saveError: {{ 'journalPages.saveError'|trans|json_encode|raw }},
+          previewPage: {{ 'journalPages.previewPage'|trans|json_encode|raw }},
           noContentAvailable: {{ 'journalPages.noContentAvailable'|trans|json_encode|raw }},
-          translations: {{ 'journalPages.translations'|trans|default('Traductions')|json_encode|raw }},
-          addTranslation: {{ 'journalPages.add_translation'|trans|default('Ajouter une traduction')|json_encode|raw }},
-          editTranslation: {{ 'journalPages.edit_translation'|trans|default('Modifier la traduction')|json_encode|raw }}
+          translations: {{ 'journalPages.translations'|trans|json_encode|raw }},
+          addTranslation: {{ 'journalPages.addTranslation'|trans|json_encode|raw }},
+          editTranslation: {{ 'journalPages.editTranslation'|trans|json_encode|raw }}
         }
       };
     </script>

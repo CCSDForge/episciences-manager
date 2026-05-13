@@ -1,7 +1,8 @@
 // Resources page styles
+@use '../components/variables' as *;
 
 .copy-url-btn:hover {
-  background-color: #e9ecef;
+  background-color: $medium-gray;
 }
 
 #uploadProgress .progress {
@@ -52,21 +53,21 @@
 .action-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  border-color: #007bff;
+  border-color: $primary-color;
 }
 
 .action-card.selected {
-  border-color: #007bff;
-  background-color: #f8f9fa;
+  border-color: $primary-color;
+  background-color: $light-gray;
 }
 
 .action-card[style*='not-allowed'] {
-  background-color: #f8f9fa !important;
-  border-color: #dee2e6 !important;
+  background-color: $light-gray !important;
+  border-color: $border-color !important;
 }
 
 .action-card[style*='not-allowed']:hover {
   transform: none !important;
   box-shadow: none !important;
-  border-color: #dee2e6 !important;
+  border-color: $border-color !important;
 }

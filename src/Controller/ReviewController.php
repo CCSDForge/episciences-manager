@@ -55,7 +55,7 @@ final class ReviewController extends AbstractController
     }
 
 
-    #[Route('/journal/{code}', name: 'app_journal_detail', requirements: ['code' => '[\w\-]+'])]
+    #[Route('/journal/{code}', name: 'app_journal_dashboard', requirements: ['code' => '[\w\-]+'])]
     public function getJournal(string $code, ReviewManager $reviewManager, PageRepository $pageRepository, PageHierarchyService $hierarchyService, JournalSettingService $settingService): Response
     {
         // Get the review by its code
@@ -68,7 +68,7 @@ final class ReviewController extends AbstractController
         // Check if user has permission to view this specific review
         $this->denyAccessUnlessGranted('REVIEW_VIEW', $review);
 
-        return $this->render('review/journalDetails.html.twig', [
+        return $this->render('review/journalDashboard.html.twig', [
             'review' => $review,
             'code' => $code,
         ]);

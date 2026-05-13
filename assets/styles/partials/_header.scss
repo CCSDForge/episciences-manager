@@ -3,8 +3,7 @@
 
 // Variables
 $breakpoint-lg: 991.98px;
-$border-color: #dee2e6;
-$bg-color: #fff;
+$bg-color: $white;
 $shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
 @mixin smooth-transition($property: all, $duration: 0.3s, $timing: ease) {

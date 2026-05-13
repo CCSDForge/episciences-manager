@@ -347,8 +347,10 @@ document.addEventListener('DOMContentLoaded', function () {
   // Copy URL buttons
   document.addEventListener('click', function (e) {
     if (e.target.closest('.copy-url-btn')) {
+      console.log('Copy URL button clicked!');
       const button = e.target.closest('.copy-url-btn');
       const url = button.getAttribute('data-url');
+      console.log('URL to copy:', url);
       copyToClipboard(url).catch(console.error);
     }
   });
@@ -679,18 +681,23 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   async function copyToClipboard(text) {
+    console.log('copyToClipboard called with:', text);
+
     // Modern clipboard API
     if (navigator.clipboard && window.isSecureContext) {
       try {
         await navigator.clipboard.writeText(text);
+        console.log('Clipboard API succeeded');
         showMessage(window.resourcesData.translations.copySuccess, 'success');
         return;
       } catch (error) {
         console.warn('Clipboard API failed, trying fallback:', error);
       }
+    } else {
+      console.log('Clipboard API not available, using fallback');
     }
 
-    // Manual fallback without deprecated APIs
+    // Fallback using execCommand (deprecated but still works)
     try {
       const textArea = document.createElement('textarea');
       textArea.value = text;
@@ -701,33 +708,24 @@ document.addEventListener('DOMContentLoaded', function () {
       document.body.appendChild(textArea);
 
       // Select the text
+      textArea.focus();
       textArea.select();
       textArea.setSelectionRange(0, 99999);
 
-      // Try to copy using keyboard shortcut simulation
-      const selection = document.getSelection();
-      const range = document.createRange();
-      range.selectNodeContents(textArea);
-      selection.removeAllRanges();
-      selection.addRange(range);
-
+      // Execute copy command
+      const successful = document.execCommand('copy');
       document.body.removeChild(textArea);
 
-      showMessage(
-        window.resourcesData.translations.copySuccess +
-          ' (Use Ctrl+C to copy manually if needed)',
-        'info'
-      );
-    } catch (error) {
-      console.error('Fallback copy failed:', error);
-
-      // Final fallback: show the text for manual copying
-      const copyText = prompt('Copy this text manually (Ctrl+C):', text);
-      if (copyText !== null) {
+      if (successful) {
+        console.log('execCommand copy succeeded');
         showMessage(window.resourcesData.translations.copySuccess, 'success');
       } else {
+        console.warn('execCommand copy returned false');
         showMessage(window.resourcesData.translations.copyError, 'danger');
       }
+    } catch (error) {
+      console.error('Fallback copy failed:', error);
+      showMessage(window.resourcesData.translations.copyError, 'danger');
     }
   }
 
@@ -1322,8 +1320,8 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // Show resource usage warning in modal
-  function showResourceUsageWarning(pages) {
-    console.log('Showing usage warning for pages:', pages);
+  function showResourceUsageWarning(items) {
+    console.log('Showing usage warning for items:', items);
 
     const warningSection = document.getElementById('usageWarningSection');
     const usageDetailsList = document.getElementById('usageDetailsList');
@@ -1333,35 +1331,72 @@ document.addEventListener('DOMContentLoaded', function () {
       return;
     }
 
+    // Separate pages and news
+    const pages = items.filter(item => item.type === 'page' || !item.type);
+    const news = items.filter(item => item.type === 'news');
+
+    let html = '<div class="mt-3">';
+
     // Build the list of pages
-    const pagesUsingFileText =
-      window.resourcesData?.translations?.pagesUsingFile ||
-      'Pages using this file:';
-    let pagesHtml = `<div class="mt-3"><strong>${pagesUsingFileText}</strong><ul class="mt-2">`;
+    if (pages.length > 0) {
+      const pagesUsingFileText =
+        window.resourcesData?.translations?.pagesUsingFile ||
+        'Pages using this file:';
+      html += `<strong><i class="fas fa-file-alt me-1"></i>${pagesUsingFileText}</strong><ul class="mt-2 mb-3">`;
 
-    pages.forEach(page => {
-      // Get page title for current locale or fallback
-      let pageTitle = page?.page_code || 'Unknown page';
-      if (page?.title) {
+      pages.forEach(page => {
         const currentLocale = getCurrentLocale();
-        pageTitle =
-          page.title[currentLocale] ||
-          page.title.en ||
-          page.title.fr ||
-          page?.page_code ||
-          'Unknown page';
-      }
+        let pageTitle = page?.page_code || 'Unknown page';
+        if (page?.title) {
+          pageTitle =
+            page.title[currentLocale] ||
+            page.title.en ||
+            page.title.fr ||
+            page?.page_code ||
+            'Unknown page';
+        }
 
-      pagesHtml += `<li><strong>${escapeHtml(pageTitle)}</strong> (${escapeHtml(page?.page_code || 'Unknown')})`;
-      if (page?.locationCount > 1) {
-        pagesHtml += ` - ${page.locationCount} references`;
-      }
-      pagesHtml += '</li>';
-    });
+        html += `<li><strong>${escapeHtml(pageTitle)}</strong> (${escapeHtml(page?.page_code || 'Unknown')})`;
+        if (page?.locationCount > 1) {
+          html += ` - ${page.locationCount} references`;
+        }
+        html += '</li>';
+      });
 
-    pagesHtml += '</ul></div>';
+      html += '</ul>';
+    }
 
-    usageDetailsList.innerHTML = pagesHtml;
+    // Build the list of news
+    if (news.length > 0) {
+      const newsUsingFileText =
+        window.resourcesData?.translations?.newsUsingFile ||
+        'News using this file:';
+      html += `<strong><i class="fas fa-newspaper me-1"></i>${newsUsingFileText}</strong><ul class="mt-2">`;
+
+      news.forEach(newsItem => {
+        const currentLocale = getCurrentLocale();
+        let newsTitle = 'News #' + (newsItem?.news_id || 'Unknown');
+        if (newsItem?.title) {
+          newsTitle =
+            newsItem.title[currentLocale] ||
+            newsItem.title.en ||
+            newsItem.title.fr ||
+            newsTitle;
+        }
+
+        html += `<li><strong>${escapeHtml(newsTitle)}</strong>`;
+        if (newsItem?.locationCount > 1) {
+          html += ` - ${newsItem.locationCount} references`;
+        }
+        html += '</li>';
+      });
+
+      html += '</ul>';
+    }
+
+    html += '</div>';
+
+    usageDetailsList.innerHTML = html;
     warningSection.style.display = 'block';
   }
 
