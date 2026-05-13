@@ -103,14 +103,14 @@
                                                    aria-expanded="false"
                                                    aria-controls="{{ collapseId }}"
                                                         {% if isContainer %}
-                                                    {% for lang in acceptedLanguages %}data-title-{{ lang }}="{{ page.title[lang] ?? page.title['en'] ?? page.title }}" {% endfor %}
+                                                    {% for lang in acceptedLanguages %}data-title-{{ lang }}="{{ page.title[lang] ?? page.title[defaultLanguage] ?? page.title }}" {% endfor %}
                                                     data-is-container="true"
                                                         {% endif %}>
                                                 <span>
                                                     {% if isContainer %}
-                                                        {{ page.title[app.request.locale] ?? page.title['en'] ?? page.title }}
+                                                        {{ page.title[app.request.locale] ?? page.title[defaultLanguage] ?? page.title }}
                                                     {% else %}
-                                                        {{ page.title[app.request.locale] ?? page.title['en'] ?? page.pageCode }}
+                                                        {{ page.title[app.request.locale] ?? page.title[defaultLanguage] ?? page.pageCode }}
                                                     {% endif %}
                                                 </span>
                                                     <i class="fas fa-chevron-down fa-xs"></i>
@@ -132,14 +132,14 @@
                                                                    aria-expanded="false"
                                                                    aria-controls="{{ subCollapseId }}"
                                                                         {% if isSubContainer %}
-                                                                    {% for lang in acceptedLanguages %}data-title-{{ lang }}="{{ subPage.title[lang] ?? subPage.title['en'] ?? subPage.title }}" {% endfor %}
+                                                                    {% for lang in acceptedLanguages %}data-title-{{ lang }}="{{ subPage.title[lang] ?? subPage.title[defaultLanguage] ?? subPage.title }}" {% endfor %}
                                                                     data-is-container="true"
                                                                         {% endif %}>
                                                                 <span>
                                                                     {% if isSubContainer %}
-                                                                        {{ subPage.title[app.request.locale] ?? subPage.title['en'] ?? subPage.title }}
+                                                                        {{ subPage.title[app.request.locale] ?? subPage.title[defaultLanguage] ?? subPage.title }}
                                                                     {% else %}
-                                                                        {{ subPage.title[app.request.locale] ?? subPage.title['en'] ?? subPage.pageCode }}
+                                                                        {{ subPage.title[app.request.locale] ?? subPage.title[defaultLanguage] ?? subPage.pageCode }}
                                                                     {% endif %}
                                                                 </span>
                                                                     <i class="fas fa-chevron-down fa-xs"></i>
@@ -152,10 +152,10 @@
                                                                                href="#"
                                                                                data-page-code="{{ nestedPage.pageCode|page_slug }}"
                                                                                data-journal-code="{{ code }}"
-                                                                               {% for lang in acceptedLanguages %}data-grandparent-title-{{ lang }}="{{ page.title[lang] ?? page.title['en'] ?? page.title }}" {% endfor %}
-                                                                                    {% for lang in acceptedLanguages %}data-parent-title-{{ lang }}="{{ subPage.title[lang] ?? subPage.title['en'] ?? subPage.title }}" {% endfor %}
-                                                                                    {% for lang in acceptedLanguages %}data-current-title-{{ lang }}="{{ nestedPage.title[lang] ?? nestedPage.title['en'] ?? nestedPage.pageCode }}" {% endfor %}>
-                                                                                {{ nestedPage.title[app.request.locale] ?? nestedPage.title['en'] ?? nestedPage.pageCode }}
+                                                                               {% for lang in acceptedLanguages %}data-grandparent-title-{{ lang }}="{{ page.title[lang] ?? page.title[defaultLanguage] ?? page.title }}" {% endfor %}
+                                                                                    {% for lang in acceptedLanguages %}data-parent-title-{{ lang }}="{{ subPage.title[lang] ?? subPage.title[defaultLanguage] ?? subPage.title }}" {% endfor %}
+                                                                                    {% for lang in acceptedLanguages %}data-current-title-{{ lang }}="{{ nestedPage.title[lang] ?? nestedPage.title[defaultLanguage] ?? nestedPage.pageCode }}" {% endfor %}>
+                                                                                {{ nestedPage.title[app.request.locale] ?? nestedPage.title[defaultLanguage] ?? nestedPage.pageCode }}
                                                                             </a>
                                                                         {% endfor %}
                                                                     </nav>
@@ -166,9 +166,9 @@
                                                                    href="#"
                                                                    data-page-code="{{ subPage.pageCode|page_slug }}"
                                                                    data-journal-code="{{ code }}"
-                                                                   {% for lang in acceptedLanguages %}data-parent-title-{{ lang }}="{% if isContainer %}{{ page.title[lang] ?? page.title['en'] ?? page.title }}{% else %}{{ page.title[lang] ?? page.title['en'] ?? page.pageCode }}{% endif %}" {% endfor %}
-                                                                        {% for lang in acceptedLanguages %}data-current-title-{{ lang }}="{{ subPage.title[lang] ?? subPage.title['en'] ?? subPage.pageCode }}" {% endfor %}>
-                                                                    {{ subPage.title[app.request.locale] ?? subPage.title['en'] ?? subPage.pageCode }}
+                                                                   {% for lang in acceptedLanguages %}data-parent-title-{{ lang }}="{% if isContainer %}{{ page.title[lang] ?? page.title[defaultLanguage] ?? page.title }}{% else %}{{ page.title[lang] ?? page.title[defaultLanguage] ?? page.pageCode }}{% endif %}" {% endfor %}
+                                                                        {% for lang in acceptedLanguages %}data-current-title-{{ lang }}="{{ subPage.title[lang] ?? subPage.title[defaultLanguage] ?? subPage.pageCode }}" {% endfor %}>
+                                                                    {{ subPage.title[app.request.locale] ?? subPage.title[defaultLanguage] ?? subPage.pageCode }}
                                                                 </a>
                                                             {% endif %}
                                                         {% endfor %}
@@ -181,16 +181,16 @@
                                                     href="#"
                                                     data-page-code="{{ page.pageCode|page_slug }}"
                                                     data-journal-code="{{ code }}"
-                                                    {% for lang in acceptedLanguages %}data-current-title-{{ lang }}="{{ page.title[lang] ?? page.title['en'] ?? page.pageCode }}" {% endfor %}
+                                                    {% for lang in acceptedLanguages %}data-current-title-{{ lang }}="{{ page.title[lang] ?? page.title[defaultLanguage] ?? page.pageCode }}" {% endfor %}
                                                 {% else %}
                                                     href="#"
-                                                    {% for lang in acceptedLanguages %}data-title-{{ lang }}="{{ page.title[lang] ?? page.title['en'] ?? page.title }}" {% endfor %}
+                                                    {% for lang in acceptedLanguages %}data-title-{{ lang }}="{{ page.title[lang] ?? page.title[defaultLanguage] ?? page.title }}" {% endfor %}
                                                     data-is-container="true"
                                                         {% endif %}>
                                                     {% if isContainer %}
-                                                        {{ page.title[app.request.locale] ?? page.title['en'] ?? page.title }}
+                                                        {{ page.title[app.request.locale] ?? page.title[defaultLanguage] ?? page.title }}
                                                     {% else %}
-                                                        {{ page.title[app.request.locale] ?? page.title['en'] ?? page.pageCode }}
+                                                        {{ page.title[app.request.locale] ?? page.title[defaultLanguage] ?? page.pageCode }}
                                                     {% endif %}
                                                 </a>
                                             {% endif %}

@@ -21,9 +21,10 @@ Parameters:
         <div class="collapse show" id="{{ wid }}-widget-body">
             <div class="language-select-section bg-white border border-top-0 px-3 py-2">
                 <label for="{{ wid }}-language-select" class="form-label small text-muted mb-1">{{ 'widget.language'|trans }}</label>
+                {% set selectedLang = app.request.locale in acceptedLanguages|default(['en', 'fr']) ? app.request.locale : defaultLanguage %}
                 <select class="form-select form-select-sm language-switch-select" id="{{ wid }}-language-select">
                     {% for lang in acceptedLanguages|default(['en', 'fr']) %}
-                        <option value="{{ lang }}" {{ defaultLanguage == lang ? 'selected' : '' }}>{{ lang|language_name(lang) }}</option>
+                        <option value="{{ lang }}" {{ selectedLang == lang ? 'selected' : '' }}>{{ lang|language_name(lang) }}</option>
                     {% endfor %}
                 </select>
             </div>
