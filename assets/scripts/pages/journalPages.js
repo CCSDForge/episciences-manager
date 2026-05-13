@@ -26,7 +26,7 @@ function escapeHtml(text) {
  * @returns {string} Localized text (falls back to English if French not available)
  */
 function getLocalizedText(textEn, textFr, locale) {
-  return (locale === 'fr' && textFr) ? textFr : textEn;
+  return locale === 'fr' && textFr ? textFr : textEn;
 }
 
 // Alert container for flash messages
@@ -69,7 +69,9 @@ function updateInlineEditTranslations() {
     'translations available:',
     !!window.journalPagesData.translations,
     'keys:',
-    window.journalPagesData.translations ? Object.keys(window.journalPagesData.translations) : 'none'
+    window.journalPagesData.translations
+      ? Object.keys(window.journalPagesData.translations)
+      : 'none'
   );
 
   if (!window.journalPagesData.translations) {
@@ -81,10 +83,14 @@ function updateInlineEditTranslations() {
   const editButton = document.getElementById('edit-button');
   console.log('Edit button found:', !!editButton);
   if (editButton && window.journalPagesData.translations.edit) {
-    console.log('Updating edit button:', window.journalPagesData.translations.edit);
+    console.log(
+      'Updating edit button:',
+      window.journalPagesData.translations.edit
+    );
     // Security: Escape translation to prevent XSS
     editButton.innerHTML =
-      '<i class="fas fa-edit me-1"></i>' + escapeHtml(window.journalPagesData.translations.edit);
+      '<i class="fas fa-edit me-1"></i>' +
+      escapeHtml(window.journalPagesData.translations.edit);
   }
 
   // Update inline edit title
@@ -156,7 +162,10 @@ function updateInlineEditTranslations() {
   const cancelButton = document.getElementById('cancel-inline-edit');
   console.log('Cancel button found:', !!cancelButton);
   if (cancelButton && window.journalPagesData.translations.cancel) {
-    console.log('Updating cancel button:', window.journalPagesData.translations.cancel);
+    console.log(
+      'Updating cancel button:',
+      window.journalPagesData.translations.cancel
+    );
     // Security: Escape translation to prevent XSS
     cancelButton.innerHTML =
       '<i class="fas fa-times me-1"></i>' +
@@ -167,10 +176,14 @@ function updateInlineEditTranslations() {
   const saveButton = document.getElementById('save-inline-edit');
   console.log('Save button found:', !!saveButton);
   if (saveButton && window.journalPagesData.translations.save) {
-    console.log('Updating save button:', window.journalPagesData.translations.save);
+    console.log(
+      'Updating save button:',
+      window.journalPagesData.translations.save
+    );
     // Security: Escape translation to prevent XSS
     saveButton.innerHTML =
-      '<i class="fas fa-save me-1"></i>' + escapeHtml(window.journalPagesData.translations.save);
+      '<i class="fas fa-save me-1"></i>' +
+      escapeHtml(window.journalPagesData.translations.save);
   }
 
   // Update preview page button
@@ -180,7 +193,10 @@ function updateInlineEditTranslations() {
     'window.journalPagesData.translations.previewPage:',
     window.journalPagesData.translations.previewPage
   );
-  console.log('All translation keys:', Object.keys(window.journalPagesData.translations));
+  console.log(
+    'All translation keys:',
+    Object.keys(window.journalPagesData.translations)
+  );
   if (previewPageButton && window.journalPagesData.translations.previewPage) {
     console.log(
       'Updating preview page button:',
@@ -347,7 +363,11 @@ function updateBreadcrumbLanguage(locale) {
   );
 
   if (grandparentText && grandparentTitleEn) {
-    const newGrandparentTitle = getLocalizedText(grandparentTitleEn, grandparentTitleFr, locale);
+    const newGrandparentTitle = getLocalizedText(
+      grandparentTitleEn,
+      grandparentTitleFr,
+      locale
+    );
     console.log(
       'Updating breadcrumb grandparent from:',
       grandparentText.textContent,
@@ -362,7 +382,11 @@ function updateBreadcrumbLanguage(locale) {
   const parentTitleFr = activeLink.getAttribute('data-parent-title-fr');
 
   if (parentText && parentTitleEn) {
-    const newParentTitle = getLocalizedText(parentTitleEn, parentTitleFr, locale);
+    const newParentTitle = getLocalizedText(
+      parentTitleEn,
+      parentTitleFr,
+      locale
+    );
     console.log(
       'Updating breadcrumb parent from:',
       parentText.textContent,
@@ -377,7 +401,11 @@ function updateBreadcrumbLanguage(locale) {
   const currentTitleFr = activeLink.getAttribute('data-current-title-fr');
 
   if (currentText && currentTitleEn) {
-    const newCurrentTitle = getLocalizedText(currentTitleEn, currentTitleFr, locale);
+    const newCurrentTitle = getLocalizedText(
+      currentTitleEn,
+      currentTitleFr,
+      locale
+    );
     console.log(
       'Updating breadcrumb current from:',
       currentText.textContent,
@@ -427,7 +455,9 @@ function expandActivePageParent() {
   if (!currentPage) return;
 
   // Find the link for the current page
-  const activeLink = document.querySelector(`.page-nav-link[data-page-code="${currentPage}"]`);
+  const activeLink = document.querySelector(
+    `.page-nav-link[data-page-code="${currentPage}"]`
+  );
   if (!activeLink) return;
 
   // Find all parent collapse elements and expand them
@@ -436,7 +466,9 @@ function expandActivePageParent() {
     if (parent.classList.contains('collapse')) {
       parent.classList.add('show');
       // Update the toggle button aria-expanded
-      const toggle = document.querySelector(`[href="#${parent.id}"], [data-bs-target="#${parent.id}"]`);
+      const toggle = document.querySelector(
+        `[href="#${parent.id}"], [data-bs-target="#${parent.id}"]`
+      );
       if (toggle) {
         toggle.setAttribute('aria-expanded', 'true');
       }
@@ -534,7 +566,8 @@ document.addEventListener('DOMContentLoaded', function () {
       if (!currentPageCode || !currentJournalCode) {
         showAlert(
           'warning',
-          window.journalPagesData.translations?.selectPageFirst || 'Please select a page first'
+          window.journalPagesData.translations?.selectPageFirst ||
+            'Please select a page first'
         );
         return;
       }
@@ -572,7 +605,8 @@ document.addEventListener('DOMContentLoaded', function () {
       inlineEditContent.style.display = 'block';
 
       const placeholder =
-        window.journalPagesData.translations?.enterContent || 'Enter the content here...';
+        window.journalPagesData.translations?.enterContent ||
+        'Enter the content here...';
       try {
         const editorPromise = initializeCKEditor(
           'page-content-inline',
@@ -626,7 +660,8 @@ document.addEventListener('DOMContentLoaded', function () {
         originalDiv.id = 'page-content-inline';
         originalDiv.setAttribute(
           'data-placeholder',
-          window.journalPagesData.translations?.enterContent || 'Enter the content here...'
+          window.journalPagesData.translations?.enterContent ||
+            'Enter the content here...'
         );
         parentElement.replaceChild(originalDiv, fallbackTextarea);
       }
@@ -886,7 +921,8 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!currentPageCode) {
       showAlert(
         'warning',
-        window.journalPagesData.translations?.selectPageFirst || 'Please select a page first'
+        window.journalPagesData.translations?.selectPageFirst ||
+          'Please select a page first'
       );
       return;
     }
@@ -914,7 +950,8 @@ document.addEventListener('DOMContentLoaded', function () {
       console.log('Missing page info - showing alert');
       showAlert(
         'warning',
-        window.journalPagesData.translations?.selectPageFirst || 'Please select a page first'
+        window.journalPagesData.translations?.selectPageFirst ||
+          'Please select a page first'
       );
       return;
     }
@@ -937,7 +974,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Initialize CKEditor
     const placeholder =
-      window.journalPagesData.translations?.enterContent || 'Enter the content here...';
+      window.journalPagesData.translations?.enterContent ||
+      'Enter the content here...';
     console.log('About to initialize CKEditor with placeholder:', placeholder);
     console.log(
       'Target element:',
@@ -1016,7 +1054,8 @@ document.addEventListener('DOMContentLoaded', function () {
         });
         showAlert(
           'danger',
-          window.journalPagesData.translations?.missingPageInfo || 'Missing page information'
+          window.journalPagesData.translations?.missingPageInfo ||
+            'Missing page information'
         );
         return;
       }
@@ -1155,13 +1194,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
             showAlert(
               'success',
-              window.journalPagesData.translations?.saveSuccess || 'Saved successfully'
+              window.journalPagesData.translations?.saveSuccess ||
+                'Saved successfully'
             );
           } else {
             showAlert(
               'danger',
-              (window.journalPagesData.translations?.saveError || 'Save error: ') +
-                (data.message || 'Unknown error')
+              (window.journalPagesData.translations?.saveError ||
+                'Save error: ') + (data.message || 'Unknown error')
             );
           }
         })
@@ -1169,7 +1209,8 @@ document.addEventListener('DOMContentLoaded', function () {
           console.error('Save error:', error);
           showAlert(
             'danger',
-            (window.journalPagesData.translations?.saveError || 'Save error: ') + error.message
+            (window.journalPagesData.translations?.saveError ||
+              'Save error: ') + error.message
           );
         });
     });
@@ -1188,7 +1229,6 @@ document.addEventListener('DOMContentLoaded', function () {
     );
     const parentText = document.querySelector('.breadcrumb-parent-text');
     const currentText = document.querySelector('.breadcrumb-current-text');
-    const homeLink = document.querySelector('.breadcrumb-home');
 
     // Get current locale
     const currentLocale = getCurrentLocale();
@@ -1209,10 +1249,19 @@ document.addEventListener('DOMContentLoaded', function () {
     const currentTitleFr = clickedLink.getAttribute('data-current-title-fr');
 
     // Select title based on current locale
-    const grandparentTitle = getLocalizedText(grandparentTitleEn, grandparentTitleFr, currentLocale);
-    const parentTitle = getLocalizedText(parentTitleEn, parentTitleFr, currentLocale);
-    const currentTitle = getLocalizedText(currentTitleEn, currentTitleFr, currentLocale)
-      || clickedLink.textContent.trim();
+    const grandparentTitle = getLocalizedText(
+      grandparentTitleEn,
+      grandparentTitleFr,
+      currentLocale
+    );
+    const parentTitle = getLocalizedText(
+      parentTitleEn,
+      parentTitleFr,
+      currentLocale
+    );
+    const currentTitle =
+      getLocalizedText(currentTitleEn, currentTitleFr, currentLocale) ||
+      clickedLink.textContent.trim();
 
     console.log('Updating breadcrumb:', {
       pageCode,
@@ -1320,7 +1369,11 @@ document.addEventListener('DOMContentLoaded', function () {
         if (parentTitleEn || parentTitleFr) {
           // This is a child page, redirect to parent page
           const currentLocale = getCurrentLocale();
-          const parentTitle = getLocalizedText(parentTitleEn, parentTitleFr, currentLocale);
+          const parentTitle = getLocalizedText(
+            parentTitleEn,
+            parentTitleFr,
+            currentLocale
+          );
           const urlTitle = parentTitle
             ? parentTitle
                 .toLowerCase()
@@ -1355,7 +1408,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
       // Update button text with current translation
       // Security: Escape translation to prevent XSS
-      if (window.journalPagesData.translations && window.journalPagesData.translations.previewPage) {
+      if (
+        window.journalPagesData.translations &&
+        window.journalPagesData.translations.previewPage
+      ) {
         previewPageButton.innerHTML =
           '<i class="fas fa-external-link-alt me-1"></i>' +
           escapeHtml(window.journalPagesData.translations.previewPage);
