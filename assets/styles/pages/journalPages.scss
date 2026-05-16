@@ -127,92 +127,44 @@
   }
 }
 
-// Inline edit mode styles
-#inline-edit-content {
-  min-height: 700px; // Stable zone same size as card-body
-  height: auto; // Grows naturally with content
-  padding: 1.5rem;
+// Page Edit Form (collapsible)
+.page-form-collapse {
+  margin-bottom: 1.5rem;
+}
 
-  // Responsive adjustments
-  @media (max-width: 768px) {
-    min-height: 500px; // More compact on mobile
-    padding: 1rem;
+.page-form-card {
+  border: 1px solid $border-color;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+  .card-header {
+    border-bottom: 1px solid $border-color;
+
+    h5 {
+      color: $primary-color;
+      font-weight: 600;
+    }
   }
 
-  @media (min-width: 1200px) {
-    min-height: 800px; // More generous on large screen
-  }
+  .card-body {
+    min-height: auto; // Override default card-body min-height for form
+    padding: 1.5rem;
 
-  // Ensure it takes full available space
-  .d-flex {
-    margin-bottom: 1.5rem;
-  }
-
-  #page-content-inline {
-    min-height: 500px; // More generous stable zone for textarea
-    height: 500px; // Fixed base height to start
-    max-height: 80vh; // Smart limit = 80% of screen height
-    font-family: $font-family-monospace;
-    font-size: 0.875rem; // 14px
-    line-height: 1.6; // Improved line spacing
-    resize: vertical; // Allow manual resize
-    width: 100%;
-    overflow-y: auto; // Internal scroll if exceeds max-height
-    border: 2px solid $gray-200;
-    border-radius: 0.5rem;
-    padding: 1rem;
-    transition:
-      border-color 0.2s ease,
-      height 0.2s ease;
-
-    // Auto-expand behavior with smart limit
-    box-sizing: border-box;
-
-    // Responsive textarea sizing
     @media (max-width: 768px) {
-      min-height: 350px; // More compact on mobile
-      height: 350px; // Mobile base height
-      max-height: 70vh; // Mobile adapted limit
-      font-size: 0.8125rem; // 13px
-      padding: 0.75rem;
-    }
-
-    @media (min-width: 1200px) {
-      min-height: 600px; // More generous on large screen
-      height: 600px; // Large screen base height
-      max-height: 85vh; // More generous on large screen
-      font-size: 0.9375rem; // 15px
-    }
-
-    &:focus {
-      border-color: $primary-color;
-      outline: none;
-      box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
-    }
-
-    // Visual indicator when in internal scroll
-    &::-webkit-scrollbar {
-      width: 8px;
-    }
-
-    &::-webkit-scrollbar-track {
-      background: #f1f1f1;
-      border-radius: 4px;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background: #c1c1c1;
-      border-radius: 4px;
-
-      &:hover {
-        background: #a8a8a8;
-      }
+      padding: 1rem;
     }
   }
 
-  #page-title-inline {
-    width: 100%;
-    margin-bottom: 1rem;
+  // CKEditor in form
+  #page_content {
+    min-height: 300px;
+    border: 1px solid $border-color;
+    border-radius: 0.375rem;
+    padding: 0.5rem;
+
+    @media (max-width: 768px) {
+      min-height: 200px;
+    }
   }
 
   .form-label {
@@ -227,32 +179,6 @@
     &:hover {
       transform: translateY(-1px);
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-  }
-
-  // Make the form flexible but maintain structure
-  #inline-edit-form {
-    display: flex;
-    flex-direction: column;
-    min-height: 500px; // Base stable height
-
-    .mb-3 {
-      &:last-child {
-        display: flex;
-        flex-direction: column;
-
-        #page-content-inline {
-          min-height: 400px;
-        }
-      }
-    }
-  }
-
-  // CKEditor theme override for inline edit mode
-  .ck.ck-editor {
-    .ck-editor__editable {
-      min-height: 300px;
-      max-height: 50vh;
     }
   }
 }

@@ -1,1431 +1,268 @@
+import { initLanguageWidget } from '../components/language-widget.js';
+import { Collapse } from 'bootstrap';
 import {
   initializeCKEditor,
   getEditorContent,
   setEditorContent,
   destroyEditor,
-  focusEditor,
 } from '../components/ckeditor.js';
 
-import { initLanguageWidget } from '../components/language-widget.js';
-
-// Security: Helper function to escape HTML special characters to prevent XSS
-function escapeHtml(text) {
-  if (text === null || text === undefined) {
-    return '';
-  }
-  const div = document.createElement('div');
-  div.textContent = String(text);
-  return div.innerHTML;
-}
-
 /**
- * Get localized text based on current locale
- * @param {string} textEn - English text
- * @param {string} textFr - French text (optional)
- * @param {string} locale - Current locale ('en' or 'fr')
- * @returns {string} Localized text (falls back to English if French not available)
+ * Journal Pages - Simplified form-based editing
+ *
+ * This module handles:
+ * 1. Language widget for the edit form
+ * 2. CKEditor initialization when form opens
+ * 3. Syncing translations to hidden inputs before submit
+ * 4. Mobile menu handling
  */
-function getLocalizedText(textEn, textFr, locale) {
-  return locale === 'fr' && textFr ? textFr : textEn;
-}
 
-// Alert container for flash messages
-let alertsContainer = null;
+document.addEventListener('DOMContentLoaded', () => {
+  // ===================
+  // CONFIGURATION
+  // ===================
 
-/**
- * Show alert message (Bootstrap flash style)
- * @param {string} type - Alert type (success, danger, warning, info)
- * @param {string} message - Message to display
- * @param {boolean} isHtmlSafe - If true, message is already escaped and can contain safe HTML
- */
-function showAlert(type, message, isHtmlSafe = false) {
-  if (!alertsContainer) {
-    alertsContainer = document.getElementById('pages-alerts');
-  }
-  if (!alertsContainer) return;
-
-  const validTypes = ['success', 'danger', 'warning', 'info'];
-  const safeType = validTypes.includes(type) ? type : 'info';
-  const safeMessage = isHtmlSafe ? message : escapeHtml(message);
-
-  alertsContainer.innerHTML = `
-    <div class="alert alert-${safeType} alert-dismissible fade show" role="alert">
-      ${safeMessage}
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-  `;
-
-  // Auto-hide after 5 seconds
-  setTimeout(() => {
-    const alert = alertsContainer.querySelector('.alert');
-    if (alert) alert.remove();
-  }, 5000);
-}
-
-// Function to update inline edit translations dynamically
-function updateInlineEditTranslations() {
-  console.log(
-    '=== updateInlineEditTranslations called ===',
-    'translations available:',
-    !!window.journalPagesData.translations,
-    'keys:',
-    window.journalPagesData.translations
-      ? Object.keys(window.journalPagesData.translations)
-      : 'none'
-  );
-
-  if (!window.journalPagesData.translations) {
-    console.warn('No translations available');
+  const config = window.pageConfig;
+  if (!config) {
+    console.error('pageConfig is not defined');
     return;
   }
 
-  // Update edit button
-  const editButton = document.getElementById('edit-button');
-  console.log('Edit button found:', !!editButton);
-  if (editButton && window.journalPagesData.translations.edit) {
-    console.log(
-      'Updating edit button:',
-      window.journalPagesData.translations.edit
-    );
-    // Security: Escape translation to prevent XSS
-    editButton.innerHTML =
-      '<i class="fas fa-edit me-1"></i>' +
-      escapeHtml(window.journalPagesData.translations.edit);
-  }
-
-  // Update inline edit title
-  const inlineEditTitle = document.querySelector('#inline-edit-content h5');
-  console.log('Inline edit title found:', !!inlineEditTitle);
-  if (inlineEditTitle && window.journalPagesData.translations.editPageContent) {
-    console.log(
-      'Updating inline edit title:',
-      window.journalPagesData.translations.editPageContent
-    );
-    const oldContent = inlineEditTitle.innerHTML;
-    // Security: Escape translation to prevent XSS
-    inlineEditTitle.innerHTML =
-      '<i class="fas fa-edit me-2"></i>' +
-      escapeHtml(window.journalPagesData.translations.editPageContent) +
-      '<i class="fas fa-file-alt ms-2"></i>';
-    console.log(
-      'Title updated from:',
-      oldContent,
-      'to:',
-      inlineEditTitle.innerHTML
-    );
-  }
-
-  // Update page title label (inline edit)
-  const pageTitleLabel = document.querySelector(
-    'label[for="page-title-inline"]'
-  );
-  console.log('Page title label found:', !!pageTitleLabel);
-  if (pageTitleLabel && window.journalPagesData.translations.pageTitle) {
-    console.log(
-      'Updating page title label from:',
-      pageTitleLabel.textContent,
-      'to:',
-      window.journalPagesData.translations.pageTitle
-    );
-    pageTitleLabel.textContent = window.journalPagesData.translations.pageTitle;
-  }
-
-  // Update content label (inline edit)
-  const contentLabel = document.querySelector(
-    'label[for="page-content-inline"]'
-  );
-  console.log('Content label found:', !!contentLabel);
-  if (contentLabel && window.journalPagesData.translations.content) {
-    console.log(
-      'Updating content label from:',
-      contentLabel.textContent,
-      'to:',
-      window.journalPagesData.translations.content
-    );
-    contentLabel.textContent = window.journalPagesData.translations.content;
-  }
-
-  // Update textarea placeholder (inline edit)
-  const textarea = document.getElementById('page-content-inline');
-  console.log('Textarea found:', !!textarea);
-  if (textarea && window.journalPagesData.translations.enterContent) {
-    console.log(
-      'Updating textarea placeholder from:',
-      textarea.placeholder,
-      'to:',
-      window.journalPagesData.translations.enterContent
-    );
-    textarea.placeholder = window.journalPagesData.translations.enterContent;
-  }
-
-  // Update cancel button (inline edit)
-  const cancelButton = document.getElementById('cancel-inline-edit');
-  console.log('Cancel button found:', !!cancelButton);
-  if (cancelButton && window.journalPagesData.translations.cancel) {
-    console.log(
-      'Updating cancel button:',
-      window.journalPagesData.translations.cancel
-    );
-    // Security: Escape translation to prevent XSS
-    cancelButton.innerHTML =
-      '<i class="fas fa-times me-1"></i>' +
-      escapeHtml(window.journalPagesData.translations.cancel);
-  }
-
-  // Update save button (inline edit)
-  const saveButton = document.getElementById('save-inline-edit');
-  console.log('Save button found:', !!saveButton);
-  if (saveButton && window.journalPagesData.translations.save) {
-    console.log(
-      'Updating save button:',
-      window.journalPagesData.translations.save
-    );
-    // Security: Escape translation to prevent XSS
-    saveButton.innerHTML =
-      '<i class="fas fa-save me-1"></i>' +
-      escapeHtml(window.journalPagesData.translations.save);
-  }
-
-  // Update preview page button
-  const previewPageButton = document.getElementById('preview-page-button');
-  console.log('Preview page button found:', !!previewPageButton);
-  console.log(
-    'window.journalPagesData.translations.previewPage:',
-    window.journalPagesData.translations.previewPage
-  );
-  console.log(
-    'All translation keys:',
-    Object.keys(window.journalPagesData.translations)
-  );
-  if (previewPageButton && window.journalPagesData.translations.previewPage) {
-    console.log(
-      'Updating preview page button:',
-      window.journalPagesData.translations.previewPage
-    );
-    // Security: Escape translation to prevent XSS
-    previewPageButton.innerHTML =
-      '<i class="fas fa-external-link-alt me-1"></i>' +
-      escapeHtml(window.journalPagesData.translations.previewPage);
-  } else {
-    console.log(
-      'Preview page button NOT updated. Button exists:',
-      !!previewPageButton,
-      'Translation exists:',
-      !!window.journalPagesData.translations.previewPage
-    );
-  }
-
-  console.log('=== updateInlineEditTranslations completed ===');
-}
-
-// Function to update container titles when language changes
-function updateContainerTitles(locale) {
-  console.log('=== updateContainerTitles called ===', 'locale:', locale);
-
-  // Update all container navigation links
-  const containerLinks = document.querySelectorAll(
-    '.page-nav-link[data-is-container="true"]'
-  );
-  console.log('Found container links:', containerLinks.length);
-
-  containerLinks.forEach(link => {
-    const titleEn = link.getAttribute('data-title-en');
-    const titleFr = link.getAttribute('data-title-fr');
-
-    if (titleEn) {
-      const newTitle = getLocalizedText(titleEn, titleFr, locale);
-      console.log(
-        'Updating container title from:',
-        link.textContent.trim(),
-        'to:',
-        newTitle
-      );
-      link.textContent = newTitle;
-    }
-  });
-
-  // Update all sub-page navigation links
-  updateSubPageLinks(locale);
-
-  // Update Home links in navigation and breadcrumb
-  updateHomeLinks(locale);
-
-  // Update breadcrumb if it's currently visible
-  updateBreadcrumbLanguage(locale);
-}
-
-// Function to update sub-page links
-function updateSubPageLinks(locale) {
-  console.log('=== updateSubPageLinks called ===', 'locale:', locale);
-
-  // Find all sub-page links (those with data-current-title-en but not data-is-container)
-  const subPageLinks = document.querySelectorAll(
-    '.page-nav-link[data-current-title-en]:not([data-is-container])'
-  );
-  console.log('Found sub-page links:', subPageLinks.length);
-
-  subPageLinks.forEach(link => {
-    const currentTitleEn = link.getAttribute('data-current-title-en');
-    const currentTitleFr = link.getAttribute('data-current-title-fr');
-
-    if (currentTitleEn) {
-      const newTitle = getLocalizedText(currentTitleEn, currentTitleFr, locale);
-      console.log(
-        'Updating sub-page title from:',
-        link.textContent.trim(),
-        'to:',
-        newTitle
-      );
-      link.textContent = newTitle;
-    }
-  });
-}
-
-// Function to update Home links
-function updateHomeLinks(locale) {
-  console.log('=== updateHomeLinks called ===', 'locale:', locale);
-
-  // Update home navigation link
-  const homeNavLink = document.querySelector('.home-nav-link');
-  if (homeNavLink) {
-    const homeTextEn = homeNavLink.getAttribute('data-home-text-en');
-    const homeTextFr = homeNavLink.getAttribute('data-home-text-fr');
-
-    if (homeTextEn) {
-      const newHomeText = getLocalizedText(homeTextEn, homeTextFr, locale);
-      console.log(
-        'Updating home nav link from:',
-        homeNavLink.textContent.trim(),
-        'to:',
-        newHomeText
-      );
-      homeNavLink.textContent = newHomeText;
-    }
-  }
-
-  // Update breadcrumb home link
-  const breadcrumbHome = document.querySelector('.breadcrumb-home');
-  if (breadcrumbHome) {
-    const homeTextEn = breadcrumbHome.getAttribute('data-home-text-en');
-    const homeTextFr = breadcrumbHome.getAttribute('data-home-text-fr');
-
-    if (homeTextEn) {
-      const newHomeText = getLocalizedText(homeTextEn, homeTextFr, locale);
-      const icon = breadcrumbHome.querySelector('i.fas.fa-home');
-      console.log(
-        'Updating breadcrumb home link from:',
-        breadcrumbHome.textContent.trim(),
-        'to:',
-        newHomeText
-      );
-
-      // Security: Escape text from data attributes to prevent XSS
-      if (icon) {
-        breadcrumbHome.innerHTML =
-          icon.outerHTML + ' ' + escapeHtml(newHomeText);
-      } else {
-        breadcrumbHome.innerHTML =
-          '<i class="fas fa-home me-1"></i> ' + escapeHtml(newHomeText);
-      }
-    }
-  }
-}
-
-// Function to update breadcrumb language
-function updateBreadcrumbLanguage(locale) {
-  console.log('=== updateBreadcrumbLanguage called ===', 'locale:', locale);
-
-  const breadcrumbNav = document.getElementById('breadcrumb-nav');
-  if (!breadcrumbNav || breadcrumbNav.style.display === 'none') {
-    console.log('Breadcrumb not visible, skipping update');
-    return;
-  }
-
-  // Get the currently active page link to extract language data
-  const activeLink = document.querySelector('.page-nav-link.active');
-  if (!activeLink) {
-    console.log('No active link found, skipping breadcrumb update');
-    return;
-  }
-
-  const grandparentText = document.querySelector(
-    '.breadcrumb-grandparent-text'
-  );
-  const parentText = document.querySelector('.breadcrumb-parent-text');
-  const currentText = document.querySelector('.breadcrumb-current-text');
-
-  // Update grandparent title if it exists
-  const grandparentTitleEn = activeLink.getAttribute(
-    'data-grandparent-title-en'
-  );
-  const grandparentTitleFr = activeLink.getAttribute(
-    'data-grandparent-title-fr'
-  );
-
-  if (grandparentText && grandparentTitleEn) {
-    const newGrandparentTitle = getLocalizedText(
-      grandparentTitleEn,
-      grandparentTitleFr,
-      locale
-    );
-    console.log(
-      'Updating breadcrumb grandparent from:',
-      grandparentText.textContent,
-      'to:',
-      newGrandparentTitle
-    );
-    grandparentText.textContent = newGrandparentTitle;
-  }
-
-  // Update parent title if it exists
-  const parentTitleEn = activeLink.getAttribute('data-parent-title-en');
-  const parentTitleFr = activeLink.getAttribute('data-parent-title-fr');
-
-  if (parentText && parentTitleEn) {
-    const newParentTitle = getLocalizedText(
-      parentTitleEn,
-      parentTitleFr,
-      locale
-    );
-    console.log(
-      'Updating breadcrumb parent from:',
-      parentText.textContent,
-      'to:',
-      newParentTitle
-    );
-    parentText.textContent = newParentTitle;
-  }
-
-  // Update current title
-  const currentTitleEn = activeLink.getAttribute('data-current-title-en');
-  const currentTitleFr = activeLink.getAttribute('data-current-title-fr');
-
-  if (currentText && currentTitleEn) {
-    const newCurrentTitle = getLocalizedText(
-      currentTitleEn,
-      currentTitleFr,
-      locale
-    );
-    console.log(
-      'Updating breadcrumb current from:',
-      currentText.textContent,
-      'to:',
-      newCurrentTitle
-    );
-    currentText.textContent = newCurrentTitle;
-  }
-}
-
-// Make functions globally available for the header script
-window.updateInlineEditTranslations = updateInlineEditTranslations;
-window.updateContainerTitles = updateContainerTitles;
-
-// Returns a locale valid for routes (en|fr only)
-function getCurrentLocale() {
-  const routeLocales = ['en', 'fr'];
-  const locale =
-    document.documentElement.lang ||
-    window.location.pathname.split('/')[1] ||
-    'en';
-
-  return routeLocales.includes(locale) ? locale : 'en';
-}
-
-// Close mobile menu when clicking a page link (CSS-only approach)
-function setupMobileMenuAutoClose() {
-  const menuCheckbox = document.getElementById('mobile-menu-toggle');
-  if (!menuCheckbox) return;
-
-  const pageLinks = document.querySelectorAll('.page-nav-link, .home-nav-link');
-
-  pageLinks.forEach(link => {
-    link.addEventListener('click', () => {
-      // Close mobile menu on link click (mobile only)
-      if (window.innerWidth < 768) {
-        menuCheckbox.checked = false;
-      }
-    });
-  });
-}
-
-// Auto-expand parent collapse of the active page
-function expandActivePageParent() {
-  // Use currentPage from route data (available before .active class is added)
-  const currentPage = window.journalPagesData?.currentPage;
-  if (!currentPage) return;
-
-  // Find the link for the current page
-  const activeLink = document.querySelector(
-    `.page-nav-link[data-page-code="${currentPage}"]`
-  );
-  if (!activeLink) return;
-
-  // Find all parent collapse elements and expand them
-  let parent = activeLink.parentElement;
-  while (parent) {
-    if (parent.classList.contains('collapse')) {
-      parent.classList.add('show');
-      // Update the toggle button aria-expanded
-      const toggle = document.querySelector(
-        `[href="#${parent.id}"], [data-bs-target="#${parent.id}"]`
-      );
-      if (toggle) {
-        toggle.setAttribute('aria-expanded', 'true');
-      }
-    }
-    parent = parent.parentElement;
-  }
-}
-
-document.addEventListener('DOMContentLoaded', function () {
-  console.log('DOM loaded');
-
-  // Setup mobile menu auto-close behavior
-  setupMobileMenuAutoClose();
-
-  // Auto-expand parent collapse of active page
-  expandActivePageParent();
-
-  // Update UI elements with translations
-  updateInlineEditTranslations();
-
-  const pageLinks = document.querySelectorAll('.page-nav-link');
-  const homeLink = document.querySelector('a[href*="app_journal_dashboard"]');
-  const breadcrumbHomeLink = document.querySelector('.breadcrumb-home');
-  const pageContent = document.getElementById('page-content');
-  const pageViewFields = document.getElementById('page-view-fields');
-  const pageHomeContent = document.getElementById('page-home-content');
-  const pageTitleView = document.getElementById('page-title-view');
-  const pageBody = document.getElementById('page-body');
-  const editButton = document.getElementById('edit-button');
-
-  // Preview button elements
-  const previewButtonContainer = document.getElementById(
-    'preview-page-button-container'
-  );
-  const previewPageButton = document.getElementById('preview-page-button');
-
-  // Inline edit elements
-  const inlineEditContent = document.getElementById('inline-edit-content');
-  const pageTitleInline = document.getElementById('page-title-inline');
-  const saveInlineButton = document.getElementById('save-inline-edit');
-  const cancelInlineButton = document.getElementById('cancel-inline-edit');
-
-  let currentPageCode = null;
-  let currentJournalCode = null;
-  let isInlineEdit = false;
-  let editingLocale = null;
-  let currentMarkdownContent = {}; // Store raw Markdown per locale for editing
-  let currentTitleData = {}; // Store title data per locale for editing
-
-  const sidebarLanguageSelect = document.getElementById(
-    'sidebar-language-select'
-  );
-
-  // Initialize editingLocale with the widget's default value (defaultLanguage from backend)
-  if (sidebarLanguageSelect) {
-    editingLocale = sidebarLanguageSelect.value;
-  }
-
-  // Initialize language widget with callbacks
-  // iconBasedOnContentOnly: true means show "+" if no content in DB (even if YAML title exists)
-  const languageWidget = initLanguageWidget({
-    widgetId: 'sidebar',
-    iconBasedOnContentOnly: true,
-    onLanguageChange: async selectedLang => {
-      editingLocale = selectedLang;
-
-      if (currentPageCode && currentJournalCode) {
-        const routeLocale = getCurrentLocale();
-        const pageUrl = `/${routeLocale}/journal/${currentJournalCode}/page/${currentPageCode}`;
-
-        try {
-          const response = await fetch(pageUrl, {
-            headers: { 'X-Requested-With': 'XMLHttpRequest' },
-          });
-
-          if (!response.ok) throw new Error('Network response was not ok');
-
-          const data = await response.json();
-
-          updatePageView(data, selectedLang);
-          languageWidget?.updateTranslations(
-            data.title,
-            data.content,
-            window.journalPagesData.translations || {}
-          );
-          // Update stored Markdown content and title for editing
-          currentMarkdownContent = data.markdownContent || {};
-          currentTitleData = data.title || {};
-        } catch (error) {
-          console.error('Error loading page content:', error);
-        }
-      }
-    },
-    onTranslationClick: async lang => {
-      if (!currentPageCode || !currentJournalCode) {
-        showAlert(
-          'warning',
-          window.journalPagesData.translations?.selectPageFirst ||
-            'Please select a page first'
-        );
-        return;
-      }
-
-      if (isInlineEdit) {
-        exitInlineEdit();
-        await new Promise(r => setTimeout(r, 200));
-      }
-
-      editingLocale = lang;
-
-      // Fetch existing content for this language
-      let existingTitle = '';
-      let existingContent = '';
-      try {
-        const routeLocale = getCurrentLocale();
-        const pageUrl = `/${routeLocale}/journal/${currentJournalCode}/page/${currentPageCode}`;
-        const response = await fetch(pageUrl, {
-          headers: { 'X-Requested-With': 'XMLHttpRequest' },
-        });
-        if (response.ok) {
-          const data = await response.json();
-          existingTitle = (data.title && data.title[lang]) || '';
-          existingContent =
-            (data.markdownContent && data.markdownContent[lang]) || '';
-        }
-      } catch (error) {
-        console.error('Error fetching page data:', error);
-      }
-
-      if (pageBody) pageBody.innerHTML = '';
-
-      pageTitleInline.textContent = existingTitle;
-      pageContent.style.display = 'none';
-      inlineEditContent.style.display = 'block';
-
-      const placeholder =
-        window.journalPagesData.translations?.enterContent ||
-        'Enter the content here...';
-      try {
-        const editorPromise = initializeCKEditor(
-          'page-content-inline',
-          placeholder
-        );
-        if (editorPromise) {
-          await editorPromise;
-          setEditorContent(existingContent);
-          setTimeout(() => focusEditor(), 100);
-        }
-      } catch (error) {
-        console.error('Error initializing CKEditor:', error);
-      }
-
-      const cardFooter = document.querySelector('.card-footer');
-      if (cardFooter) cardFooter.style.display = 'none';
-
-      isInlineEdit = true;
-    },
-  });
-
-  // Helper function to update page view (defined here to be accessible)
-  function updatePageView(data, locale) {
-    const noContentText =
-      window.journalPagesData.translations?.noContentAvailable ||
-      'No content available';
-
-    if (pageHomeContent) pageHomeContent.style.display = 'none';
-    if (pageViewFields) pageViewFields.style.display = 'block';
-
-    if (pageTitleView) {
-      pageTitleView.textContent =
-        (data.title && (data.title[locale] || data.title['en'])) || '';
-    }
-
-    if (pageBody) {
-      pageBody.innerHTML =
-        data.content && data.content[locale]
-          ? data.content[locale]
-          : noContentText;
-    }
-  }
-
-  // Helper function to exit inline edit (defined here to be accessible)
-  function exitInlineEdit() {
-    destroyEditor().then(() => {
-      const fallbackTextarea = document.getElementById('page-content-fallback');
-      if (fallbackTextarea) {
-        const parentElement = fallbackTextarea.parentNode;
-        const originalDiv = document.createElement('div');
-        originalDiv.id = 'page-content-inline';
-        originalDiv.setAttribute(
-          'data-placeholder',
-          window.journalPagesData.translations?.enterContent ||
-            'Enter the content here...'
-        );
-        parentElement.replaceChild(originalDiv, fallbackTextarea);
-      }
-
-      pageContent.style.display = 'block';
-      inlineEditContent.style.display = 'none';
-
-      const cardFooter = document.querySelector('.card-footer');
-      if (cardFooter) {
-        cardFooter.style.display = 'block';
-      }
-
-      isInlineEdit = false;
-      if (sidebarLanguageSelect) {
-        editingLocale = sidebarLanguageSelect.value;
-      }
-
-      // Reload page content to restore view after edit/cancel
-      if (currentPageCode && currentJournalCode) {
-        const displayLang = editingLocale || getCurrentLocale();
-        const routeLocale = getCurrentLocale();
-        const pageUrl = `/${routeLocale}/journal/${currentJournalCode}/page/${currentPageCode}`;
-        fetch(pageUrl, {
-          headers: { 'X-Requested-With': 'XMLHttpRequest' },
-        })
-          .then(r => r.json())
-          .then(data => {
-            updatePageView(data, displayLang);
-            languageWidget?.updateTranslations(
-              data.title,
-              data.content,
-              window.journalPagesData.translations || {}
-            );
-          })
-          .catch(() => {});
-      }
+  // ===================
+  // ELEMENT GETTERS
+  // ===================
+
+  const getElement = id => document.getElementById(id);
+  const getTitleInput = () => getElement('page_title');
+  const getContentInput = () => getElement('page_content');
+  const getFormLanguageInput = () => getElement('form-language');
+
+  // ===================
+  // TRANSLATIONS STORAGE
+  // ===================
+
+  const translations = {};
+  let currentLang = config.defaultLanguage;
+  let formWidget = null;
+  let editorInitialized = false;
+
+  // Initialize translations from hidden inputs
+  function initTranslations() {
+    config.acceptedLanguages.forEach(lang => {
+      const titleHidden = getElement(`translation-title-${lang}`);
+      const contentHidden = getElement(`translation-content-${lang}`);
+
+      translations[lang] = {
+        title: titleHidden?.value || '',
+        content: contentHidden?.value || '',
+      };
     });
   }
 
-  // Check if we're on a specific page route on page load
-  function initializeCurrentPage() {
-    const currentPath = window.location.pathname;
-    const pathSegments = currentPath
-      .split('/')
-      .filter(segment => segment !== '');
+  // ===================
+  // CORE FUNCTIONS
+  // ===================
 
-    // Check if we're on a page route: /locale/journal/journalCode/page/pageCode
-    if (
-      pathSegments.length >= 5 &&
-      pathSegments[1] === 'journal' &&
-      pathSegments[3] === 'page'
-    ) {
-      const locale = pathSegments[0];
-      const journalCode = pathSegments[2];
-      const pageCode = pathSegments[4];
+  function saveCurrentLanguage() {
+    if (!currentLang) return;
 
-      console.log('Detected current page on load:', {
-        locale,
-        journalCode,
-        pageCode,
-      });
+    translations[currentLang] = {
+      title: getTitleInput()?.value || '',
+      content: editorInitialized
+        ? getEditorContent()
+        : getContentInput()?.textContent || '',
+    };
 
-      // Find and activate the corresponding navigation link
-      const correspondingLink = Array.from(pageLinks).find(
-        link =>
-          link.getAttribute('data-page-code') === pageCode &&
-          link.getAttribute('data-journal-code') === journalCode
-      );
+    updateHiddenInputs(currentLang);
+  }
 
-      if (correspondingLink) {
-        // Set current page info
-        currentPageCode = pageCode;
-        currentJournalCode = journalCode;
+  function loadLanguage(lang) {
+    currentLang = lang;
+    const data = translations[lang] || { title: '', content: '' };
 
-        // Activate the link
-        pageLinks.forEach(l => l.classList.remove('active'));
-        correspondingLink.classList.add('active');
+    const titleInput = getTitleInput();
+    const formLanguageInput = getFormLanguageInput();
 
-        // Update breadcrumb
-        updateBreadcrumb(correspondingLink);
+    if (titleInput) titleInput.value = data.title;
+    if (formLanguageInput) formLanguageInput.value = lang;
 
-        // Load the page content
-        loadCurrentPageContent(locale, journalCode, pageCode);
-      }
+    // Update CKEditor content
+    if (editorInitialized) {
+      setEditorContent(data.content || '');
     }
   }
 
-  function loadCurrentPageContent(locale, journalCode, pageCode) {
-    const pageUrl = `/${locale}/journal/${journalCode}/page/${pageCode}`;
+  function updateHiddenInputs(lang) {
+    const titleHidden = getElement(`translation-title-${lang}`);
+    const contentHidden = getElement(`translation-content-${lang}`);
 
-    fetch(pageUrl, {
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest',
+    if (titleHidden) titleHidden.value = translations[lang]?.title || '';
+    if (contentHidden) contentHidden.value = translations[lang]?.content || '';
+  }
+
+  // Update widget translations display
+  function updateFormWidgetDisplay() {
+    if (!formWidget) return;
+
+    const titleByLocale = {};
+    const contentByLocale = {};
+    const hasDataByLocale = {};
+
+    config.acceptedLanguages.forEach(lang => {
+      titleByLocale[lang] = translations[lang]?.title || '';
+      contentByLocale[lang] = translations[lang]?.content || '';
+      hasDataByLocale[lang] = titleByLocale[lang] || contentByLocale[lang];
+    });
+
+    formWidget.updateTranslations(titleByLocale, contentByLocale, {});
+    formWidget.updateOptions(hasDataByLocale);
+  }
+
+  // ===================
+  // INITIALIZE FORM WIDGET
+  // ===================
+
+  function initFormWidget() {
+    if (formWidget) return;
+
+    formWidget = initLanguageWidget({
+      widgetId: 'page-form',
+      onLanguageChange: selectedLang => {
+        saveCurrentLanguage();
+        loadLanguage(selectedLang);
       },
-    })
-      .then(response => response.json())
-      .then(data => {
-        if (data.error) {
-          pageBody.innerHTML = '<p class="text-danger">Page not found</p>';
-        } else {
-          // Use content language from widget instead of UI locale
-          const contentLang = sidebarLanguageSelect?.value || locale;
-          updatePageView(data, contentLang);
-          // Store raw Markdown and title for editing
-          currentMarkdownContent = data.markdownContent || {};
-          currentTitleData = data.title || {};
+      onTranslationClick: lang => {
+        saveCurrentLanguage();
+        loadLanguage(lang);
+        if (formWidget?.select) {
+          formWidget.select.value = lang;
         }
-        pageContent.style.display = 'block';
-
-        languageWidget?.updateTranslations(
-          data.title,
-          data.content,
-          window.journalPagesData.translations || {}
-        );
-        languageWidget?.updateOptions(data.content);
-      })
-      .catch(error => {
-        console.error('Error loading current page content:', error);
-        pageBody.innerHTML = '<p class="text-danger">Error loading content</p>';
-        pageContent.style.display = 'block';
-      });
-  }
-
-  // Initialize current page if we're on a page route
-  initializeCurrentPage();
-
-  // Sidebar link clicks - navigate to view route (HTML navigation)
-  pageLinks.forEach(link => {
-    link.addEventListener('click', function (e) {
-      e.preventDefault();
-      console.log('Link clicked - navigating to view route');
-
-      const pageCode = this.getAttribute('data-page-code');
-      const journalCode =
-        this.getAttribute('data-journal-code') ||
-        window.journalPagesData?.journalCode;
-
-      if (!pageCode || !journalCode) {
-        console.error('Missing pageCode or journalCode');
-        return;
-      }
-
-      // Navigate to the view route (full page load)
-      const locale = getCurrentLocale();
-      const viewUrl = `/${locale}/journal/${journalCode}/pages/${pageCode}`;
-      window.location.href = viewUrl;
-    });
-  });
-
-  // Load current page content if currentPage is set (from route)
-  const initialPageCode = window.journalPagesData?.currentPage;
-  const initialEditMode = window.journalPagesData?.editMode;
-  const journalCodeFromData = window.journalPagesData?.journalCode;
-
-  if (initialPageCode && journalCodeFromData) {
-    console.log(
-      'Loading page from route:',
-      initialPageCode,
-      'editMode:',
-      initialEditMode
-    );
-
-    currentPageCode = initialPageCode;
-    currentJournalCode = journalCodeFromData;
-
-    // Find and activate the corresponding sidebar link
-    const targetLink = document.querySelector(
-      `.page-nav-link[data-page-code="${initialPageCode}"]`
-    );
-    if (targetLink) {
-      pageLinks.forEach(l => l.classList.remove('active'));
-      targetLink.classList.add('active');
-      updateBreadcrumb(targetLink);
-      updatePreviewButton(initialPageCode, targetLink);
-    }
-
-    // Fetch page content via AJAX
-    const locale = getCurrentLocale();
-    const pageUrl = `/${locale}/journal/${journalCodeFromData}/page/${initialPageCode}`;
-    console.log('Fetching page content:', pageUrl);
-
-    fetch(pageUrl, {
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest',
       },
-    })
-      .then(response => {
-        console.log('Response status:', response.status);
-        return response.json();
-      })
-      .then(data => {
-        console.log('Data received:', JSON.stringify(data, null, 2));
-        // Use content language from widget instead of UI locale
-        const contentLang = sidebarLanguageSelect?.value || locale;
-        console.log('Content language:', contentLang);
-        if (data.error) {
-          pageBody.innerHTML = '<p class="text-danger">Page not found</p>';
-        } else {
-          updatePageView(data, contentLang);
-          // Store raw Markdown and title for editing
-          currentMarkdownContent = data.markdownContent || {};
-          currentTitleData = data.title || {};
-        }
-        pageContent.style.display = 'block';
-
-        languageWidget?.updateTranslations(
-          data.title,
-          data.content,
-          window.journalPagesData.translations || {}
-        );
-        languageWidget?.updateOptions(data.content);
-
-        // If editMode is true, switch to edit mode after loading content
-        if (initialEditMode) {
-          console.log('Switching to edit mode');
-          switchToInlineEdit();
-        }
-      })
-      .catch(error => {
-        console.error('Fetch error:', error);
-        pageBody.innerHTML = '<p class="text-danger">Error loading content</p>';
-        pageContent.style.display = 'block';
-      });
-  }
-
-  // Home link handler - navigates to pages home
-  if (homeLink) {
-    homeLink.addEventListener('click', function (e) {
-      e.preventDefault();
-      console.log('Home link clicked - navigating to pages home');
-
-      const locale = getCurrentLocale();
-      const journalCode = window.journalPagesData?.journalCode;
-      const pagesUrl = `/${locale}/journal/${journalCode}/pages`;
-      window.location.href = pagesUrl;
     });
+
+    if (formWidget) {
+      initTranslations();
+      updateFormWidgetDisplay();
+    }
   }
 
-  // Breadcrumb home link handler - navigates to pages home
-  if (breadcrumbHomeLink) {
-    breadcrumbHomeLink.addEventListener('click', function (e) {
-      e.preventDefault();
-      console.log('Breadcrumb home clicked - navigating to pages home');
+  // ===================
+  // CKEDITOR INITIALIZATION
+  // ===================
 
-      const locale = getCurrentLocale();
-      const journalCode = window.journalPagesData?.journalCode;
-      const pagesUrl = `/${locale}/journal/${journalCode}/pages`;
-      window.location.href = pagesUrl;
-    });
-  }
+  async function initPageEditor() {
+    if (editorInitialized) return;
 
-  // Edit button handler - navigates to edit route
-  editButton.addEventListener('click', function (e) {
-    e.preventDefault();
-    console.log('Edit button clicked');
-
-    if (!currentPageCode) {
-      showAlert(
-        'warning',
-        window.journalPagesData.translations?.selectPageFirst ||
-          'Please select a page first'
-      );
-      return;
-    }
-
-    // If already in edit mode, just switch to inline edit
-    if (window.journalPagesData?.editMode) {
-      switchToInlineEdit();
-      return;
-    }
-
-    // Navigate to edit route
-    const locale = getCurrentLocale();
-    const journalCode = window.journalPagesData?.journalCode;
-    const editUrl = `/${locale}/journal/${journalCode}/pages/${currentPageCode}/edit`;
-    window.location.href = editUrl;
-  });
-
-  // Function to switch to inline edit mode
-  function switchToInlineEdit() {
-    console.log('switchToInlineEdit called');
-    console.log('currentPageCode:', currentPageCode);
-    console.log('currentJournalCode:', currentJournalCode);
-
-    if (!currentPageCode || !currentJournalCode) {
-      console.log('Missing page info - showing alert');
-      showAlert(
-        'warning',
-        window.journalPagesData.translations?.selectPageFirst ||
-          'Please select a page first'
-      );
-      return;
-    }
-
-    // Use stored title data for the current locale, with fallbacks
-    const currentLocale = editingLocale || getCurrentLocale();
-    const pageTitle =
-      (currentTitleData &&
-        (currentTitleData[currentLocale] || currentTitleData['en'])) ||
-      (pageTitleView && pageTitleView.textContent) ||
-      currentPageCode;
-    const markdownForEdit = currentMarkdownContent[currentLocale] || '';
-
-    // Populate inline edit form
-    pageTitleInline.textContent = pageTitle;
-
-    // Hide page content and show inline edit
-    pageContent.style.display = 'none';
-    inlineEditContent.style.display = 'block';
-
-    // Initialize CKEditor
-    const placeholder =
-      window.journalPagesData.translations?.enterContent ||
-      'Enter the content here...';
-    console.log('About to initialize CKEditor with placeholder:', placeholder);
-    console.log(
-      'Target element:',
-      document.getElementById('page-content-inline')
-    );
-
+    const placeholder = 'Enter page content...';
     try {
-      const editorPromise = initializeCKEditor(
-        'page-content-inline',
-        placeholder
-      );
-      console.log('initializeCKEditor returned:', editorPromise);
-
-      if (editorPromise) {
-        editorPromise
-          .then(() => {
-            console.log('CKEditor initialized successfully');
-            // Use raw Markdown content directly (CKEditor with Markdown plugin expects MD)
-            setEditorContent(markdownForEdit);
-
-            // Focus on the editor after a short delay
-            setTimeout(() => {
-              focusEditor();
-            }, 100);
-          })
-          .catch(error => {
-            console.error('Failed to initialize CKEditor:', error);
-            // Fallback: create a simple textarea
-            const editorElement = document.getElementById(
-              'page-content-inline'
-            );
-            const parentElement = editorElement.parentNode;
-            const textarea = document.createElement('textarea');
-            textarea.className = 'form-control';
-            textarea.id = 'page-content-fallback';
-            textarea.rows = 10;
-            textarea.placeholder = placeholder;
-            textarea.value = markdownForEdit;
-
-            parentElement.replaceChild(textarea, editorElement);
-          });
-      } else {
-        console.error('initializeCKEditor returned null');
-      }
-    } catch (error) {
-      console.error('Error calling initializeCKEditor:', error);
-    }
-
-    // Hide the edit button in footer since we're already in edit mode
-    const cardFooter = document.querySelector('.card-footer');
-    if (cardFooter) {
-      cardFooter.style.display = 'none';
-    }
-
-    // Let CSS handle the height naturally - no forced JavaScript heights
-
-    isInlineEdit = true;
-  }
-
-  // Cancel inline edit handler
-  if (cancelInlineButton) {
-    cancelInlineButton.addEventListener('click', function () {
-      exitInlineEdit();
-    });
-  }
-
-  // Save inline edit handler
-  if (saveInlineButton) {
-    saveInlineButton.addEventListener('click', function () {
-      console.log('=== SAVE BUTTON CLICKED ===');
-
-      if (!currentPageCode || !currentJournalCode) {
-        console.log('ERROR: Missing page info:', {
-          currentPageCode,
-          currentJournalCode,
-        });
-        showAlert(
-          'danger',
-          window.journalPagesData.translations?.missingPageInfo ||
-            'Missing page information'
-        );
-        return;
-      }
-
-      //const newContent = pageContentInline.value;
-      const newContent = getEditorContent();
-      const newTitle = pageTitleInline.textContent || '';
-
-      console.log('Content from editor:', newContent);
-      console.log('Editor content length:', newContent?.length || 0);
-      console.log('Title:', newTitle);
-
-      // editingLocale = target language for translation (e.g. "es"), otherwise current route locale
-      let locale = editingLocale || getCurrentLocale();
-
-      const saveUrl = `/${getCurrentLocale()}/journal/${currentJournalCode}/page/${currentPageCode}/edit`;
-
-      console.log('Save URL:', saveUrl);
-      console.log('Content locale:', locale);
-
-      // Save via AJAX
-      console.log('=== SENDING FETCH REQUEST ===');
-      console.log(
-        'Request body:',
-        JSON.stringify(
-          {
-            content: newContent,
-            title: newTitle,
-            locale: locale,
-          },
-          null,
-          2
-        )
-      );
-
-      fetch(saveUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest',
-          'X-CSRF-Token': window.journalPagesData?.csrfToken || '',
-        },
-        body: JSON.stringify({
-          content: newContent,
-          title: newTitle,
-          locale: locale,
-        }),
-      })
-        .then(response => {
-          console.log('=== FETCH RESPONSE RECEIVED ===');
-          console.log('Status:', response.status);
-          console.log('Status Text:', response.statusText);
-          console.log('OK:', response.ok);
-          console.log('Headers:', [...response.headers.entries()]);
-
-          return response.json();
-        })
-        .then(data => {
-          console.log('Save response received:', data);
-          console.log(
-            'HTML content received:',
-            data.htmlContent || 'No htmlContent'
-          );
-
-          // TEMPORARY DEBUG: Log all response data
-          if (data.debug) {
-            console.log('=== DEBUG CONVERSION RESULTS ===');
-            console.log(
-              'Original HTML:',
-              data.original_html || 'No original_html'
-            );
-            console.log(
-              'Converted Markdown:',
-              data.converted_markdown || 'No converted_markdown'
-            );
-            console.log(
-              'Back to HTML:',
-              data.back_to_html || 'No back_to_html'
-            );
-            console.log(
-              'Actual content preview:',
-              data.actual_content || 'No actual_content'
-            );
-            console.log('=== END DEBUG ===');
-            return; // Stop here for debug
-          }
-
-          if (data.success) {
-            const { htmlContent, updatedTitle } = data;
-            pageBody.innerHTML = htmlContent || newContent;
-
-            if (updatedTitle && pageTitleView) {
-              pageTitleView.textContent = updatedTitle;
-            }
-
-            const activeLink = document.querySelector('.page-nav-link.active');
-            if (activeLink && updatedTitle) {
-              // Update the title attribute for the content language being saved
-              activeLink.setAttribute(
-                `data-current-title-${locale}`,
-                updatedTitle
-              );
-
-              // Update displayed text only if editing in the current UI language
-              const uiLocale = getCurrentLocale();
-              if (locale === uiLocale) {
-                activeLink.textContent = updatedTitle;
-              }
-
-              updateBreadcrumbLanguage(uiLocale);
-            }
-
-            // Exit inline edit mode
-            exitInlineEdit();
-
-            // Update URL to remove /edit (so refresh won't open in edit mode)
-            const viewUrl = `/${getCurrentLocale()}/journal/${currentJournalCode}/pages/${currentPageCode}`;
-            history.replaceState(null, '', viewUrl);
-
-            // Refresh translation list after save
-            const routeLocale = getCurrentLocale();
-            const refreshUrl = `/${routeLocale}/journal/${currentJournalCode}/page/${currentPageCode}`;
-            fetch(refreshUrl, {
-              headers: { 'X-Requested-With': 'XMLHttpRequest' },
-            })
-              .then(r => r.json())
-              .then(pageData => {
-                languageWidget?.updateTranslations(
-                  pageData.title,
-                  pageData.content,
-                  window.journalPagesData.translations || {}
-                );
-                languageWidget?.updateOptions(pageData.content);
-              })
-              .catch(() => {});
-
-            showAlert(
-              'success',
-              window.journalPagesData.translations?.saveSuccess ||
-                'Saved successfully'
-            );
-          } else {
-            showAlert(
-              'danger',
-              (window.journalPagesData.translations?.saveError ||
-                'Save error: ') + (data.message || 'Unknown error')
-            );
-          }
-        })
-        .catch(error => {
-          console.error('Save error:', error);
-          showAlert(
-            'danger',
-            (window.journalPagesData.translations?.saveError ||
-              'Save error: ') + error.message
-          );
-        });
-    });
-  }
-
-  // Function to update breadcrumb navigation
-  function updateBreadcrumb(clickedLink) {
-    const breadcrumbNav = document.getElementById('breadcrumb-nav');
-    const breadcrumbGrandparent = document.getElementById(
-      'breadcrumb-grandparent'
-    );
-    const breadcrumbParent = document.getElementById('breadcrumb-parent');
-    const breadcrumbCurrent = document.getElementById('breadcrumb-current');
-    const grandparentText = document.querySelector(
-      '.breadcrumb-grandparent-text'
-    );
-    const parentText = document.querySelector('.breadcrumb-parent-text');
-    const currentText = document.querySelector('.breadcrumb-current-text');
-
-    // Get current locale
-    const currentLocale = getCurrentLocale();
-
-    // Get page info with locale support
-    const pageCode = clickedLink.getAttribute('data-page-code');
-
-    // Get multilingual titles
-    const grandparentTitleEn = clickedLink.getAttribute(
-      'data-grandparent-title-en'
-    );
-    const grandparentTitleFr = clickedLink.getAttribute(
-      'data-grandparent-title-fr'
-    );
-    const parentTitleEn = clickedLink.getAttribute('data-parent-title-en');
-    const parentTitleFr = clickedLink.getAttribute('data-parent-title-fr');
-    const currentTitleEn = clickedLink.getAttribute('data-current-title-en');
-    const currentTitleFr = clickedLink.getAttribute('data-current-title-fr');
-
-    // Select title based on current locale
-    const grandparentTitle = getLocalizedText(
-      grandparentTitleEn,
-      grandparentTitleFr,
-      currentLocale
-    );
-    const parentTitle = getLocalizedText(
-      parentTitleEn,
-      parentTitleFr,
-      currentLocale
-    );
-    const currentTitle =
-      getLocalizedText(currentTitleEn, currentTitleFr, currentLocale) ||
-      clickedLink.textContent.trim();
-
-    console.log('Updating breadcrumb:', {
-      pageCode,
-      grandparentTitle,
-      parentTitle,
-      currentTitle,
-      currentLocale,
-    });
-
-    // Reset breadcrumb visibility
-    breadcrumbGrandparent.style.display = 'none';
-    breadcrumbParent.style.display = 'none';
-    breadcrumbCurrent.style.display = 'none';
-
-    if (grandparentTitle && parentTitle) {
-      // Nested page (3 levels): Show grandparent > parent > current
-      grandparentText.textContent = grandparentTitle;
-      parentText.textContent = parentTitle;
-      currentText.textContent = currentTitle;
-      breadcrumbGrandparent.style.display = 'block';
-      breadcrumbParent.style.display = 'block';
-      breadcrumbCurrent.style.display = 'block';
-      breadcrumbNav.style.display = 'block';
-    } else if (parentTitle) {
-      // Sub-page (2 levels): Show parent > current
-      parentText.textContent = parentTitle;
-      currentText.textContent = currentTitle;
-      breadcrumbParent.style.display = 'block';
-      breadcrumbCurrent.style.display = 'block';
-      breadcrumbNav.style.display = 'block';
-    } else {
-      // Main page (1 level): Show only current page
-      currentText.textContent = currentTitle;
-      breadcrumbCurrent.style.display = 'block';
-      breadcrumbNav.style.display = 'block';
-    }
-
-    // Show preview button and update URL
-    updatePreviewButton(pageCode, clickedLink);
-  }
-
-  // Function to update preview button
-  function updatePreviewButton(pageCode, clickedLink) {
-    console.log('DEBUG updatePreviewButton values:');
-    console.log('  previewButtonContainer:', previewButtonContainer);
-    console.log('  previewPageButton:', previewPageButton);
-    console.log('  pageCode:', pageCode);
-    console.log('  currentJournalCode:', currentJournalCode);
-
-    console.log('Element search by different methods:');
-    console.log(
-      '  byId:',
-      document.getElementById('preview-page-button-container')
-    );
-    console.log(
-      '  querySelector:',
-      document.querySelector('#preview-page-button-container')
-    );
-
-    if (!previewButtonContainer) {
-      console.error('previewButtonContainer is null! Cannot show button.');
-    }
-    if (!previewPageButton) {
-      console.error('previewPageButton is null! Cannot set URL.');
-    }
-
-    if (
-      previewButtonContainer &&
-      previewPageButton &&
-      currentJournalCode &&
-      clickedLink
-    ) {
-      let previewUrl;
-
-      // Check if this is a container page (has children)
-      const isContainer =
-        clickedLink.getAttribute('data-is-container') === 'true';
-
-      if (isContainer) {
-        // For container pages, use the container title to create the URL
-        const currentLocale = getCurrentLocale();
-        const titleEn = clickedLink.getAttribute('data-title-en');
-        const titleFr = clickedLink.getAttribute('data-title-fr');
-        const title = getLocalizedText(titleEn, titleFr, currentLocale);
-
-        // Convert title to URL-friendly format (lowercase, spaces to hyphens, remove special chars)
-        const urlTitle = title
-          ? title
-              .toLowerCase()
-              .replace(/\s+/g, '-')
-              .replace(/[^\w-]/g, '')
-          : 'page';
-        previewUrl = `https://${currentJournalCode}.episciences.org/${urlTitle}`;
-        console.log(
-          'DEBUG: Container page detected, using title:',
-          title,
-          '→',
-          urlTitle
-        );
-      } else {
-        // Check if this is a child page (has parent title data)
-        const parentTitleEn = clickedLink.getAttribute('data-parent-title-en');
-        const parentTitleFr = clickedLink.getAttribute('data-parent-title-fr');
-
-        if (parentTitleEn || parentTitleFr) {
-          // This is a child page, redirect to parent page
-          const currentLocale = getCurrentLocale();
-          const parentTitle = getLocalizedText(
-            parentTitleEn,
-            parentTitleFr,
-            currentLocale
-          );
-          const urlTitle = parentTitle
-            ? parentTitle
-                .toLowerCase()
-                .replace(/\s+/g, '-')
-                .replace(/[^\w-]/g, '')
-            : 'page';
-          previewUrl = `https://${currentJournalCode}.episciences.org/${urlTitle}`;
-          console.log(
-            'DEBUG: Child page detected, redirecting to parent:',
-            parentTitle,
-            '→',
-            urlTitle
-          );
-        } else if (pageCode) {
-          // For regular pages, use pageCode
-          previewUrl = `https://${currentJournalCode}.episciences.org/${pageCode}`;
-          console.log(
-            'DEBUG: Regular page detected, using pageCode:',
-            pageCode
-          );
-        } else {
-          // No pageCode available, hide preview button
-          console.log('DEBUG: No pageCode available, hiding preview button');
-          previewButtonContainer.style.display = 'none';
-          return;
+      await initializeCKEditor('page_content', placeholder, content => {
+        if (!translations[currentLang]) {
+          translations[currentLang] = { title: '', content: '' };
         }
-      }
+        translations[currentLang].content = content;
+        updateFormWidgetDisplay();
+      });
+      editorInitialized = true;
 
-      // Update button href and show it
-      previewPageButton.href = previewUrl;
-      previewButtonContainer.style.display = 'block';
-
-      // Update button text with current translation
-      // Security: Escape translation to prevent XSS
-      if (
-        window.journalPagesData.translations &&
-        window.journalPagesData.translations.previewPage
-      ) {
-        previewPageButton.innerHTML =
-          '<i class="fas fa-external-link-alt me-1"></i>' +
-          escapeHtml(window.journalPagesData.translations.previewPage);
-      }
-
-      console.log('DEBUG: Preview button shown with URL:', previewUrl);
-    } else {
-      // Hide preview button if no page is selected
-      if (previewButtonContainer) {
-        previewButtonContainer.style.display = 'none';
-        console.log('DEBUG: Preview button hidden - condition failed');
-      }
+      // Load current language content into editor
+      const currentContent = translations[currentLang]?.content || '';
+      setEditorContent(currentContent);
+    } catch (error) {
+      console.error('Failed to initialize CKEditor:', error);
     }
   }
 
-  // Page loading is now handled via window.journalPagesData.currentPage (from route)
+  function destroyPageEditor() {
+    if (editorInitialized) {
+      destroyEditor();
+      editorInitialized = false;
+    }
+  }
+
+  // ===================
+  // FORM COLLAPSE HANDLERS
+  // ===================
+
+  const pageEditForm = getElement('pageEditForm');
+  if (pageEditForm) {
+    pageEditForm.addEventListener('shown.bs.collapse', async () => {
+      initFormWidget();
+      await initPageEditor();
+    });
+
+    pageEditForm.addEventListener('hidden.bs.collapse', () => {
+      destroyPageEditor();
+    });
+
+    // If form should be open on load (editMode=true)
+    if (config.editMode && pageEditForm) {
+      const bsCollapse = new Collapse(pageEditForm, { toggle: false });
+      bsCollapse.show();
+    }
+  }
+
+  // ===================
+  // EVENT LISTENERS
+  // ===================
+
+  // Real-time update on input
+  document.addEventListener('input', e => {
+    if (!translations[currentLang]) {
+      translations[currentLang] = { title: '', content: '' };
+    }
+
+    if (e.target.id === 'page_title') {
+      translations[currentLang].title = e.target.value;
+      updateFormWidgetDisplay();
+    }
+  });
+
+  // Save all translations before form submit
+  const pageForm = getElement('page-form');
+  if (pageForm) {
+    pageForm.addEventListener('submit', () => {
+      saveCurrentLanguage();
+      config.acceptedLanguages.forEach(lang => updateHiddenInputs(lang));
+    });
+  }
+
+  // ===================
+  // MOBILE MENU HANDLING
+  // ===================
+
+  // Close mobile menu when clicking on a page link
+  const mobileMenuCheckbox = getElement('mobile-menu-toggle');
+  if (mobileMenuCheckbox) {
+    document.querySelectorAll('.page-nav-link, .home-nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenuCheckbox.checked = false;
+      });
+    });
+  }
+
+  // ===================
+  // SIDEBAR LANGUAGE WIDGET (for viewing)
+  // ===================
+
+  initLanguageWidget({
+    widgetId: 'sidebar',
+    onLanguageChange: selectedLang => {
+      // Change the page locale by redirecting
+      const currentUrl = new URL(window.location.href);
+      const pathParts = currentUrl.pathname.split('/');
+
+      // Find and replace locale in path (assuming /{locale}/journal/...)
+      if (pathParts.length > 1 && ['en', 'fr'].includes(pathParts[1])) {
+        pathParts[1] = selectedLang;
+        currentUrl.pathname = pathParts.join('/');
+        window.location.href = currentUrl.toString();
+      }
+    },
+  });
+
+  // ===================
+  // INITIALIZE
+  // ===================
+
+  initTranslations();
 });

@@ -72,6 +72,13 @@ journalPages:
   translations: "Traductions"
   addTranslation: "Ajouter une traduction"
   editTranslation: "Modifier la traduction"
+  welcomeTitle: "Bienvenue"
+  requiredFields: "Champs requis"
+  flash:
+    saved: "Page sauvegardée avec succès !"
+    error: "Erreur lors de la sauvegarde de la page"
+    invalidToken: "Jeton de sécurité invalide. Veuillez rafraîchir la page."
+    noContent: "Aucun contenu à sauvegarder"
 
 journalSettings:
   title: "Paramètres"

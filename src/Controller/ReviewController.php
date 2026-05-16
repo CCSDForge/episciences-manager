@@ -3,9 +3,11 @@
 namespace App\Controller;
 
 
+use App\Controller\PageController;
 use App\Repository\PageRepository;
 use App\Repository\ReviewRepository;
 use App\Service\JournalSettingService;
+use App\Service\MarkdownService;
 use App\Service\ReviewManager;
 use App\Service\PageHierarchyService;
 use Knp\Component\Pager\PaginatorInterface;
@@ -110,7 +112,7 @@ final class ReviewController extends AbstractController
     }
 
     #[Route('/journal/{code}/pages/{pageCode}/edit', name: 'app_journal_page_edit', requirements: ['code' => '[\w\-]+', 'pageCode' => '[\w\-]+'])]
-    public function pageEdit(string $code, string $pageCode, ReviewManager $reviewManager, PageRepository $pageRepository, PageHierarchyService $hierarchyService, JournalSettingService $settingService): Response
+    public function pageEdit(string $code, string $pageCode, ReviewManager $reviewManager, PageRepository $pageRepository, PageHierarchyService $hierarchyService, JournalSettingService $settingService, MarkdownService $markdownService): Response
     {
         $review = $reviewManager->getReviewByCode($code);
 
@@ -118,15 +120,48 @@ final class ReviewController extends AbstractController
             throw $this->createNotFoundException('Review not found');
         }
 
-        $this->denyAccessUnlessGranted('REVIEW_VIEW', $review);
+        $this->denyAccessUnlessGranted('REVIEW_EDIT', $review);
 
         $pages = $pageRepository->findBy(['rvcode' => $code]);
         $organizedPages = $hierarchyService->organizePages($pages, $code);
 
         $setting = $settingService->getSettingArray($review['rvid']);
         $acceptedLanguages = $setting['languages']['accepted'] ?? ['en', 'fr'];
-
         $defaultLanguage = $setting['languages']['default'] ?? 'en';
+
+        // Resolve page alias if needed
+        $actualPageCode = PageController::resolvePageCode($pageCode);
+
+        // Fetch the current page data
+        $currentPage = $pageRepository->findOneBy([
+            'rvcode' => $code,
+            'page_code' => $actualPageCode
+        ]);
+
+        // Get YAML title (source of truth for pages defined in YAML)
+        $yamlTitle = $hierarchyService->getTitleForPageCode($actualPageCode, $code);
+
+        // Build page data for template
+        $currentPageData = null;
+        if ($currentPage) {
+            $htmlContent = $markdownService->convertContentArray($currentPage->getContent());
+            $title = $yamlTitle ?? $currentPage->getTitle();
+
+            $currentPageData = [
+                'title' => $title,
+                'content' => $htmlContent,
+                'markdownContent' => $currentPage->getContent(),
+                'pageCode' => $currentPage->getPageCode(),
+            ];
+        } elseif ($yamlTitle) {
+            // Page defined in YAML but no DB entry yet
+            $currentPageData = [
+                'title' => $yamlTitle,
+                'content' => array_fill_keys($acceptedLanguages, ''),
+                'markdownContent' => array_fill_keys($acceptedLanguages, ''),
+                'pageCode' => $actualPageCode,
+            ];
+        }
 
         return $this->render('review/journalPages.html.twig', [
             'review' => $review,
@@ -135,12 +170,13 @@ final class ReviewController extends AbstractController
             'acceptedLanguages' => $acceptedLanguages,
             'defaultLanguage' => $defaultLanguage,
             'currentPage' => $pageCode,
+            'currentPageData' => $currentPageData,
             'editMode' => true,
         ]);
     }
 
     #[Route('/journal/{code}/pages/{pageCode}', name: 'app_journal_page_view', requirements: ['code' => '[\w\-]+', 'pageCode' => '[\w\-]+'])]
-    public function pageView(string $code, string $pageCode, ReviewManager $reviewManager, PageRepository $pageRepository, PageHierarchyService $hierarchyService, JournalSettingService $settingService): Response
+    public function pageView(string $code, string $pageCode, ReviewManager $reviewManager, PageRepository $pageRepository, PageHierarchyService $hierarchyService, JournalSettingService $settingService, MarkdownService $markdownService): Response
     {
         $review = $reviewManager->getReviewByCode($code);
 
@@ -155,8 +191,41 @@ final class ReviewController extends AbstractController
 
         $setting = $settingService->getSettingArray($review['rvid']);
         $acceptedLanguages = $setting['languages']['accepted'] ?? ['en', 'fr'];
-
         $defaultLanguage = $setting['languages']['default'] ?? 'en';
+
+        // Resolve page alias if needed
+        $actualPageCode = PageController::resolvePageCode($pageCode);
+
+        // Fetch the current page data
+        $currentPage = $pageRepository->findOneBy([
+            'rvcode' => $code,
+            'page_code' => $actualPageCode
+        ]);
+
+        // Get YAML title (source of truth for pages defined in YAML)
+        $yamlTitle = $hierarchyService->getTitleForPageCode($actualPageCode, $code);
+
+        // Build page data for template
+        $currentPageData = null;
+        if ($currentPage) {
+            $htmlContent = $markdownService->convertContentArray($currentPage->getContent());
+            $title = $yamlTitle ?? $currentPage->getTitle();
+
+            $currentPageData = [
+                'title' => $title,
+                'content' => $htmlContent,
+                'markdownContent' => $currentPage->getContent(),
+                'pageCode' => $currentPage->getPageCode(),
+            ];
+        } elseif ($yamlTitle) {
+            // Page defined in YAML but no DB entry yet
+            $currentPageData = [
+                'title' => $yamlTitle,
+                'content' => array_fill_keys($acceptedLanguages, ''),
+                'markdownContent' => array_fill_keys($acceptedLanguages, ''),
+                'pageCode' => $actualPageCode,
+            ];
+        }
 
         return $this->render('review/journalPages.html.twig', [
             'review' => $review,
@@ -165,6 +234,7 @@ final class ReviewController extends AbstractController
             'acceptedLanguages' => $acceptedLanguages,
             'defaultLanguage' => $defaultLanguage,
             'currentPage' => $pageCode,
+            'currentPageData' => $currentPageData,
             'editMode' => false,
         ]);
     }

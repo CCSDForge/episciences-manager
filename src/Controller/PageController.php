@@ -12,9 +12,11 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class PageController extends AbstractController
 {
@@ -37,6 +39,15 @@ final class PageController extends AbstractController
         // Reverse lookup: find the alias key for this page code
         $alias = array_search($pageCode, self::PAGE_ALIASES, true);
         return $alias !== false ? $alias : $pageCode;
+    }
+
+    /**
+     * Resolve a URL slug to the actual page code in database
+     * Returns the actual page_code if an alias exists, otherwise returns the slug itself
+     */
+    public static function resolvePageCode(string $slug): string
+    {
+        return self::PAGE_ALIASES[$slug] ?? $slug;
     }
 
     #[Route('/journal/{code}/page/{pageTitle}', name: 'app_page_show', methods: ['GET'])]
@@ -155,27 +166,25 @@ final class PageController extends AbstractController
         Request $request,
         PageRepository $pageRepository,
         EntityManagerInterface $entityManager,
-        MarkdownService $markdownService,
-        ReviewManager $reviewManager
-    ): JsonResponse {
-        // Validate CSRF token
-        $token = $request->headers->get('X-CSRF-Token') ?? $request->query->get('_token');
+        ReviewManager $reviewManager,
+        TranslatorInterface $translator
+    ): Response {
+        // Validate CSRF token (support both form and header)
+        $token = $request->request->get('_token') ?? $request->headers->get('X-CSRF-Token');
         if (!$this->isCsrfTokenValid('page-edit', $token)) {
-            return new JsonResponse(
-                ['success' => false, 'message' => 'Invalid CSRF token'],
-                Response::HTTP_FORBIDDEN
-            );
+            $this->addFlash('danger', $translator->trans('journalPages.flash.invalidToken'));
+            return $this->redirectToRoute('app_journal_page_view', [
+                'code' => $code,
+                'pageCode' => $pageTitle
+            ]);
         }
 
         $review = $reviewManager->getReviewByCode($code);
         if (!$review) {
-            return new JsonResponse(['success' => false, 'message' => 'Journal not found'], 404);
+            throw $this->createNotFoundException('Journal not found');
         }
         if (!$this->isGranted('REVIEW_EDIT', $review)) {
-            return new JsonResponse(
-                ['success' => false, 'message' => 'Access denied'],
-                Response::HTTP_FORBIDDEN
-            );
+            throw $this->createAccessDeniedException('Access denied');
         }
 
         $actualPageCode = self::PAGE_ALIASES[$pageTitle] ?? $pageTitle;
@@ -184,8 +193,6 @@ final class PageController extends AbstractController
             'rvcode' => $code,
             'page_code' => $actualPageCode
         ]);
-
-        $data = json_decode($request->getContent(), true);
 
         // If page doesn't exist, create it
         if (!$page instanceof \App\Entity\Page) {
@@ -203,52 +210,48 @@ final class PageController extends AbstractController
             $entityManager->persist($page);
         }
 
-        if (!isset($data['content'], $data['locale'])) {
-            return new JsonResponse(['success' => false, 'message' => 'Missing content or locale'], 400);
+        // Get translations from form (all languages at once)
+        $translations = $request->request->all('translations');
+
+        if (empty($translations)) {
+            $this->addFlash('warning', $translator->trans('journalPages.flash.noContent'));
+            return $this->redirectToRoute('app_journal_page_view', [
+                'code' => $code,
+                'pageCode' => $pageTitle
+            ]);
         }
 
-        $markdownContent = (string) $data['content'];
-        $locale      = (string) $data['locale'];
-        $title       = isset($data['title']) ? (string) $data['title'] : null;
-
-        // Save markdown per locale
+        $currentTitle = $page->getTitle();
         $currentContent = $page->getContent();
-        $currentContent[$locale] = $markdownContent;
-        $page->setContent($currentContent);
 
-        // Save title per locale if provided
-        if ($title !== null) {
-            $currentTitle = $page->getTitle();
-            $currentTitle[$locale] = $title;
-            $page->setTitle($currentTitle);
+        foreach ($translations as $lang => $data) {
+            if (isset($data['title']) && !empty($data['title'])) {
+                $currentTitle[$lang] = $data['title'];
+            }
+            if (isset($data['content'])) {
+                $currentContent[$lang] = $data['content'];
+            }
         }
 
-        // Always update the date_updated timestamp
+        $page->setTitle($currentTitle);
+        $page->setContent($currentContent);
         $page->setDateUpdated(new \DateTime());
 
         try {
             $entityManager->flush();
-
-            // Return fresh HTML for the locale (MD -> HTML)
-            $htmlByLocale = $markdownService->convertContentArray($page->getContent());
-            $htmlForLocale = $htmlByLocale[$locale] ?? '';
-
-            return new JsonResponse([
-                'success'      => true,
-                'message'      => 'Page updated successfully',
-                'htmlContent'  => $htmlForLocale,
-                'updatedTitle' => $page->getTitle()[$locale] ?? $title,
-            ]);
+            $this->addFlash('success', $translator->trans('journalPages.flash.saved'));
         } catch (\Throwable $e) {
             $this->logger->error('Error saving page', [
                 'exception' => $e->getMessage(),
                 'code' => $code,
                 'pageTitle' => $pageTitle,
             ]);
-            return new JsonResponse([
-                'success' => false,
-                'message' => 'Error saving page'
-            ], 500);
+            $this->addFlash('danger', $translator->trans('journalPages.flash.error'));
         }
+
+        return $this->redirectToRoute('app_journal_page_view', [
+            'code' => $code,
+            'pageCode' => $pageTitle
+        ]);
     }
 }
