@@ -43,19 +43,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const translations = {};
   let currentLang = config.defaultLanguage;
-  let formWidget = null;
+  let sidebarWidget = null;
   let editorInitialized = false;
+  let formIsOpen = false;
 
-  // Initialize translations from hidden inputs
+  // Initialize translations from pageData config or hidden inputs
   function initTranslations() {
     config.acceptedLanguages.forEach(lang => {
-      const titleHidden = getElement(`translation-title-${lang}`);
-      const contentHidden = getElement(`translation-content-${lang}`);
+      // First try to get from pageData (passed from server)
+      if (config.pageData) {
+        translations[lang] = {
+          title: config.pageData.title?.[lang] || '',
+          content: config.pageData.content?.[lang] || '',
+        };
+      } else {
+        // Fallback to hidden inputs
+        const titleHidden = getElement(`translation-title-${lang}`);
+        const contentHidden = getElement(`translation-content-${lang}`);
 
-      translations[lang] = {
-        title: titleHidden?.value || '',
-        content: contentHidden?.value || '',
-      };
+        translations[lang] = {
+          title: titleHidden?.value || '',
+          content: contentHidden?.value || '',
+        };
+      }
     });
   }
 
@@ -101,48 +111,60 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Update widget translations display
-  function updateFormWidgetDisplay() {
-    if (!formWidget) return;
+  function updateWidgetDisplay() {
+    if (!sidebarWidget) return;
 
     const titleByLocale = {};
     const contentByLocale = {};
-    const hasDataByLocale = {};
 
     config.acceptedLanguages.forEach(lang => {
       titleByLocale[lang] = translations[lang]?.title || '';
       contentByLocale[lang] = translations[lang]?.content || '';
-      hasDataByLocale[lang] = titleByLocale[lang] || contentByLocale[lang];
     });
 
-    formWidget.updateTranslations(titleByLocale, contentByLocale, {});
-    formWidget.updateOptions(hasDataByLocale);
+    sidebarWidget.updateTranslations(titleByLocale, contentByLocale, {});
+    // For pages: show only languages with content in dropdown
+    sidebarWidget.updateOptions(contentByLocale);
   }
 
   // ===================
-  // INITIALIZE FORM WIDGET
+  // LANGUAGE CHANGE HANDLER
   // ===================
 
-  function initFormWidget() {
-    if (formWidget) return;
+  function handleLanguageChange(selectedLang) {
+    if (formIsOpen) {
+      // When form is open, switch translations
+      saveCurrentLanguage();
+      loadLanguage(selectedLang);
+    } else {
+      // When form is closed, redirect to change interface language
+      const currentUrl = new URL(window.location.href);
+      const pathParts = currentUrl.pathname.split('/');
 
-    formWidget = initLanguageWidget({
-      widgetId: 'page-form',
-      onLanguageChange: selectedLang => {
-        saveCurrentLanguage();
-        loadLanguage(selectedLang);
-      },
-      onTranslationClick: lang => {
-        saveCurrentLanguage();
-        loadLanguage(lang);
-        if (formWidget?.select) {
-          formWidget.select.value = lang;
-        }
-      },
-    });
+      if (pathParts.length > 1 && config.acceptedLanguages.includes(pathParts[1])) {
+        pathParts[1] = selectedLang;
+        currentUrl.pathname = pathParts.join('/');
+        window.location.href = currentUrl.toString();
+      }
+    }
+  }
 
-    if (formWidget) {
-      initTranslations();
-      updateFormWidgetDisplay();
+  function handleTranslationClick(lang) {
+    const pageEditForm = getElement('pageEditForm');
+
+    if (formIsOpen) {
+      // Form is already open, just switch language
+      saveCurrentLanguage();
+      loadLanguage(lang);
+      if (sidebarWidget?.select) {
+        sidebarWidget.select.value = lang;
+      }
+    } else if (pageEditForm) {
+      // Form is closed, open it and switch to the requested language
+      currentLang = lang;
+      const bsCollapse = new Collapse(pageEditForm, { toggle: false });
+      bsCollapse.show();
+      // The shown.bs.collapse event will handle the rest
     }
   }
 
@@ -160,7 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
           translations[currentLang] = { title: '', content: '' };
         }
         translations[currentLang].content = content;
-        updateFormWidgetDisplay();
+        updateWidgetDisplay();
       });
       editorInitialized = true;
 
@@ -186,11 +208,19 @@ document.addEventListener('DOMContentLoaded', () => {
   const pageEditForm = getElement('pageEditForm');
   if (pageEditForm) {
     pageEditForm.addEventListener('shown.bs.collapse', async () => {
-      initFormWidget();
+      formIsOpen = true;
+      initTranslations();
+      updateWidgetDisplay();
       await initPageEditor();
+      // Load the current language into the form
+      loadLanguage(currentLang);
+      if (sidebarWidget?.select) {
+        sidebarWidget.select.value = currentLang;
+      }
     });
 
     pageEditForm.addEventListener('hidden.bs.collapse', () => {
+      formIsOpen = false;
       destroyPageEditor();
     });
 
@@ -213,7 +243,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (e.target.id === 'page_title') {
       translations[currentLang].title = e.target.value;
-      updateFormWidgetDisplay();
+      updateWidgetDisplay();
     }
   });
 
@@ -241,23 +271,14 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ===================
-  // SIDEBAR LANGUAGE WIDGET (for viewing)
+  // SIDEBAR LANGUAGE WIDGET
   // ===================
 
-  initLanguageWidget({
+  sidebarWidget = initLanguageWidget({
     widgetId: 'sidebar',
-    onLanguageChange: selectedLang => {
-      // Change the page locale by redirecting
-      const currentUrl = new URL(window.location.href);
-      const pathParts = currentUrl.pathname.split('/');
-
-      // Find and replace locale in path (assuming /{locale}/journal/...)
-      if (pathParts.length > 1 && ['en', 'fr'].includes(pathParts[1])) {
-        pathParts[1] = selectedLang;
-        currentUrl.pathname = pathParts.join('/');
-        window.location.href = currentUrl.toString();
-      }
-    },
+    onLanguageChange: handleLanguageChange,
+    onTranslationClick: handleTranslationClick,
+    iconBasedOnContentOnly: true, // For pages: icon based on content only (titles come from YAML)
   });
 
   // ===================
@@ -265,4 +286,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // ===================
 
   initTranslations();
+  // Update widget display on page load to show correct icons (+ or pencil)
+  updateWidgetDisplay();
 });

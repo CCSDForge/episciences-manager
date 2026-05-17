@@ -104,7 +104,8 @@
 }
 
 // Markdown/CKEditor rendered content inside readonly view
-#page-body {
+#page-body,
+.ck-content {
   min-height: 200px;
   overflow-x: auto;
 
@@ -117,19 +118,50 @@
   th,
   td {
     border: 1px solid $border-color;
-    padding: 0.5rem 0.75rem;
+    padding: 0.75rem 1rem;
     vertical-align: top;
   }
 
   thead th {
     background-color: $light-gray;
     font-weight: 600;
+    padding: 1rem 1rem;
+    font-size: 1.1rem;
+  }
+
+  // Additional CKEditor table styles
+  figure.table {
+    margin: 1rem 0;
+
+    table {
+      margin: 0;
+    }
   }
 }
 
 // Page Edit Form (collapsible)
 .page-form-collapse {
   margin-bottom: 1.5rem;
+
+  // Hide the content display card when the edit form is open
+  &.show + .card {
+    display: none;
+  }
+}
+
+// Page cards (edit form and display)
+.journal-layout__content .card {
+  .card-header {
+    padding: 1rem 1.25rem;
+    border-bottom: 2px solid $primary-color;
+
+    h5 {
+      color: $primary-color;
+      font-weight: 600;
+      font-size: 1.25rem;
+      margin: 0;
+    }
+  }
 }
 
 .page-form-card {
@@ -138,11 +170,12 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 
   .card-header {
-    border-bottom: 1px solid $border-color;
+    border-bottom: 2px solid $primary-color;
 
     h5 {
       color: $primary-color;
       font-weight: 600;
+      font-size: 1.25rem;
     }
   }
 

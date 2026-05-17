@@ -163,6 +163,9 @@ final class ReviewController extends AbstractController
             ];
         }
 
+        // Get breadcrumb path
+        $breadcrumbPath = $hierarchyService->getBreadcrumbPath($actualPageCode, $code);
+
         return $this->render('review/journalPages.html.twig', [
             'review' => $review,
             'code' => $code,
@@ -171,6 +174,7 @@ final class ReviewController extends AbstractController
             'defaultLanguage' => $defaultLanguage,
             'currentPage' => $pageCode,
             'currentPageData' => $currentPageData,
+            'breadcrumbPath' => $breadcrumbPath,
             'editMode' => true,
         ]);
     }
@@ -227,6 +231,9 @@ final class ReviewController extends AbstractController
             ];
         }
 
+        // Get breadcrumb path
+        $breadcrumbPath = $hierarchyService->getBreadcrumbPath($actualPageCode, $code);
+
         return $this->render('review/journalPages.html.twig', [
             'review' => $review,
             'code' => $code,
@@ -235,9 +242,8 @@ final class ReviewController extends AbstractController
             'defaultLanguage' => $defaultLanguage,
             'currentPage' => $pageCode,
             'currentPageData' => $currentPageData,
+            'breadcrumbPath' => $breadcrumbPath,
             'editMode' => false,
         ]);
     }
-
-
 }

@@ -211,6 +211,21 @@
                                             {{ 'journalPages.home' | trans }}
                                         </a>
                                     </li>
+                                    {% if breadcrumbPath is defined and breadcrumbPath is not empty %}
+                                        {% for item in breadcrumbPath %}
+                                            <li class="breadcrumb-item">
+                                                {% if item.type == 'page' and item.code is defined %}
+                                                    <a href="{{ path('app_journal_page_view', {'code': code, 'pageCode': item.code|page_slug}) }}">
+                                                        {{ item.title[app.request.locale] ?? item.title[defaultLanguage] ?? item.title['en'] ?? 'Unknown' }}
+                                                    </a>
+                                                {% else %}
+                                                    <span class="text-muted">
+                                                        {{ item.title[app.request.locale] ?? item.title[defaultLanguage] ?? item.title['en'] ?? 'Unknown' }}
+                                                    </span>
+                                                {% endif %}
+                                            </li>
+                                        {% endfor %}
+                                    {% endif %}
                                     <li class="breadcrumb-item active" aria-current="page">
                                         {{ currentPageData.title[app.request.locale] ?? currentPageData.title[defaultLanguage] ?? currentPageData.pageCode }}
                                     </li>
@@ -229,19 +244,36 @@
 
                             <!-- Page Content Display Area -->
                             <div class="card">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-file-alt me-2"></i>{{ 'journalPages.pageContent'|trans|default('Page Content') }}
+                                    </h5>
+                                </div>
                                 <div class="card-body">
+                                    <!-- Title -->
                                     <div class="mb-3">
-                                        <h2 class="text-primary">
+                                        <label class="form-label text-primary fw-semibold">
+                                            {{ 'journalPages.form.title'|trans }}
+                                            <span class="badge bg-secondary ms-2">{{ 'journalPages.notEditable'|trans }}</span>
+                                        </label>
+                                        <div class="form-control bg-light">
                                             {{ currentPageData.title[app.request.locale] ?? currentPageData.title[defaultLanguage] ?? currentPageData.pageCode }}
-                                        </h2>
+                                        </div>
                                     </div>
-                                    <div class="ck-content">
-                                        {% set pageContent = currentPageData.content[app.request.locale] ?? currentPageData.content[defaultLanguage] ?? '' %}
-                                        {% if pageContent is not empty %}
-                                            {{ pageContent|raw }}
-                                        {% else %}
-                                            <p class="text-muted fst-italic">{{ 'journalPages.noContentAvailable'|trans }}</p>
-                                        {% endif %}
+
+                                    <!-- Content -->
+                                    <div class="mb-3">
+                                        <label class="form-label text-primary fw-semibold">
+                                            {{ 'journalPages.form.content'|trans }}
+                                        </label>
+                                        <div class="ck-content border rounded p-3 bg-white" style="min-height: 200px;">
+                                            {% set pageContent = currentPageData.content[app.request.locale] ?? currentPageData.content[defaultLanguage] ?? '' %}
+                                            {% if pageContent is not empty %}
+                                                {{ pageContent|raw }}
+                                            {% else %}
+                                                <p class="text-muted fst-italic">{{ 'journalPages.noContentAvailable'|trans }}</p>
+                                            {% endif %}
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="card-footer text-end">
@@ -298,7 +330,11 @@
         acceptedLanguages: {{ acceptedLanguages|default(['en', 'fr'])|json_encode|raw }},
         defaultLanguage: {{ defaultLanguage|default('en')|json_encode|raw }},
         currentPage: {{ currentPage|default('')|json_encode|raw }},
-        editMode: {{ editMode|default(false)|json_encode|raw }}
+        editMode: {{ editMode|default(false)|json_encode|raw }},
+        pageData: {% if currentPageData is defined and currentPageData is not null %}{
+          title: {{ currentPageData.title|json_encode|raw }},
+          content: {{ currentPageData.markdownContent|json_encode|raw }}
+        }{% else %}null{% endif %}
       };
     </script>
     {{ encore_entry_script_tags('journalPagesJs') }}
