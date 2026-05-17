@@ -89,7 +89,10 @@ document.addEventListener('DOMContentLoaded', () => {
   function loadLanguage(lang) {
     currentLang = lang;
     const data = translations[lang] || { title: '', content: '' };
-    const defaultData = translations[config.defaultLanguage] || { title: '', content: '' };
+    const defaultData = translations[config.defaultLanguage] || {
+      title: '',
+      content: '',
+    };
 
     const titleInput = getTitleInput();
     const formLanguageInput = getFormLanguageInput();
@@ -153,8 +156,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!config.pageData || !titleElement || !contentElement) return;
 
     // Get content for selected language, fallback to default language
-    const title = config.pageData.title?.[lang] || config.pageData.title?.[config.defaultLanguage] || '';
-    const content = config.pageData.content?.[lang] || config.pageData.content?.[config.defaultLanguage] || '';
+    const title =
+      config.pageData.title?.[lang] ||
+      config.pageData.title?.[config.defaultLanguage] ||
+      '';
+    const content =
+      config.pageData.content?.[lang] ||
+      config.pageData.content?.[config.defaultLanguage] ||
+      '';
 
     // Update title
     if (title) {
@@ -165,7 +174,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (content) {
       contentElement.innerHTML = content;
     } else {
-      const noContentMsg = config.translations?.noContentAvailable || 'No content available';
+      const noContentMsg =
+        config.translations?.noContentAvailable || 'No content available';
       contentElement.innerHTML = `<p class="text-muted fst-italic no-content-message">${noContentMsg}</p>`;
     }
   }
@@ -209,7 +219,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Load current language content into editor - fallback to default language if empty
       const currentContent = translations[currentLang]?.content || '';
-      const defaultContent = translations[config.defaultLanguage]?.content || '';
+      const defaultContent =
+        translations[config.defaultLanguage]?.content || '';
       setEditorContent(currentContent || defaultContent);
     } catch (error) {
       console.error('Failed to initialize CKEditor:', error);
@@ -285,11 +296,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // Close mobile menu when clicking on a page link
   const mobileMenuCheckbox = getElement('mobile-menu-toggle');
   if (mobileMenuCheckbox) {
-    document.querySelectorAll('.page-nav-link, .home-nav-link').forEach(link => {
-      link.addEventListener('click', () => {
-        mobileMenuCheckbox.checked = false;
+    document
+      .querySelectorAll('.page-nav-link, .home-nav-link')
+      .forEach(link => {
+        link.addEventListener('click', () => {
+          mobileMenuCheckbox.checked = false;
+        });
       });
-    });
   }
 
   // ===================
