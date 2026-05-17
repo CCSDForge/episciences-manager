@@ -89,6 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function loadLanguage(lang) {
     currentLang = lang;
     const data = translations[lang] || { title: '', content: '' };
+    const defaultData = translations[config.defaultLanguage] || { title: '', content: '' };
 
     const titleInput = getTitleInput();
     const formLanguageInput = getFormLanguageInput();
@@ -96,9 +97,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (titleInput) titleInput.value = data.title;
     if (formLanguageInput) formLanguageInput.value = lang;
 
-    // Update CKEditor content
+    // Update CKEditor content - fallback to default language if empty
     if (editorInitialized) {
-      setEditorContent(data.content || '');
+      const contentToLoad = data.content || defaultData.content || '';
+      setEditorContent(contentToLoad);
     }
   }
 
@@ -133,19 +135,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function handleLanguageChange(selectedLang) {
     if (formIsOpen) {
-      // When form is open, switch translations
+      // When form is open, switch translations in editor
       saveCurrentLanguage();
       loadLanguage(selectedLang);
     } else {
-      // When form is closed, redirect to change interface language
-      const currentUrl = new URL(window.location.href);
-      const pathParts = currentUrl.pathname.split('/');
+      // When form is closed, update the view content (no redirect)
+      updateViewContent(selectedLang);
+    }
+    currentLang = selectedLang;
+  }
 
-      if (pathParts.length > 1 && config.acceptedLanguages.includes(pathParts[1])) {
-        pathParts[1] = selectedLang;
-        currentUrl.pathname = pathParts.join('/');
-        window.location.href = currentUrl.toString();
-      }
+  // Update the page view content based on selected language
+  function updateViewContent(lang) {
+    const titleElement = document.getElementById('page-view-title');
+    const contentElement = document.getElementById('page-view-content');
+
+    if (!config.pageData || !titleElement || !contentElement) return;
+
+    // Get content for selected language, fallback to default language
+    const title = config.pageData.title?.[lang] || config.pageData.title?.[config.defaultLanguage] || '';
+    const content = config.pageData.content?.[lang] || config.pageData.content?.[config.defaultLanguage] || '';
+
+    // Update title
+    if (title) {
+      titleElement.textContent = title;
+    }
+
+    // Update content
+    if (content) {
+      contentElement.innerHTML = content;
+    } else {
+      const noContentMsg = config.translations?.noContentAvailable || 'No content available';
+      contentElement.innerHTML = `<p class="text-muted fst-italic no-content-message">${noContentMsg}</p>`;
     }
   }
 
@@ -186,9 +207,10 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       editorInitialized = true;
 
-      // Load current language content into editor
+      // Load current language content into editor - fallback to default language if empty
       const currentContent = translations[currentLang]?.content || '';
-      setEditorContent(currentContent);
+      const defaultContent = translations[config.defaultLanguage]?.content || '';
+      setEditorContent(currentContent || defaultContent);
     } catch (error) {
       console.error('Failed to initialize CKEditor:', error);
     }
