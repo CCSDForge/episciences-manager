@@ -319,4 +319,66 @@ class PageHierarchyService
     {
         return $this->config;
     }
+
+    /**
+     * Get the breadcrumb path for a page code
+     * @return array<int, array{title: array<string, string>, type: string, code?: string}> Array of breadcrumb items
+     */
+    public function getBreadcrumbPath(string $pageCode, string $rvcode): array
+    {
+        $journalConfig = $this->config[$rvcode]['main_pages']
+            ?? $this->config['default']['main_pages']
+            ?? [];
+
+        $path = [];
+        $this->findPathToPage($pageCode, $journalConfig, $path);
+
+        return $path;
+    }
+
+    /**
+     * Recursively find the path to a page
+     * @param array<int, array<string, mixed>> $config
+     * @param array<int, array{title: array<string, string>, type: string, code?: string}> &$path
+     */
+    private function findPathToPage(string $targetPageCode, array $config, array &$path): bool
+    {
+        foreach ($config as $item) {
+            if ($item === null) {
+                continue;
+            }
+
+            // Check if this is the target page
+            if (isset($item['code']) && $item['code'] === $targetPageCode) {
+                return true; // Found it, don't add to path (current page is not in breadcrumb path)
+            }
+
+            // Check if this is a container
+            $isContainer = isset($item['type']) && $item['type'] === 'container';
+
+            // Check children
+            if (isset($item['children'])) {
+                // Temporarily add this item to path
+                $breadcrumbItem = [
+                    'type' => $isContainer ? 'container' : 'page',
+                    'title' => $item['title'] ?? ['en' => 'Unknown', 'fr' => 'Inconnu'],
+                ];
+                if (!$isContainer && isset($item['code'])) {
+                    $breadcrumbItem['code'] = $item['code'];
+                }
+
+                $path[] = $breadcrumbItem;
+
+                // Search in children
+                if ($this->findPathToPage($targetPageCode, $item['children'], $path)) {
+                    return true; // Found in children, keep this item in path
+                }
+
+                // Not found in children, remove from path
+                array_pop($path);
+            }
+        }
+
+        return false;
+    }
 }
