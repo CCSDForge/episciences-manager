@@ -1,0 +1,78 @@
+{#
+Page Form Component (for edit)
+Parameters:
+- code: journal code
+- acceptedLanguages: array
+- defaultLanguage: string
+- pageData: page data for edit mode
+- formAction: URL for form submission
+- csrfTokenId: CSRF token identifier
+- formOpen: boolean (default false) - whether form is open by default
+#}
+
+{% set isEdit = pageData is defined and pageData is not null %}
+{% set isFormOpen = formOpen|default(false) %}
+
+<div class="{% if not isFormOpen %}collapse{% endif %} mt-4 page-form-collapse" id="pageEditForm">
+    <div class="card page-form-card">
+        <div class="card-header bg-light">
+            <h5 class="mb-0" id="page-form-title">
+                <i class="fas fa-edit me-2"></i>{{ 'journalPages.editTitle'|trans }}
+            </h5>
+        </div>
+        <div class="card-body">
+            <form id="page-form" method="post" action="{{ formAction }}">
+                <input type="hidden" name="_token" value="{{ csrf_token(csrfTokenId) }}">
+                <input type="hidden" name="language" id="form-language" value="{{ defaultLanguage }}">
+
+                {# Hidden inputs for multilingual translations #}
+                {% for lang in acceptedLanguages %}
+                    <input type="hidden" name="translations[{{ lang }}][title]" id="translation-title-{{ lang }}"
+                           value="{% if isEdit %}{{ pageData.title[lang]|default('') }}{% endif %}">
+                    <input type="hidden" name="translations[{{ lang }}][content]" id="translation-content-{{ lang }}"
+                           value="{% if isEdit %}{{ pageData.markdownContent[lang]|default('') }}{% endif %}">
+                {% endfor %}
+
+                <!-- Title (read-only, from pages_hierarchy.yaml) -->
+                <div class="mb-3">
+                    <label for="page_title" class="form-label">
+                        {{ 'journalPages.form.title'|trans|default('Title') }}
+                        <span class="badge bg-secondary ms-2">{{ 'journalPages.notEditable'|trans }}</span>
+                    </label>
+                    <input type="text"
+                           class="form-control bg-light"
+                           id="page_title"
+                           name="title"
+                           value="{% if isEdit %}{{ pageData.title[defaultLanguage]|default('') }}{% endif %}"
+                           readonly>
+                </div>
+
+                <!-- Content -->
+                <div class="mb-3">
+                    <label for="page_content" class="form-label">
+                        {{ 'journalPages.form.content'|trans|default('Content') }}
+                    </label>
+                    <div id="page_content" class="form-control" style="min-height: 300px;">{% if isEdit %}{{ pageData.markdownContent[defaultLanguage]|default('') }}{% endif %}</div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="d-flex justify-content-center gap-2 mt-4">
+                    {% if isFormOpen %}
+                        <a href="{{ path('app_journal_page_view', {'code': code, 'pageCode': pageData.pageCode|page_slug}) }}" class="btn btn-outline-secondary">
+                            {{ 'journalPages.form.cancel'|trans|default('Cancel') }}
+                        </a>
+                    {% else %}
+                        <button type="button" class="btn btn-outline-secondary"
+                                data-bs-toggle="collapse" data-bs-target="#pageEditForm">
+                            {{ 'journalPages.form.cancel'|trans|default('Cancel') }}
+                        </button>
+                    {% endif %}
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i>
+                        {{ 'journalPages.form.save'|trans|default('Save') }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

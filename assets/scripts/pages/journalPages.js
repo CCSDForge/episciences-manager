@@ -183,19 +183,23 @@ document.addEventListener('DOMContentLoaded', () => {
   function handleTranslationClick(lang) {
     const pageEditForm = getElement('pageEditForm');
 
-    if (formIsOpen) {
-      // Form is already open, just switch language
+    if (config.editMode || formIsOpen) {
+      // Form is already open (edit mode or collapse open), just switch language
       saveCurrentLanguage();
       loadLanguage(lang);
       if (sidebarWidget?.select) {
         sidebarWidget.select.value = lang;
       }
     } else if (pageEditForm) {
-      // Form is closed, open it and switch to the requested language
+      // Form exists as collapse, open it and switch to the requested language
       currentLang = lang;
       const bsCollapse = new Collapse(pageEditForm, { toggle: false });
       bsCollapse.show();
       // The shown.bs.collapse event will handle the rest
+    } else if (config.currentPage) {
+      // View mode: form not in DOM, redirect to edit page
+      const editUrl = `/${config.locale}/journal/${config.journalCode}/pages/${config.currentPage}/edit`;
+      window.location.href = editUrl;
     }
   }
 
@@ -235,11 +239,12 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ===================
-  // FORM COLLAPSE HANDLERS
+  // FORM HANDLERS
   // ===================
 
   const pageEditForm = getElement('pageEditForm');
   if (pageEditForm) {
+    // Handle collapse events (for view mode with collapse)
     pageEditForm.addEventListener('shown.bs.collapse', async () => {
       formIsOpen = true;
       initTranslations();
@@ -257,10 +262,17 @@ document.addEventListener('DOMContentLoaded', () => {
       destroyPageEditor();
     });
 
-    // If form should be open on load (editMode=true)
-    if (config.editMode && pageEditForm) {
-      const bsCollapse = new Collapse(pageEditForm, { toggle: false });
-      bsCollapse.show();
+    // If in edit mode, form is already open (not a collapse)
+    if (config.editMode) {
+      formIsOpen = true;
+      initTranslations();
+      updateWidgetDisplay();
+      initPageEditor().then(() => {
+        loadLanguage(currentLang);
+        if (sidebarWidget?.select) {
+          sidebarWidget.select.value = currentLang;
+        }
+      });
     }
   }
 
