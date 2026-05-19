@@ -101,7 +101,7 @@
                                     {% set contentText = rawContent|striptags|decode_entities %}
                                     <div class="d-flex align-items-start gap-2">
                                         {% if firstImage %}
-                                            <img src="{{ firstImage }}" alt="" class="news-thumbnail rounded flex-shrink-0">
+                                            <img src="{{ firstImage|e('html_attr') }}" alt="" class="news-thumbnail rounded flex-shrink-0">
                                         {% endif %}
                                         <span class="news-content-text">
                                             {{ contentText|length > 300 ? contentText|slice(0, 300) ~ '…' : contentText }}
@@ -126,7 +126,7 @@
                                             class="btn btn-outline-danger btn-sm btn-delete-news"
                                             data-news-id="{{ news.id }}"
                                             data-delete-url="{{ path('app_news_delete', {code: code, id: news.id}) }}"
-                                            data-news-title="{{ news.title[defaultLanguage]|default('') }}">
+                                            data-news-title="{{ news.title[defaultLanguage]|default('')|e('html_attr') }}">
                                         <i class="fas fa-trash me-1"></i>
                                         {{ 'news.delete'|trans }}
                                     </button>
@@ -190,12 +190,12 @@
     {{ encore_entry_script_tags('newsJs') }}
     <script>
       window.newsLanguageConfig = {
-        acceptedLanguages: {{ acceptedLanguages|json_encode|raw }},
-        defaultLanguage: '{{ defaultLanguage }}',
+        acceptedLanguages: {{ acceptedLanguages|json_encode }},
+        defaultLanguage: {{ defaultLanguage|json_encode }},
         mode: 'create',
         contentMaxLength: 5000,
         translations: {
-          contentTooLong: '{{ 'news.validation.contentTooLong'|trans({'%limit%': 5000}) }}'
+          contentTooLong: {{ 'news.validation.contentTooLong'|trans({'%limit%': 5000})|json_encode }}
         }
       };
     </script>

@@ -7,6 +7,16 @@ import {
   destroyEditor,
 } from '../components/ckeditor.js';
 
+// Security: Helper function to escape HTML special characters to prevent XSS
+function escapeHtml(text) {
+  if (text === null || text === undefined) {
+    return '';
+  }
+  const div = document.createElement('div');
+  div.textContent = String(text);
+  return div.innerHTML;
+}
+
 /**
  * Journal Pages - Simplified form-based editing
  *
@@ -181,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       const noContentMsg =
         config.translations?.noContentAvailable || 'No content available';
-      contentElement.innerHTML = `<p class="text-muted fst-italic no-content-message">${noContentMsg}</p>`;
+      contentElement.innerHTML = `<p class="text-muted fst-italic no-content-message">${escapeHtml(noContentMsg)}</p>`;
     }
   }
 
