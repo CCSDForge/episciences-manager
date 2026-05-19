@@ -62,8 +62,8 @@
                     </div>
                 </div>
 
-                <!-- Flash messages container for JS alerts (positioned bottom-right via CSS) -->
-                <div id="pages-alerts"></div>
+                <!-- Flash Messages (bottom right toast) -->
+                {% include 'components/flash_messages.html.twig' %}
 
                 <!-- Row 2: Sidebar + Content + Language Widget -->
                 <div class="journal-layout">
@@ -80,232 +80,221 @@
                             </div>
                             <!-- Sidebar content -->
                             <nav class="nav flex-column bg-light rounded p-3 sidebar-menu">
-                                        <a class="nav-link home-nav-link py-2"
-                                           href="{{ path('app_journal_pages', {'code': code, '_locale': app.request.locale}) }}"
-                                           data-home-text-en="Home"
-                                           data-home-text-fr="Accueil">
-                                            <i class="fas fa-home me-2"></i>
-                                            {{ 'journalPages.home' | trans }}
-                                        </a>
+                                <a class="nav-link home-nav-link py-2 {% if currentPage is not defined or currentPage == '' %}active{% endif %}"
+                                   href="{{ path('app_journal_pages', {'code': code}) }}">
+                                    <i class="fas fa-home me-2"></i>
+                                    {{ 'journalPages.home' | trans }}
+                                </a>
 
-                                        {% for page in pages.main %}
-                                            {% set isContainer = page.type is defined and page.type == 'container' %}
-                                            {% set pageKey = isContainer ? (page.title['en'] ?? page.title) : (page.pageCode ?? page.title['en']) %}
-                                            {% set hasSubPages = pages.sub[pageKey] is defined and pages.sub[pageKey] is not empty %}
-                                            {% set collapseId = 'collapse-' ~ loop.index %}
+                                {% for page in pages.main %}
+                                    {% set isContainer = page.type is defined and page.type == 'container' %}
+                                    {% set pageKey = isContainer ? (page.title['en'] ?? page.title) : (page.pageCode ?? page.title['en']) %}
+                                    {% set hasSubPages = pages.sub[pageKey] is defined and pages.sub[pageKey] is not empty %}
+                                    {% set collapseId = 'collapse-' ~ loop.index %}
+                                    {% set isCurrentPage = not isContainer and currentPage is defined and currentPage == (page.pageCode|page_slug) %}
 
-                                            {% if hasSubPages %}
-                                                <a class="nav-link py-2 d-flex justify-content-between align-items-center"
-                                                   id="nav-{% if isContainer %}container-{{ pageKey|lower|replace({' ': '-', '.': '-', '&': 'and'}) }}{% else %}page-{{ page.pageCode }}{% endif %}"
-                                                   data-bs-toggle="collapse"
-                                                   href="#{{ collapseId }}"
-                                                   role="button"
-                                                   aria-expanded="false"
-                                                   aria-controls="{{ collapseId }}"
-                                                        {% if isContainer %}
-                                                    {% for lang in acceptedLanguages %}data-title-{{ lang }}="{{ page.title[lang] ?? page.title[defaultLanguage] ?? page.title }}" {% endfor %}
-                                                    data-is-container="true"
-                                                        {% endif %}>
-                                                <span>
-                                                    {% if isContainer %}
-                                                        {{ page.title[app.request.locale] ?? page.title[defaultLanguage] ?? page.title }}
-                                                    {% else %}
-                                                        {{ page.title[app.request.locale] ?? page.title[defaultLanguage] ?? page.pageCode }}
-                                                    {% endif %}
-                                                </span>
-                                                    <i class="fas fa-chevron-down fa-xs"></i>
-                                                </a>
-                                                <div class="collapse" id="{{ collapseId }}">
-                                                    <nav class="nav flex-column ms-3">
-                                                        {% for subPage in pages.sub[pageKey] %}
-                                                            {% set isSubContainer = subPage.type is defined and subPage.type == 'container' %}
-                                                            {% set subPageKey = isSubContainer ? (subPage.title['en'] ?? subPage.title) : subPage.pageCode %}
-                                                            {% set hasNestedSubPages = isSubContainer and pages.sub[subPageKey] is defined and pages.sub[subPageKey] is not empty %}
-                                                            {% set subCollapseId = 'collapse-' ~ loop.parent.loop.index ~ '-' ~ loop.index %}
-
-                                                            {% if hasNestedSubPages %}
-                                                                <a class="nav-link py-1 d-flex justify-content-between align-items-center"
-                                                                   id="nav-{% if isSubContainer %}container-{{ subPageKey|lower|replace({' ': '-', '.': '-', '&': 'and'}) }}{% else %}page-{{ subPage.pageCode }}{% endif %}"
-                                                                   data-bs-toggle="collapse"
-                                                                   href="#{{ subCollapseId }}"
-                                                                   role="button"
-                                                                   aria-expanded="false"
-                                                                   aria-controls="{{ subCollapseId }}"
-                                                                        {% if isSubContainer %}
-                                                                    {% for lang in acceptedLanguages %}data-title-{{ lang }}="{{ subPage.title[lang] ?? subPage.title[defaultLanguage] ?? subPage.title }}" {% endfor %}
-                                                                    data-is-container="true"
-                                                                        {% endif %}>
-                                                                <span>
-                                                                    {% if isSubContainer %}
-                                                                        {{ subPage.title[app.request.locale] ?? subPage.title[defaultLanguage] ?? subPage.title }}
-                                                                    {% else %}
-                                                                        {{ subPage.title[app.request.locale] ?? subPage.title[defaultLanguage] ?? subPage.pageCode }}
-                                                                    {% endif %}
-                                                                </span>
-                                                                    <i class="fas fa-chevron-down fa-xs"></i>
-                                                                </a>
-                                                                <div class="collapse" id="{{ subCollapseId }}">
-                                                                    <nav class="nav flex-column ms-3">
-                                                                        {% for nestedPage in pages.sub[subPageKey] %}
-                                                                            <a class="nav-link page-nav-link py-1"
-                                                                               id="nav-page-{{ nestedPage.pageCode }}"
-                                                                               href="#"
-                                                                               data-page-code="{{ nestedPage.pageCode|page_slug }}"
-                                                                               data-journal-code="{{ code }}"
-                                                                               {% for lang in acceptedLanguages %}data-grandparent-title-{{ lang }}="{{ page.title[lang] ?? page.title[defaultLanguage] ?? page.title }}" {% endfor %}
-                                                                                    {% for lang in acceptedLanguages %}data-parent-title-{{ lang }}="{{ subPage.title[lang] ?? subPage.title[defaultLanguage] ?? subPage.title }}" {% endfor %}
-                                                                                    {% for lang in acceptedLanguages %}data-current-title-{{ lang }}="{{ nestedPage.title[lang] ?? nestedPage.title[defaultLanguage] ?? nestedPage.pageCode }}" {% endfor %}>
-                                                                                {{ nestedPage.title[app.request.locale] ?? nestedPage.title[defaultLanguage] ?? nestedPage.pageCode }}
-                                                                            </a>
-                                                                        {% endfor %}
-                                                                    </nav>
-                                                                </div>
-                                                            {% else %}
-                                                                <a class="nav-link page-nav-link py-1"
-                                                                   id="nav-page-{{ subPage.pageCode }}"
-                                                                   href="#"
-                                                                   data-page-code="{{ subPage.pageCode|page_slug }}"
-                                                                   data-journal-code="{{ code }}"
-                                                                   {% for lang in acceptedLanguages %}data-parent-title-{{ lang }}="{% if isContainer %}{{ page.title[lang] ?? page.title[defaultLanguage] ?? page.title }}{% else %}{{ page.title[lang] ?? page.title[defaultLanguage] ?? page.pageCode }}{% endif %}" {% endfor %}
-                                                                        {% for lang in acceptedLanguages %}data-current-title-{{ lang }}="{{ subPage.title[lang] ?? subPage.title[defaultLanguage] ?? subPage.pageCode }}" {% endfor %}>
-                                                                    {{ subPage.title[app.request.locale] ?? subPage.title[defaultLanguage] ?? subPage.pageCode }}
-                                                                </a>
-                                                            {% endif %}
-                                                        {% endfor %}
-                                                    </nav>
-                                                </div>
-                                            {% else %}
-                                                <a class="nav-link page-nav-link py-2"
-                                                   id="nav-{% if isContainer %}container-{{ pageKey|lower|replace({' ': '-', '.': '-', '&': 'and'}) }}{% else %}page-{{ page.pageCode }}{% endif %}"
-                                                        {% if not isContainer %}
-                                                    href="#"
-                                                    data-page-code="{{ page.pageCode|page_slug }}"
-                                                    data-journal-code="{{ code }}"
-                                                    {% for lang in acceptedLanguages %}data-current-title-{{ lang }}="{{ page.title[lang] ?? page.title[defaultLanguage] ?? page.pageCode }}" {% endfor %}
-                                                {% else %}
-                                                    href="#"
-                                                    {% for lang in acceptedLanguages %}data-title-{{ lang }}="{{ page.title[lang] ?? page.title[defaultLanguage] ?? page.title }}" {% endfor %}
-                                                    data-is-container="true"
-                                                        {% endif %}>
-                                                    {% if isContainer %}
-                                                        {{ page.title[app.request.locale] ?? page.title[defaultLanguage] ?? page.title }}
-                                                    {% else %}
-                                                        {{ page.title[app.request.locale] ?? page.title[defaultLanguage] ?? page.pageCode }}
-                                                    {% endif %}
-                                                </a>
+                                    {% if hasSubPages %}
+                                        {# Check if any subpage is active to expand this collapse #}
+                                        {% set hasActiveChild = false %}
+                                        {% for subPage in pages.sub[pageKey] %}
+                                            {% if currentPage is defined and currentPage == (subPage.pageCode|default('')|page_slug) %}
+                                                {% set hasActiveChild = true %}
                                             {% endif %}
                                         {% endfor %}
 
-                                    </nav>
+                                        <a class="nav-link py-2 d-flex justify-content-between align-items-center"
+                                           id="nav-{% if isContainer %}container-{{ pageKey|lower|replace({' ': '-', '.': '-', '&': 'and'}) }}{% else %}page-{{ page.pageCode }}{% endif %}"
+                                           data-bs-toggle="collapse"
+                                           href="#{{ collapseId }}"
+                                           role="button"
+                                           aria-expanded="{{ hasActiveChild ? 'true' : 'false' }}"
+                                           aria-controls="{{ collapseId }}">
+                                            <span>
+                                                {% if isContainer %}
+                                                    {{ page.title[app.request.locale] ?? page.title[defaultLanguage] ?? page.title }}
+                                                {% else %}
+                                                    {{ page.title[app.request.locale] ?? page.title[defaultLanguage] ?? page.pageCode }}
+                                                {% endif %}
+                                            </span>
+                                            <i class="fas fa-chevron-down fa-xs"></i>
+                                        </a>
+                                        <div class="collapse {% if hasActiveChild %}show{% endif %}" id="{{ collapseId }}">
+                                            <nav class="nav flex-column ms-3">
+                                                {% for subPage in pages.sub[pageKey] %}
+                                                    {% set isSubContainer = subPage.type is defined and subPage.type == 'container' %}
+                                                    {% set subPageKey = isSubContainer ? (subPage.title['en'] ?? subPage.title) : subPage.pageCode %}
+                                                    {% set hasNestedSubPages = isSubContainer and pages.sub[subPageKey] is defined and pages.sub[subPageKey] is not empty %}
+                                                    {% set subCollapseId = 'collapse-' ~ loop.parent.loop.index ~ '-' ~ loop.index %}
+                                                    {% set isSubCurrentPage = not isSubContainer and currentPage is defined and currentPage == (subPage.pageCode|page_slug) %}
+
+                                                    {% if hasNestedSubPages %}
+                                                        {# Check if any nested page is active #}
+                                                        {% set hasActiveNested = false %}
+                                                        {% for nestedPage in pages.sub[subPageKey] %}
+                                                            {% if currentPage is defined and currentPage == (nestedPage.pageCode|page_slug) %}
+                                                                {% set hasActiveNested = true %}
+                                                            {% endif %}
+                                                        {% endfor %}
+
+                                                        <a class="nav-link py-1 d-flex justify-content-between align-items-center"
+                                                           id="nav-{% if isSubContainer %}container-{{ subPageKey|lower|replace({' ': '-', '.': '-', '&': 'and'}) }}{% else %}page-{{ subPage.pageCode }}{% endif %}"
+                                                           data-bs-toggle="collapse"
+                                                           href="#{{ subCollapseId }}"
+                                                           role="button"
+                                                           aria-expanded="{{ hasActiveNested ? 'true' : 'false' }}"
+                                                           aria-controls="{{ subCollapseId }}">
+                                                            <span>
+                                                                {% if isSubContainer %}
+                                                                    {{ subPage.title[app.request.locale] ?? subPage.title[defaultLanguage] ?? subPage.title }}
+                                                                {% else %}
+                                                                    {{ subPage.title[app.request.locale] ?? subPage.title[defaultLanguage] ?? subPage.pageCode }}
+                                                                {% endif %}
+                                                            </span>
+                                                            <i class="fas fa-chevron-down fa-xs"></i>
+                                                        </a>
+                                                        <div class="collapse {% if hasActiveNested %}show{% endif %}" id="{{ subCollapseId }}">
+                                                            <nav class="nav flex-column ms-3">
+                                                                {% for nestedPage in pages.sub[subPageKey] %}
+                                                                    {% set isNestedCurrentPage = currentPage is defined and currentPage == (nestedPage.pageCode|page_slug) %}
+                                                                    <a class="nav-link page-nav-link py-1 {% if isNestedCurrentPage %}active{% endif %}"
+                                                                       id="nav-page-{{ nestedPage.pageCode }}"
+                                                                       href="{{ path('app_journal_page_view', {'code': code, 'pageCode': nestedPage.pageCode|page_slug}) }}">
+                                                                        {{ nestedPage.title[app.request.locale] ?? nestedPage.title[defaultLanguage] ?? nestedPage.pageCode }}
+                                                                    </a>
+                                                                {% endfor %}
+                                                            </nav>
+                                                        </div>
+                                                    {% else %}
+                                                        <a class="nav-link page-nav-link py-1 {% if isSubCurrentPage %}active{% endif %}"
+                                                           id="nav-page-{{ subPage.pageCode }}"
+                                                           href="{{ path('app_journal_page_view', {'code': code, 'pageCode': subPage.pageCode|page_slug}) }}">
+                                                            {{ subPage.title[app.request.locale] ?? subPage.title[defaultLanguage] ?? subPage.pageCode }}
+                                                        </a>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </nav>
+                                        </div>
+                                    {% else %}
+                                        {% if isContainer %}
+                                            <span class="nav-link py-2 text-muted">
+                                                {{ page.title[app.request.locale] ?? page.title[defaultLanguage] ?? page.title }}
+                                            </span>
+                                        {% else %}
+                                            <a class="nav-link page-nav-link py-2 {% if isCurrentPage %}active{% endif %}"
+                                               id="nav-page-{{ page.pageCode }}"
+                                               href="{{ path('app_journal_page_view', {'code': code, 'pageCode': page.pageCode|page_slug}) }}">
+                                                {{ page.title[app.request.locale] ?? page.title[defaultLanguage] ?? page.pageCode }}
+                                            </a>
+                                        {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                            </nav>
                         {% endif %}
                     </div>
 
                     <!-- Content -->
                     <div class="journal-layout__content">
-                        <!-- Breadcrumb Navigation & Preview Button -->
-                        <div id="breadcrumb-nav" class="bg-light rounded px-3 py-2 mb-3 d-flex justify-content-between align-items-center" style="display: none !important;">
+                        {% if currentPageData is defined and currentPageData is not null %}
                             <!-- Breadcrumb Navigation -->
-                            <nav class="breadcrumb-container">
+                            <nav aria-label="breadcrumb" class="bg-light rounded px-3 py-2 mb-3">
                                 <ol class="breadcrumb mb-0">
                                     <li class="breadcrumb-item">
-                                        <a href="#" class="breadcrumb-home"
-                                           data-home-text-en="Home"
-                                           data-home-text-fr="Accueil">
+                                        <a href="{{ path('app_journal_pages', {'code': code}) }}">
                                             <i class="fas fa-home me-1"></i>
                                             {{ 'journalPages.home' | trans }}
                                         </a>
                                     </li>
-                                    <li id="breadcrumb-grandparent" class="breadcrumb-item" style="display: none;">
-                                        <span class="breadcrumb-grandparent-text"></span>
-                                    </li>
-                                    <li id="breadcrumb-parent" class="breadcrumb-item" style="display: none;">
-                                        <span class="breadcrumb-parent-text"></span>
-                                    </li>
-                                    <li id="breadcrumb-current" class="breadcrumb-item active" style="display: none;">
-                                        <span class="breadcrumb-current-text"></span>
+                                    {% if breadcrumbPath is defined and breadcrumbPath is not empty %}
+                                        {% for item in breadcrumbPath %}
+                                            <li class="breadcrumb-item">
+                                                {% if item.type == 'page' and item.code is defined %}
+                                                    <a href="{{ path('app_journal_page_view', {'code': code, 'pageCode': item.code|page_slug}) }}">
+                                                        {{ item.title[app.request.locale] ?? item.title[defaultLanguage] ?? item.title['en'] ?? 'Unknown' }}
+                                                    </a>
+                                                {% else %}
+                                                    <span class="text-muted">
+                                                        {{ item.title[app.request.locale] ?? item.title[defaultLanguage] ?? item.title['en'] ?? 'Unknown' }}
+                                                    </span>
+                                                {% endif %}
+                                            </li>
+                                        {% endfor %}
+                                    {% endif %}
+                                    <li class="breadcrumb-item active" aria-current="page">
+                                        {{ currentPageData.title[app.request.locale] ?? currentPageData.title[defaultLanguage] ?? currentPageData.pageCode }}
                                     </li>
                                 </ol>
                             </nav>
 
-                            <!-- Preview Page Button -->
-                            <div id="preview-page-button-container" style="display: none;">
-                                <a id="preview-page-button"
-                                   href="#"
-                                   target="_blank"
-                                   rel="noopener noreferrer"
-                                   class="btn btn-outline-primary btn-sm">
-                                    <i class="fas fa-external-link-alt me-1"></i>
-                                    {{ 'journalPages.previewPage' | trans }}
-                                </a>
-                            </div>
-                        </div>
-
-                        <!-- Page Content Display Area -->
-                        <div class="card">
-                            <div class="card-body">
-                                <!-- View Mode -->
-                                <div id="page-content" class="ck-content" style="display: block;">
-                                    <div id="page-view-fields" style="display: none;">
-                                        <div class="mb-3">
-                                            <label class="form-label text-primary fw-semibold">{{ 'journalPages.pageTitle' | trans }} <span class="text-muted fw-normal">({{ 'journalPages.notEditable' | trans }})</span></label>
-                                            <p class="form-control bg-light" id="page-title-view"></p>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label text-primary fw-semibold">{{ 'journalPages.content' | trans }}</label>
-                                            <div id="page-body" class="ck-content form-control bg-light" style="height: auto;"></div>
-                                        </div>
-                                    </div>
-                                    <div id="page-home-content">
-                                        <div class="text-center py-5">
-                                            <i class="fas fa-home fa-3x text-primary mb-3"></i>
-                                            <h3>{{ 'journalPages.welcomeTitle' | trans }}</h3>
-                                            <p class="text-muted">{{ 'journalPages.selectPageFirst' | trans }}</p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Inline Edit Mode -->
-                                <div id="inline-edit-content" style="display: none;">
-                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                            {% if editMode|default(false) %}
+                                <!-- Edit Mode: Form open by default -->
+                                {% include 'pages/_page_form.html.twig' with {
+                                    code: code,
+                                    acceptedLanguages: acceptedLanguages,
+                                    defaultLanguage: defaultLanguage,
+                                    pageData: currentPageData,
+                                    formAction: path('app_journal_page_edit', {'code': code, 'pageCode': currentPage}),
+                                    csrfTokenId: 'page-edit',
+                                    formOpen: true
+                                } %}
+                            {% else %}
+                                <!-- View Mode: Page Content Display -->
+                                <div class="card">
+                                    <div class="card-header bg-light">
                                         <h5 class="mb-0">
-                                            <i class="fas fa-edit me-2"></i>
-                                            {{ 'journalPages.editPageContent' | trans }}
-                                            <i class="fas fa-file-alt ms-2"></i>
+                                            <i class="fas fa-file-alt me-2"></i>{{ 'journalPages.pageContent'|trans|default('Page Content') }}
                                         </h5>
-                                        <div>
-                                            <button type="button" class="btn btn-sm btn-outline-secondary me-2" id="cancel-inline-edit">
-                                                <i class="fas fa-times me-1"></i>
-                                                {{ 'journalPages.cancel' | trans }}
-                                            </button>
-                                            <button type="button" class="btn btn-sm btn-primary" id="save-inline-edit">
-                                                <i class="fas fa-save me-1"></i>
-                                                {{ 'journalPages.save' | trans }}
-                                            </button>
+                                    </div>
+                                    <div class="card-body">
+                                        <!-- Title -->
+                                        <div class="mb-3">
+                                            <label class="form-label text-primary fw-semibold">
+                                                {{ 'journalPages.form.title'|trans }}
+                                                <span class="badge bg-secondary ms-2">{{ 'journalPages.notEditable'|trans }}</span>
+                                            </label>
+                                            <div id="page-view-title" class="form-control bg-light">
+                                                {{ currentPageData.title[defaultLanguage] ?? currentPageData.pageCode }}
+                                            </div>
+                                        </div>
+
+                                        <!-- Content -->
+                                        <div class="mb-3">
+                                            <label class="form-label text-primary fw-semibold">
+                                                {{ 'journalPages.form.content'|trans }}
+                                            </label>
+                                            <div id="page-view-content" class="ck-content border rounded p-3 bg-white">
+                                                {# Use interface locale, NO fallback to default language #}
+                                                {% set localeContent = currentPageData.content[app.request.locale]|default('') %}
+                                                {% if localeContent is not empty %}
+                                                    {{ localeContent|raw }}
+                                                {% else %}
+                                                    <p class="text-muted fst-italic no-content-message">{{ 'journalPages.noContentAvailable'|trans }}</p>
+                                                {% endif %}
+                                            </div>
                                         </div>
                                     </div>
-
-                                    <form id="inline-edit-form">
-                                        <div class="mb-3">
-                                            <label class="form-label">
-                                                {{ 'journalPages.pageTitle' | trans }} <span class="text-muted fw-normal">({{ 'journalPages.notEditable' | trans }})</span>
-                                            </label>
-                                            <p class="form-control bg-light" id="page-title-inline"></p>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="page-content-inline" class="form-label">{{ 'journalPages.content' | trans }}</label>
-                                            <div id="page-content-inline" data-placeholder="{{ 'journals.enterContent' | trans }}"></div>
-                                        </div>
-                                    </form>
+                                    <div class="card-footer text-end">
+                                        <a href="{{ path('app_journal_page_edit', {'code': code, 'pageCode': currentPage}) }}" class="btn btn-primary">
+                                            <i class="fas fa-edit me-1"></i>
+                                            {{ 'journalPages.edit' | trans }}
+                                        </a>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% else %}
+                            <!-- Home / Welcome Screen -->
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="text-center py-5">
+                                        <i class="fas fa-home fa-3x text-primary mb-3"></i>
+                                        <h3>{{ 'journalPages.welcomeTitle' | trans }}</h3>
+                                        <p class="text-muted">{{ 'journalPages.selectPageFirst' | trans }}</p>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="card-footer text-end">
-                                <button type="button" class="btn btn-primary" id="edit-button">
-                                    <i class="fas fa-edit me-1"></i>
-                                    {{ 'journalPages.edit' | trans }}
-                                </button>
-                            </div>
-                        </div>
+                        {% endif %}
                     </div>
+
+                    <!-- Language Widget for viewing (changes interface language) -->
                     {{ include('components/language_widget.html.twig', {
                         widgetId: 'sidebar',
                         acceptedLanguages: acceptedLanguages|default(['en', 'fr']),
@@ -321,7 +310,6 @@
         </div>
     </div>
 
-
 {% endblock %}
 
 {% block stylesheets %}
@@ -333,30 +321,21 @@
 {% block javascripts %}
     {{ parent() }}
     <script>
-      window.journalPagesData = {
+      window.pageConfig = {
         locale: {{ app.request.locale|json_encode|raw }},
         journalCode: {{ code|json_encode|raw }},
-        acceptedLanguages: {{ acceptedLanguages|default(['en', 'fr'])|json_encode|raw }},
-        csrfToken: {{ csrf_token('page-edit')|json_encode|raw }},
+        acceptedLanguages: {{ acceptedLanguages|json_encode|raw }},
+        defaultLanguage: {{ defaultLanguage|json_encode|raw }},
         currentPage: {{ currentPage|default('')|json_encode|raw }},
         editMode: {{ editMode|default(false)|json_encode|raw }},
+        contentLanguage: {{ contentLanguage|default(null)|json_encode|raw }},
+        pageData: {% if currentPageData is defined and currentPageData is not null %}{
+          title: {{ currentPageData.title|json_encode|raw }},
+          content: {{ currentPageData.content|json_encode|raw }},
+          markdownContent: {{ currentPageData.markdownContent|json_encode|raw }}
+        }{% else %}null{% endif %},
         translations: {
-          edit: {{ 'journalPages.edit'|trans|json_encode|raw }},
-          editPageContent: {{ 'journalPages.editPageContent'|trans|json_encode|raw }},
-          pageTitle: {{ 'journalPages.pageTitle'|trans|json_encode|raw }},
-          content: {{ 'journalPages.content'|trans|json_encode|raw }},
-          enterContent: {{ 'journalPages.enterContent'|trans|json_encode|raw }},
-          cancel: {{ 'journalPages.cancel'|trans|json_encode|raw }},
-          save: {{ 'journalPages.save'|trans|json_encode|raw }},
-          selectPageFirst: {{ 'journalPages.selectPageFirst'|trans|json_encode|raw }},
-          missingPageInfo: {{ 'journalPages.missingPageInfo'|trans|json_encode|raw }},
-          saveSuccess: {{ 'journalPages.saveSuccess'|trans|json_encode|raw }},
-          saveError: {{ 'journalPages.saveError'|trans|json_encode|raw }},
-          previewPage: {{ 'journalPages.previewPage'|trans|json_encode|raw }},
-          noContentAvailable: {{ 'journalPages.noContentAvailable'|trans|json_encode|raw }},
-          translations: {{ 'journalPages.translations'|trans|json_encode|raw }},
-          addTranslation: {{ 'journalPages.addTranslation'|trans|json_encode|raw }},
-          editTranslation: {{ 'journalPages.editTranslation'|trans|json_encode|raw }}
+          noContentAvailable: {{ 'journalPages.noContentAvailable'|trans|json_encode|raw }}
         }
       };
     </script>
