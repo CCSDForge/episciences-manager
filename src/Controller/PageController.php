@@ -170,6 +170,12 @@ final class PageController extends AbstractController
             try {
                 $entityManager->flush();
                 $this->addFlash('success', $translator->trans('journalPages.flash.saved'));
+
+                // Store the edited language to display content in that language after redirect
+                $editedLanguage = $request->request->get('language');
+                if ($editedLanguage) {
+                    $request->getSession()->set('content_language', $editedLanguage);
+                }
             } catch (\Throwable $e) {
                 $this->logger->error('Error saving page', [
                     'exception' => $e->getMessage(),
@@ -241,7 +247,7 @@ final class PageController extends AbstractController
     }
 
     #[Route('/journal/{code}/pages/{pageCode}', name: 'app_journal_page_view', requirements: ['code' => '[\w\-]+', 'pageCode' => '[\w\-]+'])]
-    public function pageView(string $code, string $pageCode, ReviewManager $reviewManager, PageRepository $pageRepository, PageHierarchyService $hierarchyService, JournalSettingService $settingService, MarkdownService $markdownService): Response
+    public function pageView(string $code, string $pageCode, Request $request, ReviewManager $reviewManager, PageRepository $pageRepository, PageHierarchyService $hierarchyService, JournalSettingService $settingService, MarkdownService $markdownService): Response
     {
         $review = $reviewManager->getReviewByCode($code);
 
@@ -295,6 +301,13 @@ final class PageController extends AbstractController
         // Get breadcrumb path
         $breadcrumbPath = $hierarchyService->getBreadcrumbPath($actualPageCode, $code);
 
+        // Check if we should display content in a specific language (after edit)
+        $contentLanguage = $request->getSession()->get('content_language');
+        if ($contentLanguage) {
+            // Clear it so it's only used once
+            $request->getSession()->remove('content_language');
+        }
+
         return $this->render('pages/journalPages.html.twig', [
             'review' => $review,
             'code' => $code,
@@ -305,6 +318,7 @@ final class PageController extends AbstractController
             'currentPageData' => $currentPageData,
             'breadcrumbPath' => $breadcrumbPath,
             'editMode' => false,
+            'contentLanguage' => $contentLanguage,
         ]);
     }
 }

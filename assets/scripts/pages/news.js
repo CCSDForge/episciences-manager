@@ -312,6 +312,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // If form is already visible (showCreateForm=true), init immediately
     if (newsCreateForm.classList.contains('show')) {
       initFormWidget();
+      initNewsEditor();
     }
   }
 

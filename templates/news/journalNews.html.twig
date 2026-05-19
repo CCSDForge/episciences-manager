@@ -190,12 +190,12 @@
     {{ encore_entry_script_tags('newsJs') }}
     <script>
       window.newsLanguageConfig = {
-        acceptedLanguages: {{ acceptedLanguages|json_encode }},
-        defaultLanguage: {{ defaultLanguage|json_encode }},
+        acceptedLanguages: {{ acceptedLanguages|json_encode|raw }},
+        defaultLanguage: {{ defaultLanguage|json_encode|raw }},
         mode: 'create',
         contentMaxLength: 5000,
         translations: {
-          contentTooLong: {{ 'news.validation.contentTooLong'|trans({'%limit%': 5000})|json_encode }}
+          contentTooLong: {{ 'news.validation.contentTooLong'|trans({'%limit%': 5000})|json_encode|raw }}
         }
       };
     </script>

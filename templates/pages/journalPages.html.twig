@@ -328,6 +328,7 @@
         defaultLanguage: {{ defaultLanguage|json_encode|raw }},
         currentPage: {{ currentPage|default('')|json_encode|raw }},
         editMode: {{ editMode|default(false)|json_encode|raw }},
+        contentLanguage: {{ contentLanguage|default(null)|json_encode|raw }},
         pageData: {% if currentPageData is defined and currentPageData is not null %}{
           title: {{ currentPageData.title|json_encode|raw }},
           content: {{ currentPageData.content|json_encode|raw }},

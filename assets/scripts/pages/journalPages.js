@@ -52,10 +52,12 @@ document.addEventListener('DOMContentLoaded', () => {
   // ===================
 
   const translations = {};
-  // Initialize with interface locale to match the displayed content
-  let currentLang = config.acceptedLanguages.includes(config.locale)
-    ? config.locale
-    : config.defaultLanguage;
+  // Initialize with contentLanguage (after edit) or interface locale
+  let currentLang = config.contentLanguage && config.acceptedLanguages.includes(config.contentLanguage)
+    ? config.contentLanguage
+    : config.acceptedLanguages.includes(config.locale)
+      ? config.locale
+      : config.defaultLanguage;
   let sidebarWidget = null;
   let editorInitialized = false;
   let formIsOpen = false;
