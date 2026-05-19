@@ -40,11 +40,11 @@ Parameters:
                         {# Hidden inputs for multilingual translations #}
                         {% for lang in acceptedLanguages %}
                             <input type="hidden" name="translations[{{ lang }}][title]" id="translation-title-{{ lang }}"
-                                   value="{% if isEdit %}{{ news.title[lang]|default('') }}{% endif %}">
+                                   value="{% if isEdit %}{{ news.title[lang]|default('')|e('html_attr') }}{% endif %}">
                             <input type="hidden" name="translations[{{ lang }}][content]" id="translation-content-{{ lang }}"
-                                   value="{% if isEdit %}{{ news.content[lang]|default('') }}{% endif %}">
+                                   value="{% if isEdit %}{{ news.content[lang]|default('')|e('html_attr') }}{% endif %}">
                             <input type="hidden" name="translations[{{ lang }}][link]" id="translation-link-{{ lang }}"
-                                   value="{% if isEdit %}{{ news.link[lang]|default('') }}{% endif %}">
+                                   value="{% if isEdit %}{{ news.link[lang]|default('')|e('html_attr') }}{% endif %}">
                         {% endfor %}
 
                         <p class="text-muted mb-3">
@@ -60,8 +60,7 @@ Parameters:
                                    class="form-control"
                                    id="news_title"
                                    name="title"
-                                   value="{% if isEdit %}{{ news.title[defaultLanguage]|default('') }}{%
-                                       endif %}"
+                                   value="{% if isEdit %}{{ news.title[defaultLanguage]|default('')|e('html_attr') }}{% endif %}"
                                    required>
                         </div>
 
@@ -84,8 +83,7 @@ Parameters:
                                    id="news_link"
                                    name="link"
                                    placeholder="https://"
-                                   value="{% if isEdit %}{{ news.link[defaultLanguage]|default('') }}{%
-                                       endif %}">
+                                   value="{% if isEdit %}{{ news.link[defaultLanguage]|default('')|e('html_attr') }}{% endif %}">
                         </div>
 
                         <!-- Status -->

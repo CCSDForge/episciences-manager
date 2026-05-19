@@ -290,17 +290,6 @@ export function initializeCKEditor(
   return ClassicEditor.create(element, config).then(editor => {
     editorInstance = editor;
 
-    const editableEl = editor.ui.view.editable.element;
-    const updateMinHeight = () => {
-      if (!editableEl) return;
-      const h = Math.max(420, editableEl.scrollHeight || 0);
-      editableEl.style.minHeight = h + 'px';
-    };
-
-    editor.editing.view.document.on('change', updateMinHeight);
-    // Initial adjustment
-    setTimeout(updateMinHeight, 0);
-
     // Create character counter if maxLength is set
     if (maxCharLimit > 0) {
       createCharCounter(element);

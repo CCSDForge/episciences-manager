@@ -106,7 +106,7 @@
 // Markdown/CKEditor rendered content inside readonly view
 #page-body,
 .ck-content {
-  min-height: 200px;
+  min-height: 400px;
   overflow-x: auto;
 
   table {
@@ -219,7 +219,7 @@
 // CKEditor global theme (outside inline edit)
 .ck.ck-editor {
   .ck-editor__editable {
-    min-height: 200px;
+    min-height: 400px;
     max-height: 60vh;
     overflow-y: auto;
   }

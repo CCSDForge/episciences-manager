@@ -7,6 +7,16 @@ import {
   destroyEditor,
 } from '../components/ckeditor.js';
 
+// Security: Helper function to escape HTML special characters to prevent XSS
+function escapeHtml(text) {
+  if (text === null || text === undefined) {
+    return '';
+  }
+  const div = document.createElement('div');
+  div.textContent = String(text);
+  return div.innerHTML;
+}
+
 /**
  * Journal Pages - Simplified form-based editing
  *
@@ -42,7 +52,14 @@ document.addEventListener('DOMContentLoaded', () => {
   // ===================
 
   const translations = {};
-  let currentLang = config.defaultLanguage;
+  // Initialize with contentLanguage (after edit) or interface locale
+  let currentLang =
+    config.contentLanguage &&
+    config.acceptedLanguages.includes(config.contentLanguage)
+      ? config.contentLanguage
+      : config.acceptedLanguages.includes(config.locale)
+        ? config.locale
+        : config.defaultLanguage;
   let sidebarWidget = null;
   let editorInitialized = false;
   let formIsOpen = false;
@@ -97,13 +114,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const titleInput = getTitleInput();
     const formLanguageInput = getFormLanguageInput();
 
-    if (titleInput) titleInput.value = data.title;
+    // Update title with fallback to default language (title is read-only, comes from YAML)
+    if (titleInput) {
+      titleInput.value = data.title || defaultData.title || '';
+    }
     if (formLanguageInput) formLanguageInput.value = lang;
 
-    // Update CKEditor content - fallback to default language if empty
+    // Update content - NO fallback, show empty if no content for this language
+    // This makes it clear to the editor that content needs to be added
     if (editorInitialized) {
-      const contentToLoad = data.content || defaultData.content || '';
-      setEditorContent(contentToLoad);
+      setEditorContent(data.content || '');
     }
   }
 
@@ -155,47 +175,50 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!config.pageData || !titleElement || !contentElement) return;
 
-    // Get content for selected language, fallback to default language
+    // Title: keep fallback (titles come from YAML and are usually translated)
     const title =
       config.pageData.title?.[lang] ||
       config.pageData.title?.[config.defaultLanguage] ||
       '';
-    const content =
-      config.pageData.content?.[lang] ||
-      config.pageData.content?.[config.defaultLanguage] ||
-      '';
+
+    // Content: NO fallback - show "no content" message if empty for this language
+    const content = config.pageData.content?.[lang] || '';
 
     // Update title
     if (title) {
       titleElement.textContent = title;
     }
 
-    // Update content
+    // Update content - show message if no content for selected language
     if (content) {
       contentElement.innerHTML = content;
     } else {
       const noContentMsg =
         config.translations?.noContentAvailable || 'No content available';
-      contentElement.innerHTML = `<p class="text-muted fst-italic no-content-message">${noContentMsg}</p>`;
+      contentElement.innerHTML = `<p class="text-muted fst-italic no-content-message">${escapeHtml(noContentMsg)}</p>`;
     }
   }
 
   function handleTranslationClick(lang) {
     const pageEditForm = getElement('pageEditForm');
 
-    if (formIsOpen) {
-      // Form is already open, just switch language
+    if (config.editMode || formIsOpen) {
+      // Form is already open (edit mode or collapse open), just switch language
       saveCurrentLanguage();
       loadLanguage(lang);
       if (sidebarWidget?.select) {
         sidebarWidget.select.value = lang;
       }
     } else if (pageEditForm) {
-      // Form is closed, open it and switch to the requested language
+      // Form exists as collapse, open it and switch to the requested language
       currentLang = lang;
       const bsCollapse = new Collapse(pageEditForm, { toggle: false });
       bsCollapse.show();
       // The shown.bs.collapse event will handle the rest
+    } else if (config.currentPage) {
+      // View mode: form not in DOM, redirect to edit page
+      const editUrl = `/${config.locale}/journal/${config.journalCode}/pages/${config.currentPage}/edit`;
+      window.location.href = editUrl;
     }
   }
 
@@ -217,11 +240,9 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       editorInitialized = true;
 
-      // Load current language content into editor - fallback to default language if empty
+      // Load current language content into editor - NO fallback, show empty if no content
       const currentContent = translations[currentLang]?.content || '';
-      const defaultContent =
-        translations[config.defaultLanguage]?.content || '';
-      setEditorContent(currentContent || defaultContent);
+      setEditorContent(currentContent);
     } catch (error) {
       console.error('Failed to initialize CKEditor:', error);
     }
@@ -235,11 +256,12 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ===================
-  // FORM COLLAPSE HANDLERS
+  // FORM HANDLERS
   // ===================
 
   const pageEditForm = getElement('pageEditForm');
   if (pageEditForm) {
+    // Handle collapse events (for view mode with collapse)
     pageEditForm.addEventListener('shown.bs.collapse', async () => {
       formIsOpen = true;
       initTranslations();
@@ -257,10 +279,12 @@ document.addEventListener('DOMContentLoaded', () => {
       destroyPageEditor();
     });
 
-    // If form should be open on load (editMode=true)
-    if (config.editMode && pageEditForm) {
-      const bsCollapse = new Collapse(pageEditForm, { toggle: false });
-      bsCollapse.show();
+    // If in edit mode, form is already open (not a collapse)
+    // Use async IIFE to properly await editor initialization
+    if (config.editMode) {
+      formIsOpen = true;
+      initTranslations();
+      // Note: sidebarWidget is not yet initialized here, updateWidgetDisplay will be called later
     }
   }
 
@@ -323,4 +347,43 @@ document.addEventListener('DOMContentLoaded', () => {
   initTranslations();
   // Update widget display on page load to show correct icons (+ or pencil)
   updateWidgetDisplay();
+
+  // Synchronize widget dropdown with currentLang on page load
+  // This ensures the widget shows the same language as the displayed content
+  if (sidebarWidget?.select) {
+    sidebarWidget.select.value = currentLang;
+  }
+
+  // Update content based on interface language at page load
+  const titleInputOnLoad = getTitleInput();
+  const contentInputOnLoad = getContentInput();
+
+  if (config.editMode && (titleInputOnLoad || contentInputOnLoad)) {
+    // Edit mode: update form elements
+    const data = translations[currentLang] || { title: '', content: '' };
+    const defaultData = translations[config.defaultLanguage] || {
+      title: '',
+      content: '',
+    };
+
+    // Immediately update title with correct language (before CKEditor loads)
+    if (titleInputOnLoad) {
+      titleInputOnLoad.value = data.title || defaultData.title || '';
+    }
+
+    // Note: Don't update content div here - CKEditor will handle it via setEditorContent()
+    // Using textContent would insert raw text instead of HTML
+
+    // Ensure formIsOpen is true for other handlers
+    formIsOpen = true;
+
+    // Then initialize CKEditor and reload content
+    (async () => {
+      await initPageEditor();
+      loadLanguage(currentLang);
+    })();
+  } else if (!config.editMode && config.currentPage) {
+    // View mode: update view elements to match interface language
+    updateViewContent(currentLang);
+  }
 });
