@@ -268,7 +268,7 @@
                                             <label class="form-label text-primary fw-semibold">
                                                 {{ 'journalPages.form.content'|trans }}
                                             </label>
-                                            <div id="page-view-content" class="ck-content border rounded p-3 bg-white" style="min-height: 200px;">
+                                            <div id="page-view-content" class="ck-content border rounded p-3 bg-white">
                                                 {# Use interface locale, NO fallback to default language #}
                                                 {% set localeContent = currentPageData.content[app.request.locale]|default('') %}
                                                 {% if localeContent is not empty %}
