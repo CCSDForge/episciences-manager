@@ -284,7 +284,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const formTitle = getElement('news-form-title');
     if (formTitle) {
       const createTitle = formTitle.dataset.createTitle || 'Add news';
-      formTitle.innerHTML = `<i class="fas fa-plus me-2"></i>${createTitle}`;
+      formTitle.innerHTML = `<i class="fas fa-plus me-2"></i>${escapeHtml(createTitle)}`;
     }
 
     // Clear CKEditor content if initialized
@@ -312,6 +312,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // If form is already visible (showCreateForm=true), init immediately
     if (newsCreateForm.classList.contains('show')) {
       initFormWidget();
+      initNewsEditor();
     }
   }
 
@@ -474,7 +475,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const formTitle = document.getElementById('news-form-title');
       if (formTitle) {
         const editTitle = formTitle.dataset.editTitle || 'Edit news';
-        formTitle.innerHTML = `<i class="fas fa-edit me-2"></i>${editTitle}`;
+        formTitle.innerHTML = `<i class="fas fa-edit me-2"></i>${escapeHtml(editTitle)}`;
       }
 
       // Initialize widget and editor

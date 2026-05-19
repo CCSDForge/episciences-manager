@@ -62,15 +62,8 @@
                     </div>
                 </div>
 
-                <!-- Flash Messages -->
-                {% for label, messages in app.flashes %}
-                    {% for message in messages %}
-                        <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
-                            {{ message }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    {% endfor %}
-                {% endfor %}
+                <!-- Flash Messages (bottom right toast) -->
+                {% include 'components/flash_messages.html.twig' %}
 
                 <!-- Row 2: Sidebar + Content + Language Widget -->
                 <div class="journal-layout">
@@ -232,57 +225,61 @@
                                 </ol>
                             </nav>
 
-                            <!-- Edit Form (collapsible) -->
-                            {% include 'pages/_page_form.html.twig' with {
-                                code: code,
-                                acceptedLanguages: acceptedLanguages,
-                                defaultLanguage: defaultLanguage,
-                                pageData: currentPageData,
-                                formAction: path('app_page_edit', {'code': code, 'pageTitle': currentPage}),
-                                csrfTokenId: 'page-edit'
-                            } %}
+                            {% if editMode|default(false) %}
+                                <!-- Edit Mode: Form open by default -->
+                                {% include 'pages/_page_form.html.twig' with {
+                                    code: code,
+                                    acceptedLanguages: acceptedLanguages,
+                                    defaultLanguage: defaultLanguage,
+                                    pageData: currentPageData,
+                                    formAction: path('app_journal_page_edit', {'code': code, 'pageCode': currentPage}),
+                                    csrfTokenId: 'page-edit',
+                                    formOpen: true
+                                } %}
+                            {% else %}
+                                <!-- View Mode: Page Content Display -->
+                                <div class="card">
+                                    <div class="card-header bg-light">
+                                        <h5 class="mb-0">
+                                            <i class="fas fa-file-alt me-2"></i>{{ 'journalPages.pageContent'|trans|default('Page Content') }}
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <!-- Title -->
+                                        <div class="mb-3">
+                                            <label class="form-label text-primary fw-semibold">
+                                                {{ 'journalPages.form.title'|trans }}
+                                                <span class="badge bg-secondary ms-2">{{ 'journalPages.notEditable'|trans }}</span>
+                                            </label>
+                                            <div id="page-view-title" class="form-control bg-light">
+                                                {{ currentPageData.title[defaultLanguage] ?? currentPageData.pageCode }}
+                                            </div>
+                                        </div>
 
-                            <!-- Page Content Display Area -->
-                            <div class="card">
-                                <div class="card-header bg-light">
-                                    <h5 class="mb-0">
-                                        <i class="fas fa-file-alt me-2"></i>{{ 'journalPages.pageContent'|trans|default('Page Content') }}
-                                    </h5>
-                                </div>
-                                <div class="card-body">
-                                    <!-- Title -->
-                                    <div class="mb-3">
-                                        <label class="form-label text-primary fw-semibold">
-                                            {{ 'journalPages.form.title'|trans }}
-                                            <span class="badge bg-secondary ms-2">{{ 'journalPages.notEditable'|trans }}</span>
-                                        </label>
-                                        <div id="page-view-title" class="form-control bg-light">
-                                            {{ currentPageData.title[defaultLanguage] ?? currentPageData.pageCode }}
+                                        <!-- Content -->
+                                        <div class="mb-3">
+                                            <label class="form-label text-primary fw-semibold">
+                                                {{ 'journalPages.form.content'|trans }}
+                                            </label>
+                                            <div id="page-view-content" class="ck-content border rounded p-3 bg-white">
+                                                {# Use interface locale, NO fallback to default language #}
+                                                {% set localeContent = currentPageData.content[app.request.locale]|default('') %}
+                                                {% if localeContent is not empty %}
+                                                    {{ localeContent|raw }}
+                                                {% else %}
+                                                    <p class="text-muted fst-italic no-content-message">{{ 'journalPages.noContentAvailable'|trans }}</p>
+                                                {% endif %}
+                                            </div>
                                         </div>
                                     </div>
-
-                                    <!-- Content -->
-                                    <div class="mb-3">
-                                        <label class="form-label text-primary fw-semibold">
-                                            {{ 'journalPages.form.content'|trans }}
-                                        </label>
-                                        <div id="page-view-content" class="ck-content border rounded p-3 bg-white" style="min-height: 200px;">
-                                            {% set defaultContent = currentPageData.content[defaultLanguage]|default('') %}
-                                            {% if defaultContent is not empty %}
-                                                {{ defaultContent|raw }}
-                                            {% else %}
-                                                <p class="text-muted fst-italic no-content-message">{{ 'journalPages.noContentAvailable'|trans }}</p>
-                                            {% endif %}
-                                        </div>
+                                    <div class="card-footer text-end">
+                                        <a href="{{ path('app_journal_page_edit', {'code': code, 'pageCode': currentPage}) }}" class="btn btn-primary">
+                                            <i class="fas fa-edit me-1"></i>
+                                            {{ 'journalPages.edit' | trans }}
+                                        </a>
                                     </div>
                                 </div>
-                                <div class="card-footer text-end">
-                                    <button type="button" class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#pageEditForm">
-                                        <i class="fas fa-edit me-1"></i>
-                                        {{ 'journalPages.edit' | trans }}
-                                    </button>
-                                </div>
-                            </div>
+                            {% endif %}
                         {% else %}
                             <!-- Home / Welcome Screen -->
                             <div class="card">
@@ -331,9 +328,11 @@
         defaultLanguage: {{ defaultLanguage|json_encode|raw }},
         currentPage: {{ currentPage|default('')|json_encode|raw }},
         editMode: {{ editMode|default(false)|json_encode|raw }},
+        contentLanguage: {{ contentLanguage|default(null)|json_encode|raw }},
         pageData: {% if currentPageData is defined and currentPageData is not null %}{
           title: {{ currentPageData.title|json_encode|raw }},
-          content: {{ currentPageData.markdownContent|json_encode|raw }}
+          content: {{ currentPageData.content|json_encode|raw }},
+          markdownContent: {{ currentPageData.markdownContent|json_encode|raw }}
         }{% else %}null{% endif %},
         translations: {
           noContentAvailable: {{ 'journalPages.noContentAvailable'|trans|json_encode|raw }}

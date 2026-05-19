@@ -26,6 +26,22 @@
   }
 }
 
+// CKEditor in news form
+.ck.ck-editor {
+  .ck-editor__editable {
+    min-height: 400px;
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+
+  @media (max-width: 768px) {
+    .ck-editor__editable {
+      min-height: 200px;
+      max-height: 50vh;
+    }
+  }
+}
+
 // Language widget - collapsible panel
 .language-widget {
   background: $white;

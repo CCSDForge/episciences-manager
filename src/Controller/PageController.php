@@ -11,8 +11,6 @@ use App\Service\PageHierarchyService;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -50,208 +48,277 @@ final class PageController extends AbstractController
         return self::PAGE_ALIASES[$slug] ?? $slug;
     }
 
-    #[Route('/journal/{code}/page/{pageTitle}', name: 'app_page_show', methods: ['GET'])]
-    public function showPage(string $code, string $pageTitle, PageRepository $pageRepository, MarkdownService $markdownService, ReviewManager $reviewManager, PageHierarchyService $hierarchyService, JournalSettingService $settingService, EntityManagerInterface $entityManager, Request $request): Response
+    #[Route('/journal/{code}/pages', name: 'app_journal_pages', requirements: ['code' => '[\w\-]+'])]
+    public function pages(string $code, ReviewManager $reviewManager, PageRepository $pageRepository, PageHierarchyService $hierarchyService, JournalSettingService $settingService): Response
     {
-        // Check permissions first
+        // Get the review by its code
         $review = $reviewManager->getReviewByCode($code);
+
         if (!$review) {
-            if ($request->isXmlHttpRequest()) {
-                return new JsonResponse(['error' => 'Journal not found'], Response::HTTP_NOT_FOUND);
-            }
             throw $this->createNotFoundException('Review not found');
         }
 
-        if (!$this->isGranted('REVIEW_VIEW', $review)) {
-            if ($request->isXmlHttpRequest()) {
-                return new JsonResponse(['error' => 'Access denied'], Response::HTTP_FORBIDDEN);
-            }
-            throw $this->createAccessDeniedException('Access denied');
-        }
+        // Check if user has permission to view this specific review
+        $this->denyAccessUnlessGranted('REVIEW_VIEW', $review);
 
-        // Check if there's an alias for this pageTitle
-        $actualPageCode = self::PAGE_ALIASES[$pageTitle] ?? $pageTitle;
-
-        // Find the page using the actual page code
-        $page = $pageRepository->findOneBy([
-            'rvcode' => $code,
-            'page_code' => $actualPageCode
+        // Retrieve the journal pages
+        $pages = $pageRepository->findBy([
+            'rvcode' => $code
         ]);
 
-        // Get accepted languages for this journal
+        // Organize pages according to configured hierarchy
+        $organizedPages = $hierarchyService->organizePages($pages, $code);
+
         $setting = $settingService->getSettingArray($review['rvid']);
         $acceptedLanguages = $setting['languages']['accepted'] ?? ['en', 'fr'];
 
-        // If it's an AJAX request, return JSON
-        if ($request->isXmlHttpRequest()) {
-            // If page doesn't exist, return empty content
-            if (!$page instanceof \App\Entity\Page) {
-                // Get title from YAML config
-                $yamlTitle = $hierarchyService->getTitleForPageCode($actualPageCode, $code);
-                $title = $yamlTitle ?? array_fill_keys($acceptedLanguages, ucwords(str_replace('-', ' ', $actualPageCode)));
-                $emptyContent = array_fill_keys($acceptedLanguages, '');
+        $defaultLanguage = $setting['languages']['default'] ?? 'en';
 
-                return new JsonResponse([
-                    'title' => $title,
-                    'content' => $emptyContent,
-                    'markdownContent' => $emptyContent,
-                    'pageCode' => $actualPageCode,
-                    'isEmpty' => true
-                ]);
-            }
-
-            // Convert markdown content to HTML
-            $htmlContent = $markdownService->convertContentArray($page->getContent());
-
-            // Get YAML title (source of truth for pages defined in YAML)
-            $yamlTitle = $hierarchyService->getTitleForPageCode($actualPageCode, $code);
-            $dbTitle = $page->getTitle();
-
-            // If page is defined in YAML, sync YAML titles to DB if different
-            if ($yamlTitle !== null) {
-                $needsUpdate = false;
-                foreach ($yamlTitle as $lang => $title) {
-                    if (!isset($dbTitle[$lang]) || $dbTitle[$lang] !== $title) {
-                        $needsUpdate = true;
-                        break;
-                    }
-                }
-                if ($needsUpdate) {
-                    // Update DB with YAML titles
-                    $page->setTitle($yamlTitle);
-                    $entityManager->flush();
-                    $dbTitle = $yamlTitle;
-                }
-            }
-
-            // Use YAML title if available, otherwise DB title
-            $mergedTitle = $yamlTitle ?? $dbTitle;
-
-            // Ensure all accepted languages have at least a fallback title
-            foreach ($acceptedLanguages as $lang) {
-                if (empty($mergedTitle[$lang])) {
-                    $mergedTitle[$lang] = $mergedTitle['en'] ?? ucwords(str_replace('-', ' ', $actualPageCode));
-                }
-            }
-
-            return new JsonResponse([
-                'title' => $mergedTitle,
-                'content' => $htmlContent,
-                'markdownContent' => $page->getContent(),
-                'pageCode' => $page->getPageCode()
-            ]);
-        }
-
-        if (!$page instanceof \App\Entity\Page) {
-            throw $this->createNotFoundException('Page not found');
-        }
-
-        // Get all pages for the journal
-        $allPages = $pageRepository->findBy(['rvcode' => $code]);
-        $organizedPages = $hierarchyService->organizePages($allPages, $code);
-
-        return $this->render('review/journalPages.html.twig', [
+        return $this->render('pages/journalPages.html.twig', [
             'review' => $review,
             'code' => $code,
             'pages' => $organizedPages,
-            'currentPageCode' => $pageTitle,
             'acceptedLanguages' => $acceptedLanguages,
+            'defaultLanguage' => $defaultLanguage,
         ]);
     }
 
-    #[Route('/journal/{code}/page/{pageTitle}/edit', name: 'app_page_edit', methods: ['POST'])]
-    public function editPage(
+    #[Route('/journal/{code}/pages/{pageCode}/edit', name: 'app_journal_page_edit', requirements: ['code' => '[\w\-]+', 'pageCode' => '[\w\-]+'], methods: ['GET', 'POST'])]
+    public function pageEdit(
         string $code,
-        string $pageTitle,
+        string $pageCode,
         Request $request,
-        PageRepository $pageRepository,
-        EntityManagerInterface $entityManager,
         ReviewManager $reviewManager,
+        PageRepository $pageRepository,
+        PageHierarchyService $hierarchyService,
+        JournalSettingService $settingService,
+        MarkdownService $markdownService,
+        EntityManagerInterface $entityManager,
         TranslatorInterface $translator
     ): Response {
-        // Validate CSRF token (support both form and header)
-        $token = $request->request->get('_token') ?? $request->headers->get('X-CSRF-Token');
-        if (!$this->isCsrfTokenValid('page-edit', $token)) {
-            $this->addFlash('danger', $translator->trans('journalPages.flash.invalidToken'));
+        $review = $reviewManager->getReviewByCode($code);
+
+        if (!$review) {
+            throw $this->createNotFoundException('Review not found');
+        }
+
+        $this->denyAccessUnlessGranted('REVIEW_EDIT', $review);
+
+        // Resolve page alias if needed
+        $actualPageCode = self::resolvePageCode($pageCode);
+
+        // Handle POST request (save changes)
+        if ($request->isMethod('POST')) {
+            // Validate CSRF token
+            $token = $request->request->get('_token') ?? $request->headers->get('X-CSRF-Token');
+            if (!$this->isCsrfTokenValid('page-edit', $token)) {
+                $this->addFlash('danger', $translator->trans('journalPages.flash.invalidToken'));
+                return $this->redirectToRoute('app_journal_page_view', [
+                    'code' => $code,
+                    'pageCode' => $pageCode
+                ]);
+            }
+
+            $page = $pageRepository->findOneBy([
+                'rvcode' => $code,
+                'page_code' => $actualPageCode
+            ]);
+
+            // If page doesn't exist, create it
+            if (!$page instanceof \App\Entity\Page) {
+                $page = new \App\Entity\Page();
+                $page->setRvcode($code);
+                $page->setPageCode(strtolower($actualPageCode));
+                /** @var \App\Entity\User|null $user */
+                $user = $this->getUser();
+                $page->setUid($user?->getUid() ?? 0);
+                $page->setTitle([]);
+                $page->setContent([]);
+                $page->setVisibility(['public']);
+                $page->setDateCreation(new \DateTime());
+                $page->setDateUpdated(new \DateTime());
+                $entityManager->persist($page);
+            }
+
+            // Get translations from form
+            $translations = $request->request->all('translations');
+
+            if (empty($translations)) {
+                $this->addFlash('warning', $translator->trans('journalPages.flash.noContent'));
+                return $this->redirectToRoute('app_journal_page_view', [
+                    'code' => $code,
+                    'pageCode' => $pageCode
+                ]);
+            }
+
+            $currentTitle = $page->getTitle();
+            $currentContent = $page->getContent();
+
+            foreach ($translations as $lang => $data) {
+                if (isset($data['title']) && !empty($data['title'])) {
+                    $currentTitle[$lang] = $data['title'];
+                }
+                if (isset($data['content'])) {
+                    $currentContent[$lang] = $data['content'];
+                }
+            }
+
+            $page->setTitle($currentTitle);
+            $page->setContent($currentContent);
+            $page->setDateUpdated(new \DateTime());
+
+            try {
+                $entityManager->flush();
+                $this->addFlash('success', $translator->trans('journalPages.flash.saved'));
+
+                // Store the edited language to display content in that language after redirect
+                $editedLanguage = $request->request->get('language');
+                if ($editedLanguage) {
+                    $request->getSession()->set('content_language', $editedLanguage);
+                }
+            } catch (\Throwable $e) {
+                $this->logger->error('Error saving page', [
+                    'exception' => $e->getMessage(),
+                    'code' => $code,
+                    'pageCode' => $pageCode,
+                ]);
+                $this->addFlash('danger', $translator->trans('journalPages.flash.error'));
+            }
+
             return $this->redirectToRoute('app_journal_page_view', [
                 'code' => $code,
-                'pageCode' => $pageTitle
+                'pageCode' => $pageCode
             ]);
         }
 
-        $review = $reviewManager->getReviewByCode($code);
-        if (!$review) {
-            throw $this->createNotFoundException('Journal not found');
-        }
-        if (!$this->isGranted('REVIEW_EDIT', $review)) {
-            throw $this->createAccessDeniedException('Access denied');
-        }
+        // Handle GET request (show edit form)
+        $pages = $pageRepository->findBy(['rvcode' => $code]);
+        $organizedPages = $hierarchyService->organizePages($pages, $code);
 
-        $actualPageCode = self::PAGE_ALIASES[$pageTitle] ?? $pageTitle;
+        $setting = $settingService->getSettingArray($review['rvid']);
+        $acceptedLanguages = $setting['languages']['accepted'] ?? ['en', 'fr'];
+        $defaultLanguage = $setting['languages']['default'] ?? 'en';
 
-        $page = $pageRepository->findOneBy([
+        // Fetch the current page data
+        $currentPage = $pageRepository->findOneBy([
             'rvcode' => $code,
             'page_code' => $actualPageCode
         ]);
 
-        // If page doesn't exist, create it
-        if (!$page instanceof \App\Entity\Page) {
-            $page = new \App\Entity\Page();
-            $page->setRvcode($code);
-            $page->setPageCode(strtolower($actualPageCode));
-            /** @var \App\Entity\User|null $user */
-            $user = $this->getUser();
-            $page->setUid($user?->getUid() ?? 0);
-            $page->setTitle([]);
-            $page->setContent([]);
-            $page->setVisibility(['public']);
-            $page->setDateCreation(new \DateTime());
-            $page->setDateUpdated(new \DateTime());
-            $entityManager->persist($page);
+        // Get YAML title (source of truth for pages defined in YAML)
+        $yamlTitle = $hierarchyService->getTitleForPageCode($actualPageCode, $code);
+
+        // Build page data for template
+        $currentPageData = null;
+        if ($currentPage) {
+            $htmlContent = $markdownService->convertContentArray($currentPage->getContent());
+            $title = $yamlTitle ?? $currentPage->getTitle();
+
+            $currentPageData = [
+                'title' => $title,
+                'content' => $htmlContent,
+                'markdownContent' => $currentPage->getContent(),
+                'pageCode' => $currentPage->getPageCode(),
+            ];
+        } elseif ($yamlTitle) {
+            // Page defined in YAML but no DB entry yet
+            $currentPageData = [
+                'title' => $yamlTitle,
+                'content' => array_fill_keys($acceptedLanguages, ''),
+                'markdownContent' => array_fill_keys($acceptedLanguages, ''),
+                'pageCode' => $actualPageCode,
+            ];
         }
 
-        // Get translations from form (all languages at once)
-        $translations = $request->request->all('translations');
+        // Get breadcrumb path
+        $breadcrumbPath = $hierarchyService->getBreadcrumbPath($actualPageCode, $code);
 
-        if (empty($translations)) {
-            $this->addFlash('warning', $translator->trans('journalPages.flash.noContent'));
-            return $this->redirectToRoute('app_journal_page_view', [
-                'code' => $code,
-                'pageCode' => $pageTitle
-            ]);
-        }
-
-        $currentTitle = $page->getTitle();
-        $currentContent = $page->getContent();
-
-        foreach ($translations as $lang => $data) {
-            if (isset($data['title']) && !empty($data['title'])) {
-                $currentTitle[$lang] = $data['title'];
-            }
-            if (isset($data['content'])) {
-                $currentContent[$lang] = $data['content'];
-            }
-        }
-
-        $page->setTitle($currentTitle);
-        $page->setContent($currentContent);
-        $page->setDateUpdated(new \DateTime());
-
-        try {
-            $entityManager->flush();
-            $this->addFlash('success', $translator->trans('journalPages.flash.saved'));
-        } catch (\Throwable $e) {
-            $this->logger->error('Error saving page', [
-                'exception' => $e->getMessage(),
-                'code' => $code,
-                'pageTitle' => $pageTitle,
-            ]);
-            $this->addFlash('danger', $translator->trans('journalPages.flash.error'));
-        }
-
-        return $this->redirectToRoute('app_journal_page_view', [
+        return $this->render('pages/journalPages.html.twig', [
+            'review' => $review,
             'code' => $code,
-            'pageCode' => $pageTitle
+            'pages' => $organizedPages,
+            'acceptedLanguages' => $acceptedLanguages,
+            'defaultLanguage' => $defaultLanguage,
+            'currentPage' => $pageCode,
+            'currentPageData' => $currentPageData,
+            'breadcrumbPath' => $breadcrumbPath,
+            'editMode' => true,
+        ]);
+    }
+
+    #[Route('/journal/{code}/pages/{pageCode}', name: 'app_journal_page_view', requirements: ['code' => '[\w\-]+', 'pageCode' => '[\w\-]+'])]
+    public function pageView(string $code, string $pageCode, Request $request, ReviewManager $reviewManager, PageRepository $pageRepository, PageHierarchyService $hierarchyService, JournalSettingService $settingService, MarkdownService $markdownService): Response
+    {
+        $review = $reviewManager->getReviewByCode($code);
+
+        if (!$review) {
+            throw $this->createNotFoundException('Review not found');
+        }
+
+        $this->denyAccessUnlessGranted('REVIEW_VIEW', $review);
+
+        $pages = $pageRepository->findBy(['rvcode' => $code]);
+        $organizedPages = $hierarchyService->organizePages($pages, $code);
+
+        $setting = $settingService->getSettingArray($review['rvid']);
+        $acceptedLanguages = $setting['languages']['accepted'] ?? ['en', 'fr'];
+        $defaultLanguage = $setting['languages']['default'] ?? 'en';
+
+        // Resolve page alias if needed
+        $actualPageCode = self::resolvePageCode($pageCode);
+
+        // Fetch the current page data
+        $currentPage = $pageRepository->findOneBy([
+            'rvcode' => $code,
+            'page_code' => $actualPageCode
+        ]);
+
+        // Get YAML title (source of truth for pages defined in YAML)
+        $yamlTitle = $hierarchyService->getTitleForPageCode($actualPageCode, $code);
+
+        // Build page data for template
+        $currentPageData = null;
+        if ($currentPage) {
+            $htmlContent = $markdownService->convertContentArray($currentPage->getContent());
+            $title = $yamlTitle ?? $currentPage->getTitle();
+
+            $currentPageData = [
+                'title' => $title,
+                'content' => $htmlContent,
+                'markdownContent' => $currentPage->getContent(),
+                'pageCode' => $currentPage->getPageCode(),
+            ];
+        } elseif ($yamlTitle) {
+            // Page defined in YAML but no DB entry yet
+            $currentPageData = [
+                'title' => $yamlTitle,
+                'content' => array_fill_keys($acceptedLanguages, ''),
+                'markdownContent' => array_fill_keys($acceptedLanguages, ''),
+                'pageCode' => $actualPageCode,
+            ];
+        }
+
+        // Get breadcrumb path
+        $breadcrumbPath = $hierarchyService->getBreadcrumbPath($actualPageCode, $code);
+
+        // Check if we should display content in a specific language (after edit)
+        $contentLanguage = $request->getSession()->get('content_language');
+        if ($contentLanguage) {
+            // Clear it so it's only used once
+            $request->getSession()->remove('content_language');
+        }
+
+        return $this->render('pages/journalPages.html.twig', [
+            'review' => $review,
+            'code' => $code,
+            'pages' => $organizedPages,
+            'acceptedLanguages' => $acceptedLanguages,
+            'defaultLanguage' => $defaultLanguage,
+            'currentPage' => $pageCode,
+            'currentPageData' => $currentPageData,
+            'breadcrumbPath' => $breadcrumbPath,
+            'editMode' => false,
+            'contentLanguage' => $contentLanguage,
         ]);
     }
 }
