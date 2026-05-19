@@ -12,6 +12,7 @@ Parameters:
 
 {% set isEdit = pageData is defined and pageData is not null %}
 {% set isFormOpen = formOpen|default(false) %}
+{% set initialLang = app.request.locale in acceptedLanguages ? app.request.locale : defaultLanguage %}
 
 <div class="{% if not isFormOpen %}collapse{% endif %} mt-4 page-form-collapse" id="pageEditForm">
     <div class="card page-form-card">
@@ -23,7 +24,7 @@ Parameters:
         <div class="card-body">
             <form id="page-form" method="post" action="{{ formAction }}">
                 <input type="hidden" name="_token" value="{{ csrf_token(csrfTokenId) }}">
-                <input type="hidden" name="language" id="form-language" value="{{ defaultLanguage }}">
+                <input type="hidden" name="language" id="form-language" value="{{ initialLang }}">
 
                 {# Hidden inputs for multilingual translations #}
                 {% for lang in acceptedLanguages %}
@@ -43,7 +44,7 @@ Parameters:
                            class="form-control bg-light"
                            id="page_title"
                            name="title"
-                           value="{% if isEdit %}{{ pageData.title[defaultLanguage]|default('') }}{% endif %}"
+                           value="{% if isEdit %}{{ pageData.title[initialLang]|default(pageData.title[defaultLanguage]|default('')) }}{% endif %}"
                            readonly>
                 </div>
 
@@ -52,7 +53,7 @@ Parameters:
                     <label for="page_content" class="form-label">
                         {{ 'journalPages.form.content'|trans|default('Content') }}
                     </label>
-                    <div id="page_content" class="form-control" style="min-height: 300px;">{% if isEdit %}{{ pageData.markdownContent[defaultLanguage]|default('') }}{% endif %}</div>
+                    <div id="page_content" class="form-control" style="min-height: 300px;">{% if isEdit %}{{ pageData.markdownContent[initialLang]|default('') }}{% endif %}</div>
                 </div>
 
                 <!-- Buttons -->

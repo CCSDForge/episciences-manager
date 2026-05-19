@@ -269,9 +269,10 @@
                                                 {{ 'journalPages.form.content'|trans }}
                                             </label>
                                             <div id="page-view-content" class="ck-content border rounded p-3 bg-white" style="min-height: 200px;">
-                                                {% set defaultContent = currentPageData.content[defaultLanguage]|default('') %}
-                                                {% if defaultContent is not empty %}
-                                                    {{ defaultContent|raw }}
+                                                {# Use interface locale, NO fallback to default language #}
+                                                {% set localeContent = currentPageData.content[app.request.locale]|default('') %}
+                                                {% if localeContent is not empty %}
+                                                    {{ localeContent|raw }}
                                                 {% else %}
                                                     <p class="text-muted fst-italic no-content-message">{{ 'journalPages.noContentAvailable'|trans }}</p>
                                                 {% endif %}
@@ -336,7 +337,8 @@
         editMode: {{ editMode|default(false)|json_encode|raw }},
         pageData: {% if currentPageData is defined and currentPageData is not null %}{
           title: {{ currentPageData.title|json_encode|raw }},
-          content: {{ currentPageData.markdownContent|json_encode|raw }}
+          content: {{ currentPageData.content|json_encode|raw }},
+          markdownContent: {{ currentPageData.markdownContent|json_encode|raw }}
         }{% else %}null{% endif %},
         translations: {
           noContentAvailable: {{ 'journalPages.noContentAvailable'|trans|json_encode|raw }}
