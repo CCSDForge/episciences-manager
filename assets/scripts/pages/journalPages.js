@@ -53,11 +53,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const translations = {};
   // Initialize with contentLanguage (after edit) or interface locale
-  let currentLang = config.contentLanguage && config.acceptedLanguages.includes(config.contentLanguage)
-    ? config.contentLanguage
-    : config.acceptedLanguages.includes(config.locale)
-      ? config.locale
-      : config.defaultLanguage;
+  let currentLang =
+    config.contentLanguage &&
+    config.acceptedLanguages.includes(config.contentLanguage)
+      ? config.contentLanguage
+      : config.acceptedLanguages.includes(config.locale)
+        ? config.locale
+        : config.defaultLanguage;
   let sidebarWidget = null;
   let editorInitialized = false;
   let formIsOpen = false;
@@ -359,7 +361,10 @@ document.addEventListener('DOMContentLoaded', () => {
   if (config.editMode && (titleInputOnLoad || contentInputOnLoad)) {
     // Edit mode: update form elements
     const data = translations[currentLang] || { title: '', content: '' };
-    const defaultData = translations[config.defaultLanguage] || { title: '', content: '' };
+    const defaultData = translations[config.defaultLanguage] || {
+      title: '',
+      content: '',
+    };
 
     // Immediately update title with correct language (before CKEditor loads)
     if (titleInputOnLoad) {
