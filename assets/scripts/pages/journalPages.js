@@ -79,7 +79,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (config.pageData) {
         translations[lang] = {
           title: config.pageData.title?.[lang] || '',
-          content: config.pageData.content?.[lang] || '',
+          // CKEditor with Markdown plugin expects Markdown input
+          content: config.pageData.markdownContent?.[lang] || '',
         };
       } else {
         // Fallback to hidden inputs
