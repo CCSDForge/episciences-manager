@@ -52,14 +52,22 @@ document.addEventListener('DOMContentLoaded', () => {
   // ===================
 
   const translations = {};
-  // Initialize with contentLanguage (after edit) or interface locale
+  // Check if we came from clicking a translation pencil (stored in sessionStorage)
+  const editContentLanguage = sessionStorage.getItem('editContentLanguage');
+  if (editContentLanguage) {
+    sessionStorage.removeItem('editContentLanguage'); // Use only once
+  }
+  // Initialize with: editContentLanguage (from pencil click) > contentLanguage (after save) > interface locale
   let currentLang =
-    config.contentLanguage &&
-    config.acceptedLanguages.includes(config.contentLanguage)
-      ? config.contentLanguage
-      : config.acceptedLanguages.includes(config.locale)
-        ? config.locale
-        : config.defaultLanguage;
+    editContentLanguage &&
+    config.acceptedLanguages.includes(editContentLanguage)
+      ? editContentLanguage
+      : config.contentLanguage &&
+          config.acceptedLanguages.includes(config.contentLanguage)
+        ? config.contentLanguage
+        : config.acceptedLanguages.includes(config.locale)
+          ? config.locale
+          : config.defaultLanguage;
   let sidebarWidget = null;
   let editorInitialized = false;
   let formIsOpen = false;
@@ -217,6 +225,8 @@ document.addEventListener('DOMContentLoaded', () => {
       // The shown.bs.collapse event will handle the rest
     } else if (config.currentPage) {
       // View mode: form not in DOM, redirect to edit page
+      // Store the clicked language in session so edit page shows correct content
+      sessionStorage.setItem('editContentLanguage', lang);
       const editUrl = `/${config.locale}/journal/${config.journalCode}/pages/${config.currentPage}/edit`;
       window.location.href = editUrl;
     }
@@ -259,33 +269,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // FORM HANDLERS
   // ===================
 
-  const pageEditForm = getElement('pageEditForm');
-  if (pageEditForm) {
-    // Handle collapse events (for view mode with collapse)
-    pageEditForm.addEventListener('shown.bs.collapse', async () => {
-      formIsOpen = true;
-      initTranslations();
-      updateWidgetDisplay();
-      await initPageEditor();
-      // Load the current language into the form
-      loadLanguage(currentLang);
-      if (sidebarWidget?.select) {
-        sidebarWidget.select.value = currentLang;
-      }
-    });
-
-    pageEditForm.addEventListener('hidden.bs.collapse', () => {
-      formIsOpen = false;
-      destroyPageEditor();
-    });
-
-    // If in edit mode, form is already open (not a collapse)
-    // Use async IIFE to properly await editor initialization
-    if (config.editMode) {
-      formIsOpen = true;
-      initTranslations();
-      // Note: sidebarWidget is not yet initialized here, updateWidgetDisplay will be called later
-    }
+  // In edit mode, form is already open (not a collapse)
+  if (config.editMode) {
+    formIsOpen = true;
+    initTranslations();
+    // Note: sidebarWidget is not yet initialized here, updateWidgetDisplay will be called later
   }
 
   // ===================
