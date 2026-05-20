@@ -2,18 +2,29 @@
 
 namespace App\Service;
 
-use League\CommonMark\GithubFlavoredMarkdownConverter;
+use League\CommonMark\Environment\Environment;
+use League\CommonMark\Extension\Attributes\AttributesExtension;
+use League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension;
+use League\CommonMark\Extension\GithubFlavoredMarkdownExtension;
+use League\CommonMark\MarkdownConverter;
 
 class MarkdownService
 {
-    private GithubFlavoredMarkdownConverter $converter;
+    private MarkdownConverter $converter;
 
     public function __construct()
     {
-        $this->converter = new GithubFlavoredMarkdownConverter([
-            'html_input' => 'strip',           // Allow raw HTML in Markdown
+        $config = [
+            'html_input' => 'strip',           // Strip raw HTML in Markdown
             'allow_unsafe_links' => false,     // Security: block javascript: etc.
-        ]);
+        ];
+
+        $environment = new Environment($config);
+        $environment->addExtension(new CommonMarkCoreExtension());
+        $environment->addExtension(new GithubFlavoredMarkdownExtension());
+        $environment->addExtension(new AttributesExtension());
+
+        $this->converter = new MarkdownConverter($environment);
     }
 
     /**

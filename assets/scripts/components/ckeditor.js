@@ -272,24 +272,233 @@ export function initializeCKEditor(
   });
 }
 
+/**
+ * Extract image attributes (resize and alignment) from CKEditor model
+ * Returns a Map of image src -> { width, align }
+ */
+function getImageAttributesInfo() {
+  const imageInfo = new Map();
+
+  if (!editorInstance) return imageInfo;
+
+  const root = editorInstance.model.document.getRoot();
+
+  // Traverse the model to find all images
+  for (const item of editorInstance.model.createRangeIn(root).getItems()) {
+    if (item.is('element', 'imageBlock') || item.is('element', 'imageInline')) {
+      const src = item.getAttribute('src');
+      const resizedWidth = item.getAttribute('resizedWidth');
+      const imageStyle = item.getAttribute('imageStyle');
+
+      if (src && (resizedWidth || imageStyle)) {
+        imageInfo.set(src, {
+          width: resizedWidth || null,
+          align: imageStyle || null,
+        });
+      }
+    }
+  }
+
+  return imageInfo;
+}
+
+/**
+ * Convert CKEditor imageStyle to CSS style
+ */
+function imageStyleToCSS(imageStyle) {
+  const styleMap = {
+    alignLeft: 'float:left;margin-right:1em',
+    alignRight: 'float:right;margin-left:1em',
+    alignCenter: 'display:block;margin-left:auto;margin-right:auto',
+    alignBlockLeft: 'float:left;margin-right:1em',
+    alignBlockRight: 'float:right;margin-left:1em',
+  };
+  return styleMap[imageStyle] || null;
+}
+
+/**
+ * Add attributes to Markdown images
+ * Converts ![alt](url) to ![alt](url){width="X%" style="..."} for styled images
+ */
+function addImageAttributesToMarkdown(markdown, imageInfo) {
+  if (!markdown || imageInfo.size === 0) return markdown;
+
+  // Regex to match Markdown images: ![alt](url) or ![alt](url "title")
+  const imageRegex = /!\[([^\]]*)\]\(([^)\s]+)(?:\s+"([^"]*)")?\)/g;
+
+  return markdown.replace(imageRegex, (match, alt, url, title) => {
+    // Check if this image has attributes
+    const info = imageInfo.get(url);
+
+    if (info && (info.width || info.align)) {
+      const attrs = [];
+
+      if (info.width) {
+        attrs.push(`width="${info.width}"`);
+      }
+
+      if (info.align) {
+        const cssStyle = imageStyleToCSS(info.align);
+        if (cssStyle) {
+          attrs.push(`style="${cssStyle}"`);
+        }
+      }
+
+      if (attrs.length > 0) {
+        const titlePart = title ? ` "${title}"` : '';
+        return `![${alt}](${url}${titlePart}){${attrs.join(' ')}}`;
+      }
+    }
+
+    return match;
+  });
+}
+
 export function getEditorContent() {
   console.log('=== getEditorContent called ===');
   console.log('Editor instance exists:', !!editorInstance);
 
   if (editorInstance) {
+    // Get image attributes (resize + alignment) before getting Markdown content
+    const imageInfo = getImageAttributesInfo();
+    console.log(
+      'Image attributes info:',
+      Object.fromEntries(
+        [...imageInfo].map(([k, v]) => [k, JSON.stringify(v)])
+      )
+    );
+
     const content = editorInstance.getData();
     console.log('Raw editor data:', content);
-    console.log('Content length:', content?.length || 0);
-    return content;
+
+    // Add attributes to images in Markdown
+    const contentWithAttributes = addImageAttributesToMarkdown(
+      content,
+      imageInfo
+    );
+    console.log('Content with attributes:', contentWithAttributes);
+    console.log('Content length:', contentWithAttributes?.length || 0);
+
+    return contentWithAttributes;
   }
 
   console.log('No editor instance, returning empty string');
   return '';
 }
 
+/**
+ * Convert CSS style back to CKEditor imageStyle
+ */
+function cssToImageStyle(cssStyle) {
+  if (!cssStyle) return null;
+
+  if (cssStyle.includes('float:left') || cssStyle.includes('float: left')) {
+    return 'alignLeft';
+  }
+  if (cssStyle.includes('float:right') || cssStyle.includes('float: right')) {
+    return 'alignRight';
+  }
+  if (
+    cssStyle.includes('margin-left:auto') ||
+    cssStyle.includes('margin-left: auto')
+  ) {
+    return 'alignCenter';
+  }
+  return null;
+}
+
+/**
+ * Parse Markdown to extract image attributes (width and style)
+ * Returns { cleanMarkdown, attributesMap } where attributesMap is src -> { width, style }
+ */
+function parseImageAttributes(markdown) {
+  if (!markdown) return { cleanMarkdown: '', attributesMap: new Map() };
+
+  const attributesMap = new Map();
+
+  // Regex to match Markdown images with attributes: ![alt](url){...}
+  // Captures: alt, url, title (optional), attributes
+  const imageWithAttrsRegex =
+    /!\[([^\]]*)\]\(([^)\s]+)(?:\s+"([^"]*)")?\)\{([^}]+)\}/g;
+
+  const cleanMarkdown = markdown.replace(
+    imageWithAttrsRegex,
+    (match, alt, url, title, attrs) => {
+      // Parse attributes
+      const widthMatch = attrs.match(/width="([^"]+)"/);
+      const styleMatch = attrs.match(/style="([^"]+)"/);
+
+      const attributes = {
+        width: widthMatch ? widthMatch[1] : null,
+        style: styleMatch ? styleMatch[1] : null,
+      };
+
+      // Store attributes for this URL
+      attributesMap.set(url, attributes);
+
+      // Return the image without attributes (standard Markdown)
+      const titlePart = title ? ` "${title}"` : '';
+      return `![${alt}](${url}${titlePart})`;
+    }
+  );
+
+  return { cleanMarkdown, attributesMap };
+}
+
+/**
+ * Apply image attributes (resize and alignment) in CKEditor model
+ */
+function applyImageAttributes(attributesMap) {
+  if (!editorInstance || attributesMap.size === 0) return;
+
+  const root = editorInstance.model.document.getRoot();
+
+  editorInstance.model.change(writer => {
+    for (const item of editorInstance.model.createRangeIn(root).getItems()) {
+      if (item.is('element', 'imageBlock') || item.is('element', 'imageInline')) {
+        const src = item.getAttribute('src');
+
+        if (src && attributesMap.has(src)) {
+          const attrs = attributesMap.get(src);
+
+          if (attrs.width) {
+            writer.setAttribute('resizedWidth', attrs.width, item);
+          }
+
+          if (attrs.style) {
+            const imageStyle = cssToImageStyle(attrs.style);
+            if (imageStyle) {
+              writer.setAttribute('imageStyle', imageStyle, item);
+            }
+          }
+        }
+      }
+    }
+  });
+}
+
 export function setEditorContent(content) {
   if (editorInstance) {
-    editorInstance.setData(content || '');
+    // Parse content to extract image attributes (width and style)
+    const { cleanMarkdown, attributesMap } = parseImageAttributes(content);
+    console.log(
+      'Parsed image attributes:',
+      Object.fromEntries(
+        [...attributesMap].map(([k, v]) => [k, JSON.stringify(v)])
+      )
+    );
+
+    // Set the clean Markdown (without attributes) in CKEditor
+    editorInstance.setData(cleanMarkdown || '');
+
+    // Apply attributes to images after content is loaded
+    // Use setTimeout to ensure the model is fully updated
+    if (attributesMap.size > 0) {
+      setTimeout(() => {
+        applyImageAttributes(attributesMap);
+      }, 100);
+    }
+
     // Update character counter after setting content
     if (maxCharLimit > 0) {
       updateCharCounter();
