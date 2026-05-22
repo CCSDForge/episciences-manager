@@ -452,7 +452,9 @@ function applyImageAttributes(attributesMap) {
   if (!editorInstance || attributesMap.size === 0) return;
 
   const root = editorInstance.model.document.getRoot();
+  const imagesToStyle = [];
 
+  // First pass: apply width and collect images that need styling
   editorInstance.model.change(writer => {
     for (const item of editorInstance.model.createRangeIn(root).getItems()) {
       if (item.is('element', 'imageBlock') || item.is('element', 'imageInline')) {
@@ -468,13 +470,40 @@ function applyImageAttributes(attributesMap) {
           if (attrs.style) {
             const imageStyle = cssToImageStyle(attrs.style);
             if (imageStyle) {
-              writer.setAttribute('imageStyle', imageStyle, item);
+              imagesToStyle.push({ element: item, style: imageStyle });
             }
           }
         }
       }
     }
   });
+
+  // Second pass: apply imageStyle using the command (more reliable)
+  // We need to select each image and execute the command
+  imagesToStyle.forEach(({ element, style }) => {
+    editorInstance.model.change(writer => {
+      // Select the image element
+      writer.setSelection(element, 'on');
+    });
+
+    // Execute the imageStyle command
+    try {
+      editorInstance.execute('imageStyle', { value: style });
+    } catch (e) {
+      console.warn('Could not apply imageStyle command, falling back to attribute:', e);
+      // Fallback: set attribute directly
+      editorInstance.model.change(writer => {
+        writer.setAttribute('imageStyle', style, element);
+      });
+    }
+  });
+
+  // Clear selection after applying styles
+  if (imagesToStyle.length > 0) {
+    editorInstance.model.change(writer => {
+      writer.setSelection(null);
+    });
+  }
 }
 
 export function setEditorContent(content) {
@@ -488,16 +517,25 @@ export function setEditorContent(content) {
       )
     );
 
+    // Apply attributes after content is loaded using CKEditor's event system
+    if (attributesMap.size > 0) {
+      // Listen for the next data change (triggered by setData)
+      const onDataChange = () => {
+        // Remove listener to avoid multiple calls
+        editorInstance.model.document.off('change:data', onDataChange);
+
+        // Use requestAnimationFrame to ensure DOM is ready
+        requestAnimationFrame(() => {
+          applyImageAttributes(attributesMap);
+          console.log('Applied image attributes after content load');
+        });
+      };
+
+      editorInstance.model.document.on('change:data', onDataChange);
+    }
+
     // Set the clean Markdown (without attributes) in CKEditor
     editorInstance.setData(cleanMarkdown || '');
-
-    // Apply attributes to images after content is loaded
-    // Use setTimeout to ensure the model is fully updated
-    if (attributesMap.size > 0) {
-      setTimeout(() => {
-        applyImageAttributes(attributesMap);
-      }, 100);
-    }
 
     // Update character counter after setting content
     if (maxCharLimit > 0) {
