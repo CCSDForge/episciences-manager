@@ -430,14 +430,15 @@ document.addEventListener('DOMContentLoaded', () => {
       const editUrl = btn.dataset.editUrl;
 
       // Fill translations from data attributes
+      // Use data-markdown-xx for content (raw Markdown with attributes like {width="50%"})
       config.acceptedLanguages.forEach(lang => {
         const titleKey = `title${lang.charAt(0).toUpperCase() + lang.slice(1)}`;
-        const contentKey = `content${lang.charAt(0).toUpperCase() + lang.slice(1)}`;
+        const markdownKey = `markdown${lang.charAt(0).toUpperCase() + lang.slice(1)}`;
         const linkKey = `link${lang.charAt(0).toUpperCase() + lang.slice(1)}`;
 
         translations[lang] = {
           title: newsItem.dataset[titleKey] || '',
-          content: newsItem.dataset[contentKey] || '',
+          content: newsItem.dataset[markdownKey] || '',
           link: newsItem.dataset[linkKey] || '',
         };
 

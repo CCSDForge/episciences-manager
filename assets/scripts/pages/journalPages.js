@@ -52,22 +52,28 @@ document.addEventListener('DOMContentLoaded', () => {
   // ===================
 
   const translations = {};
-  // Check if we came from clicking a translation pencil (stored in sessionStorage)
-  const editContentLanguage = sessionStorage.getItem('editContentLanguage');
-  if (editContentLanguage) {
+  // Check URL parameter first, then sessionStorage as fallback
+  const urlParams = new URLSearchParams(window.location.search);
+  const urlContentLang = urlParams.get('contentLang');
+
+  // Fallback: check sessionStorage (for backward compatibility)
+  const sessionContentLang = sessionStorage.getItem('editContentLanguage');
+  if (sessionContentLang) {
     sessionStorage.removeItem('editContentLanguage'); // Use only once
   }
-  // Initialize with: editContentLanguage (from pencil click) > contentLanguage (after save) > interface locale
+
+  // Priority: URL param > sessionStorage > contentLanguage (after save) > interface locale
   let currentLang =
-    editContentLanguage &&
-    config.acceptedLanguages.includes(editContentLanguage)
-      ? editContentLanguage
-      : config.contentLanguage &&
-          config.acceptedLanguages.includes(config.contentLanguage)
-        ? config.contentLanguage
-        : config.acceptedLanguages.includes(config.locale)
-          ? config.locale
-          : config.defaultLanguage;
+    urlContentLang && config.acceptedLanguages.includes(urlContentLang)
+      ? urlContentLang
+      : sessionContentLang && config.acceptedLanguages.includes(sessionContentLang)
+        ? sessionContentLang
+        : config.contentLanguage &&
+            config.acceptedLanguages.includes(config.contentLanguage)
+          ? config.contentLanguage
+          : config.acceptedLanguages.includes(config.locale)
+            ? config.locale
+            : config.defaultLanguage;
   let sidebarWidget = null;
   let editorInitialized = false;
   let formIsOpen = false;
@@ -208,6 +214,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // Update URL parameter without reloading page
+  function updateUrlContentLang(lang) {
+    const url = new URL(window.location.href);
+    url.searchParams.set('contentLang', lang);
+    window.history.replaceState({}, '', url.toString());
+  }
+
   function handleTranslationClick(lang) {
     const pageEditForm = getElement('pageEditForm');
 
@@ -218,6 +231,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (sidebarWidget?.select) {
         sidebarWidget.select.value = lang;
       }
+      // Update URL to reflect current language
+      updateUrlContentLang(lang);
     } else if (pageEditForm) {
       // Form exists as collapse, open it and switch to the requested language
       currentLang = lang;
@@ -226,9 +241,8 @@ document.addEventListener('DOMContentLoaded', () => {
       // The shown.bs.collapse event will handle the rest
     } else if (config.currentPage) {
       // View mode: form not in DOM, redirect to edit page
-      // Store the clicked language in session so edit page shows correct content
-      sessionStorage.setItem('editContentLanguage', lang);
-      const editUrl = `/${config.locale}/journal/${config.journalCode}/pages/${config.currentPage}/edit`;
+      // Pass language as URL parameter
+      const editUrl = `/${config.locale}/journal/${config.journalCode}/pages/${config.currentPage}/edit?contentLang=${lang}`;
       window.location.href = editUrl;
     }
   }
