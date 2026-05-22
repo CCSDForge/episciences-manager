@@ -583,30 +583,24 @@ export function isOverLimit() {
 export function insertImageIntoEditor(imageUrl, altText = '') {
   if (!editorInstance || !imageUrl) return;
 
-  //Normalize to absolute URL (handles /path, //host, relative paths)
-  const toAbsoluteUrl = url => {
-    try {
-      // new URL resolves relative paths against window.location.href
-      return new URL(url, window.location.href).href;
-    } catch {
-      return url;
-    }
-  };
+  // Keep the URL as-is (relative or absolute)
+  // Security check: allow relative paths starting with / or http(s) URLs
+  const isRelativePath = imageUrl.startsWith('/');
+  const isHttpUrl = /^https?:\/\//i.test(imageUrl);
 
-  const fullImageUrl = toAbsoluteUrl(imageUrl);
-
-  //Security check: allow only http(s) URLs
-  if (!/^https?:\/\//i.test(fullImageUrl)) {
-    console.warn('Blocked non-http(s) URL:', fullImageUrl);
+  if (!isRelativePath && !isHttpUrl) {
+    console.warn('Blocked invalid URL (must be relative /path or http(s)):', imageUrl);
     return;
   }
+
+  const finalImageUrl = imageUrl;
 
   //Insert image directly using model API - most reliable method
   try {
     editorInstance.model.change(writer => {
       // Create the image element with proper attributes
       const imageElement = writer.createElement('imageBlock', {
-        src: fullImageUrl,
+        src: finalImageUrl,
         alt: altText || 'Image',
       });
 
@@ -621,7 +615,7 @@ export function insertImageIntoEditor(imageUrl, altText = '') {
     // Fallback: Try the insertImage command
     try {
       editorInstance.execute('insertImage', {
-        source: fullImageUrl,
+        source: finalImageUrl,
       });
     } catch (commandError) {
       console.error(
@@ -631,7 +625,7 @@ export function insertImageIntoEditor(imageUrl, altText = '') {
 
       // Final fallback: Insert as HTML and convert to model
       try {
-        const imageHtml = `<img src="${fullImageUrl}" alt="${altText || 'Image'}" />`;
+        const imageHtml = `<img src="${finalImageUrl}" alt="${altText || 'Image'}" />`;
         const viewFragment = editorInstance.data.processor.toView(imageHtml);
         const modelFragment = editorInstance.data.toModel(viewFragment);
 
@@ -676,22 +670,17 @@ export function insertLinkIntoEditor(linkUrl, linkText = '', insertId = null) {
     uniqueInsertId
   );
 
-  // Normalize to absolute URL
-  const toAbsoluteUrl = url => {
-    try {
-      return new URL(url, window.location.href).href;
-    } catch {
-      return url;
-    }
-  };
+  // Keep the URL as-is (relative or absolute)
+  // Security check: allow relative paths starting with / or http(s) URLs
+  const isRelativePath = linkUrl.startsWith('/');
+  const isHttpUrl = /^https?:\/\//i.test(linkUrl);
 
-  const fullLinkUrl = toAbsoluteUrl(linkUrl);
-
-  // Security check: allow only http(s) URLs
-  if (!/^https?:\/\//i.test(fullLinkUrl)) {
-    console.warn('Blocked non-http(s) URL:', fullLinkUrl);
+  if (!isRelativePath && !isHttpUrl) {
+    console.warn('Blocked invalid URL (must be relative /path or http(s)):', linkUrl);
     return;
   }
+
+  const fullLinkUrl = linkUrl;
 
   try {
     // Get current selection or insert position
