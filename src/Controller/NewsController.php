@@ -191,7 +191,7 @@ final class NewsController extends AbstractController
             $news->setTitle($titles);
             $news->setContent($contents);
             $news->setLink($links);
-            $news->setVisibility($status === 'public' ? ['public'] : []);
+            $news->setVisibility($status === 'public' ? ['public'] : ['private']);
             $news->setDateCreation(new \DateTime());
             $news->setDateUpdated(new \DateTime());
 
@@ -296,7 +296,7 @@ final class NewsController extends AbstractController
         $news->setTitle($titles);
         $news->setContent($contents);
         $news->setLink($links);
-        $news->setVisibility($status === 'public' ? ['public'] : []);
+        $news->setVisibility($status === 'public' ? ['public'] : ['private']);
         $news->setDateUpdated(new \DateTime());
 
         $entityManager->flush();

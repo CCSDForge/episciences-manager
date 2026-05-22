@@ -75,6 +75,7 @@
                                     {% for lang in acceptedLanguages %}
                                         data-title-{{ lang }}="{{ news.title[lang]|default('')|e('html_attr') }}"
                                         data-content-{{ lang }}="{{ news.htmlContent[lang]|default('')|e('html_attr') }}"
+                                        data-markdown-{{ lang }}="{{ news.content[lang]|default('')|e('html_attr') }}"
                                         data-link-{{ lang }}="{{ news.link[lang]|default('')|e('html_attr') }}"
                                     {% endfor %}
                                  data-visibility="{{ 'public' in news.visibility ? 'public' : 'invisible' }}">
