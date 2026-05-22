@@ -405,9 +405,7 @@ export function getEditorContent() {
     const imageInfo = getImageAttributesInfo();
     console.log(
       'Image attributes info:',
-      Object.fromEntries(
-        [...imageInfo].map(([k, v]) => [k, JSON.stringify(v)])
-      )
+      Object.fromEntries([...imageInfo].map(([k, v]) => [k, JSON.stringify(v)]))
     );
 
     const content = editorInstance.getData();
@@ -499,7 +497,10 @@ function applyImageAttributes(attributesMap) {
   // First pass: apply width and collect images that need styling
   editorInstance.model.change(writer => {
     for (const item of editorInstance.model.createRangeIn(root).getItems()) {
-      if (item.is('element', 'imageBlock') || item.is('element', 'imageInline')) {
+      if (
+        item.is('element', 'imageBlock') ||
+        item.is('element', 'imageInline')
+      ) {
         const src = item.getAttribute('src');
 
         if (src && attributesMap.has(src)) {
@@ -532,7 +533,10 @@ function applyImageAttributes(attributesMap) {
     try {
       editorInstance.execute('imageStyle', { value: style });
     } catch (e) {
-      console.warn('Could not apply imageStyle command, falling back to attribute:', e);
+      console.warn(
+        'Could not apply imageStyle command, falling back to attribute:',
+        e
+      );
       // Fallback: set attribute directly
       editorInstance.model.change(writer => {
         writer.setAttribute('imageStyle', style, element);
@@ -631,7 +635,10 @@ export function insertImageIntoEditor(imageUrl, altText = '') {
   const isHttpUrl = /^https?:\/\//i.test(imageUrl);
 
   if (!isRelativePath && !isHttpUrl) {
-    console.warn('Blocked invalid URL (must be relative /path or http(s)):', imageUrl);
+    console.warn(
+      'Blocked invalid URL (must be relative /path or http(s)):',
+      imageUrl
+    );
     return;
   }
 
@@ -718,7 +725,10 @@ export function insertLinkIntoEditor(linkUrl, linkText = '', insertId = null) {
   const isHttpUrl = /^https?:\/\//i.test(linkUrl);
 
   if (!isRelativePath && !isHttpUrl) {
-    console.warn('Blocked invalid URL (must be relative /path or http(s)):', linkUrl);
+    console.warn(
+      'Blocked invalid URL (must be relative /path or http(s)):',
+      linkUrl
+    );
     return;
   }
 

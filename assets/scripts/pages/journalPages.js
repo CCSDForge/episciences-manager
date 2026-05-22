@@ -4,7 +4,6 @@ import {
   initializeCKEditor,
   getEditorContent,
   setEditorContent,
-  destroyEditor,
 } from '../components/ckeditor.js';
 
 // Security: Helper function to escape HTML special characters to prevent XSS
@@ -66,7 +65,8 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentLang =
     urlContentLang && config.acceptedLanguages.includes(urlContentLang)
       ? urlContentLang
-      : sessionContentLang && config.acceptedLanguages.includes(sessionContentLang)
+      : sessionContentLang &&
+          config.acceptedLanguages.includes(sessionContentLang)
         ? sessionContentLang
         : config.contentLanguage &&
             config.acceptedLanguages.includes(config.contentLanguage)
@@ -270,13 +270,6 @@ document.addEventListener('DOMContentLoaded', () => {
       setEditorContent(currentContent);
     } catch (error) {
       console.error('Failed to initialize CKEditor:', error);
-    }
-  }
-
-  function destroyPageEditor() {
-    if (editorInitialized) {
-      destroyEditor();
-      editorInitialized = false;
     }
   }
 
