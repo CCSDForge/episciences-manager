@@ -118,16 +118,6 @@ page_hierarchies:
               en: "Proposing Special Issues"
               fr: "Proposer des numéros spéciaux"
               es: "Proponer números especiales"
-          - code: "test"
-            title:
-              en: "english title"
-              fr: "french titre"
-              es: "espagnol titre"
-          - code: "for-reviewers-test"
-            title:
-              en: "For Reviewers test"
-              fr: "Pour les évaluateurs test"
-              es: "Para les revisores test"
       - code: "credits"
         title:
           en: "Credits"
