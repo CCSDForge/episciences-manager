@@ -23,7 +23,7 @@ Parameters:
                 <label for="{{ wid }}-language-select" class="form-label small text-muted mb-1">{{ 'widget.language'|trans }}</label>
                 <select class="form-select form-select-sm language-switch-select" id="{{ wid }}-language-select">
                     {% for lang in acceptedLanguages|default(['en', 'fr']) %}
-                        <option value="{{ lang }}" {{ defaultLanguage == lang ? 'selected' : '' }}>{{ lang|language_name(lang) }}</option>
+                        <option value="{{ lang }}" {{ defaultLanguage == lang ? 'selected' : '' }}>{{ lang|language_name(lang)|capitalize }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -33,11 +33,11 @@ Parameters:
                 <div id="{{ wid }}-translations-list" class="translations-list">
                     {% for lang in acceptedLanguages|default(['en', 'fr']) %}
                         <div class="translation-row d-flex align-items-center gap-2 mb-2" data-lang="{{ lang }}">
-                            <span class="translation-flag" title="{{ lang|language_name(lang) }}">{{ lang|capitalize }}</span>
+                            <span class="translation-flag" title="{{ lang|language_name(lang)|capitalize }}">{{ lang|capitalize }}</span>
                             <button class="btn btn-link btn-sm p-0 translation-action-btn" type="button" title="{{ 'widget.addTranslation'|trans }}">
                                 <i class="fas fa-plus text-muted"></i>
                             </button>
-                            <input type="text" class="form-control form-control-sm translation-title-input" readonly placeholder="{{ lang|language_name(lang) }}" aria-label="{{ lang|language_name(lang) }}">
+                            <input type="text" class="form-control form-control-sm translation-title-input" readonly placeholder="{{ lang|language_name(lang)|capitalize }}" aria-label="{{ lang|language_name(lang)|capitalize }}">
                         </div>
                     {% endfor %}
                 </div>
