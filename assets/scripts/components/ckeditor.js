@@ -44,6 +44,32 @@ let maxCharLimit = 0;
 const processedInserts = new Set();
 
 /**
+ * Extract filename from a URL or path
+ * @param {string} url - The URL or path to extract filename from
+ * @returns {string|null} The filename or null if not found
+ */
+function extractFilenameFromUrl(url) {
+  if (!url) return null;
+
+  try {
+    // Remove query string and hash
+    const cleanUrl = url.split('?')[0].split('#')[0];
+    // Get the last part of the path
+    const parts = cleanUrl.split('/');
+    const filename = parts[parts.length - 1];
+
+    // Return filename if it looks valid (has an extension)
+    if (filename && filename.includes('.')) {
+      return filename;
+    }
+  } catch (e) {
+    console.warn('Failed to extract filename from URL:', url, e);
+  }
+
+  return null;
+}
+
+/**
  * Get plain text character count from editor content
  */
 function getCharCount() {
@@ -233,6 +259,33 @@ export function initializeCKEditor(
       // Call the onChange callback if provided
       if (onChangeCallback) {
         onChangeCallback(content);
+      }
+    });
+
+    // Auto-fill alt text for images inserted without one
+    editor.model.document.on('change:data', () => {
+      const changes = editor.model.document.differ.getChanges();
+
+      for (const change of changes) {
+        if (change.type === 'insert' && change.name === 'imageBlock') {
+          const position = change.position;
+          const imageElement = position.nodeAfter;
+
+          if (imageElement && imageElement.is('element', 'imageBlock')) {
+            const src = imageElement.getAttribute('src');
+            const alt = imageElement.getAttribute('alt');
+
+            // If no alt text or default "Image", extract filename from URL
+            if (src && (!alt || alt === 'Image')) {
+              const filename = extractFilenameFromUrl(src);
+              if (filename) {
+                editor.model.change(writer => {
+                  writer.setAttribute('alt', filename, imageElement);
+                });
+              }
+            }
+          }
+        }
       }
     });
 
