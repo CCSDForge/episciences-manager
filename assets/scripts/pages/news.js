@@ -430,7 +430,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const editUrl = btn.dataset.editUrl;
 
       // Fill translations from data attributes
-      // Use data-markdown-xx for content (raw Markdown with attributes like {width="50%"})
+      // Use data-markdown-xx for content (Markdown with HTML img tags for styled images)
       config.acceptedLanguages.forEach(lang => {
         const titleKey = `title${lang.charAt(0).toUpperCase() + lang.slice(1)}`;
         const markdownKey = `markdown${lang.charAt(0).toUpperCase() + lang.slice(1)}`;

@@ -318,7 +318,8 @@ function imageStyleToCSS(imageStyle) {
 
 /**
  * Add attributes to Markdown images
- * Converts ![alt](url) to ![alt](url){width="X%" style="..."} for styled images
+ * Converts ![alt](url) to <img src="url" alt="alt" width="..." style="..."> for styled images
+ * Uses HTML img tags instead of markdown extended syntax for universal compatibility
  */
 function addImageAttributesToMarkdown(markdown, imageInfo) {
   if (!markdown || imageInfo.size === 0) return markdown;
@@ -331,23 +332,26 @@ function addImageAttributesToMarkdown(markdown, imageInfo) {
     const info = imageInfo.get(url);
 
     if (info && (info.width || info.align)) {
-      const attrs = [];
+      // Build HTML img tag with attributes for universal compatibility
+      let imgTag = `<img src="${url}" alt="${alt}"`;
 
       if (info.width) {
-        attrs.push(`width="${info.width}"`);
+        imgTag += ` width="${info.width}"`;
       }
 
       if (info.align) {
         const cssStyle = imageStyleToCSS(info.align);
         if (cssStyle) {
-          attrs.push(`style="${cssStyle}"`);
+          imgTag += ` style="${cssStyle}"`;
         }
       }
 
-      if (attrs.length > 0) {
-        const titlePart = title ? ` "${title}"` : '';
-        return `![${alt}](${url}${titlePart}){${attrs.join(' ')}}`;
+      if (title) {
+        imgTag += ` title="${title}"`;
       }
+
+      imgTag += '>';
+      return imgTag;
     }
 
     return match;
@@ -409,19 +413,22 @@ function cssToImageStyle(cssStyle) {
 
 /**
  * Parse Markdown to extract image attributes (width and style)
+ * Supports both:
+ * - Legacy format: ![alt](url){width="..." style="..."}
+ * - HTML format: <img src="url" alt="alt" width="..." style="...">
  * Returns { cleanMarkdown, attributesMap } where attributesMap is src -> { width, style }
  */
 function parseImageAttributes(markdown) {
   if (!markdown) return { cleanMarkdown: '', attributesMap: new Map() };
 
   const attributesMap = new Map();
+  let cleanMarkdown = markdown;
 
-  // Regex to match Markdown images with attributes: ![alt](url){...}
-  // Captures: alt, url, title (optional), attributes
+  // 1. Parse legacy format: ![alt](url){...}
   const imageWithAttrsRegex =
     /!\[([^\]]*)\]\(([^)\s]+)(?:\s+"([^"]*)")?\)\{([^}]+)\}/g;
 
-  const cleanMarkdown = markdown.replace(
+  cleanMarkdown = cleanMarkdown.replace(
     imageWithAttrsRegex,
     (match, alt, url, title, attrs) => {
       // Parse attributes
@@ -441,6 +448,36 @@ function parseImageAttributes(markdown) {
       return `![${alt}](${url}${titlePart})`;
     }
   );
+
+  // 2. Parse HTML img tags: <img src="url" alt="alt" width="..." style="...">
+  const htmlImgRegex =
+    /<img\s+([^>]*)>/gi;
+
+  cleanMarkdown = cleanMarkdown.replace(htmlImgRegex, (match, attrsString) => {
+    // Extract attributes from the img tag
+    const srcMatch = attrsString.match(/src="([^"]+)"/);
+    const altMatch = attrsString.match(/alt="([^"]*)"/);
+    const widthMatch = attrsString.match(/width="([^"]+)"/);
+    const styleMatch = attrsString.match(/style="([^"]+)"/);
+    const titleMatch = attrsString.match(/title="([^"]+)"/);
+
+    if (!srcMatch) return match; // Keep original if no src
+
+    const src = srcMatch[1];
+    const alt = altMatch ? altMatch[1] : '';
+    const width = widthMatch ? widthMatch[1] : null;
+    const style = styleMatch ? styleMatch[1] : null;
+    const title = titleMatch ? titleMatch[1] : null;
+
+    // Store attributes if any custom styling exists
+    if (width || style) {
+      attributesMap.set(src, { width, style });
+    }
+
+    // Convert to standard Markdown for CKEditor
+    const titlePart = title ? ` "${title}"` : '';
+    return `![${alt}](${src}${titlePart})`;
+  });
 
   return { cleanMarkdown, attributesMap };
 }

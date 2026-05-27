@@ -3,7 +3,6 @@
 namespace App\Service;
 
 use League\CommonMark\Environment\Environment;
-use League\CommonMark\Extension\Attributes\AttributesExtension;
 use League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension;
 use League\CommonMark\Extension\GithubFlavoredMarkdownExtension;
 use League\CommonMark\MarkdownConverter;
@@ -15,14 +14,13 @@ class MarkdownService
     public function __construct()
     {
         $config = [
-            'html_input' => 'strip',           // Strip raw HTML in Markdown
+            'html_input' => 'allow',           // Allow HTML (for img tags with attributes)
             'allow_unsafe_links' => false,     // Security: block javascript: etc.
         ];
 
         $environment = new Environment($config);
         $environment->addExtension(new CommonMarkCoreExtension());
         $environment->addExtension(new GithubFlavoredMarkdownExtension());
-        $environment->addExtension(new AttributesExtension());
 
         $this->converter = new MarkdownConverter($environment);
     }
