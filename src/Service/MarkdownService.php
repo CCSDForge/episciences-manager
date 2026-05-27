@@ -38,12 +38,15 @@ class MarkdownService
 
     /**
      * Convert an array of Markdown content into HTML
+     *
+     * @param array<string, string> $content
+     * @return array<string, string>
      */
     public function convertContentArray(array $content): array
     {
         $out = [];
         foreach ($content as $locale => $markdown) {
-            $out[$locale] = $this->toHtml(is_scalar($markdown) ? (string) $markdown : '');
+            $out[$locale] = $this->toHtml($markdown);
         }
         return $out;
     }

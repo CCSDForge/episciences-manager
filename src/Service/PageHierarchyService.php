@@ -292,6 +292,10 @@ class PageHierarchyService
         return $this->findTitleInConfig($pageCode, $journalConfig);
     }
 
+    /**
+     * @param array<int, array<string, mixed>> $config
+     * @return array<string, string>|null
+     */
     private function findTitleInConfig(string $pageCode, array $config): ?array
     {
         foreach ($config as $item) {
@@ -322,7 +326,7 @@ class PageHierarchyService
 
     /**
      * Get the breadcrumb path for a page code
-     * @return array<int, array{title: array<string, string>, type: string, code?: string}> Array of breadcrumb items
+     * @return array<int, array<string, mixed>> Array of breadcrumb items
      */
     public function getBreadcrumbPath(string $pageCode, string $rvcode): array
     {
@@ -339,15 +343,11 @@ class PageHierarchyService
     /**
      * Recursively find the path to a page
      * @param array<int, array<string, mixed>> $config
-     * @param array<int, array{title: array<string, string>, type: string, code?: string}> &$path
+     * @param array<int, array<string, mixed>> &$path
      */
     private function findPathToPage(string $targetPageCode, array $config, array &$path): bool
     {
         foreach ($config as $item) {
-            if ($item === null) {
-                continue;
-            }
-
             // Check if this is the target page
             if (isset($item['code']) && $item['code'] === $targetPageCode) {
                 return true; // Found it, don't add to path (current page is not in breadcrumb path)

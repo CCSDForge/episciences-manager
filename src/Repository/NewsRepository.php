@@ -16,6 +16,7 @@ class NewsRepository extends ServiceEntityRepository
         parent::__construct($registry, News::class);
     }
 
+    /** @return list<News> */
     public function findByRvcode(string $rvcode): array
     {
         return $this->queryByRvcode($rvcode)->getQuery()->getResult();

@@ -143,7 +143,7 @@ final class PageController extends AbstractController
             // Get translations from form
             $translations = $request->request->all('translations');
 
-            if (empty($translations)) {
+            if ($translations === []) {
                 $this->addFlash('warning', $translator->trans('journalPages.flash.noContent'));
                 return $this->redirectToRoute('app_journal_page_view', [
                     'code' => $code,
@@ -210,7 +210,7 @@ final class PageController extends AbstractController
 
         // Build page data for template
         $currentPageData = null;
-        if ($currentPage) {
+        if ($currentPage instanceof \App\Entity\Page) {
             $htmlContent = $markdownService->convertContentArray($currentPage->getContent());
             $title = $yamlTitle ?? $currentPage->getTitle();
 
@@ -278,7 +278,7 @@ final class PageController extends AbstractController
 
         // Build page data for template
         $currentPageData = null;
-        if ($currentPage) {
+        if ($currentPage instanceof \App\Entity\Page) {
             $htmlContent = $markdownService->convertContentArray($currentPage->getContent());
             $title = $yamlTitle ?? $currentPage->getTitle();
 

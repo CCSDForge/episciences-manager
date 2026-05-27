@@ -117,9 +117,6 @@ readonly class ResourceUsageService
         $patterns = $this->getSearchPatterns($filename, $rvcode);
 
         foreach ($content as $locale => $contentData) {
-            if (!is_string($contentData)) {
-                continue;
-            }
             foreach ($patterns as $index => $pattern) {
                 if (preg_match($pattern, $contentData, $matches)) {
                     $patternType = $this->getPatternDescription($index);
@@ -209,7 +206,8 @@ readonly class ResourceUsageService
             'inUse' => $pageUsage !== [] || $newsUsage !== [],
             'pageCount' => count($pageUsage),
             'newsCount' => count($newsUsage),
-            'pages' => array_merge($pagesFormatted, $newsFormatted)
+            'pages' => $pagesFormatted,
+            'news' => $newsFormatted
         ];
     }
 }

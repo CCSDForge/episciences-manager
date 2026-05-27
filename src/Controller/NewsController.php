@@ -4,6 +4,7 @@ namespace App\Controller;
 
 
 use App\Entity\News;
+use App\Entity\User;
 use App\Repository\NewsRepository;
 use App\Service\JournalSettingService;
 use App\Service\MarkdownService;
@@ -34,11 +35,12 @@ final class NewsController extends AbstractController
 
     /**
      * Validate content length for all languages
+     * @param array<mixed> $translations
      * @return bool True if valid, false if any content exceeds limit
      */
     private function validateContentLength(array $translations): bool
     {
-        foreach ($translations as $lang => $data) {
+        foreach ($translations as $data) {
             if (!empty($data['content'])) {
                 $length = $this->getPlainTextLength($data['content']);
                 if ($length > self::NEWS_CONTENT_MAX_LENGTH) {
@@ -51,6 +53,8 @@ final class NewsController extends AbstractController
 
     /**
      * Convert news list with Markdown content to include HTML content
+     * @param list<News> $newsList
+     * @return array<mixed>
      */
     private function convertNewsListToHtml(array $newsList, MarkdownService $markdownService): array
     {
@@ -82,8 +86,6 @@ final class NewsController extends AbstractController
     ): Response {
         // Get the logged-in user (via CAS)
         $user = $security->getUser();
-        $uid = $user?->getUid();
-
         // Get the review by its code
         $review = $reviewManager->getReviewByCode($code);
 
@@ -180,14 +182,14 @@ final class NewsController extends AbstractController
             }
 
             // Validate at least one title exists (security check - JS validation can be bypassed)
-            if (empty($titles)) {
+            if ($titles === []) {
                 return $this->redirectToRoute('app_news_show', ['code' => $code]);
             }
 
             // Create new News entity
             $news = new News();
             $news->setRvcode($code);
-            $news->setCreator($user);
+            $news->setCreator($user instanceof User ? $user : null);
             $news->setTitle($titles);
             $news->setContent($contents);
             $news->setLink($links);
@@ -288,7 +290,7 @@ final class NewsController extends AbstractController
         }
 
         // Validate at least one title exists (security check - JS validation can be bypassed)
-        if (empty($titles)) {
+        if ($titles === []) {
             return $this->redirectToRoute('app_news_show', ['code' => $code]);
         }
 
