@@ -26,12 +26,15 @@ class News
     #[ORM\Column(name: 'code', length: 100, nullable: false, options: ['comment' => 'Journal code rvcode'])]
     private ?string $rvcode = null;
     
+    /** @var array<string, string> */
     #[ORM\Column(name: 'title', type: 'json', nullable: false, options: ['comment' => 'Page title'])]
     private array $title = [];
 
+    /** @var array<string, string>|null */
     #[ORM\Column(name: 'content', type: 'json', nullable: true)]
     private ?array $content = null;
 
+    /** @var array<string, string>|null */
     #[ORM\Column(name: 'link', type: 'json', nullable: true)]
     private ?array $link = null;
 
@@ -41,6 +44,7 @@ class News
     #[ORM\Column(name: 'date_updated', type: Types::DATETIME_MUTABLE, nullable: false)]
     private ?\DateTimeInterface $dateUpdated = null;
 
+    /** @var list<string> */
     #[ORM\Column(name: 'visibility', type: 'json', nullable: false)]
     private array $visibility = [];
 
@@ -98,11 +102,13 @@ class News
         return $this;
     }
 
+    /** @return array<string, string> */
     public function getTitle(): array
     {
         return $this->title;
     }
 
+    /** @param array<string, string> $title */
     public function setTitle(array $title): static
     {
         $this->title = $title;
@@ -110,11 +116,13 @@ class News
         return $this;
     }
 
+    /** @return array<string, string>|null */
     public function getContent(): ?array
     {
         return $this->content;
     }
 
+    /** @param array<string, string>|null $content */
     public function setContent(?array $content): static
     {
         $this->content = $content;
@@ -122,11 +130,13 @@ class News
         return $this;
     }
 
+    /** @return array<string, string>|null */
     public function getLink(): ?array
     {
         return $this->link;
     }
 
+    /** @param array<string, string>|null $link */
     public function setLink(?array $link): static
     {
         $this->link = $link;
@@ -134,11 +144,13 @@ class News
         return $this;
     }
 
+    /** @return list<string> */
     public function getVisibility(): array
     {
         return $this->visibility;
     }
 
+    /** @param list<string> $visibility */
     public function setVisibility(array $visibility): static
     {
         $this->visibility = $visibility;

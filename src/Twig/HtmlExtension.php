@@ -21,7 +21,7 @@ class HtmlExtension extends AbstractExtension
      */
     public function extractFirstImage(?string $html): ?string
     {
-        if (empty($html)) {
+        if ($html === null || $html === '') {
             return null;
         }
 
@@ -38,7 +38,7 @@ class HtmlExtension extends AbstractExtension
      */
     public function decodeEntities(?string $text): ?string
     {
-        if (empty($text)) {
+        if ($text === null || $text === '') {
             return $text;
         }
 
