@@ -358,7 +358,10 @@ export function insertImageIntoEditor(imageUrl, altText = '') {
   const isHttpUrl = /^https?:\/\//i.test(imageUrl);
 
   if (!isRelativePath && !isHttpUrl) {
-    console.warn('Blocked invalid URL (must be relative /path or http(s)):', imageUrl);
+    console.warn(
+      'Blocked invalid URL (must be relative /path or http(s)):',
+      imageUrl
+    );
     return;
   }
 
@@ -445,7 +448,10 @@ export function insertLinkIntoEditor(linkUrl, linkText = '', insertId = null) {
   const isHttpUrl = /^https?:\/\//i.test(linkUrl);
 
   if (!isRelativePath && !isHttpUrl) {
-    console.warn('Blocked invalid URL (must be relative /path or http(s)):', linkUrl);
+    console.warn(
+      'Blocked invalid URL (must be relative /path or http(s)):',
+      linkUrl
+    );
     return;
   }
 
