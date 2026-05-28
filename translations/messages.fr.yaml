@@ -217,6 +217,7 @@ news:
     created: "Actualité créée avec succès"
     updated: "Actualité mise à jour avec succès"
     deleted: "Actualité supprimée avec succès"
+    contentTooLong: "Le contenu dépasse la longueur maximale de %max% caractères."
 
 resources:
   title: "Ressources"
