@@ -308,7 +308,9 @@ final class ResourcesController extends AbstractController
                 'success' => true,
                 'inUse' => $usageSummary['inUse'],
                 'pageCount' => $usageSummary['pageCount'],
-                'pages' => $usageSummary['pages']
+                'newsCount' => $usageSummary['newsCount'],
+                'pages' => $usageSummary['pages'],
+                'news' => $usageSummary['news']
             ]);
         } catch (\Exception $e) {
             return new JsonResponse([

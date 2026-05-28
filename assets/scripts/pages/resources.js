@@ -1263,8 +1263,8 @@ document.addEventListener('DOMContentLoaded', function () {
       }
 
       if (result?.success && result?.inUse) {
-        // File is in use - show warning
-        showResourceUsageWarning(result.pages);
+        // File is in use - show warning (combine pages and news)
+        showResourceUsageWarning([...(result.pages || []), ...(result.news || [])]);
 
         // Change button text to indicate warning
         if (confirmDeleteBtn) {

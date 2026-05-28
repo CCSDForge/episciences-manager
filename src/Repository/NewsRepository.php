@@ -29,4 +29,21 @@ class NewsRepository extends ServiceEntityRepository
             ->setParameter('rvcode', $rvcode)
             ->orderBy('n.dateCreation', 'DESC');
     }
+
+    /**
+     * Find news that contain a specific filename in their content (JSON column)
+     * Uses SQL LIKE for efficient filtering before loading entities
+     *
+     * @return list<News>
+     */
+    public function findByContentContaining(string $filename, string $rvcode): array
+    {
+        return $this->createQueryBuilder('n')
+            ->where('n.rvcode = :rvcode')
+            ->andWhere('n.content LIKE :filename')
+            ->setParameter('rvcode', $rvcode)
+            ->setParameter('filename', '%' . $filename . '%')
+            ->getQuery()
+            ->getResult();
+    }
 }

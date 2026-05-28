@@ -17,6 +17,7 @@ readonly class ResourceUsageService
 
     /**
      * Find pages that use a specific resource file
+     * Uses optimized SQL query instead of loading all pages
      *
      * @param string $filename The resource filename to search for
      * @param string $rvcode The journal code
@@ -26,8 +27,8 @@ readonly class ResourceUsageService
     {
         $usage = [];
 
-        // Search in page content for references to the resource
-        $pages = $this->pageRepository->findBy(['rvcode' => $rvcode]);
+        // Use optimized SQL query - only loads pages that contain the filename
+        $pages = $this->pageRepository->findByContentContaining($filename, $rvcode);
 
         foreach ($pages as $page) {
             $foundInContent = $this->searchInPageContent($page, $filename, $rvcode);
@@ -47,6 +48,7 @@ readonly class ResourceUsageService
 
     /**
      * Find news that use a specific resource file
+     * Uses optimized SQL query instead of loading all news
      *
      * @param string $filename The resource filename to search for
      * @param string $rvcode The journal code
@@ -56,8 +58,8 @@ readonly class ResourceUsageService
     {
         $usage = [];
 
-        // Search in news content for references to the resource
-        $newsList = $this->newsRepository->findBy(['rvcode' => $rvcode]);
+        // Use optimized SQL query - only loads news that contain the filename
+        $newsList = $this->newsRepository->findByContentContaining($filename, $rvcode);
 
         foreach ($newsList as $news) {
             $foundInContent = $this->searchInNewsContent($news, $filename, $rvcode);
@@ -172,7 +174,6 @@ readonly class ResourceUsageService
 
         return $descriptions[$patternIndex] ?? 'Unknown reference';
     }
-
 
     /**
      * Get a summary of resource usage (pages and news combined)

@@ -40,4 +40,21 @@ class PageRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+
+    /**
+     * Find pages that contain a specific filename in their content (JSON column)
+     * Uses SQL LIKE for efficient filtering before loading entities
+     *
+     * @return list<Page>
+     */
+    public function findByContentContaining(string $filename, string $rvcode): array
+    {
+        return $this->createQueryBuilder('p')
+            ->where('p.rvcode = :rvcode')
+            ->andWhere('p.content LIKE :filename')
+            ->setParameter('rvcode', $rvcode)
+            ->setParameter('filename', '%' . $filename . '%')
+            ->getQuery()
+            ->getResult();
+    }
 }
