@@ -151,6 +151,7 @@ journalSettings:
     journalIndexingRender: "Journal Indexing"
     journalAcknowledgementsRender: "Acknowledgements"
     journalForReviewersRender: "For Reviewers"
+    journalForEditorsRender: "For Editors"
     journalEthicalCharterRender: "Ethical Charter"
     journalForConferenceOrganisersRender: "For Conference Organizers"
     journalProposingSpecialIssuesRender: "Proposing Special Issues"

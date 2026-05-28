@@ -60,17 +60,18 @@
         "menu": {
             "type": "object",
             "properties": {
-                "acceptedArticlesRender": { "type": "boolean" },
-                "volumeTypeProceedingsRender": { "type": "boolean" },
-                "specialIssuesRender": { "type": "boolean" },
-                "sectionsRender": { "type": "boolean" },
-                "authorsRender": { "type": "boolean" },
-                "journalIndexingRender": { "type": "boolean" },
-                "journalAcknowledgementsRender": { "type": "boolean" },
-                "journalEthicalCharterRender": { "type": "boolean" },
-                "journalForReviewersRender": { "type": "boolean" },
-                "journalForConferenceOrganisersRender": { "type": "boolean" },
-                "journalProposingSpecialIssuesRender": { "type": "boolean" }
+              "acceptedArticlesRender": { "type": "boolean" },
+              "volumeTypeProceedingsRender": { "type": "boolean" },
+              "specialIssuesRender": { "type": "boolean" },
+              "sectionsRender": { "type": "boolean" },
+              "authorsRender": { "type": "boolean" },
+              "journalIndexingRender": { "type": "boolean" },
+              "journalAcknowledgementsRender": { "type": "boolean" },
+              "journalEthicalCharterRender": { "type": "boolean" },
+              "journalForReviewersRender": { "type": "boolean" },
+              "journalForEditorsRender": { "type": "boolean" },
+              "journalForConferenceOrganisersRender": { "type": "boolean" },
+              "journalProposingSpecialIssuesRender": { "type": "boolean" }
             }
         },
         "statistics": {
