@@ -101,7 +101,7 @@ page_hierarchies:
           - code: "for-editors"
             title:
               en: "For Editors"
-              fr: "Pour les éditeurs"
+              fr: "Pour les rédacteurs"
               es: "Para los editores"
           - code: "for-conference-organisers"
             title:

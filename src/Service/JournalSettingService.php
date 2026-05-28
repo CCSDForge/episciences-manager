@@ -112,6 +112,7 @@ class JournalSettingService
                 'journalAcknowledgementsRender' => false,
                 'journalEthicalCharterRender' => true,
                 'journalForReviewersRender' => false,
+                'journalForEditorsRender' => false,
                 'journalForConferenceOrganisersRender' => false,
                 'journalProposingSpecialIssuesRender' => false,
             ],
