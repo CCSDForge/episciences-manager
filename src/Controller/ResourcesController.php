@@ -15,9 +15,17 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use App\Service\ResourceUsageService;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
+use Symfony\Component\Security\Csrf\CsrfToken;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class ResourcesController extends AbstractController
 {
+    public function __construct(
+        private readonly CsrfTokenManagerInterface $csrfTokenManager,
+        private readonly TranslatorInterface $translator
+    ) {
+    }
     private const ALLOWED_EXTENSIONS = [
         'png', 'jpg', 'jpeg', 'gif', 'tif', 'tiff', 'zip', 'gz', '7z', 'rar', 
         'tar', 'bz', 'bz2', 'rtf', 'doc', 'eps', 'ps', 'dvi', 'docx', 'pdf', 
@@ -41,10 +49,14 @@ final class ResourcesController extends AbstractController
     #[Route('/journal/{code}/resources/upload', name: 'app_resources_upload', requirements: ['code' => '[\w\-]+'], methods: ['POST'])]
     public function upload(Request $request, string $code, SluggerInterface $slugger, UploadDirectoryService $dirs): JsonResponse
     {
-        // Debug logging
-        error_log('Upload request received for journal: ' . $code);
-        error_log('Files in request: ' . print_r($_FILES, true));
-        error_log('Post data: ' . print_r($_POST, true));
+        // Validate CSRF token for security
+        $csrfToken = $request->headers->get('X-CSRF-Token') ?? $request->request->get('_csrf_token');
+        if (!$this->csrfTokenManager->isTokenValid(new CsrfToken('resources_upload', $csrfToken))) {
+            return new JsonResponse([
+                'success' => false,
+                'message' => $this->translator->trans('resources.invalidCsrfToken')
+            ], 403);
+        }
 
         /** @var UploadedFile|null $uploadedFile */
         $uploadedFile = $request->files->get('file');
@@ -53,18 +65,19 @@ final class ResourcesController extends AbstractController
         $customFileName = $request->request->get('customFileName');
 
         if (!$uploadedFile) {
-            error_log('No file uploaded in request');
             return new JsonResponse([
-                'success' => false, 
-                'message' => 'No file uploaded'
+                'success' => false,
+                'message' => $this->translator->trans('resources.noFileUploaded')
             ], 400);
         }
 
         // Validate file size
         if ($uploadedFile->getSize() > self::MAX_FILE_SIZE) {
             return new JsonResponse([
-                'success' => false, 
-                'message' => 'File too large. Maximum size: ' . (self::MAX_FILE_SIZE / 1024 / 1024) . 'MB'
+                'success' => false,
+                'message' => $this->translator->trans('resources.fileTooLarge', [
+                    '%size%' => (self::MAX_FILE_SIZE / 1024 / 1024)
+                ])
             ], 400);
         }
 
@@ -74,8 +87,10 @@ final class ResourcesController extends AbstractController
 
         if (!in_array($extension, self::ALLOWED_EXTENSIONS)) {
             return new JsonResponse([
-                'success' => false, 
-                'message' => 'File type not allowed. Allowed types: ' . implode(', ', self::ALLOWED_EXTENSIONS)
+                'success' => false,
+                'message' => $this->translator->trans('resources.fileTypeNotAllowed', [
+                    '%types%' => implode(', ', self::ALLOWED_EXTENSIONS)
+                ])
             ], 400);
         }
 
@@ -84,43 +99,27 @@ final class ResourcesController extends AbstractController
 
         // Handle custom filename
         if ($action === 'custom' && $customFileName) {
-            error_log("=== CUSTOM FILENAME DEBUG ===");
-            error_log("Original customFileName: " . $customFileName);
-            
             // Extract filename without extension from custom name
             $customNameParts = pathinfo($customFileName);
             $customBaseName = $customNameParts['filename'];
-            error_log("customBaseName after pathinfo: " . $customBaseName);
-            
+
             // Use custom name but keep original extension
             $safeFilename = (string) $slugger->slug($customBaseName);
             $newFilename = $safeFilename . '.' . $extension;
-            error_log("safeFilename after slug: " . $safeFilename);
-            error_log("newFilename: " . $newFilename);
-            
+
             // Check if the custom filename already exists
             $destinationPath = $uploadDirectory . '/' . $newFilename;
-            error_log("destinationPath: " . $destinationPath);
-            error_log("file_exists check: " . (file_exists($destinationPath) ? 'TRUE' : 'FALSE'));
-            
-            // List all files in the directory for debugging
-            if (is_dir($uploadDirectory)) {
-                $files = scandir($uploadDirectory);
-                error_log("Files in directory: " . json_encode($files));
-            }
-            
+
             if (file_exists($destinationPath)) {
-                error_log("CONFLICT DETECTED - returning 409");
                 return new JsonResponse([
                     'success' => false,
                     'conflict' => true,
-                    'message' => 'Custom filename already exists',
+                    'message' => $this->translator->trans('resources.customFilenameExists'),
                     'existingFile' => $newFilename,
                     'originalName' => $uploadedFile->getClientOriginalName(),
                     'isCustomName' => true
                 ], 409);
             }
-            error_log("NO CONFLICT - proceeding with upload");
         } else {
             // Generate safe filename from original
             $safeFilename = (string) $slugger->slug($originalFilename);
@@ -133,7 +132,7 @@ final class ResourcesController extends AbstractController
         if (!is_writable($uploadDirectory)) {
             return new JsonResponse([
                 'success' => false,
-                'message' => 'Upload directory is not writable: ' . $uploadDirectory
+                'message' => $this->translator->trans('resources.uploadDirNotWritable')
             ], 500);
         }
 
@@ -143,7 +142,7 @@ final class ResourcesController extends AbstractController
                 return new JsonResponse([
                     'success' => false,
                     'conflict' => true,
-                    'message' => 'File already exists',
+                    'message' => $this->translator->trans('resources.fileAlreadyExists'),
                     'existingFile' => $newFilename,
                     'originalName' => $uploadedFile->getClientOriginalName()
                 ], 409); // 409 Conflict status code
@@ -165,7 +164,7 @@ final class ResourcesController extends AbstractController
                 } catch (\Exception $e) {
                     return new JsonResponse([
                         'success' => false,
-                        'message' => 'Failed to delete existing file: ' . $e->getMessage()
+                        'message' => $this->translator->trans('resources.failedDeleteExisting')
                     ], 500);
                 }
             } elseif ($action === 'custom') {
@@ -174,7 +173,7 @@ final class ResourcesController extends AbstractController
                 return new JsonResponse([
                     'success' => false,
                     'conflict' => true,
-                    'message' => 'Custom filename already exists',
+                    'message' => $this->translator->trans('resources.customFilenameExists'),
                     'existingFile' => $newFilename,
                     'originalName' => $uploadedFile->getClientOriginalName(),
                     'isCustomName' => true
@@ -187,43 +186,72 @@ final class ResourcesController extends AbstractController
             
             return new JsonResponse([
                 'success' => true,
-                'message' => 'File uploaded successfully',
+                'message' => $this->translator->trans('resources.fileUploadedSuccess'),
                 'filename' => $newFilename,
                 'url' => $this->generatePublicUrl($code, $newFilename)
             ]);
 
         } catch (FileException $e) {
             return new JsonResponse([
-                'success' => false, 
-                'message' => 'Failed to upload file: ' . $e->getMessage()
+                'success' => false,
+                'message' => $this->translator->trans('resources.failedUploadFile')
             ], 500);
         }
     }
 
-    #[Route('/journal/{code}/resources/{filename}/delete', name: 'app_resources_delete', requirements: ['code' => '[\w\-]+'], methods: ['DELETE'])]
-    public function delete(string $code, string $filename, UploadDirectoryService $dirs): JsonResponse
+    #[Route('/journal/{code}/resources/{filename}/delete', name: 'app_resources_delete', methods: ['DELETE'], requirements: ['code' => '[\w\-]+'])]
+    public function delete(Request $request, string $code, string $filename, UploadDirectoryService $dirs): JsonResponse
     {
-        $filePath = $dirs->getUploadDirectory($code) . '/' . $filename;
-
-        if (!file_exists($filePath)) {
+        // Validate CSRF token for security
+        $csrfToken = $request->headers->get('X-CSRF-Token');
+        if (!$this->csrfTokenManager->isTokenValid(new CsrfToken('resources_delete', $csrfToken))) {
             return new JsonResponse([
-                'success' => false, 
-                'message' => 'File not found'
+                'success' => false,
+                'message' => $this->translator->trans('resources.invalidCsrfToken')
+            ], 403);
+        }
+
+        $uploadDirectory = $dirs->getUploadDirectory($code);
+        $filePath = $uploadDirectory . '/' . $filename;
+
+        // Security: Prevent path traversal attacks by validating the resolved path
+        $realFilePath = realpath($filePath);
+        $realUploadDir = realpath($uploadDirectory);
+
+        if ($realFilePath === false || $realUploadDir === false) {
+            return new JsonResponse([
+                'success' => false,
+                'message' => $this->translator->trans('resources.fileNotFound')
+            ], 404);
+        }
+
+        // Ensure the file is within the allowed upload directory
+        if (strpos($realFilePath, $realUploadDir) !== 0) {
+            return new JsonResponse([
+                'success' => false,
+                'message' => $this->translator->trans('resources.accessDenied')
+            ], 403);
+        }
+
+        if (!file_exists($realFilePath)) {
+            return new JsonResponse([
+                'success' => false,
+                'message' => $this->translator->trans('resources.fileNotFound')
             ], 404);
         }
 
         try {
-            unlink($filePath);
-            
+            unlink($realFilePath);
+
             return new JsonResponse([
                 'success' => true,
-                'message' => 'File deleted successfully'
+                'message' => $this->translator->trans('resources.fileDeletedSuccess')
             ]);
 
         } catch (\Exception $e) {
             return new JsonResponse([
-                'success' => false, 
-                'message' => 'Failed to delete file: ' . $e->getMessage()
+                'success' => false,
+                'message' => $this->translator->trans('resources.failedDeleteFile')
             ], 500);
         }
     }
@@ -247,7 +275,7 @@ final class ResourcesController extends AbstractController
         if (!$filename) {
             return new JsonResponse([
                 'success' => false,
-                'message' => 'Filename is required'
+                'message' => $this->translator->trans('resources.filenameRequired')
             ], 400);
         }
 
@@ -285,7 +313,7 @@ final class ResourcesController extends AbstractController
         } catch (\Exception $e) {
             return new JsonResponse([
                 'success' => false,
-                'message' => 'Error checking resource usage: ' . $e->getMessage()
+                'message' => $this->translator->trans('resources.errorCheckingUsage')
             ], 500);
         }
     }
@@ -293,15 +321,32 @@ final class ResourcesController extends AbstractController
     #[Route('/{code}/resources/{filename}', name: 'app_resources_serve', requirements: ['code' => '[\w\-]+', 'filename' => '.+'])]
     public function serve(string $code, string $filename, UploadDirectoryService $dirs): Response
     {
-        $filePath = $dirs->getUploadDirectory($code) . '/' . $filename;
+        $uploadDirectory = $dirs->getUploadDirectory($code);
+        $filePath = $uploadDirectory . '/' . $filename;
 
-        if (!file_exists($filePath)) {
+        // Security: Prevent path traversal attacks by validating the resolved path
+        $realFilePath = realpath($filePath);
+        $realUploadDir = realpath($uploadDirectory);
+
+        if ($realFilePath === false || $realUploadDir === false) {
             throw $this->createNotFoundException('File not found');
         }
 
-        $response = new BinaryFileResponse($filePath);
-        $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_INLINE, $filename);
-        
+        // Ensure the file is within the allowed upload directory
+        if (strpos($realFilePath, $realUploadDir) !== 0) {
+            throw $this->createAccessDeniedException('Access denied');
+        }
+
+        if (!file_exists($realFilePath)) {
+            throw $this->createNotFoundException('File not found');
+        }
+
+        $response = new BinaryFileResponse($realFilePath);
+
+        // Use basename to get only the filename, preventing header injection
+        $safeFilename = basename($filename);
+        $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_INLINE, $safeFilename);
+
         return $response;
     }
 
