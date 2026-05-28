@@ -17,11 +17,13 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use App\Service\ResourceUsageService;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Csrf\CsrfToken;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class ResourcesController extends AbstractController
 {
     public function __construct(
-        private readonly CsrfTokenManagerInterface $csrfTokenManager
+        private readonly CsrfTokenManagerInterface $csrfTokenManager,
+        private readonly TranslatorInterface $translator
     ) {
     }
     private const ALLOWED_EXTENSIONS = [
@@ -52,7 +54,7 @@ final class ResourcesController extends AbstractController
         if (!$this->csrfTokenManager->isTokenValid(new CsrfToken('resources_upload', $csrfToken))) {
             return new JsonResponse([
                 'success' => false,
-                'message' => 'Invalid CSRF token'
+                'message' => $this->translator->trans('resources.invalidCsrfToken')
             ], 403);
         }
 
@@ -65,15 +67,17 @@ final class ResourcesController extends AbstractController
         if (!$uploadedFile) {
             return new JsonResponse([
                 'success' => false,
-                'message' => 'No file uploaded'
+                'message' => $this->translator->trans('resources.noFileUploaded')
             ], 400);
         }
 
         // Validate file size
         if ($uploadedFile->getSize() > self::MAX_FILE_SIZE) {
             return new JsonResponse([
-                'success' => false, 
-                'message' => 'File too large. Maximum size: ' . (self::MAX_FILE_SIZE / 1024 / 1024) . 'MB'
+                'success' => false,
+                'message' => $this->translator->trans('resources.fileTooLarge', [
+                    '%size%' => (self::MAX_FILE_SIZE / 1024 / 1024)
+                ])
             ], 400);
         }
 
@@ -83,8 +87,10 @@ final class ResourcesController extends AbstractController
 
         if (!in_array($extension, self::ALLOWED_EXTENSIONS)) {
             return new JsonResponse([
-                'success' => false, 
-                'message' => 'File type not allowed. Allowed types: ' . implode(', ', self::ALLOWED_EXTENSIONS)
+                'success' => false,
+                'message' => $this->translator->trans('resources.fileTypeNotAllowed', [
+                    '%types%' => implode(', ', self::ALLOWED_EXTENSIONS)
+                ])
             ], 400);
         }
 
@@ -108,7 +114,7 @@ final class ResourcesController extends AbstractController
                 return new JsonResponse([
                     'success' => false,
                     'conflict' => true,
-                    'message' => 'Custom filename already exists',
+                    'message' => $this->translator->trans('resources.customFilenameExists'),
                     'existingFile' => $newFilename,
                     'originalName' => $uploadedFile->getClientOriginalName(),
                     'isCustomName' => true
@@ -126,7 +132,7 @@ final class ResourcesController extends AbstractController
         if (!is_writable($uploadDirectory)) {
             return new JsonResponse([
                 'success' => false,
-                'message' => 'Upload directory is not writable: ' . $uploadDirectory
+                'message' => $this->translator->trans('resources.uploadDirNotWritable')
             ], 500);
         }
 
@@ -136,7 +142,7 @@ final class ResourcesController extends AbstractController
                 return new JsonResponse([
                     'success' => false,
                     'conflict' => true,
-                    'message' => 'File already exists',
+                    'message' => $this->translator->trans('resources.fileAlreadyExists'),
                     'existingFile' => $newFilename,
                     'originalName' => $uploadedFile->getClientOriginalName()
                 ], 409); // 409 Conflict status code
@@ -158,7 +164,7 @@ final class ResourcesController extends AbstractController
                 } catch (\Exception $e) {
                     return new JsonResponse([
                         'success' => false,
-                        'message' => 'Failed to delete existing file: ' . $e->getMessage()
+                        'message' => $this->translator->trans('resources.failedDeleteExisting')
                     ], 500);
                 }
             } elseif ($action === 'custom') {
@@ -167,7 +173,7 @@ final class ResourcesController extends AbstractController
                 return new JsonResponse([
                     'success' => false,
                     'conflict' => true,
-                    'message' => 'Custom filename already exists',
+                    'message' => $this->translator->trans('resources.customFilenameExists'),
                     'existingFile' => $newFilename,
                     'originalName' => $uploadedFile->getClientOriginalName(),
                     'isCustomName' => true
@@ -180,15 +186,15 @@ final class ResourcesController extends AbstractController
             
             return new JsonResponse([
                 'success' => true,
-                'message' => 'File uploaded successfully',
+                'message' => $this->translator->trans('resources.fileUploadedSuccess'),
                 'filename' => $newFilename,
                 'url' => $this->generatePublicUrl($code, $newFilename)
             ]);
 
         } catch (FileException $e) {
             return new JsonResponse([
-                'success' => false, 
-                'message' => 'Failed to upload file: ' . $e->getMessage()
+                'success' => false,
+                'message' => $this->translator->trans('resources.failedUploadFile')
             ], 500);
         }
     }
@@ -201,7 +207,7 @@ final class ResourcesController extends AbstractController
         if (!$this->csrfTokenManager->isTokenValid(new CsrfToken('resources_delete', $csrfToken))) {
             return new JsonResponse([
                 'success' => false,
-                'message' => 'Invalid CSRF token'
+                'message' => $this->translator->trans('resources.invalidCsrfToken')
             ], 403);
         }
 
@@ -215,7 +221,7 @@ final class ResourcesController extends AbstractController
         if ($realFilePath === false || $realUploadDir === false) {
             return new JsonResponse([
                 'success' => false,
-                'message' => 'File not found'
+                'message' => $this->translator->trans('resources.fileNotFound')
             ], 404);
         }
 
@@ -223,14 +229,14 @@ final class ResourcesController extends AbstractController
         if (strpos($realFilePath, $realUploadDir) !== 0) {
             return new JsonResponse([
                 'success' => false,
-                'message' => 'Access denied'
+                'message' => $this->translator->trans('resources.accessDenied')
             ], 403);
         }
 
         if (!file_exists($realFilePath)) {
             return new JsonResponse([
                 'success' => false,
-                'message' => 'File not found'
+                'message' => $this->translator->trans('resources.fileNotFound')
             ], 404);
         }
 
@@ -239,13 +245,13 @@ final class ResourcesController extends AbstractController
 
             return new JsonResponse([
                 'success' => true,
-                'message' => 'File deleted successfully'
+                'message' => $this->translator->trans('resources.fileDeletedSuccess')
             ]);
 
         } catch (\Exception $e) {
             return new JsonResponse([
                 'success' => false,
-                'message' => 'Failed to delete file'
+                'message' => $this->translator->trans('resources.failedDeleteFile')
             ], 500);
         }
     }
@@ -269,7 +275,7 @@ final class ResourcesController extends AbstractController
         if (!$filename) {
             return new JsonResponse([
                 'success' => false,
-                'message' => 'Filename is required'
+                'message' => $this->translator->trans('resources.filenameRequired')
             ], 400);
         }
 
@@ -307,7 +313,7 @@ final class ResourcesController extends AbstractController
         } catch (\Exception $e) {
             return new JsonResponse([
                 'success' => false,
-                'message' => 'Error checking resource usage: ' . $e->getMessage()
+                'message' => $this->translator->trans('resources.errorCheckingUsage')
             ], 500);
         }
     }
