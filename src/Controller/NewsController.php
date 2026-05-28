@@ -161,6 +161,7 @@ final class NewsController extends AbstractController
 
             // Validate content length (security check - JS validation can be bypassed)
             if (!$this->validateContentLength($translations)) {
+                $this->addFlash('error', $translator->trans('news.flash.contentTooLong', ['%max%' => self::NEWS_CONTENT_MAX_LENGTH]));
                 return $this->redirectToRoute('app_news_show', ['code' => $code]);
             }
 
@@ -269,6 +270,7 @@ final class NewsController extends AbstractController
 
         // Validate content length (security check - JS validation can be bypassed)
         if (!$this->validateContentLength($translations)) {
+            $this->addFlash('error', $translator->trans('news.flash.contentTooLong', ['%max%' => self::NEWS_CONTENT_MAX_LENGTH]));
             return $this->redirectToRoute('app_news_show', ['code' => $code]);
         }
 

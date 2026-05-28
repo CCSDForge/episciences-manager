@@ -217,6 +217,7 @@ news:
     created: "News created successfully"
     updated: "News updated successfully"
     deleted: "News deleted successfully"
+    contentTooLong: "Content exceeds maximum length of %max% characters."
 
 resources:
   title: "Resources"
