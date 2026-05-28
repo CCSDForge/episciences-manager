@@ -146,6 +146,7 @@ document.addEventListener('DOMContentLoaded', function () {
           body: formData,
           headers: {
             'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRF-Token': window.resourcesData.csrfTokenUpload,
           },
         })
       );
@@ -381,7 +382,7 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   // Delete file buttons
-  document.addEventListener('click', async function (e) {
+  document.addEventListener('click', function (e) {
     console.log('Click detected on delete area:', e.target);
     const deleteBtn = e.target.closest('.delete-file-btn');
     console.log('Delete button found:', deleteBtn);
@@ -390,18 +391,22 @@ document.addEventListener('DOMContentLoaded', function () {
       const filename = deleteBtn.getAttribute('data-filename');
       console.log('Filename to delete:', filename);
 
+      // Lire les données d'utilisation directement depuis le HTML (pré-calculées par PHP)
+      const usageData = JSON.parse(deleteBtn.getAttribute('data-usage') || '{}');
+      console.log('Usage data from HTML:', usageData);
+
       fileToDeleteName = filename;
       if (fileToDelete) {
         fileToDelete.textContent = filename;
       }
 
-      // Show modal immediately but start checking usage
+      // Show modal and display usage info (pas d'appel API)
       if (deleteConfirmModal) {
         console.log('Showing modal for file:', filename);
         deleteConfirmModal.show();
 
-        // Check resource usage
-        await checkResourceUsageAndUpdateModal(filename);
+        // Afficher les infos d'utilisation (données déjà disponibles)
+        displayResourceUsage(usageData);
       } else {
         console.error('Modal not initialized');
       }
@@ -421,6 +426,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const response = await fetch(deleteUrl, {
           method: 'DELETE',
+          headers: {
+            'X-CSRF-Token': window.resourcesData.csrfTokenDelete,
+          },
         });
 
         const result = await response.json();
@@ -1054,8 +1062,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const insertId = `link_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
     console.log('Generated insert ID:', insertId);
 
-    // Create link HTML
-    const linkHtml = `<a href="${url}" target="_blank">${filename}</a>`;
+    // Create link HTML (escaped for XSS protection)
+    const linkHtml = `<a href="${escapeHtml(url)}" target="_blank">${escapeHtml(filename)}</a>`;
 
     // Try to communicate with CKEditor using postMessage
     if (window.parent !== window) {
@@ -1224,19 +1232,15 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // Check resource usage and update modal
-  async function checkResourceUsageAndUpdateModal(filename) {
-    console.log('Checking resource usage for:', filename);
+  // Display resource usage in modal (données pré-calculées par PHP, pas d'appel API)
+  function displayResourceUsage(usageData) {
+    console.log('Displaying resource usage:', usageData);
 
-    // Show loading indicator
-    const loadingElement = document.getElementById('usageCheckLoading');
     const warningSection = document.getElementById('usageWarningSection');
     const safeToDeleteSection = document.getElementById('safeToDeleteSection');
     const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
 
-    if (loadingElement) {
-      loadingElement.style.display = 'block';
-    }
+    // Reset sections
     if (warningSection) {
       warningSection.style.display = 'none';
     }
@@ -1244,61 +1248,27 @@ document.addEventListener('DOMContentLoaded', function () {
       safeToDeleteSection.style.display = 'none';
     }
 
-    try {
-      const checkUrl = window.resourcesData.checkUsageUrl.replace(
-        '__FILENAME__',
-        encodeURIComponent(filename)
-      );
+    if (usageData?.inUse) {
+      // File is in use - show warning (combine pages and news)
+      showResourceUsageWarning([...(usageData.pages || []), ...(usageData.news || [])]);
 
-      const response = await fetch(checkUrl, {
-        method: 'GET',
-      });
+      // Change button text to indicate warning
+      if (confirmDeleteBtn) {
+        const deleteAnywayText =
+          window.resourcesData?.translations?.deleteAnyway || 'Delete anyway';
+        confirmDeleteBtn.innerHTML = `<i class="fas fa-exclamation-triangle me-2"></i>${deleteAnywayText}`;
+        confirmDeleteBtn.className = 'btn btn-warning';
+      }
+    } else {
+      // File is not in use - show safe to delete message
+      console.log('File is not in use, safe to delete');
 
-      const result = await response.json();
-      console.log('Usage check result:', result);
-
-      // Hide loading
-      if (loadingElement) {
-        loadingElement.style.display = 'none';
+      // Show safe to delete message
+      if (safeToDeleteSection) {
+        safeToDeleteSection.style.display = 'block';
       }
 
-      if (result?.success && result?.inUse) {
-        // File is in use - show warning (combine pages and news)
-        showResourceUsageWarning([...(result.pages || []), ...(result.news || [])]);
-
-        // Change button text to indicate warning
-        if (confirmDeleteBtn) {
-          const deleteAnywayText =
-            window.resourcesData?.translations?.deleteAnyway || 'Delete anyway';
-          confirmDeleteBtn.innerHTML = `<i class="fas fa-exclamation-triangle me-2"></i>${deleteAnywayText}`;
-          confirmDeleteBtn.className = 'btn btn-warning';
-        }
-      } else {
-        // File is not in use - show safe to delete message
-        console.log('File is not in use, safe to delete');
-
-        // Show safe to delete message
-        if (safeToDeleteSection) {
-          safeToDeleteSection.style.display = 'block';
-        }
-
-        // Ensure button is normal
-        if (confirmDeleteBtn) {
-          const deleteText =
-            window.resourcesData?.translations?.delete || 'Delete';
-          confirmDeleteBtn.innerHTML = `<i class="fas fa-trash me-2"></i>${deleteText}`;
-          confirmDeleteBtn.className = 'btn btn-danger';
-        }
-      }
-    } catch (error) {
-      console.error('Error checking resource usage:', error);
-
-      // Hide loading and proceed normally on error
-      if (loadingElement) {
-        loadingElement.style.display = 'none';
-      }
-
-      // Keep button normal on error
+      // Ensure button is normal
       if (confirmDeleteBtn) {
         const deleteText =
           window.resourcesData?.translations?.delete || 'Delete';

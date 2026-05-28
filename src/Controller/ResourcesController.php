@@ -36,9 +36,14 @@ final class ResourcesController extends AbstractController
     private const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
     #[Route('/journal/{code}/resources', name: 'app_resources_manager', requirements: ['code' => '[\w\-]+'])]
-    public function index(string $code, UploadDirectoryService $dirs): Response
+    public function index(string $code, UploadDirectoryService $dirs, ResourceUsageService $usageService): Response
     {
         $files = $this->getFilesForJournal($code, $dirs);
+
+        // Pré-calculer l'utilisation pour chaque fichier (évite les appels API)
+        foreach ($files as &$file) {
+            $file['usage'] = $usageService->getResourceUsageSummary($file['name'], $code);
+        }
 
         return $this->render('resources/index.html.twig', [
             'files' => $files,
@@ -296,28 +301,6 @@ final class ResourcesController extends AbstractController
             'exists' => file_exists($filePath),
             'filename' => $finalFilename
         ]);
-    }
-
-    #[Route('/journal/{code}/resources/{filename}/check-usage', name: 'app_resources_check_usage', requirements: ['code' => '[\w\-]+'], methods: ['GET'])]
-    public function checkUsage(string $code, string $filename, ResourceUsageService $usageService): JsonResponse
-    {
-        try {
-            $usageSummary = $usageService->getResourceUsageSummary($filename, $code);
-
-            return new JsonResponse([
-                'success' => true,
-                'inUse' => $usageSummary['inUse'],
-                'pageCount' => $usageSummary['pageCount'],
-                'newsCount' => $usageSummary['newsCount'],
-                'pages' => $usageSummary['pages'],
-                'news' => $usageSummary['news']
-            ]);
-        } catch (\Exception $e) {
-            return new JsonResponse([
-                'success' => false,
-                'message' => $this->translator->trans('resources.errorCheckingUsage')
-            ], 500);
-        }
     }
 
     #[Route('/{code}/resources/{filename}', name: 'app_resources_serve', requirements: ['code' => '[\w\-]+', 'filename' => '.+'])]
