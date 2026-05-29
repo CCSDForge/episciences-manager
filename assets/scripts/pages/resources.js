@@ -392,7 +392,9 @@ document.addEventListener('DOMContentLoaded', function () {
       console.log('Filename to delete:', filename);
 
       // Lire les données d'utilisation directement depuis le HTML (pré-calculées par PHP)
-      const usageData = JSON.parse(deleteBtn.getAttribute('data-usage') || '{}');
+      const usageData = JSON.parse(
+        deleteBtn.getAttribute('data-usage') || '{}'
+      );
       console.log('Usage data from HTML:', usageData);
 
       fileToDeleteName = filename;
@@ -1250,7 +1252,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (usageData?.inUse) {
       // File is in use - show warning (combine pages and news)
-      showResourceUsageWarning([...(usageData.pages || []), ...(usageData.news || [])]);
+      showResourceUsageWarning([
+        ...(usageData.pages || []),
+        ...(usageData.news || []),
+      ]);
 
       // Change button text to indicate warning
       if (confirmDeleteBtn) {
