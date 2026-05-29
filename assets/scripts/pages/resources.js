@@ -118,12 +118,27 @@ document.addEventListener('DOMContentLoaded', function () {
     console.error('Upload form not found!');
   }
 
+  const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+
   async function handleUpload(action = null) {
     console.log('handleUpload function called with action:', action);
 
     const file = fileInput.files[0];
     if (!file) {
       showMessage('Please select a file', 'danger');
+      return;
+    }
+
+    // Check file size before upload
+    if (file.size > MAX_FILE_SIZE) {
+      const maxSizeMB = MAX_FILE_SIZE / 1024 / 1024;
+      const fileSizeMB = (file.size / 1024 / 1024).toFixed(2);
+      showMessage(
+        window.resourcesData.translations.fileTooLarge
+          .replace('%maxSize%', maxSizeMB)
+          .replace('%fileSize%', fileSizeMB),
+        'danger'
+      );
       return;
     }
 
@@ -556,6 +571,22 @@ document.addEventListener('DOMContentLoaded', function () {
     const file = fileInput.files[0];
     if (!file) {
       console.log('No file selected');
+      return;
+    }
+
+    // Check file size before upload
+    if (file.size > MAX_FILE_SIZE) {
+      const maxSizeMB = MAX_FILE_SIZE / 1024 / 1024;
+      const fileSizeMB = (file.size / 1024 / 1024).toFixed(2);
+      showMessage(
+        window.resourcesData.translations.fileTooLarge
+          .replace('%maxSize%', maxSizeMB)
+          .replace('%fileSize%', fileSizeMB),
+        'danger'
+      );
+      if (fileConflictModal) {
+        fileConflictModal.hide();
+      }
       return;
     }
 
