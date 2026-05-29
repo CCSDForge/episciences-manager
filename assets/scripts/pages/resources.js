@@ -118,12 +118,27 @@ document.addEventListener('DOMContentLoaded', function () {
     console.error('Upload form not found!');
   }
 
+  const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+
   async function handleUpload(action = null) {
     console.log('handleUpload function called with action:', action);
 
     const file = fileInput.files[0];
     if (!file) {
       showMessage('Please select a file', 'danger');
+      return;
+    }
+
+    // Check file size before upload
+    if (file.size > MAX_FILE_SIZE) {
+      const maxSizeMB = MAX_FILE_SIZE / 1024 / 1024;
+      const fileSizeMB = (file.size / 1024 / 1024).toFixed(2);
+      showMessage(
+        window.resourcesData.translations.fileTooLarge
+          .replace('%maxSize%', maxSizeMB)
+          .replace('%fileSize%', fileSizeMB),
+        'danger'
+      );
       return;
     }
 
@@ -565,6 +580,22 @@ document.addEventListener('DOMContentLoaded', function () {
       return;
     }
 
+    // Check file size before upload
+    if (file.size > MAX_FILE_SIZE) {
+      const maxSizeMB = MAX_FILE_SIZE / 1024 / 1024;
+      const fileSizeMB = (file.size / 1024 / 1024).toFixed(2);
+      showMessage(
+        window.resourcesData.translations.fileTooLarge
+          .replace('%maxSize%', maxSizeMB)
+          .replace('%fileSize%', fileSizeMB),
+        'danger'
+      );
+      if (fileConflictModal) {
+        fileConflictModal.hide();
+      }
+      return;
+    }
+
     // Check if the custom filename already exists before attempting upload
     console.log('Checking if custom filename exists:', customFileName);
     const fileExists = await checkFileExists(customFileName);
@@ -607,6 +638,7 @@ document.addEventListener('DOMContentLoaded', function () {
           body: formData,
           headers: {
             'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRF-Token': window.resourcesData.csrfTokenUpload,
           },
         })
       );

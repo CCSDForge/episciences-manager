@@ -27,9 +27,9 @@ final class ResourcesController extends AbstractController
     ) {
     }
     private const ALLOWED_EXTENSIONS = [
-        'png', 'jpg', 'jpeg', 'gif', 'tif', 'tiff', 'zip', 'gz', '7z', 'rar', 
-        'tar', 'bz', 'bz2', 'rtf', 'doc', 'eps', 'ps', 'dvi', 'docx', 'pdf', 
-        'txt', 'md', 'odt', 'ods', 'xls', 'xlsx', 'tex', 'bbl', 'bbx', 'bib', 
+        'png', 'jpg', 'jpeg', 'gif', 'tif', 'tiff', 'zip', 'gz', '7z', 'rar',
+        'tar', 'bz', 'bz2', 'rtf', 'doc', 'eps', 'ps', 'dvi', 'docx', 'pdf',
+        'txt', 'md', 'odt', 'ods', 'xls', 'xlsx', 'tex', 'bbl', 'bbx', 'bib',
         'bst', 'cbx', 'cls', 'def', 'dbx', 'dtx', 'lbx', 'sty'
     ];
 
@@ -81,7 +81,8 @@ final class ResourcesController extends AbstractController
             return new JsonResponse([
                 'success' => false,
                 'message' => $this->translator->trans('resources.fileTooLarge', [
-                    '%size%' => (self::MAX_FILE_SIZE / 1024 / 1024)
+                    '%maxSize%' => (self::MAX_FILE_SIZE / 1024 / 1024),
+                    '%fileSize%' => round($uploadedFile->getSize() / 1024 / 1024, 2)
                 ])
             ], 400);
         }
@@ -152,7 +153,6 @@ final class ResourcesController extends AbstractController
                     'originalName' => $uploadedFile->getClientOriginalName()
                 ], 409); // 409 Conflict status code
             }
-            
             // Handle user's choice
             if ($action === 'rename') {
                 // Generate unique filename
@@ -188,7 +188,7 @@ final class ResourcesController extends AbstractController
 
         try {
             $uploadedFile->move($uploadDirectory, $newFilename);
-            
+
             return new JsonResponse([
                 'success' => true,
                 'message' => $this->translator->trans('resources.fileUploadedSuccess'),
@@ -265,7 +265,7 @@ final class ResourcesController extends AbstractController
     public function list(string $code, UploadDirectoryService $dirs): JsonResponse
     {
         $files = $this->getFilesForJournal($code, $dirs);
-        
+
         return new JsonResponse([
             'success' => true,
             'files' => $files
@@ -276,7 +276,7 @@ final class ResourcesController extends AbstractController
     public function checkExists(Request $request, string $code, UploadDirectoryService $dirs, SluggerInterface $slugger): JsonResponse
     {
         $filename = $request->request->get('filename');
-        
+
         if (!$filename) {
             return new JsonResponse([
                 'success' => false,
@@ -288,14 +288,14 @@ final class ResourcesController extends AbstractController
         $filenameParts = pathinfo($filename);
         $baseName = $filenameParts['filename'];
         $extension = isset($filenameParts['extension']) ? $filenameParts['extension'] : '';
-        
+
         // Apply the same slugging logic as in upload
         $safeFilename = (string) $slugger->slug($baseName);
         $finalFilename = $extension ? $safeFilename . '.' . $extension : $safeFilename;
-        
+
         $uploadDirectory = $dirs->getUploadDirectory($code);
         $filePath = $uploadDirectory . '/' . $finalFilename;
-        
+
         return new JsonResponse([
             'success' => true,
             'exists' => file_exists($filePath),

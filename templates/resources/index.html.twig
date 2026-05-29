@@ -32,7 +32,7 @@
                             <div class="col-md-9">
                                 <label for="fileInput" class="form-label">{{ 'resources.selectFile'|trans }}</label>
                                 <div class="input-group">
-                                    <input type="file" class="form-control" id="fileInput" name="file" required style="display: none;">
+                                    <input type="file" class="form-control" id="fileInput" name="file" style="display: none;">
                                     <input type="text" class="form-control" id="fileInputDisplay" placeholder="{{ 'resources.noFileSelected'|trans }}" readonly>
                                     <button class="btn btn-outline-secondary" type="button" id="fileInputBtn">
                                         <i class="fas fa-folder-open me-2"></i>
@@ -40,7 +40,8 @@
                                     </button>
                                 </div>
                                 <div class="form-text">
-                                    {{ 'resources.allowedTypes'|trans }}: PNG, JPG, JPEG, GIF, PDF, DOC, DOCX, TXT, MD, ZIP, etc.
+                                    {{ 'resources.allowedTypes'|trans }}: PNG, JPG, JPEG, GIF, PDF, DOC, DOCX, TXT, MD, ZIP, etc.<br>
+                                    {{ 'resources.maxFileSize'|trans }}: 10 Mo
                                 </div>
                             </div>
                             <div class="col-md-3">
@@ -344,6 +345,7 @@
         translations: {
             uploadSuccess: '{{ 'resources.uploadSuccess'|trans }}',
             uploadError: '{{ 'resources.uploadError'|trans }}',
+            fileTooLarge: '{{ 'resources.fileTooLarge'|trans }}',
             deleteSuccess: '{{ 'resources.deleteSuccess'|trans }}',
             deleteError: '{{ 'resources.deleteError'|trans }}',
             copySuccess: '{{ 'resources.copySuccess'|trans }}',
