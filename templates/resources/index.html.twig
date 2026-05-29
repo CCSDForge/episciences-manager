@@ -128,6 +128,7 @@
                                             <td class="text-center">
                                                 <button class="btn btn-sm btn-danger delete-file-btn"
                                                         data-filename="{{ file.name }}"
+                                                        data-usage="{{ file.usage|json_encode|e('html_attr') }}"
                                                         title="{{ 'resources.deleteFile'|trans }}">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
@@ -179,13 +180,6 @@
                     </div>
                 </div>
 
-                <!-- Loading Usage Check -->
-                <div id="usageCheckLoading" class="text-center mt-3" style="display: none;">
-                    <div class="spinner-border spinner-border-sm me-2" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                    {{ 'resources.checkingUsage'|trans }}
-                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
@@ -345,7 +339,8 @@
         deleteUrl: '{{ path('app_resources_delete', {'code': journal_code, 'filename': '__FILENAME__'}) }}',
         listUrl: '{{ path('app_resources_list', {'code': journal_code}) }}',
         checkExistsUrl: '{{ path('app_resources_check_exists', {'code': journal_code}) }}',
-        checkUsageUrl: '{{ path('app_resources_check_usage', {'code': journal_code, 'filename': '__FILENAME__'}) }}',
+        csrfTokenUpload: '{{ csrf_token('resources_upload') }}',
+        csrfTokenDelete: '{{ csrf_token('resources_delete') }}',
         translations: {
             uploadSuccess: '{{ 'resources.uploadSuccess'|trans }}',
             uploadError: '{{ 'resources.uploadError'|trans }}',
