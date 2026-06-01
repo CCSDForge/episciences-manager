@@ -34,6 +34,10 @@
                                 <div class="input-group">
                                     <input type="file" class="form-control" id="fileInput" name="file" style="display: none;">
                                     <input type="text" class="form-control" id="fileInputDisplay" placeholder="{{ 'resources.noFileSelected'|trans }}" readonly>
+                                    <button class="btn btn-outline-danger" type="button"
+                                            id="clearFileBtn" style="display: none;">
+                                        <i class="fas fa-times"></i>
+                                    </button>
                                     <button class="btn btn-outline-secondary" type="button" id="fileInputBtn">
                                         <i class="fas fa-folder-open me-2"></i>
                                         {{ 'resources.browseFiles'|trans }}
