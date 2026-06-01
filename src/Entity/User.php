@@ -8,15 +8,8 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\Table(
-    name: 'USER',
-    uniqueConstraints: [
-        new ORM\UniqueConstraint(
-            name: 'UNIQ_IDENTIFIER_EMAIL',
-            columns: ['email']
-        )
-    ]
-)]
+#[ORM\Table(name: 'USER')]
+#[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', columns: ['email'])]
 
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -126,6 +119,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @see UserInterface
      */
+    #[\Deprecated]
     public function eraseCredentials(): void
     {
         // If you store any temporary, sensitive data on the user, clear it here
