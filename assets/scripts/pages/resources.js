@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   const fileInput = document.getElementById('fileInput');
   const fileInputDisplay = document.getElementById('fileInputDisplay');
+  const clearFileBtn = document.getElementById('clearFileBtn');
   const fileInputBtn = document.getElementById('fileInputBtn');
   console.log('File input element:', fileInput);
 
@@ -77,13 +78,22 @@ document.addEventListener('DOMContentLoaded', function () {
       fileInput.click();
     });
 
+    if (clearFileBtn) {
+      clearFileBtn.addEventListener('click', () => {
+        fileInput.value = '';
+        fileInputDisplay.value = '';
+        clearFileBtn.style.display = 'none';
+      });
+    }
     // Handle file selection
     fileInput.addEventListener('change', function () {
       const files = fileInput.files;
       if (files.length > 0) {
         fileInputDisplay.value = files[0].name;
+        if (clearFileBtn) clearFileBtn.style.display = 'block';
       } else {
         fileInputDisplay.value = '';
+        if (clearFileBtn) clearFileBtn.style.display = 'none';
       }
     });
 
@@ -92,6 +102,7 @@ document.addEventListener('DOMContentLoaded', function () {
       uploadForm.addEventListener('reset', function () {
         setTimeout(() => {
           fileInputDisplay.value = '';
+          if (clearFileBtn) clearFileBtn.style.display = 'none';
         }, 0);
       });
     }
@@ -174,6 +185,7 @@ document.addEventListener('DOMContentLoaded', function () {
         fileInput.value = '';
         if (fileInputDisplay) {
           fileInputDisplay.value = '';
+          if (clearFileBtn) clearFileBtn.style.display = 'none';
         }
         await refreshFileList();
       } else if (result.conflict) {
@@ -653,6 +665,7 @@ document.addEventListener('DOMContentLoaded', function () {
         fileInput.value = '';
         if (fileInputDisplay) {
           fileInputDisplay.value = '';
+          if (clearFileBtn) clearFileBtn.style.display = 'none';
         }
         await refreshFileList();
       } else if (result.conflict) {
