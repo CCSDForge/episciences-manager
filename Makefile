@@ -87,7 +87,14 @@ help: ## Display available commands list
 # ==========================
 #     DOCKER (Local dev)
 # ==========================
-.PHONY: up down restart logs ps build clean
+.PHONY: up down restart logs ps build clean _ensure-containers
+
+# Internal target: start containers silently (used by deploy-prod)
+_ensure-containers:
+	@$(DOCKER_COMPOSE) --env-file .env.local up -d
+	@$(DOCKER) exec -u root $(CNTR_NAME_PHP) sh -c "chown www-data:www-data /var/www && chown -R www-data:www-data /var/www/htdocs/var"
+	@$(DOCKER) exec -u root $(CNTR_NAME_PHP) git config --global --add safe.directory /var/www/htdocs 2>/dev/null || true
+
 up: ## Start all containers (in background)
 	$(DOCKER_COMPOSE) --env-file .env.local up -d
 	@echo "Fixing permissions for internal cache and logs..."
@@ -359,20 +366,20 @@ preprod-ci-no-ssl: ## Start preprod with CI database (HTTP only)
 .PHONY: composer-install-prod cache-clear cache-warmup deploy-prod deploy deploy-branch deploy-tag
 
 composer-install-prod: ## Install PHP dependencies (prod)
-	$(DOCKER) exec -it -u www-data $(CNTR_NAME_PHP) composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --classmap-authoritative
+	$(DOCKER) exec -it -u root -e APP_ENV=prod $(CNTR_NAME_PHP) composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --classmap-authoritative
 
-cache-clear: ## Clear Symfony cache (prod, host)
-	php bin/console cache:clear --env=prod --no-debug
+cache-clear: ## Clear Symfony cache (prod, Docker container)
+	$(DOCKER) exec -e APP_ENV=prod $(CNTR_NAME_PHP) php bin/console cache:clear --env=prod --no-debug
 
 cache-clear-preprod: ## Clear Symfony cache (preprod, Docker container)
-	$(DOCKER) exec $(CNTR_NAME_PHP) php bin/console cache:clear --env=preprod --no-debug
+	$(DOCKER) exec -e APP_ENV=preprod $(CNTR_NAME_PHP) php bin/console cache:clear --env=preprod --no-debug
 
-cache-warmup: ## Warm up Symfony cache (prod, host)
-	php bin/console cache:warmup --env=prod --no-debug
+cache-warmup: ## Warm up Symfony cache (prod, Docker container)
+	$(DOCKER) exec -e APP_ENV=prod $(CNTR_NAME_PHP) php bin/console cache:warmup --env=prod --no-debug
 
 # Shared deployment logic
 define deploy-logic
-	@echo -e "$(BOLD)🚀 Starting deployment for: $(YELLOW)$(1)$(NC) $(BLUE)(host only)$(NC)"
+	@echo -e "$(BOLD)🚀 Starting deployment for: $(YELLOW)$(1)$(NC) $(BLUE)(via Docker)$(NC)"
 	@if [ ! -d ".git" ]; then echo -e "$(RED)✗ Not a git repository$(NC)"; exit 1; fi
 	@git fetch --all --tags
 	@git checkout --force $(1)
@@ -407,13 +414,13 @@ dump-env-prod: ## Compile .env files for production environment (optimizes perfo
 	$(DOCKER) exec $(CNTR_NAME_PHP) composer dump-env prod
 	@echo -e "$(GREEN)✓ Environment compiled to .env.local.php$(NC)\n"
 
-deploy-prod: ## Complete production deployment
-	@echo -e "$(BOLD)🚀 Starting production deployment $(BLUE)(host only)$(NC)..."
+deploy-prod: _ensure-containers ## Complete production deployment
+	@echo -e "$(BOLD)🚀 Starting production deployment $(BLUE)(via Docker)$(NC)..."
 	@echo -e ""; echo -e "$(BLUE)📋 1/7 - Installing production dependencies...$(NC)"; $(MAKE) composer-install-prod
 	@echo -e ""; echo -e "$(BLUE)📋 2/7 - Building production assets...$(NC)"; $(MAKE) yarn-encore-production || true
 	@echo -e ""; echo -e "$(BLUE)📋 3/7 - Compiling environment...$(NC)"; $(MAKE) dump-env-prod || true
 	@echo -e ""; echo -e "$(BLUE)📋 4/7 - Running database migrations...$(NC)"
-	php bin/console doctrine:migrations:migrate --no-interaction --env=prod
+	$(DOCKER) exec -e APP_ENV=prod $(CNTR_NAME_PHP) php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration --env=prod
 	@echo -e ""; echo -e "$(BLUE)📋 5/7 - Clearing cache...$(NC)"; $(MAKE) cache-clear
 	@echo -e ""; echo -e "$(BLUE)📋 6/7 - Warming up cache...$(NC)"; $(MAKE) cache-warmup
 	@echo -e ""; echo -e "$(BLUE)📋 7/7 - Restarting services (via Docker)...$(NC)"; $(MAKE) restart-httpd; $(MAKE) restart-php

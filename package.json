@@ -28,7 +28,6 @@
     "webpack-cli": "^6.0.1"
   },
   "license": "GPL-3.0-or-later",
-  "private": false,
   "scripts": {
     "dev-server": "encore dev-server",
     "dev": "encore dev",
