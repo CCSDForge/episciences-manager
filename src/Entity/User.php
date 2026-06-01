@@ -8,28 +8,18 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\Table(
-    name: 'USER',
-    uniqueConstraints: [
-        new ORM\UniqueConstraint(
-            name: 'UNIQ_IDENTIFIER_EMAIL',
-            columns: ['email']
-        )
-    ]
-)]
+#[ORM\Table(name: 'USER')]
+#[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', columns: ['email'])]
 
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\Column(name: 'UID', type: 'integer', options: ['unsigned' => true])]
     private ?int $uid = null;
 
     #[ORM\Column(length: 180)]
     private ?string $email = null;
-
-
-    private array $roles = [];
 
 
     private ?string $password = null;
@@ -45,14 +35,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $firstname = null;
 
 
+    /** @var list<string> */
+    private array $roles = [];
+
+    /** @var array<int, array<string, mixed>> */
     private array $rolesDetails = [];
 
+    /**
+     * @param array<int, array<string, mixed>> $rolesDetails
+     */
     public function setRolesDetails(array $rolesDetails): static
     {
         $this->rolesDetails = $rolesDetails;
         return $this;
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function getRolesDetails(): array
     {
         return $this->rolesDetails;
@@ -83,11 +83,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @see UserInterface
+     *
+     * @return list<string>
      */
     public function getRoles(): array
     {
-       // return $this->roles ?? ['ROLE_ANO'];
-        return ['ROLE_USER'];
+        return $this->roles !== [] ? $this->roles : ['ROLE_USER'];
     }
 
     /**

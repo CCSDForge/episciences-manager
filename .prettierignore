@@ -1,0 +1,42 @@
+# Dependencies
+/node_modules/
+/vendor/
+
+# Build outputs (Webpack Encore & assets)
+public/build/
+public/css/
+public/fonts/
+public/img/
+public/bundles/
+
+# Symfony runtime
+/var/
+/var/cache/
+/var/log/
+
+# Env & secrets
+.env*
+config/pwd.json*
+
+# Test & coverage
+/coverage/
+/.jest-cache/
+/.eslintcache
+
+# Generated/minified files
+*.min.js
+*.min.css
+*.map
+
+# Temporary files
+tmp/
+temp/
+.tmp/
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo

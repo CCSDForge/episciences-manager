@@ -1,0 +1,106 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+        "api_domain": {
+            "type": "string"
+        },
+        "theme": {
+            "type": "object",
+            "properties": {
+                "primaryColor": {
+                    "type": "string",
+                    "pattern": "^#[0-9A-Fa-f]{6}$"
+                },
+                "primaryTextColor": {
+                    "type": "string",
+                    "pattern": "^#[0-9A-Fa-f]{6}$"
+                }
+            }
+        },
+        "languages": {
+            "type": "object",
+            "properties": {
+                "default": {
+                    "type": "string",
+                    "enum": ["en", "fr", "es", "de"]
+                },
+                "accepted": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "string",
+                        "enum": ["en", "fr", "es", "de"]
+                    }
+                }
+            }
+        },
+        "homepage": {
+            "type": "object",
+            "properties": {
+                "latestArticlesCarouselRender": { "type": "boolean" },
+                "latestNewsCarouselRender": { "type": "boolean" },
+                "membersCarouselRender": { "type": "boolean" },
+                "statsRender": { "type": "boolean" },
+                "journalIndexationRender": { "type": "boolean" },
+                "specialIssuesRender": { "type": "boolean" },
+                "latestAcceptedArticlesCarouselRender": { "type": "boolean" },
+                "lastNewsRender": { "type": "boolean" }
+            }
+        },
+        "homepageRightBlock": {
+            "type": "object",
+            "properties": {
+                "lastInformationRenderType": {
+                    "type": "string",
+                    "enum": ["last-news", "last-volume", "last-special-issue"]
+                }
+            }
+        },
+        "menu": {
+            "type": "object",
+            "properties": {
+              "acceptedArticlesRender": { "type": "boolean" },
+              "volumeTypeProceedingsRender": { "type": "boolean" },
+              "specialIssuesRender": { "type": "boolean" },
+              "sectionsRender": { "type": "boolean" },
+              "authorsRender": { "type": "boolean" },
+              "journalIndexingRender": { "type": "boolean" },
+              "journalAcknowledgementsRender": { "type": "boolean" },
+              "journalEthicalCharterRender": { "type": "boolean" },
+              "journalForReviewersRender": { "type": "boolean" },
+              "journalForEditorsRender": { "type": "boolean" },
+              "journalForConferenceOrganisersRender": { "type": "boolean" },
+              "journalProposingSpecialIssuesRender": { "type": "boolean" }
+            }
+        },
+        "statistics": {
+            "type": "object",
+            "properties": {
+                "colors": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "pattern": "^#[0-9A-Fa-f]{6}$"
+                    }
+                },
+                "acceptanceRate": { "$ref": "#/$defs/statOption" },
+                "nbSubmissions": { "$ref": "#/$defs/statOption" },
+                "nbSubmissionsDetails": { "$ref": "#/$defs/statOption" },
+                "reviewsRequested": { "$ref": "#/$defs/statOption" },
+                "reviewsReceived": { "$ref": "#/$defs/statOption" },
+                "medianSubmissionPublication": { "$ref": "#/$defs/statOption" },
+                "medianReviewsNumber": { "$ref": "#/$defs/statOption" }
+            }
+        }
+    },
+    "$defs": {
+        "statOption": {
+            "type": "object",
+            "properties": {
+                "render": { "type": "boolean" },
+                "order": { "type": "integer", "minimum": 0 }
+            }
+        }
+    }
+}

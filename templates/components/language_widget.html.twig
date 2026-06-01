@@ -1,0 +1,47 @@
+{#
+Language Widget Component
+Parameters:
+- widgetId: unique identifier for the widget (default: 'sidebar')
+- acceptedLanguages: array of language codes ['en', 'fr', ...]
+- defaultLanguage: default language code
+- mode: 'create' or 'edit'
+#}
+
+{% set wid = widgetId|default('sidebar') %}
+
+<!-- Language Widget (Responsive) -->
+<div class="journal-layout__widget">
+    <div class="language-widget">
+        <div class="language-widget-header bg-light d-flex justify-content-between align-items-center border px-3 py-2" id="{{ wid }}-widget-header">
+            <span class="fw-semibold small">{{ 'widget.languages'|trans }}</span>
+            <button class="btn btn-link btn-sm p-0 text-muted d-none d-xl-inline-block" type="button" data-bs-toggle="collapse" data-bs-target="#{{ wid }}-widget-body" aria-expanded="true">
+                <i class="fas fa-chevron-up fa-xs"></i>
+            </button>
+        </div>
+        <div class="collapse show" id="{{ wid }}-widget-body">
+            <div class="language-select-section bg-white border border-top-0 px-3 py-2">
+                <label for="{{ wid }}-language-select" class="form-label small text-muted mb-1">{{ 'widget.language'|trans }}</label>
+                <select class="form-select form-select-sm language-switch-select" id="{{ wid }}-language-select">
+                    {% for lang in acceptedLanguages|default(['en', 'fr']) %}
+                        <option value="{{ lang }}" {{ defaultLanguage == lang ? 'selected' : '' }}>{{ lang|language_name(lang)|capitalize }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <!-- Traductions section -->
+            <div class="translations-section bg-white border border-top-0 rounded-bottom px-3 py-2">
+                <label class="form-label small text-muted mb-1">{{ 'widget.translations'|trans }}</label>
+                <div id="{{ wid }}-translations-list" class="translations-list">
+                    {% for lang in acceptedLanguages|default(['en', 'fr']) %}
+                        <div class="translation-row d-flex align-items-center gap-2 mb-2" data-lang="{{ lang }}">
+                            <span class="translation-flag" title="{{ lang|language_name(lang)|capitalize }}">{{ lang|capitalize }}</span>
+                            <button class="btn btn-link btn-sm p-0 translation-action-btn" type="button" title="{{ 'widget.addTranslation'|trans }}">
+                                <i class="fas fa-plus text-muted"></i>
+                            </button>
+                            <input type="text" class="form-control form-control-sm translation-title-input" readonly placeholder="{{ lang|language_name(lang)|capitalize }}" aria-label="{{ lang|language_name(lang)|capitalize }}">
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

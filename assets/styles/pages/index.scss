@@ -84,13 +84,13 @@ $transition: all 0.3s ease;
       align-items: center;
 
       &:hover {
-        background-color: #f8f9fa;
+        background-color: $light-gray;
         transform: translateX(5px);
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
       }
 
       &:not(:last-child) {
-        border-bottom: 1px solid #e9ecef;
+        border-bottom: 1px solid $medium-gray;
       }
 
       // Logo de la revue
@@ -100,7 +100,7 @@ $transition: all 0.3s ease;
         object-fit: contain;
         border-radius: $border-radius;
         margin-right: 1.5rem;
-        border: 2px solid #e9ecef;
+        border: 2px solid $medium-gray;
         transition: $transition;
       }
 
@@ -109,7 +109,7 @@ $transition: all 0.3s ease;
         flex-grow: 1;
         font-size: 1.1rem;
         font-weight: 600;
-        color: #495057;
+        color: $text-color;
         transition: $transition;
       }
 
@@ -169,10 +169,10 @@ $transition: all 0.3s ease;
     color: $secondary-color;
     font-weight: 600;
     transition: $transition;
-    background: #f8f9fa;
+    background: $light-gray;
 
     &:hover {
-      background: #e9ecef;
+      background: $medium-gray;
       color: $primary-color;
       border-color: $primary-color;
       transform: translateY(-2px);
@@ -198,15 +198,15 @@ $transition: all 0.3s ease;
     }
 
     &.disabled .page-link {
-      background: #e9ecef;
-      color: #adb5bd;
+      background: $medium-gray;
+      color: $gray-500;
       border-color: transparent;
       cursor: not-allowed;
       transform: none;
 
       &:hover {
-        background: #e9ecef;
-        color: #adb5bd;
+        background: $medium-gray;
+        color: $gray-500;
         transform: none;
         box-shadow: none;
       }

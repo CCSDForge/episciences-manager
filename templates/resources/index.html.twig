@@ -1,0 +1,385 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'resources.title'|trans }}{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3">
+                    <i class="fas fa-folder-open me-2"></i>
+                    {{ 'resources.title'|trans }}
+                </h1>
+
+                            <a href="{{ path('app_journal_dashboard', {'code': journal_code}) }}"  class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-1"></i>
+                                {{ 'journalPages.back'|trans }}
+                            </a>
+            </div>
+
+            <!-- Upload Section -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-upload me-2"></i>
+                        {{ 'resources.uploadFile'|trans }}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form id="uploadForm" enctype="multipart/form-data">
+                        <div class="row g-3">
+                            <div class="col-md-9">
+                                <label for="fileInput" class="form-label">{{ 'resources.selectFile'|trans }}</label>
+                                <div class="input-group">
+                                    <input type="file" class="form-control" id="fileInput" name="file" style="display: none;">
+                                    <input type="text" class="form-control" id="fileInputDisplay" placeholder="{{ 'resources.noFileSelected'|trans }}" readonly>
+                                    <button class="btn btn-outline-danger" type="button"
+                                            id="clearFileBtn" style="display: none;">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                    <button class="btn btn-outline-secondary" type="button" id="fileInputBtn">
+                                        <i class="fas fa-folder-open me-2"></i>
+                                        {{ 'resources.browseFiles'|trans }}
+                                    </button>
+                                </div>
+                                <div class="form-text">
+                                    {{ 'resources.allowedTypes'|trans }}: PNG, JPG, JPEG, GIF, PDF, DOC, DOCX, TXT, MD, ZIP, etc.<br>
+                                    {{ 'resources.maxFileSize'|trans }}: 10 Mo
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">&nbsp;</label>
+                                <button type="submit" class="btn btn-primary d-block">
+                                    <i class="fas fa-upload me-2"></i>
+                                    {{ 'resources.uploadButton'|trans }}
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Upload Progress -->
+                    <div id="uploadProgress" class="mt-3" style="display: none;">
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Upload Messages -->
+                    <div id="uploadMessages" class="mt-3"></div>
+                </div>
+            </div>
+
+            <!-- Files Table -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-list me-2"></i>
+                        {{ 'resources.fileList'|trans }}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if files is empty %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">{{ 'resources.noFiles'|trans }}</p>
+                        </div>
+                    {% else %}
+                        <div class="table-responsive">
+                            <table class="table table-striped" id="filesTable">
+                                <thead>
+                                    <tr>
+                                        <th>{{ 'resources.fileName'|trans }}</th>
+                                        <th>{{ 'resources.publicUrl'|trans }}</th>
+                                        <th>{{ 'resources.lastModified'|trans }}</th>
+                                        <th>{{ 'resources.fileSize'|trans }}</th>
+                                        <th class="text-center">{{ 'resources.actions'|trans }}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for file in files %}
+                                        <tr data-filename="{{ file.name }}">
+                                            <td>
+                                                <i class="fas {{ file.name|file_icon }} me-2"></i>
+                                                <strong>{{ file.name }}</strong>
+                                            </td>
+                                            <td>
+                                                <div class="input-group input-group-sm">
+                                                    <input type="text" class="form-control" value="{{ file.url }}" readonly>
+                                                    <button class="btn btn-outline-secondary copy-url-btn" type="button"
+                                                            data-url="{{ file.url }}"
+                                                            title="{{ 'resources.copyUrl'|trans }}">
+                                                        <i class="fas fa-copy"></i>
+                                                    </button>
+                                                    {% if file.name|split('.')|last|lower in ['png', 'jpg', 'jpeg', 'gif', 'svg', 'webp'] %}
+                                                    <button class="btn btn-outline-primary insert-image-btn" type="button"
+                                                            data-url="{{ file.url }}"
+                                                            data-filename="{{ file.name }}"
+                                                            title="{{ 'resources.insertInEditor'|trans }}">
+                                                        <i class="fas fa-plus"></i>
+                                                    </button>
+                                                    {% elseif file.name|split('.')|last|lower == 'pdf' %}
+                                                    <button class="btn btn-outline-success insert-link-btn" type="button"
+                                                            data-url="{{ file.url }}"
+                                                            data-filename="{{ file.name }}"
+                                                            title="{{ 'resources.insertLink'|trans }}">
+                                                        <i class="fas fa-link"></i>
+                                                    </button>
+                                                    {% endif %}
+                                                </div>
+                                            </td>
+                                            <td>{% if app.request.locale == 'en' %}{{ file.modified|date('Y-m-d g:i A') }}{% else %}{{ file.modified|date('Y-m-d H:i') }}{% endif %}</td>
+                                            <td>{{ file.size|file_size }}</td>
+                                            <td class="text-center">
+                                                <button class="btn btn-sm btn-danger delete-file-btn"
+                                                        data-filename="{{ file.name }}"
+                                                        data-usage="{{ file.usage|json_encode|e('html_attr') }}"
+                                                        title="{{ 'resources.deleteFile'|trans }}">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header justify-content-center">
+                <h5 class="modal-title">{{ 'resources.confirmDelete'|trans }}</h5>
+                <button type="button" class="btn-close position-absolute" style="right: 1rem;" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>{{ 'resources.deleteConfirmMessage'|trans }}</p>
+                <p><strong id="fileToDelete"></strong></p>
+
+                <!-- Usage Warning Section -->
+                <div id="usageWarningSection" class="alert alert-warning mt-3" style="display: none;">
+                    <div class="d-flex align-items-start">
+                        <i class="fas fa-exclamation-triangle me-2 mt-1"></i>
+                        <div>
+                            <h6 class="alert-heading mb-2">{{ 'resources.fileInUseWarning'|trans }}</h6>
+                            <p class="mb-2">{{ 'resources.fileInUseMessage'|trans }}</p>
+                            <div id="usageDetailsList"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- File Safe to Delete Section -->
+                <div id="safeToDeleteSection" class="alert alert-success mt-3" style="display: none;">
+                    <div class="d-flex align-items-start">
+                        <i class="fas fa-check-circle me-2 mt-1"></i>
+                        <div>
+                            <h6 class="alert-heading mb-2">{{ 'resources.fileNotInUse'|trans }}</h6>
+                            <p class="mb-0">{{ 'resources.safeToDelete'|trans }}</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    {{ 'resources.cancel'|trans }}
+                </button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
+                    {{ 'resources.delete'|trans }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- File Conflict Modal -->
+<div class="modal fade" id="fileConflictModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                    {{ 'resources.fileConflictTitle'|trans }}
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-warning" id="defaultConflictMessage">
+                    <i class="fas fa-info-circle me-2"></i>
+                    {{ 'resources.fileExists'|trans }}
+                </div>
+                <div class="alert alert-warning" id="customConflictMessage" style="display: none;">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    {{ 'resources.customNameExists'|trans }}
+                </div>
+                <p class="mb-4" id="defaultConflictText">{{ 'resources.existingFile'|trans }}: <strong id="conflictFileName"></strong></p>
+                <p class="mb-4" id="customConflictText" style="display: none;">{{ 'resources.customNameConflictText'|trans({'%filename%': '<strong id="conflictFileNameCustom"></strong>'}) | raw }}</p>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="card action-card" data-action="replace" style="cursor: pointer;">
+                            <div class="card-body text-center">
+                                <i class="fas fa-undo fa-2x text-primary mb-2"></i>
+                                <h6>{{ 'resources.replaceFile'|trans }}</h6>
+                                <p class="text-muted small">{{ 'resources.replaceFileDesc'|trans }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card action-card" data-action="rename" style="cursor: pointer;">
+                            <div class="card-body text-center">
+                                <i class="fas fa-edit fa-2x text-success mb-2"></i>
+                                <h6>{{ 'resources.renameFile'|trans }}</h6>
+                                <p class="text-muted small">{{ 'resources.renameFileDesc'|trans }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Custom rename section -->
+                <div id="customRenameSection" class="mt-4" style="display: none;">
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <h6 class="card-title">
+                                <i class="fas fa-edit me-2"></i>
+                                {{ 'resources.customFileName'|trans }}
+                            </h6>
+                            <div class="mb-3">
+                                <label for="customFileName" class="form-label">{{ 'resources.newFileName'|trans }}</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="customFileName" placeholder="{{ 'resources.enterFileName'|trans }}">
+                                    <span class="input-group-text" id="fileExtension">.jpg</span>
+                                </div>
+                                <div class="form-text">{{ 'resources.fileNameHint'|trans }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>
+                    {{ 'resources.cancel'|trans }}
+                </button>
+                <button type="button" class="btn btn-primary" id="renameFileBtn" style="display: none;">
+                    <i class="fas fa-check me-2"></i>
+                    {{ 'resources.confirmRename'|trans }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Image Insert Success Modal -->
+<div class="modal fade" id="imageInsertModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-check-circle text-success me-2"></i>
+                    {{ 'resources.imageReadyTitle'|trans }}
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <div class="mb-3">
+                    <i class="fas fa-image fa-3x text-primary mb-3"></i>
+                </div>
+                <p class="mb-2"><strong id="insertedImageName"></strong></p>
+                <p class="text-muted">{{ 'resources.imageReadyMessage'|trans }}</p>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+                    <i class="fas fa-arrow-left me-2"></i>
+                    {{ 'resources.returnToEditor'|trans }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Link Insert Success Modal -->
+<div class="modal fade" id="linkInsertModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-check-circle text-success me-2"></i>
+                    {{ 'resources.linkReadyTitle'|trans }}
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <div class="mb-3">
+                    <i class="fas fa-link fa-3x text-success mb-3"></i>
+                </div>
+                <p class="mb-2"><strong id="insertedLinkName"></strong></p>
+                <p class="text-muted">{{ 'resources.linkReadyMessage'|trans }}</p>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+                    <i class="fas fa-arrow-left me-2"></i>
+                    {{ 'resources.returnToEditor'|trans }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+    // Pass data to JavaScript
+    window.resourcesData = {
+        journalCode: '{{ journal_code }}',
+        uploadUrl: '{{ path('app_resources_upload', {'code': journal_code}) }}',
+        deleteUrl: '{{ path('app_resources_delete', {'code': journal_code, 'filename': '__FILENAME__'}) }}',
+        listUrl: '{{ path('app_resources_list', {'code': journal_code}) }}',
+        checkExistsUrl: '{{ path('app_resources_check_exists', {'code': journal_code}) }}',
+        csrfTokenUpload: '{{ csrf_token('resources_upload') }}',
+        csrfTokenDelete: '{{ csrf_token('resources_delete') }}',
+        translations: {
+            uploadSuccess: '{{ 'resources.uploadSuccess'|trans }}',
+            uploadError: '{{ 'resources.uploadError'|trans }}',
+            fileTooLarge: '{{ 'resources.fileTooLarge'|trans }}',
+            deleteSuccess: '{{ 'resources.deleteSuccess'|trans }}',
+            deleteError: '{{ 'resources.deleteError'|trans }}',
+            copySuccess: '{{ 'resources.copySuccess'|trans }}',
+            copyError: '{{ 'resources.copyError'|trans }}',
+            confirmRename: '{{ 'resources.confirmRename'|trans }}',
+            pleaseEnterFileName: '{{ 'resources.pleaseEnterFileName'|trans }}',
+            chooseAnotherName: '{{ 'resources.chooseAnotherName'|trans }}',
+            enterFileName: '{{ 'resources.enterFileName'|trans }}',
+            fileName: '{{ 'resources.fileName'|trans }}',
+            publicUrl: '{{ 'resources.publicUrl'|trans }}',
+            lastModified: '{{ 'resources.lastModified'|trans }}',
+            fileSize: '{{ 'resources.fileSize'|trans }}',
+            actions: '{{ 'resources.actions'|trans }}',
+            noFiles: '{{ 'resources.noFiles'|trans }}',
+            insertLink: '{{ 'resources.insertLink'|trans }}',
+            pagesUsingFile: '{{ 'resources.pagesUsingFile'|trans }}',
+            newsUsingFile: '{{ 'resources.newsUsingFile'|trans }}',
+            deleteAnyway: '{{ 'resources.deleteAnyway'|trans }}',
+            fileNotInUse: '{{ 'resources.fileNotInUse'|trans }}',
+            safeToDelete: '{{ 'resources.safeToDelete'|trans }}',
+            delete: '{{ 'resources.delete'|trans }}',
+            generateAutomatically: '{{ 'resources.generateAutomatically'|trans }}',
+            returnToEditor: '{{ 'resources.returnToEditor'|trans }}'
+        }
+    };
+    </script>
+    {{ encore_entry_script_tags('resourcesJs') }}
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('resources') }}
+{% endblock %}

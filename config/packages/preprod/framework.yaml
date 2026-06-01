@@ -1,0 +1,18 @@
+framework:
+  # Disable the web profiler in preprod (logs are still kept)
+  profiler:
+    enabled: false
+
+  # Enable a more aggressive cache configuration
+  cache:
+    app: cache.adapter.filesystem
+
+  # Disable VarDumper (errors are logged instead of dumped)
+  php_errors:
+    log: true
+
+# Completely disable Twig debug mode
+twig:
+  debug: false
+  strict_variables: false
+  cache: true

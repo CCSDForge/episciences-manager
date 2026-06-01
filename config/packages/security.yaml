@@ -12,10 +12,17 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+        public_home:
+            pattern: '^/$|^/[a-z]{2}/$'
+            security: true
+            lazy: true
+            provider: app_user_provider
+            context: main_context
         l3_firewall:
             pattern: ^/
             #pattern: ^/(force|extract|admin)
             security: true
+            context: main_context
             custom_authenticators:
                 - cas.security.authentication.authenticator
         main:
@@ -41,8 +48,10 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        - { path: ^/login, roles: PUBLIC_ACCESS }
-        - { path: ^/force, roles: PUBLIC_ACCESS }
+        - { path: ^/$, roles: PUBLIC_ACCESS }
+        - { path: '^/[a-z]{2}/$', roles: PUBLIC_ACCESS }
+        - { path: '^/[a-z]{2}/login', roles: PUBLIC_ACCESS }
+        - { path: '^/[a-z]{2}/force', roles: PUBLIC_ACCESS }
         #- { path: ^/login, roles: [ ROLE_USER, ROLE_ANO ] }
         #- { path: ^/force, roles: [ ROLE_USER, ROLE_ANO ] }
         #- { path: ^/, roles: PUBLIC_ACCESS }

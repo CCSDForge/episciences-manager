@@ -1,14 +1,17 @@
 <!DOCTYPE html>
-<html>
+<html lang="{{ app.request.locale|default('fr') }}">
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}{{ 'meta.default_title'|trans }}{% endblock %}</title>
+        <title>{% block title %}{{ 'meta.defaultTitle'|trans }}{% endblock %}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
+        {# favicon — served from Encore build output #}
+        <link rel="icon" href="{{ asset('build/images/favicon.ico') }}" />
+
         {# SEO Meta tags #}
-        <meta name="description" content="{% block meta_description %}{{ 'meta.default_description'|trans }}{% endblock %}">
-        <meta name="keywords" content="{% block meta_keywords %}{{ 'meta.default_keywords'|trans }}{% endblock %}">
+        <meta name="description" content="{% block meta_description %}{{ 'meta.defaultDescription'|trans }}{% endblock %}">
+        <meta name="keywords" content="{% block meta_keywords %}{{ 'meta.defaultKeywords'|trans }}{% endblock %}">
         <meta name="author" content="Episciences">
         <meta name="robots" content="{% block robots %}index, follow{% endblock %}">
 
@@ -38,11 +41,12 @@
 
         {% block javascripts %}
             {{ encore_entry_script_tags('app') }}
+            {{ encore_entry_script_tags('headerJs') }}
         {% endblock %}
     </head>
     <body>
     {% block navbar %}
-        {% include '/partials/_header.html.twig' %}
+        {% include '/partials/header.html.twig' %}
     {% endblock %}
     {% block body %}
         <div class="flex h-screen">
@@ -53,7 +57,7 @@
     {% endblock %}
 
     {% block footer %}
-        {% include '/partials/_footer.html.twig' %}
+        {% include '/partials/footer.html.twig' %}
     {% endblock %}
     </body>
 

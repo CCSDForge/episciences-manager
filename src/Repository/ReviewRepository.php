@@ -18,6 +18,9 @@ class ReviewRepository extends ServiceEntityRepository
         parent::__construct($registry, Review::class);
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function findAllForList(): array
     {
         return $this->createQueryBuilder('r')
@@ -26,11 +29,32 @@ class ReviewRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * Count all reviews.
+     */
+    public function countAllReviews(): int
+    {
+        return (int) $this->createQueryBuilder('r')
+            ->select('COUNT(r.rvid)')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    /**
+     * Count active reviews (status = 1)
+     */
+    public function countActiveReviews(): int
+    {
+        return (int) $this->createQueryBuilder('r')
+            ->select('COUNT(r.rvid)')
+            ->where('r.status = :active')
+            ->setParameter('active', 1)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 
     /**
      * Create a QueryBuilder for active reviews with new front switched on.
-     *
-     * @return QueryBuilder
      */
     public function findActiveNewFrontReviewsQuery(): QueryBuilder
     {
@@ -46,7 +70,7 @@ class ReviewRepository extends ServiceEntityRepository
     /**
      * Find all reviews that are active and have the new front switched on and not the default rvid (0).
      *
-     * @return array
+     * @return array<int, array<string, mixed>>
      */
     public function findActiveNewFrontReviews(): array
     {
@@ -59,7 +83,6 @@ class ReviewRepository extends ServiceEntityRepository
     /**
      * Find a review by code or name (case insensitive).
      *
-     * @param string $search
      * @return Review[] Returns an array of Review objects
      */
     public function findByCodeOrName(string $search): array

@@ -9,6 +9,9 @@ use \Symfony\Component\Security\Core\User\UserProviderInterface;
 
 
 
+/**
+ * @implements UserProviderInterface<User>
+ */
 class UserProvider implements UserProviderInterface
 {
     public function __construct(private EntityManagerInterface $em) {}
@@ -43,7 +46,7 @@ class UserProvider implements UserProviderInterface
             return $user;
         }
 
-        if (!$user) {
+        if (!$user instanceof \App\Entity\User) {
             throw new \Exception("Utilisateur avec username=$identifier introuvable");
         }
 
@@ -54,13 +57,12 @@ class UserProvider implements UserProviderInterface
         //dump($rows);
         $roles = array_column($rows, 'ROLEID');
 
-        if (empty($roles)) {
+        if ($roles === []) {
             $roles = ['ROLE_ANO'];
         }
 
-        //dump($roles);
-        $user->setRoles($roles ?? []);
-        $user->setRolesDetails($rows ?? []);
+        $user->setRoles($roles);
+        $user->setRolesDetails($rows);
 
         return $user;
     }

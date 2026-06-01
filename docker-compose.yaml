@@ -1,27 +1,30 @@
 services:
   httpd:
     image: "${COMPOSE_PROJECT_NAME}-httpd:latest"
-    container_name: httpd-manager
+    container_name: episciences-manager-httpd
     build:
       context: .
       dockerfile: docker/apache/Dockerfile
     restart: always
     volumes:
       - ./docker/apache/vhost.conf:/usr/local/apache2/conf/extra/episciences-manager.conf
+      - ./docker/apache/ssl:/usr/local/apache2/conf/ssl
       - .:/var/www/htdocs
       - ./var/cache:/var/www/htdocs/var/cache
       - ./var/log:/var/www/htdocs/var/log
     ports:
       - "80:80"
+      - "443:443"
     depends_on:
       - php-fpm-manager
     networks:
       - epi-manager-network
+      - epi-network
     command: >
       /bin/sh -c "chown -R www-data:www-data /var/www/htdocs/var && httpd-foreground"
 
   php-fpm-manager:
-    container_name: php-fpm-manager
+    container_name: episciences-manager-php-fpm
     working_dir: /var/www/htdocs
     build:
       context: .
@@ -49,6 +52,7 @@ services:
       - DB_AUTH_USER=root
       - DB_AUTH_PASSWORD=root
       - DB_AUTH_DATABASE=auth
+      - DATABASE_URL=mysql://${DB_EPISCIENCES_USER}:${DB_EPISCIENCES_PASSWORD}@${DB_EPISCIENCES_HOST}:${DB_EPISCIENCES_PORT}/${DB_EPISCIENCES_DATABASE}?serverVersion=8.0&charset=utf8mb4
     expose:
       - "9000"
     networks:
@@ -59,6 +63,6 @@ networks:
   epi-manager-network:
     driver: bridge
   epi-network:
-    name: episciences_epi-network
+    name: epi-network
     external: true
 

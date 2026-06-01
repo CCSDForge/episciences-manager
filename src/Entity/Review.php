@@ -34,7 +34,7 @@ class Review
 
     public function getId(): ?int
     {
-        return $this->id;
+        return $this->rvid;
     }
 
     public function getRvid(): ?int

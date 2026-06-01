@@ -2,38 +2,52 @@
 
 namespace App\Service;
 
-use Parsedown;
+use League\CommonMark\Environment\Environment;
+use League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension;
+use League\CommonMark\Extension\GithubFlavoredMarkdownExtension;
+use League\CommonMark\MarkdownConverter;
 
 class MarkdownService
 {
-    private Parsedown $parsedown;
+    private MarkdownConverter $converter;
 
     public function __construct()
     {
-        $this->parsedown = new Parsedown();
-        $this->parsedown->setSafeMode(true); // Enable XSS protection
+        $config = [
+            'html_input' => 'strip',           // Strip raw HTML in Markdown
+            'allow_unsafe_links' => false,     // Security: block javascript: etc.
+        ];
+
+        $environment = new Environment($config);
+        $environment->addExtension(new CommonMarkCoreExtension());
+        $environment->addExtension(new GithubFlavoredMarkdownExtension());
+
+        $this->converter = new MarkdownConverter($environment);
     }
 
     /**
-     * Convert markdown text to HTML
+     * Convert Markdown to HTML (for display)
      */
-    public function toHtml(string $markdown): string
+    public function toHtml(?string $markdown): string
     {
-        return $this->parsedown->text($markdown);
+        if ($markdown === null || trim($markdown) === '') {
+            return '';
+        }
+        return $this->converter->convert($markdown)->getContent();
     }
 
     /**
-     * Convert an array of markdown content to HTML
-     * Maintains the same array structure but converts content values
+     * Convert an array of Markdown content into HTML
+     *
+     * @param array<string, string> $content
+     * @return array<string, string>
      */
     public function convertContentArray(array $content): array
     {
-        $convertedContent = [];
-        
-        foreach ($content as $locale => $markdownText) {
-            $convertedContent[$locale] = $this->toHtml($markdownText);
+        $out = [];
+        foreach ($content as $locale => $markdown) {
+            $out[$locale] = $this->toHtml($markdown);
         }
-        
-        return $convertedContent;
+        return $out;
     }
 }

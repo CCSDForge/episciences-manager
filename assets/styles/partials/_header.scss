@@ -3,15 +3,14 @@
 
 // Variables
 $breakpoint-lg: 991.98px;
-$border-color: #dee2e6;
-$bg-color: #fff;
+$bg-color: $white;
 $shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
 @mixin smooth-transition($property: all, $duration: 0.3s, $timing: ease) {
   transition: $property $duration $timing;
 }
 
-// Header principal
+// Main header
 .header {
   background-color: $bg-color;
   box-shadow: $shadow;
@@ -39,13 +38,13 @@ $shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       }
     }
 
-    // Container principal de navigation
+    // Main navigation container
     .header-container {
       position: relative;
       display: flex;
       align-items: center;
 
-      // Bouton toggle pour mobile
+      // Mobile toggle button
       .login-toggler {
         border: none;
         background: transparent;
@@ -75,7 +74,7 @@ $shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
       }
 
-      // Zone utilisateur
+      // User area
       .login-btn-container {
         .user-menu {
           .welcome-text {
@@ -133,7 +132,7 @@ $shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   .header {
     .header-preheader {
       .header-container {
-        // Positionnement du collapse sur mobile
+        // Mobile collapse positioning
         #headerNav {
           position: absolute;
           top: 100%;
@@ -167,7 +166,7 @@ $shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
           }
         }
 
-        // Animation du collapse
+        // Collapse animation
         .collapse {
           &:not(.show) {
             display: none;
@@ -184,7 +183,7 @@ $shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 }
 
-// États actifs et focus
+// Active and focus states
 @media (min-width: calc($breakpoint-lg + 1px)) {
   .header {
     .header-preheader {
@@ -199,14 +198,14 @@ $shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 }
 
-// Animation smooth pour les transitions
+// Smooth animation for transitions
 * {
   &:focus {
     outline: none;
   }
 }
 
-// Amélioration de l'accessibilité
+// Accessibility improvements
 .login-toggler {
   &[aria-expanded='true'] {
     .navbar-toggler-icon {

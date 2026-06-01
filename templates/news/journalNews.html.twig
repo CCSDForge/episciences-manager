@@ -1,0 +1,203 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="row gx-4">
+        <div class="col-1 d-none d-xl-block"></div>
+        <div class="col-12 col-xl-10">
+            <!-- Header (3-column grid) -->
+            <div class="journal-header d-none d-md-grid align-items-center mb-4 mt-4">
+                <!-- Logo -->
+                <div class="text-center">
+                    <img src="{{ asset('build/images/logo-' ~ review.code ~ '.svg') }}"
+                         onerror="this.onerror=null; this.src='{{ asset('build/images/logo-' ~ review.code ~ '-preprod.svg') }}';"
+                         alt="{{ review.name }} Logo" class="img-fluid logo">
+                </div>
+                <!-- Title -->
+                <div class="ps-3">
+                    <h1 class="h3 mb-0 text-primary fw-bold">{{ review.name }}</h1>
+                </div>
+                <!-- Back button and Resources -->
+                <div class="d-flex justify-content-end gap-2">
+                    <a href="{{ path('app_resources_manager', {'code': code}) }}" class="btn btn-outline-success btn-sm" target="_blank" rel="noopener noreferrer">
+                        <i class="fas fa-folder-open me-1"></i>
+                        {{ 'journalDashboard.resources'|trans }}
+                    </a>
+                    <a href="{{ path('app_journal_dashboard', {'code': code} ) }}" class="btn btn-outline-secondary btn-sm">
+                        <i class="fas fa-arrow-left me-1"></i>
+                        {{ 'journalPages.back'|trans }}
+                    </a>
+                </div>
+            </div>
+
+            {% include 'components/flash_messages.html.twig' %}
+            <div id="news-alerts"></div>
+
+            <!-- News section (aligned with title column) -->
+            <div class="news-content">
+                <div class="d-flex justify-content-between align-items-center gap-3 pb-2 mb-4 border-bottom border-primary border-3">
+                    <h2 class="mb-0">
+                        {{ 'news.title'|trans }}
+                        <small class="text-muted fw-normal fs-6">{{ 'news.description'|trans }}</small>
+                    </h2>
+
+                    <button type="button" class="btn btn-primary flex-shrink-0" data-bs-toggle="collapse"
+                            data-bs-target="#newsCreateForm">
+                        <i class="fas fa-plus me-2"></i>
+                        {{ 'news.addNews'|trans }}
+                    </button>
+                </div>
+                {% include 'news/_news_form.html.twig' with {
+                    code: code,
+                    acceptedLanguages: acceptedLanguages,
+                    defaultLanguage: defaultLanguage,
+                    formAction: path('app_news_create', {'code': code}),
+                    csrfTokenId: 'news-create',
+                    showCreateForm: showCreateForm|default(false),
+                    defaultCreateUrl: path('app_news_create', {'code': code}),
+                    submittedTranslations: submittedTranslations|default(null),
+                    submittedStatus: submittedStatus|default(null)
+                } %}
+
+                <!-- News list -->
+                <div class="news-list mt-4">
+                    <!-- Header -->
+                    <div class="news-header py-2 border-bottom bg-light py-4 fw-bold fs-5">
+                        <div class="news-status">{{ 'news.header.status'|trans }}</div>
+                        <div class="news-title-col">{{ 'news.header.title'|trans }}</div>
+                        <div class="news-content-col">{{ 'news.header.content'|trans }}</div>
+                        <div class="news-creation-col">{{ 'news.header.createdAt'|trans }}</div>
+                        <div class="news-actions-col">{{ 'news.header.actions'|trans }}</div>
+                    </div>
+                    <div class="news-items">
+                        {% for news in newsList %}
+                            <div class="news-item py-3 border-bottom"
+                                 data-news-id="{{ news.id }}"
+                                    {% for lang in acceptedLanguages %}
+                                        data-title-{{ lang }}="{{ news.title[lang]|default('')|e('html_attr') }}"
+                                        data-content-{{ lang }}="{{ news.htmlContent[lang]|default('')|e('html_attr') }}"
+                                        data-markdown-{{ lang }}="{{ news.content[lang]|default('')|e('html_attr') }}"
+                                        data-link-{{ lang }}="{{ news.link[lang]|default('')|e('html_attr') }}"
+                                    {% endfor %}
+                                 data-visibility="{{ 'public' in news.visibility ? 'public' : 'invisible' }}">
+                                <!-- Status -->
+                                <div class="news-status">
+                                    {% if 'public' in news.visibility %}
+                                        <span class="badge bg-success">{{ 'news.status.online'|trans }}</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">{{ 'news.status.offline'|trans }}</span>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Title -->
+                                <div class="news-title-col"
+                                     {% for lang in acceptedLanguages %}data-title-{{ lang }}="{{ news.title[lang]|default('')|e('html_attr') }}"{% endfor %}>
+                                    <span class="news-title-text">{{ news.title[app.request.locale] ?? news.title[defaultLanguage] ?? 'No title' }}</span>
+                                </div>
+
+                                <!-- Content -->
+                                <div class="news-content-col text-muted"
+                                     {% for lang in acceptedLanguages %}data-content-{{ lang }}="{{ news.htmlContent[lang]|default('')|striptags|e('html_attr') }}"{% endfor %}>
+                                    {% set rawContent = news.htmlContent[app.request.locale]|default(news.htmlContent[defaultLanguage]|default('')) %}
+                                    {% set firstImage = rawContent|extract_first_image %}
+                                    {% set contentText = rawContent|striptags|decode_entities %}
+                                    <div class="d-flex align-items-start gap-2">
+                                        {% if firstImage %}
+                                            <img src="{{ firstImage|e('html_attr') }}" alt="" class="news-thumbnail rounded flex-shrink-0">
+                                        {% endif %}
+                                        <span class="news-content-text">
+                                            {{ contentText|length > 300 ? contentText|slice(0, 300) ~ '…' : contentText }}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- Creation date -->
+                                <div class="news-creation-col">
+                                    <span class="news-creation-text">{{ news.dateCreation|date('Y-m-d') }}</span>
+                                </div>
+
+                                <!-- Actions -->
+                                <div class="news-actions d-flex gap-2">
+                                    <button type="button"
+                                            class="btn btn-outline-secondary btn-sm btn-edit-news"
+                                            data-edit-url="{{ path('app_news_edit', {code: code, id: news.id}) }}">
+                                        <i class="fas fa-pencil-alt me-1"></i>
+                                        {{ 'news.edit'|trans }}
+                                    </button>
+                                    <button type="button"
+                                            class="btn btn-outline-danger btn-sm btn-delete-news"
+                                            data-news-id="{{ news.id }}"
+                                            data-delete-url="{{ path('app_news_delete', {code: code, id: news.id}) }}"
+                                            data-news-title="{{ news.title[defaultLanguage]|default('')|e('html_attr') }}">
+                                        <i class="fas fa-trash me-1"></i>
+                                        {{ 'news.delete'|trans }}
+                                    </button>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="text-center text-muted py-4">
+                                {{ 'news.noNews'|trans }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                {% if newsList is defined %}
+                    <div class="d-flex justify-content-center mt-4">
+                        {{ knp_pagination_render(newsList, '@KnpPaginator/Pagination/bootstrap_v5_pagination.html.twig') }}
+                    </div>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+    <div class="col-1 d-none d-xl-block"></div>
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteNewsModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ 'news.deleteConfirmTitle'|trans }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>{{ 'news.deleteConfirmMessage'|trans }}</p>
+                    <p class="fw-bold" id="delete-news-title"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        {{ 'news.form.cancel'|trans }}
+                    </button>
+                    <form id="delete-news-form" method="post" style="display: inline;">
+                        <input type="hidden" name="_token" id="delete-csrf-token"
+                               value="{{ csrf_token('news-delete') }}">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash me-1"></i>
+                            {{ 'news.delete'|trans }}
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('news') }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('newsJs') }}
+    <script>
+      window.newsLanguageConfig = {
+        acceptedLanguages: {{ acceptedLanguages|json_encode|raw }},
+        defaultLanguage: {{ defaultLanguage|json_encode|raw }},
+        mode: 'create',
+        contentMaxLength: 5000,
+        translations: {
+          contentTooLong: {{ 'news.validation.contentTooLong'|trans({'%limit%': 5000})|json_encode|raw }}
+        }
+      };
+    </script>
+{% endblock %}

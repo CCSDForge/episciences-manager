@@ -21,13 +21,12 @@ class UserController extends AbstractController
         // Récupération des attributs du token CAS (dont le UID)
         $attributes = $token->getAttributes();
 
-        //dump($attributes);
-        $roles=$this->getUser()->getRoles();
-        dump($roles);
+        $roles = $this->getUser()->getRoles();
 
         $logger->info('Attributs utilisateur CAS', $attributes);
+        /** @var \App\Entity\User|null $user */
         $user = $this->getUser();
-        $rolesDetails = $user->getRolesDetails();
+        $rolesDetails = $user?->getRolesDetails() ?? [];
         //$logger->info('Rôles utilisateur', $rolesDetails);
 
         // Passer tous les attributs au template

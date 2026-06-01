@@ -1,10 +1,11 @@
+@use 'sass:color';
 @use '../components/variables' as *;
 
 .footer {
-  background-color: #fff;
+  background-color: $white;
   padding: 2rem;
   font-family: $font-family-base;
-  color: #333;
+  color: $dark-gray;
 
   .footer-columns {
     display: flex;

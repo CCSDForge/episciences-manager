@@ -1,7 +1,7 @@
 @use 'sass:color';
 @use '../components/variables' as *;
 
-// Gradients personnalisés
+// Custom gradients
 $primary-gradient: linear-gradient(
   135deg,
   $primary-color 0%,
@@ -14,14 +14,14 @@ $success-gradient: linear-gradient(
 );
 $warning-gradient: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);
 
-// Body et layout principal
+// Body and main layout
 body {
   background: linear-gradient(135deg, $light-gray 0%, $medium-gray 100%);
   min-height: 100vh;
   color: $text-color;
 }
 
-// Effet glassmorphism
+// Glassmorphism effect
 .glass {
   background: rgba(255, 255, 255, 0.25);
   backdrop-filter: blur(20px);
@@ -29,7 +29,7 @@ body {
   box-shadow: 0 8px 32px 0 $shadow-light;
 }
 
-// Page title avec gradient
+// Page title with gradient
 .page-title {
   background: $primary-gradient;
   -webkit-background-clip: text;
@@ -45,7 +45,7 @@ body {
   }
 }
 
-// Stats cards
+// Statistics cards
 .stats-section {
   margin-bottom: $spacing-xl;
 
@@ -76,7 +76,7 @@ body {
       pointer-events: none;
     }
 
-    // Variantes de couleurs
+    // Color variations
     &.total {
       background: $warning-gradient;
     }
@@ -134,7 +134,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0px 4px 15px $shadow-light;
+    box-shadow: 0 4px 15px $shadow-light;
     z-index: 2;
 
     &:hover {
@@ -157,13 +157,35 @@ body {
       background: color.adjust($primary-color, $lightness: -10%) !important;
     }
 
+    // Clear mode style
+    &.clear-mode {
+      background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+
+      &:hover {
+        background: #c82333;
+        box-shadow: 0 8px 25px rgba(220, 53, 69, 0.4);
+        transform: translateY(-50%) scale(1.1);
+      }
+
+      &:active,
+      &:focus {
+        background: #bd2130 !important;
+        box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
+      }
+
+      i {
+        animation: rotateIn 0.3s ease-out;
+      }
+    }
+
     i {
-      font-size: 14px;
+      font-size: 0.875rem; // 14px
+      transition: transform 0.3s ease;
     }
   }
 }
 
-// Journal table
+// Logs table
 .journal-table {
   margin-top: $spacing-xl;
 
@@ -222,7 +244,7 @@ body {
   }
 }
 
-// Journal name styling
+// Journal name style
 .journal-name {
   font-weight: 600;
   color: $gray-800;
@@ -235,7 +257,7 @@ body {
   font-size: $font-size-sm;
 }
 
-// Badge styling
+// Badge styles
 .badge {
   padding: $spacing-sm $spacing-md;
   font-size: $font-size-sm;
@@ -343,6 +365,17 @@ body {
   }
 }
 
+@keyframes rotateIn {
+  from {
+    transform: rotate(-180deg) scale(0.8);
+    opacity: 0.5;
+  }
+  to {
+    transform: rotate(0deg) scale(1);
+    opacity: 1;
+  }
+}
+
 // Responsive design
 @media (max-width: 768px) {
   .stats-section {
@@ -407,6 +440,7 @@ body {
     }
   }
 }
+
 // Pagination styles
 .pagination-wrapper {
   margin-top: $spacing-xl;
@@ -474,7 +508,7 @@ body {
         }
       }
 
-      // Page active
+      // Active page
       &.active .page-link {
         background: $primary-gradient;
         color: $white;
@@ -489,7 +523,7 @@ body {
         }
       }
 
-      // Pages disabled
+      // Disabled pages
       &.disabled .page-link {
         background: rgba(255, 255, 255, 0.1);
         color: $gray-500;
@@ -507,7 +541,7 @@ body {
   }
 }
 
-// Informations de pagination
+// Pagination info
 .pagination-info {
   margin-top: $spacing-md;
   padding: $spacing-md;
@@ -527,7 +561,7 @@ body {
   }
 }
 
-// Media queries pour pagination
+// Media queries for pagination
 @media (max-width: 768px) {
   .pagination-wrapper {
     margin-top: $spacing-lg;
@@ -577,7 +611,7 @@ body {
   animation: fadeInUp 0.6s ease-out 0.2s both;
 }
 
-// Correction des boutons d'action
+// Fix action buttons
 .action-btn {
   display: inline-flex;
   align-items: center;

@@ -2,12 +2,10 @@
 
 namespace App\Controller;
 
-
-use App\Repository\PageRepository;
+use App\Repository\ReviewRepository;
 use App\Service\ReviewManager;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -16,75 +14,59 @@ final class ReviewController extends AbstractController
 {
 
     #[Route('/journal', name: 'app_journal')]
-    public function index(Request $request, ReviewManager $reviewManager,PaginatorInterface $paginator): Response
+    public function index(Request $request, ReviewManager $reviewManager, PaginatorInterface $paginator, ReviewRepository $reviewRepository): Response
     {
         $user = $this->getUser();
 
-        if (!$user) {
+        if (!$user instanceof \App\Entity\User) {
             throw $this->createAccessDeniedException('You must be logged in');
         }
 
         $search = $request->query->get('search', '');
         $page = $request->query->getInt('page', 1);
 
-        $activeJournalsCount = $reviewManager->getActiveReviewsCount();
+        // Count only reviews where user has a valid role
+        $result = $reviewManager->getReviewsForUserPaginated($user, $paginator, $page, 30);
+
+        $totalReviews = $reviewRepository->countAllReviews();
+        $totalActiveReviews = $reviewRepository->countActiveReviews();
 
         if (!empty($search)) {
-            $reviews = $reviewManager->searchReviews($search);
+            $reviews = $reviewManager->searchReviewsForUser($user, $search);
             $pagination = null;
         } else {
-            $result = $reviewManager->getAllReviewsForDisplayPaginated($paginator,$page,10);
-                $reviews = $result['reviews'];
-                $pagination = $result['pagination'];
-
+            $reviews = $result['reviews'];
+            $pagination = $result['pagination'];
         }
 
-        //dd($reviews);
-
-        //dd($user);
         return $this->render('review/journal.html.twig', [
             'reviews' => $reviews,
             'pagination' => $pagination,
             'search' => $search,
             'user' => $user,
             'current_page' => $page,
-            'activeJournalsCount' => $activeJournalsCount,
+            'totalReviews' => $totalReviews,
+            'totalActiveReviews' => $totalActiveReviews,
         ]);
     }
 
-    #[Route('/journal/{code}', name: 'app_journal_detail', requirements: ['code' => '[\w\-]+'])]
-    public function getJournal(string $code, ReviewManager $reviewManager, PageRepository $pageRepository): Response
-    {
-        // Récupérer la review par son code
-        $review = $reviewManager->getReviewByCode($code);
 
-        //dd($review);
+    #[Route('/journal/{code}', name: 'app_journal_dashboard', requirements: ['code' => '[\w\-]+'])]
+    public function getJournal(string $code, ReviewManager $reviewManager): Response
+    {
+        // Get the review by its code
+        $review = $reviewManager->getReviewByCode($code);
 
         if (!$review) {
             throw $this->createNotFoundException('Review not found');
         }
 
-        //dd([
-            //'review_rvid' => $review['rvid'],
-            //'user_roles' => $this->getUser()->getRolesDetails(),
-            //'code' => $code,
-            //'full_review' => $review
-       // ]);
-
         // Check if user has permission to view this specific review
         $this->denyAccessUnlessGranted('REVIEW_VIEW', $review);
 
-        //Retrieve the journal pages
-        $pages = $pageRepository->findBy([
-            'rvcode' => $code
-        ]);
-
-        return $this->render('review/journalDetails.html.twig', [
+        return $this->render('review/journalDashboard.html.twig', [
             'review' => $review,
             'code' => $code,
-            'pages' => $pages,
         ]);
     }
-
-
 }
