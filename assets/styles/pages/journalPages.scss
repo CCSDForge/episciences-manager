@@ -413,4 +413,9 @@
   &__widget {
     grid-area: widget;
   }
+
+  // Widget area cards - no min-height
+  .journal-layout__widget .card-body {
+    min-height: auto;
+  }
 }
