@@ -11,7 +11,7 @@
 
 -- NEWS: Add ENUM column (single value: public or private)
 ALTER TABLE news
-ADD COLUMN visibility_enum ENUM('public', 'private') DEFAULT 'private'
+ADD COLUMN visibility_enum ENUM('public', 'private') DEFAULT 'public'
 AFTER visibility;
 
 -- PAGES: Add SET column (multiple values possible)
@@ -79,5 +79,5 @@ ALTER TABLE news DROP COLUMN visibility;
 ALTER TABLE pages DROP COLUMN visibility;
 
 -- Rename new columns to original names
-ALTER TABLE news CHANGE visibility_enum visibility ENUM('public', 'private') NOT NULL DEFAULT 'private';
+ALTER TABLE news CHANGE visibility_enum visibility ENUM('public', 'private') NOT NULL DEFAULT 'public';
 ALTER TABLE pages CHANGE visibility_set visibility SET('public','member','editor','chief_editor','administrator','secretary','webmaster','guest_editor') NOT NULL DEFAULT 'public';

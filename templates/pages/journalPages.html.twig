@@ -306,7 +306,7 @@
                         defaultLanguage: defaultLanguage
                     }) }}
 
-                    {# Visibility display/selector #}
+                    {# TODO: Visibility display/selector - commented for future use
                     {% if currentPageData is defined and currentPageData is not null %}
                         <div class="card mt-3">
                             <div class="card-header">
@@ -324,7 +324,7 @@
                             </div>
                             <div class="card-body">
                                 {% if editMode|default(false) %}
-                                    {# Edit mode: checkboxes #}
+                                    {* Edit mode: checkboxes *}
                                     {% for role in visibilityRoles|default(['public']) %}
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" name="visibility[]"
@@ -336,7 +336,7 @@
                                         </div>
                                     {% endfor %}
                                 {% else %}
-                                    {# View mode: badges #}
+                                    {* View mode: badges *}
                                     {% for role in currentPageData.visibility|default(['public']) %}
                                         <span class="badge bg-primary me-1">{{ ('role.' ~
                                             role)|trans|default(role|capitalize) }}</span>
@@ -345,6 +345,7 @@
                             </div>
                         </div>
                     {% endif %}
+                    #}
                 </div>
             </div>
         </div>

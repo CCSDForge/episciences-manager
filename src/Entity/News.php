@@ -44,11 +44,8 @@ class News
     #[ORM\Column(name: 'date_updated', type: Types::DATETIME_MUTABLE, nullable: false)]
     private ?\DateTimeInterface $dateUpdated = null;
 
-    #[ORM\Column(name: 'visibility', type: 'json', nullable: false)]
-    private array $visibilityJson = [];  // Legacy column (for other projects)
-
     /** @var list<string> */
-    #[ORM\Column(name: 'visibility_enum', type: 'news_visibility', nullable: false)]
+    #[ORM\Column(name: 'visibility', type: 'news_visibility', nullable: false)]
     private array $visibility = [];
 
     public function getId(): ?int
@@ -156,7 +153,6 @@ class News
     public function setVisibility(array $visibility): static
     {
         $this->visibility = $visibility;
-        $this->visibilityJson = $visibility; // Sync with the legacy column
         return $this;
     }
 
