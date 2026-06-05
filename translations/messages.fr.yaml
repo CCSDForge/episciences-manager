@@ -79,11 +79,23 @@ journalPages:
     content: "Contenu"
     cancel: "Annuler"
     save: "Enregistrer"
+    visibility: "Visibilité"
+    visibilityHelp: "Sélectionnez les rôles qui peuvent voir cette page"
+    visibilityInfo: "Rôles autorisés à voir cette page"
   flash:
     saved: "Page sauvegardée avec succès !"
     error: "Erreur lors de la sauvegarde de la page"
     invalidToken: "Jeton de sécurité invalide. Veuillez rafraîchir la page."
     noContent: "Aucun contenu à sauvegarder"
+role:
+  public: "Public (tout le monde)"
+  member: "Membre"
+  editor: "Rédacteur"
+  chief_editor: "Rédacteur en chef"
+  administrator: "Administrateur"
+  secretary: "Secrétaire"
+  webmaster: "Webmaster"
+  guest_editor: "Rédacteur invité"
 
 journalSettings:
   title: "Paramètres"
