@@ -79,11 +79,24 @@ journalPages:
     content: "Content"
     cancel: "Cancel"
     save: "Save"
+    visibility: "Visibility"
+    visibilityHelp: "Select which roles can view this page"
+    visibilityInfo: "Roles that can view this page"
   flash:
     saved: "Page saved successfully!"
     error: "Error saving page"
     invalidToken: "Invalid security token. Please refresh the page."
     noContent: "No content to save"
+
+role:
+  public: "Public (everyone)"
+  member: "Member"
+  editor: "Editor"
+  chief_editor: "Chief Editor"
+  administrator: "Administrator"
+  secretary: "Secretary"
+  webmaster: "Webmaster"
+  guest_editor: "Guest Editor"
 
 journalSettings:
   title: "Settings"

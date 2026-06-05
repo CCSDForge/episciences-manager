@@ -33,7 +33,7 @@ class Page
     private array $content = [];
 
     /** @var array<int, string> */
-    #[ORM\Column(name: 'visibility', type: 'json', nullable: false)]
+    #[ORM\Column(name: 'visibility', type: 'page_visibility', nullable: false)]
     private array $visibility = [];
 
     #[ORM\Column(name: 'date_creation', type: Types::DATETIME_MUTABLE,nullable: true)]

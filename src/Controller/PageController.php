@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use App\Enum\PageVisibility;
 
 final class PageController extends AbstractController
 {
@@ -165,6 +166,12 @@ final class PageController extends AbstractController
 
             $page->setTitle($currentTitle);
             $page->setContent($currentContent);
+            // Get visibility from form
+            $visibility = $request->request->all('visibility');
+            if (empty($visibility)) {
+                $visibility = ['public'];  // Default value
+            }
+            $page->setVisibility($visibility);
             $page->setDateUpdated(new \DateTime());
 
             try {
@@ -219,6 +226,7 @@ final class PageController extends AbstractController
                 'content' => $htmlContent,
                 'markdownContent' => $currentPage->getContent(),
                 'pageCode' => $currentPage->getPageCode(),
+                'visibility' => $currentPage->getVisibility(),
             ];
         } elseif ($yamlTitle) {
             // Page defined in YAML but no DB entry yet
@@ -227,6 +235,7 @@ final class PageController extends AbstractController
                 'content' => array_fill_keys($acceptedLanguages, ''),
                 'markdownContent' => array_fill_keys($acceptedLanguages, ''),
                 'pageCode' => $actualPageCode,
+                'visibility' => ['public'],
             ];
         }
 
@@ -243,6 +252,7 @@ final class PageController extends AbstractController
             'currentPageData' => $currentPageData,
             'breadcrumbPath' => $breadcrumbPath,
             'editMode' => true,
+            'visibilityRoles' => PageVisibility::values(),
         ]);
     }
 
@@ -287,6 +297,7 @@ final class PageController extends AbstractController
                 'content' => $htmlContent,
                 'markdownContent' => $currentPage->getContent(),
                 'pageCode' => $currentPage->getPageCode(),
+                'visibility' => $currentPage->getVisibility(),
             ];
         } elseif ($yamlTitle) {
             // Page defined in YAML but no DB entry yet
@@ -295,6 +306,7 @@ final class PageController extends AbstractController
                 'content' => array_fill_keys($acceptedLanguages, ''),
                 'markdownContent' => array_fill_keys($acceptedLanguages, ''),
                 'pageCode' => $actualPageCode,
+                'visibility' => ['public'],
             ];
         }
 
@@ -319,6 +331,7 @@ final class PageController extends AbstractController
             'breadcrumbPath' => $breadcrumbPath,
             'editMode' => false,
             'contentLanguage' => $contentLanguage,
+            'visibilityRoles' => PageVisibility::values(),
         ]);
     }
 }

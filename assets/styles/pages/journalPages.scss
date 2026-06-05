@@ -412,5 +412,17 @@
 
   &__widget {
     grid-area: widget;
+
+    // Desktop: sticky like sidebar
+    @media (min-width: 768px) {
+      position: sticky;
+      top: 20px;
+      height: fit-content;
+    }
+  }
+
+  // Widget area cards - no min-height
+  .journal-layout__widget .card-body {
+    min-height: auto;
   }
 }

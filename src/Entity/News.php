@@ -25,7 +25,7 @@ class News
     private ?int $legacy_id = null;
     #[ORM\Column(name: 'code', length: 100, nullable: false, options: ['comment' => 'Journal code rvcode'])]
     private ?string $rvcode = null;
-    
+
     /** @var array<string, string> */
     #[ORM\Column(name: 'title', type: 'json', nullable: false, options: ['comment' => 'Page title'])]
     private array $title = [];
@@ -45,9 +45,8 @@ class News
     private ?\DateTimeInterface $dateUpdated = null;
 
     /** @var list<string> */
-    #[ORM\Column(name: 'visibility', type: 'json', nullable: false)]
+    #[ORM\Column(name: 'visibility', type: 'news_visibility', nullable: false)]
     private array $visibility = [];
-
 
     public function getId(): ?int
     {
@@ -154,7 +153,6 @@ class News
     public function setVisibility(array $visibility): static
     {
         $this->visibility = $visibility;
-
         return $this;
     }
 
