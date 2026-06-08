@@ -6,7 +6,7 @@ namespace App\Controller;
 use App\Entity\News;
 use App\Entity\User;
 use App\Repository\NewsRepository;
-use App\Service\JournalSettingService;
+use App\Service\JournalFrontendSettingService;
 use App\Service\MarkdownService;
 use App\Service\ReviewManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -81,7 +81,7 @@ final class NewsController extends AbstractController
         PaginatorInterface $paginator,
         Request $request,
         Security $security,
-        JournalSettingService $settingService,
+        JournalFrontendSettingService $settingService,
         MarkdownService $markdownService
     ): Response {
         // Get the logged-in user (via CAS)
@@ -129,7 +129,7 @@ final class NewsController extends AbstractController
         NewsRepository $newsRepository,
         PaginatorInterface $paginator,
         Security $security,
-        JournalSettingService $settingService,
+        JournalFrontendSettingService $settingService,
         EntityManagerInterface $entityManager,
         MarkdownService $markdownService,
         TranslatorInterface $translator

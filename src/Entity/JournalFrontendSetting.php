@@ -3,13 +3,13 @@
 
 namespace App\Entity;
 
-use App\Repository\JournalSettingRepository;
+use App\Repository\JournalFrontendSettingRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: JournalSettingRepository::class)]
+#[ORM\Entity(repositoryClass: JournalFrontendSettingRepository::class)]
 #[ORM\Table(name: 'JOURNAL_SETTING')]
-class JournalSetting
+class JournalFrontendSetting
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

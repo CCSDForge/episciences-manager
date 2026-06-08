@@ -19,7 +19,7 @@ console.log('Welcome to Webpack Encore with Bootstrap!🎉');
  * ---------------------------------
  * 1. Ajax alerts (JS-based, via showAlert functions):
  *    - journalPages.js -> #pages-alerts
- *    - journalSettings.js -> #settings-alerts
+ *    - journalFrontendSettings.js -> #settings-alerts
  *
  * 2. Symfony flash messages (server-side, via flash_messages.html.twig):
  *    - home/index.html.twig (logout success)

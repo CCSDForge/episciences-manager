@@ -40,10 +40,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
       // Build URL with CSRF token
       const url = new URL(
-        window.journalSettingsData.updateUrl,
+        window.journalFrontendSettingsData.updateUrl,
         window.location.origin
       );
-      url.searchParams.set('_token', window.journalSettingsData.csrfToken);
+      url.searchParams.set('_token', window.journalFrontendSettingsData.csrfToken);
 
       // Send request
       fetch(url.toString(), {
@@ -61,10 +61,10 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .then(({ ok, data }) => {
           if (ok && data.success) {
-            showAlert('success', window.journalSettingsData.translations.saved);
+            showAlert('success', window.journalFrontendSettingsData.translations.saved);
           } else {
             let errorMessage = escapeHtml(
-              data.message || window.journalSettingsData.translations.error
+              data.message || window.journalFrontendSettingsData.translations.error
             );
             if (data.errors) {
               const errorDetails = Object.values(data.errors)
@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', function () {
           }
         })
         .catch(error => {
-          showAlert('danger', window.journalSettingsData.translations.error);
+          showAlert('danger', window.journalFrontendSettingsData.translations.error);
           console.error('Error:', error);
         })
         .finally(() => {
@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', function () {
           saveButton.disabled = false;
           saveButton.innerHTML =
             '<i class="fas fa-save me-2"></i>' +
-            window.journalSettingsData.translations.save;
+            window.journalFrontendSettingsData.translations.save;
         });
     });
   }

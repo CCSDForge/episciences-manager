@@ -4,7 +4,7 @@ namespace App\Controller;
 
 
 use App\Repository\PageRepository;
-use App\Service\JournalSettingService;
+use App\Service\JournalFrontendSettingService;
 use App\Service\MarkdownService;
 use App\Service\ReviewManager;
 use App\Service\PageHierarchyService;
@@ -50,7 +50,7 @@ final class PageController extends AbstractController
     }
 
     #[Route('/journal/{code}/pages', name: 'app_journal_pages', requirements: ['code' => '[\w\-]+'])]
-    public function pages(string $code, ReviewManager $reviewManager, PageRepository $pageRepository, PageHierarchyService $hierarchyService, JournalSettingService $settingService): Response
+    public function pages(string $code, ReviewManager $reviewManager, PageRepository $pageRepository, PageHierarchyService $hierarchyService, JournalFrontendSettingService $settingService): Response
     {
         // Get the review by its code
         $review = $reviewManager->getReviewByCode($code);
@@ -92,7 +92,7 @@ final class PageController extends AbstractController
         ReviewManager $reviewManager,
         PageRepository $pageRepository,
         PageHierarchyService $hierarchyService,
-        JournalSettingService $settingService,
+        JournalFrontendSettingService $settingService,
         MarkdownService $markdownService,
         EntityManagerInterface $entityManager,
         TranslatorInterface $translator
@@ -257,7 +257,7 @@ final class PageController extends AbstractController
     }
 
     #[Route('/journal/{code}/pages/{pageCode}', name: 'app_journal_page_view', requirements: ['code' => '[\w\-]+', 'pageCode' => '[\w\-]+'])]
-    public function pageView(string $code, string $pageCode, Request $request, ReviewManager $reviewManager, PageRepository $pageRepository, PageHierarchyService $hierarchyService, JournalSettingService $settingService, MarkdownService $markdownService): Response
+    public function pageView(string $code, string $pageCode, Request $request, ReviewManager $reviewManager, PageRepository $pageRepository, PageHierarchyService $hierarchyService, JournalFrontendSettingService $settingService, MarkdownService $markdownService): Response
     {
         $review = $reviewManager->getReviewByCode($code);
 

@@ -97,7 +97,7 @@ role:
   webmaster: "Webmaster"
   guest_editor: "Rédacteur invité"
 
-journalSettings:
+journalFrontendSettings:
   title: "Paramètres"
   save: "Sauvegarder"
   saved: "Paramètres sauvegardés avec succès"

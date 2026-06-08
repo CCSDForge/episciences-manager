@@ -343,7 +343,7 @@
   {% block javascripts %}
       {{ parent() }}
       <script>
-          window.journalSettingsData = {
+          window.journalFrontendSettingsData = {
               updateUrl: '{{ path('app_journal_settings_update', {'code': code}) }}',
               csrfToken: '{{ csrf_token('journal-settings') }}',
               translations: {
@@ -368,5 +368,5 @@
           });
           {% endif %}
       </script>
-      {{ encore_entry_script_tags('journalSettingsJs') }}
+      {{ encore_entry_script_tags('journalFrontendSettingsJs') }}
   {% endblock %}
