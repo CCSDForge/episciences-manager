@@ -15,7 +15,7 @@ nav:
   dashboard: "Dashboard"
   users: "Users"
   journal: "Journal"
-  journalSettings: "Journal Settings"
+  journalFrontendSettings: "Journal Frontend Settings" #on ne l'utilise plus
   website: "Website"
   statistics: "Statistics"
 
@@ -99,7 +99,7 @@ role:
   guest_editor: "Guest Editor"
 
 journalFrontendSettings:
-  title: "Settings"
+  title: "Journal Settings"
   save: "Save"
   saved: "Settings saved successfully"
   error: "Error saving settings"

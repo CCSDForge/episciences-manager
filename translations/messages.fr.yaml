@@ -15,7 +15,7 @@ nav:
   dashboard: "Tableau de bord"
   users: "Utilisateurs"
   journal: "Journal"
-  journalSettings: "Paramètres du journal"
+  journalFrontendSettings: "Paramètres front-end du journal"
   website: "Site Web"
   statistics: "Statistiques"
 
@@ -98,7 +98,7 @@ role:
   guest_editor: "Rédacteur invité"
 
 journalFrontendSettings:
-  title: "Paramètres"
+  title: "Paramètres front-end du journal"
   save: "Sauvegarder"
   saved: "Paramètres sauvegardés avec succès"
   error: "Erreur lors de la sauvegarde"

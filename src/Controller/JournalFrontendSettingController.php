@@ -11,7 +11,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class JournalFrontendSettingController extends AbstractController
 {
-    #[Route('/journal/{code}/settings', name: 'app_journal_settings')]
+    #[Route('/journal/{code}/frontend-settings', name: 'app_journal_frontend_settings')]
     public function index(
         string $code,
         ReviewManager $reviewManager,
@@ -38,7 +38,7 @@ class JournalFrontendSettingController extends AbstractController
         ]);
     }
 
-    #[Route('/journal/{code}/settings/show', name: 'app_journal_settings_show', methods: ['GET'])]
+    #[Route('/journal/{code}/frontend-settings/show', name: 'app_journal_frontend_settings_show', methods: ['GET'])]
     public function show(
         string $code,
         ReviewManager $reviewManager,
@@ -68,7 +68,7 @@ class JournalFrontendSettingController extends AbstractController
         ]);
     }
 
-    #[Route('/journal/{code}/settings/edit', name: 'app_journal_settings_update', methods: ['POST','PUT'])]
+    #[Route('/journal/{code}/frontend-settings/edit', name: 'app_journal_frontend_settings_update', methods: ['POST','PUT'])]
     public function update(
         string $code,
         Request $request,
