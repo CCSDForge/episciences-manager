@@ -43,7 +43,10 @@ document.addEventListener('DOMContentLoaded', function () {
         window.journalFrontendSettingsData.updateUrl,
         window.location.origin
       );
-      url.searchParams.set('_token', window.journalFrontendSettingsData.csrfToken);
+      url.searchParams.set(
+        '_token',
+        window.journalFrontendSettingsData.csrfToken
+      );
 
       // Send request
       fetch(url.toString(), {
@@ -61,10 +64,14 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .then(({ ok, data }) => {
           if (ok && data.success) {
-            showAlert('success', window.journalFrontendSettingsData.translations.saved);
+            showAlert(
+              'success',
+              window.journalFrontendSettingsData.translations.saved
+            );
           } else {
             let errorMessage = escapeHtml(
-              data.message || window.journalFrontendSettingsData.translations.error
+              data.message ||
+                window.journalFrontendSettingsData.translations.error
             );
             if (data.errors) {
               const errorDetails = Object.values(data.errors)
@@ -77,7 +84,10 @@ document.addEventListener('DOMContentLoaded', function () {
           }
         })
         .catch(error => {
-          showAlert('danger', window.journalFrontendSettingsData.translations.error);
+          showAlert(
+            'danger',
+            window.journalFrontendSettingsData.translations.error
+          );
           console.error('Error:', error);
         })
         .finally(() => {

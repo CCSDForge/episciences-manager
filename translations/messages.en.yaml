@@ -99,7 +99,7 @@ role:
   guest_editor: "Guest Editor"
 
 journalFrontendSettings:
-  title: "Journal Settings"
+  title: "Journal Frontend Settings"
   save: "Save"
   saved: "Settings saved successfully"
   error: "Error saving settings"
@@ -192,6 +192,37 @@ journalFrontendSettings:
     preview.rejected: "Rejected articles"
     preview.accepted: "Accepted articles"
     preview.other: "Other status"
+
+journalBackofficeSettings:
+  title: "Journal Backoffice Settings"
+  edit: "Edit"
+  save: "Save"
+  cancel: "Cancel"
+  created: "Settings created successfully"
+  updated: "Settings updated successfully"
+  error: "Error saving settings"
+  readonlyInfo: "You can view these settings, but only epiadmin can modify them."
+
+  journalDescription:
+    title: "Journal Description"
+    description: "Describe your journal"
+    label: "Description"
+    placeholder: "Enter the journal description..."
+    hint: "This description will be displayed on the journal homepage."
+
+  journalKeywords:
+    title: "Keywords"
+    description: "Keywords for SEO and discoverability"
+    label: "Keywords"
+    placeholder: "science, research, open access..."
+    hint: "Enter subjects, disciplines, and topics. Separate keywords with commas."
+
+  journalCreationYear:
+    title: "Creation Year"
+    description: "Year the journal was founded"
+    label: "Year"
+    placeholder: "2020"
+    hint: "Enter the year the journal was created."
 
 news:
   title: "News"

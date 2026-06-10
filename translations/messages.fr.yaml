@@ -192,6 +192,37 @@ journalFrontendSettings:
     preview.accepted: "Articles acceptés"
     preview.other: "Autre statut"
 
+journalBackofficeSettings:
+  title: "Paramètres back-office du journal"
+  edit: "Modifier"
+  save: "Sauvegarder"
+  cancel: "Annuler"
+  created: "Paramètres créés avec succès"
+  updated: "Paramètres mis à jour avec succès"
+  error: "Erreur lors de la sauvegarde"
+  readonlyInfo: "Vous pouvez consulter ces paramètres, mais seul epiadmin peut les modifier."
+
+  journalDescription:
+    title: "Description du journal"
+    description: "Décrivez votre journal"
+    label: "Description"
+    placeholder: "Saisissez la description du journal..."
+    hint: "Cette description sera affichée sur la page d'accueil du journal."
+
+  journalKeywords:
+    title: "Mots-clés"
+    description: "Mots-clés pour le référencement et la découvrabilité"
+    label: "Mots-clés"
+    placeholder: "science, recherche, libre accès..."
+    hint: "Saisissez les sujets, disciplines et thématiques. Séparez les mots-clés par des virgules."
+
+  journalCreationYear:
+    title: "Année de création"
+    description: "Année de fondation du journal"
+    label: "Année"
+    placeholder: "2020"
+    hint: "Saisissez l'année de création du journal."
+
 news:
   title: "Actualités"
   description: "Ajout / modifications d'actualités pour le site"

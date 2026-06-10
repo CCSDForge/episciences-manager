@@ -37,6 +37,12 @@
                         {{ 'journalFrontendSettings.title' | trans }}
                     </a>
 
+                    <a href="{{ path('app_journal_backoffice_settings', {'code': code}) }}"
+                       class="btn btn-outline-secondary btn-lg">
+                        <i class="fas fa-cog me-2"></i>
+                        {{ 'journalBackofficeSettings.title' | trans }}
+                    </a>
+
                     <a href="{{ path('app_news_show', {'code': code}) }}" class="btn btn-outline-info btn-lg">
                         <i class="fas fa-newspaper me-2"></i>
                         {{ 'journalDashboard.news' | trans }}
