@@ -200,7 +200,7 @@ journalBackofficeSettings:
   created: "Paramètres créés avec succès"
   updated: "Paramètres mis à jour avec succès"
   error: "Erreur lors de la sauvegarde"
-  readonlyInfo: "Vous pouvez consulter ces paramètres, mais seul epiadmin peut les modifier."
+  readonlyInfo: "Vous pouvez consulter ces paramètres, mais seuls epiadmin ou administrator peuvent les modifier."
 
   journalDescription:
     title: "Description du journal"
