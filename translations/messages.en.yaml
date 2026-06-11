@@ -214,8 +214,8 @@ journalBackofficeSettings:
     title: "Keywords"
     description: "Keywords for SEO and discoverability"
     label: "Keywords"
-    placeholder: "science, research, open access..."
-    hint: "Enter subjects, disciplines, and topics. Separate keywords with commas."
+    placeholder: "science; research; open access..."
+    hint: "Enter subjects, disciplines, and topics. Separate keywords with semicolons."
 
   journalCreationYear:
     title: "Creation Year"

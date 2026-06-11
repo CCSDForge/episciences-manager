@@ -213,8 +213,8 @@ journalBackofficeSettings:
     title: "Mots-clés"
     description: "Mots-clés pour le référencement et la découvrabilité"
     label: "Mots-clés"
-    placeholder: "science, recherche, libre accès..."
-    hint: "Saisissez les sujets, disciplines et thématiques. Séparez les mots-clés par des virgules."
+    placeholder: "science; recherche; libre accès..."
+    hint: "Saisissez les sujets, disciplines et thématiques. Séparez les mots-clés par des points-virgules."
 
   journalCreationYear:
     title: "Année de création"
