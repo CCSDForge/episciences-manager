@@ -15,7 +15,7 @@ nav:
   dashboard: "Tableau de bord"
   users: "Utilisateurs"
   journal: "Journal"
-  journalSettings: "Paramètres du journal"
+  journalFrontendSettings: "Paramètres front-end du journal"
   website: "Site Web"
   statistics: "Statistiques"
 
@@ -97,8 +97,8 @@ role:
   webmaster: "Webmaster"
   guest_editor: "Rédacteur invité"
 
-journalSettings:
-  title: "Paramètres"
+journalFrontendSettings:
+  title: "Paramètres front-end du journal"
   save: "Sauvegarder"
   saved: "Paramètres sauvegardés avec succès"
   error: "Erreur lors de la sauvegarde"
@@ -191,6 +191,37 @@ journalSettings:
     preview.rejected: "Articles refusés"
     preview.accepted: "Articles acceptés"
     preview.other: "Autre statut"
+
+journalBackofficeSettings:
+  title: "Paramètres back-office du journal"
+  edit: "Modifier"
+  save: "Sauvegarder"
+  cancel: "Annuler"
+  created: "Paramètres créés avec succès"
+  updated: "Paramètres mis à jour avec succès"
+  error: "Erreur lors de la sauvegarde"
+  readonlyInfo: "Vous pouvez consulter ces paramètres, mais seul epiadmin peut les modifier."
+
+  journalDescription:
+    title: "Description du journal"
+    description: "Décrivez votre journal"
+    label: "Description"
+    placeholder: "Saisissez la description du journal..."
+    hint: "Cette description sera affichée sur la page d'accueil du journal."
+
+  journalKeywords:
+    title: "Mots-clés"
+    description: "Mots-clés pour le référencement et la découvrabilité"
+    label: "Mots-clés"
+    placeholder: "science; recherche; libre accès..."
+    hint: "Saisissez les sujets, disciplines et thématiques. Séparez les mots-clés par des points-virgules."
+
+  journalCreationYear:
+    title: "Année de création"
+    description: "Année de fondation du journal"
+    label: "Année"
+    placeholder: "2020"
+    hint: "Saisissez l'année de création du journal."
 
 news:
   title: "Actualités"

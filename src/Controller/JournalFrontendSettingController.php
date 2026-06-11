@@ -1,7 +1,7 @@
 <?php
 namespace App\Controller;
 
-use App\Service\JournalSettingService;
+use App\Service\JournalFrontendSettingService;
 use App\Service\ReviewManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -9,13 +9,13 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-class JournalSettingController extends AbstractController
+class JournalFrontendSettingController extends AbstractController
 {
-    #[Route('/journal/{code}/settings', name: 'app_journal_settings')]
+    #[Route('/journal/{code}/frontend-settings', name: 'app_journal_frontend_settings')]
     public function index(
         string $code,
         ReviewManager $reviewManager,
-        JournalSettingService $settingService
+        JournalFrontendSettingService $settingService
     ): Response {
         $review = $reviewManager->getReviewByCode($code);
 
@@ -27,7 +27,7 @@ class JournalSettingController extends AbstractController
 
         $setting = $settingService->getSettingArray($review['rvid']);
 
-        return $this->render('journalSettings/index.html.twig', [
+        return $this->render('journalFrontendSettings/index.html.twig', [
             'review' => $review,
             'setting' => $setting,
             'code' => $code,
@@ -38,11 +38,11 @@ class JournalSettingController extends AbstractController
         ]);
     }
 
-    #[Route('/journal/{code}/settings/show', name: 'app_journal_settings_show', methods: ['GET'])]
+    #[Route('/journal/{code}/frontend-settings/show', name: 'app_journal_frontend_settings_show', methods: ['GET'])]
     public function show(
         string $code,
         ReviewManager $reviewManager,
-        JournalSettingService $settingService
+        JournalFrontendSettingService $settingService
     ): JsonResponse {
         $review = $reviewManager->getReviewByCode($code);
 
@@ -68,12 +68,12 @@ class JournalSettingController extends AbstractController
         ]);
     }
 
-    #[Route('/journal/{code}/settings/edit', name: 'app_journal_settings_update', methods: ['POST','PUT'])]
+    #[Route('/journal/{code}/frontend-settings/edit', name: 'app_journal_frontend_settings_update', methods: ['POST','PUT'])]
     public function update(
         string $code,
         Request $request,
         ReviewManager $reviewManager,
-        JournalSettingService $settingService
+        JournalFrontendSettingService $settingService
     ): JsonResponse {
         // Validate CSRF token from query parameter
         $token = $request->query->get('_token');

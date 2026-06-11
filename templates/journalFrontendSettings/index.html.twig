@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-  {% block title %}{{ 'journalSettings.title'|trans }} - {{ review.name }}{% endblock %}
+  {% block title %}{{ 'journalFrontendSettings.title'|trans }} - {{ review.name }}{% endblock %}
 
   {% block body %}
       <div class="container py-4">
@@ -9,7 +9,7 @@
                   <span class="text-muted fs-5">{{ review.name }}</span>
               </div>
               <div class="text-ceter" style="flex:1;">
-                  <h1 class="h3 mb-0"><i class="fas fa-cog me-2"></i>{{ 'journalSettings.title'|trans }}</h1>
+                  <h1 class="h3 mb-0"><i class="fas fa-cog me-2"></i>{{ 'journalFrontendSettings.title'|trans }}</h1>
               </div>
               <div class="text-end" style="flex:1;">
                   <a href="{{ path('app_journal_dashboard', {'code': code}) }}" class="btn btn-outline-secondary">
@@ -28,13 +28,13 @@
               <div class="card">
                   <div class="card-header" style="font-size: 18px;">
                       <i class="fas fa-plug me-2"></i>
-                      {{ 'journalSettings.api.title'|trans }}
-                      <small class="text-muted">({{ 'journalSettings.api.description'|trans }})</small>
+                      {{ 'journalFrontendSettings.api.title'|trans }}
+                      <small class="text-muted">({{ 'journalFrontendSettings.api.description'|trans }})</small>
                   </div>
                   <div class="card-body px-5">
                       <div class="mb-3">
                           <label for="api_domain"
-                                 class="form-label">{{ 'journalSettings.api.domain'|trans }}</label>
+                                 class="form-label">{{ 'journalFrontendSettings.api.domain'|trans }}</label>
                           <select class="form-select" id="api_domain">
                               <option value="https://api-preprod.episciences.org" {{ setting.api_domain == 'https://api-preprod.episciences.org' ? 'selected' : '' }}>
                                   https://api-preprod.episciences.org
@@ -51,14 +51,14 @@
               <div class="card">
                   <div class="card-header" style="font-size: 18px;">
                       <i class="fas fa-palette me-2"></i>
-                      {{ 'journalSettings.theme.title'|trans }}
-                      <small class="text-muted">({{ 'journalSettings.theme.description'|trans }})</small>
+                      {{ 'journalFrontendSettings.theme.title'|trans }}
+                      <small class="text-muted">({{ 'journalFrontendSettings.theme.description'|trans }})</small>
                   </div>
                   <div class="card-body px-5 py-3">
                       <div class="row justify-content-between mb-3">
                           <div class="col-md-5">
                               <label for="theme_primaryColor"
-                                     class="form-label">{{ 'journalSettings.theme.primaryColor'|trans }}</label>
+                                     class="form-label">{{ 'journalFrontendSettings.theme.primaryColor'|trans }}</label>
                               <div class="input-group">
                                   <input type="color" class="form-control form-control-color"
                                          id="theme_primaryColor_picker"
@@ -71,7 +71,7 @@
                           </div>
                           <div class="col-md-5">
                               <label for="theme_primaryTextColor"
-                                     class="form-label">{{ 'journalSettings.theme.primaryTextColor'|trans }}</label>
+                                     class="form-label">{{ 'journalFrontendSettings.theme.primaryTextColor'|trans }}</label>
                               <div class="input-group">
                                   <input type="color" class="form-control form-control-color"
                                          id="theme_primaryTextColor_picker"
@@ -86,18 +86,18 @@
                       <div class="mt-5">
                           <div class="row justify-content-between">
                               <div class="col-md-5 mb-3">
-                                  <label class="form-label">{{ 'journalSettings.theme.preview'|trans }}</label>
+                                  <label class="form-label">{{ 'journalFrontendSettings.theme.preview'|trans }}</label>
                                   <div id="theme-preview" class="p-3 rounded"
                                        style="background-color: {{ setting.theme.primaryColor }};
                                                color: {{ setting.theme.primaryTextColor }};">
-                                      {{ 'journalSettings.theme.previewText'|trans }}
+                                      {{ 'journalFrontendSettings.theme.previewText'|trans }}
                                   </div>
                               </div>
                               <div class="col-md-5 mb-3">
-                                  <label class="form-label">{{ 'journalSettings.theme.contrastRatio'|trans }}</label>
+                                  <label class="form-label">{{ 'journalFrontendSettings.theme.contrastRatio'|trans }}</label>
                                   <div class="p-3 rounded border text-center">
                                       <div id="contrast-ratio-value" class="fs-3 fw-bold">--</div>
-                                      <div id="contrast-ratio-level" class="badge mt-2" data-fail-label="{{ 'journalSettings.theme.contrastFail'|trans }}">--</div>
+                                      <div id="contrast-ratio-level" class="badge mt-2" data-fail-label="{{ 'journalFrontendSettings.theme.contrastFail'|trans }}">--</div>
                                       <div class="small text-muted mt-2">
                                           <span class="badge bg-success">AAA ≥ 7:1</span>
                                           <span class="badge bg-warning text-dark">AA ≥ 4.5:1</span>
@@ -114,17 +114,17 @@
               <div class="card">
                   <div class="card-header" style="font-size: 18px;">
                       <i class="fas fa-language me-2"></i>
-                      {{ 'journalSettings.languages.title'|trans }}
-                      <small class="text-muted">({{ 'journalSettings.languages.description'|trans }})</small>
+                      {{ 'journalFrontendSettings.languages.title'|trans }}
+                      <small class="text-muted">({{ 'journalFrontendSettings.languages.description'|trans }})</small>
                   </div>
                   <div class="card-body px-5">
                       <div class="mb-3">
-                          <label class="form-label">{{ 'journalSettings.languages.accepted'|trans }}</label>
+                          <label class="form-label">{{ 'journalFrontendSettings.languages.accepted'|trans }}</label>
                           <div class="d-flex flex-wrap gap-3">
                               {% set availableLanguages = {
-                              'en': 'journalSettings.languages.english'|trans,
-                              'fr': 'journalSettings.languages.french'|trans,
-                              'es': 'journalSettings.languages.spanish'|trans
+                              'en': 'journalFrontendSettings.languages.english'|trans,
+                              'fr': 'journalFrontendSettings.languages.french'|trans,
+                              'es': 'journalFrontendSettings.languages.spanish'|trans
                           } %}
                               {% for code, name in availableLanguages %}
                                   <div class="form-check">
@@ -140,7 +140,7 @@
                       </div>
                       <div class="mb-3">
                           <label for="languages_default"
-                                 class="form-label">{{ 'journalSettings.languages.default'|trans }}</label>
+                                 class="form-label">{{ 'journalFrontendSettings.languages.default'|trans }}</label>
                           <select class="form-select" id="languages_default">
                               {% for code, name in availableLanguages %}
                                   <option value="{{ code }}" {{ setting.languages.default
@@ -155,8 +155,8 @@
               <div class="card">
                   <div class="card-header" style="font-size: 18px;">
                       <i class="fas fa-home me-2"></i>
-                      {{ 'journalSettings.homepage.title'|trans }}
-                      <small class="text-muted">({{ 'journalSettings.homepage.description'|trans }})</small>
+                      {{ 'journalFrontendSettings.homepage.title'|trans }}
+                      <small class="text-muted">({{ 'journalFrontendSettings.homepage.description'|trans }})</small>
                   </div>
                   <div class="card-body px-5">
                       <div class="row justify-content-between">
@@ -168,7 +168,7 @@
                                              id="homepage_{{ option }}"
                                               {{ setting.homepage[option] ? 'checked' : '' }}>
                                       <label class="form-check-label" for="homepage_{{ option }}">
-                                          {{ ('journalSettings.homepage.' ~ option)|trans }}
+                                          {{ ('journalFrontendSettings.homepage.' ~ option)|trans }}
                                       </label>
                                   </div>
                               </div>
@@ -176,19 +176,19 @@
                       </div>
                       <div class="my-3">
                           <label for="homepageRightBlock_lastInformationRenderType" class="form-label">
-                              {{ 'journalSettings.homepage.lastInformationRenderType'|trans }}
-                              <small class="text-muted">({{ 'journalSettings.homepage.lastInformationRenderTypeHint'|trans }}
+                              {{ 'journalFrontendSettings.homepage.lastInformationRenderType'|trans }}
+                              <small class="text-muted">({{ 'journalFrontendSettings.homepage.lastInformationRenderTypeHint'|trans }}
                                   )</small>
                           </label>
                           <select class="form-select" id="homepageRightBlock_lastInformationRenderType">
                               <option value="last-news" {{ setting.homepageRightBlock.lastInformationRenderType == 'last-news' ? 'selected' : '' }}>
-                                  {{ 'journalSettings.homepage.lastNews'|trans }}
+                                  {{ 'journalFrontendSettings.homepage.lastNews'|trans }}
                               </option>
                               <option value="last-volume" {{ setting.homepageRightBlock.lastInformationRenderType == 'last-volume' ? 'selected' : '' }}>
-                                  {{ 'journalSettings.homepage.lastVolume'|trans }}
+                                  {{ 'journalFrontendSettings.homepage.lastVolume'|trans }}
                               </option>
                               <option value="last-special-issue" {{ setting.homepageRightBlock.lastInformationRenderType == 'last-special-issue' ? 'selected' : '' }}>
-                                  {{ 'journalSettings.homepage.lastSpecialIssue'|trans }}
+                                  {{ 'journalFrontendSettings.homepage.lastSpecialIssue'|trans }}
                               </option>
                           </select>
                       </div>
@@ -199,8 +199,8 @@
               <div class="card">
                   <div class="card-header" style="font-size: 18px;">
                       <i class="fas fa-bars me-2"></i>
-                      {{ 'journalSettings.menu.title'|trans }}
-                      <small class="text-muted">({{ 'journalSettings.menu.description'|trans }})</small>
+                      {{ 'journalFrontendSettings.menu.title'|trans }}
+                      <small class="text-muted">({{ 'journalFrontendSettings.menu.description'|trans }})</small>
                   </div>
                   <div class="card-body px-5">
                       {% set menuCategories = {
@@ -213,7 +213,7 @@
                               <div class="col-md-4 mb-4">
                                   <h6 class="text-muted border-bottom pb-2 mb-3">
                                       <i class="fas fa-folder me-1"></i>
-                                      {{ ('journalSettings.menu.category.' ~ category)|trans }}
+                                      {{ ('journalFrontendSettings.menu.category.' ~ category)|trans }}
                                   </h6>
                                   {% for option in options %}
                                       <div class="form-check form-switch mb-2">
@@ -222,7 +222,7 @@
                                                  id="menu_{{ option }}"
                                                   {{ setting.menu[option] ? 'checked' : '' }}>
                                           <label class="form-check-label" for="menu_{{ option }}">
-                                              {{ ('journalSettings.menu.' ~ option)|trans }}
+                                              {{ ('journalFrontendSettings.menu.' ~ option)|trans }}
                                           </label>
                                       </div>
                                   {% endfor %}
@@ -236,8 +236,8 @@
               <div class="card">
                   <div class="card-header" style="font-size: 18px;">
                       <i class="fas fa-chart-bar me-2"></i>
-                      {{ 'journalSettings.statistics.title'|trans }}
-                      <small class="text-muted">({{ 'journalSettings.statistics.description'|trans }})</small>
+                      {{ 'journalFrontendSettings.statistics.title'|trans }}
+                      <small class="text-muted">({{ 'journalFrontendSettings.statistics.description'|trans }})</small>
                   </div>
                   <div class="card-body px-5">
                       <div class="mb-4">
@@ -245,7 +245,7 @@
                               <div class="col-md-3">
                               </div>
                               <div class="col-md-3">
-                                  <label class="form-label">{{ 'journalSettings.statistics.colors'|trans }}</label>
+                                  <label class="form-label">{{ 'journalFrontendSettings.statistics.colors'|trans }}</label>
                                   <div class="d-flex flex-wrap gap-2" id="statistics-colors">
                                       {% for i, color in setting.statistics.colors %}
                                           <input type="color" class="form-control form-control-color stats-color"
@@ -254,7 +254,7 @@
                                   </div>
                               </div>
                               <div class="col-md-6">
-                                  <label class="form-label">{{ 'journalSettings.statistics.preview'|trans }}</label>
+                                  <label class="form-label">{{ 'journalFrontendSettings.statistics.preview'|trans }}</label>
                                   <div class="d-flex align-items-center gap-4">
                                       <div id="chart-preview" style="
                                           width: 100px;
@@ -270,19 +270,19 @@
                                       <div class="chart-legend small">
                                           <div class="d-flex align-items-center mb-1">
                                               <span id="legend-color-0" class="me-2" style="display:inline-block;width:14px;height:14px;background:{{ setting.statistics.colors[0] }};"></span>
-                                              <span>{{ 'journalSettings.statistics.preview.published'|trans }}</span>
+                                              <span>{{ 'journalFrontendSettings.statistics.preview.published'|trans }}</span>
                                           </div>
                                           <div class="d-flex align-items-center mb-1">
                                               <span id="legend-color-1" class="me-2" style="display:inline-block;width:14px;height:14px;background:{{ setting.statistics.colors[1] }};"></span>
-                                              <span>{{ 'journalSettings.statistics.preview.rejected'|trans }}</span>
+                                              <span>{{ 'journalFrontendSettings.statistics.preview.rejected'|trans }}</span>
                                           </div>
                                           <div class="d-flex align-items-center mb-1">
                                               <span id="legend-color-2" class="me-2" style="display:inline-block;width:14px;height:14px;background:{{ setting.statistics.colors[2] }};"></span>
-                                              <span>{{ 'journalSettings.statistics.preview.accepted'|trans }}</span>
+                                              <span>{{ 'journalFrontendSettings.statistics.preview.accepted'|trans }}</span>
                                           </div>
                                           <div class="d-flex align-items-center mb-1">
                                               <span id="legend-color-3" class="me-2" style="display:inline-block;width:14px;height:14px;background:{{ setting.statistics.colors[3] }};"></span>
-                                              <span>{{ 'journalSettings.statistics.preview.other'|trans }}</span>
+                                              <span>{{ 'journalFrontendSettings.statistics.preview.other'|trans }}</span>
                                           </div>
                                       </div>
                                   </div>
@@ -293,15 +293,15 @@
                       <table class="table mt-3 table-sm">
                           <thead>
                           <tr>
-                              <th>{{ 'journalSettings.statistics.statistic'|trans }}</th>
-                              <th class="text-center">{{ 'journalSettings.statistics.render'|trans }}</th>
-                              <th class="text-center">{{ 'journalSettings.statistics.order'|trans }}</th>
+                              <th>{{ 'journalFrontendSettings.statistics.statistic'|trans }}</th>
+                              <th class="text-center">{{ 'journalFrontendSettings.statistics.render'|trans }}</th>
+                              <th class="text-center">{{ 'journalFrontendSettings.statistics.order'|trans }}</th>
                           </tr>
                           </thead>
                           <tbody>
                           {% for option in statsOptions %}
                               <tr>
-                                  <td>{{ ('journalSettings.statistics.' ~ option)|trans }}</td>
+                                  <td>{{ ('journalFrontendSettings.statistics.' ~ option)|trans }}</td>
                                   <td class="text-center">
                                       <input class="form-check-input stats-render"
                                              type="checkbox"
@@ -329,12 +329,12 @@
               <div class="d-flex justify-content-center mt-4">
                   <button type="button" class="btn btn-primary btn-lg" id="saveSettings">
                       <i class="fas fa-save me-2"></i>
-                      {{ 'journalSettings.save'|trans }}
+                      {{ 'journalFrontendSettings.save'|trans }}
                   </button>
               </div>
           {% else %}
               <div class="alert alert-info mt-4 text-center">
-                  {{ 'journalSettings.readonlyInfo'|trans }}
+                  {{ 'journalFrontendSettings.readonlyInfo'|trans }}
               </div>
           {% endif %}
       </div>
@@ -343,13 +343,13 @@
   {% block javascripts %}
       {{ parent() }}
       <script>
-          window.journalSettingsData = {
-              updateUrl: '{{ path('app_journal_settings_update', {'code': code}) }}',
+          window.journalFrontendSettingsData = {
+              updateUrl: '{{ path('app_journal_frontend_settings_update', {'code': code}) }}',
               csrfToken: '{{ csrf_token('journal-settings') }}',
               translations: {
-                  save: '{{ 'journalSettings.save'|trans }}',
-                  saved: '{{ 'journalSettings.saved'|trans }}',
-                  error: '{{ 'journalSettings.error'|trans }}'
+                  save: '{{ 'journalFrontendSettings.save'|trans }}',
+                  saved: '{{ 'journalFrontendSettings.saved'|trans }}',
+                  error: '{{ 'journalFrontendSettings.error'|trans }}'
               }
           };
 
@@ -368,5 +368,5 @@
           });
           {% endif %}
       </script>
-      {{ encore_entry_script_tags('journalSettingsJs') }}
+      {{ encore_entry_script_tags('journalFrontendSettingsJs') }}
   {% endblock %}

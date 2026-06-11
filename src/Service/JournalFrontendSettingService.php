@@ -1,14 +1,14 @@
 <?php
 namespace App\Service;
 
-use App\Entity\JournalSetting;
-use App\Repository\JournalSettingRepository;
+use App\Entity\JournalFrontendSetting;
+use App\Repository\JournalFrontendSettingRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
-class JournalSettingService
+class JournalFrontendSettingService
 {
     public function __construct(
-        private JournalSettingRepository $repository,
+        private JournalFrontendSettingRepository $repository,
         private EntityManagerInterface   $entityManager,
         private JsonSchemaValidator      $schemaValidator
     )
@@ -132,7 +132,7 @@ class JournalSettingService
     /**
      * Get a setting entity by its RVID.
      */
-    public function getByRvid(int $rvid): ?JournalSetting
+    public function getByRvid(int $rvid): ?JournalFrontendSetting
     {
         return $this->repository->findByRvid($rvid);
     }
@@ -140,12 +140,12 @@ class JournalSettingService
     /**
      * Get the setting for the given RVID or create it with default values.
      */
-    public function getOrCreateSetting(int $rvid): JournalSetting
+    public function getOrCreateSetting(int $rvid): JournalFrontendSetting
     {
         $setting = $this->repository->findByRvid($rvid);
 
-        if (!$setting instanceof \App\Entity\JournalSetting) {
-            $setting = new JournalSetting();
+        if (!$setting instanceof \App\Entity\JournalFrontendSetting) {
+            $setting = new JournalFrontendSetting();
             $setting->setRvid($rvid);
             $setting->setSetting($this->getDefaultSetting());
             $setting->setCreatedAt(new \DateTime());
@@ -177,7 +177,7 @@ class JournalSettingService
      * @return array{
      *     success: bool,
      *     errors?: array<string, string>,
-     *     setting?: JournalSetting
+     *     setting?: JournalFrontendSetting
      * }
      */
     public function updateSetting(int $rvid, array $newSetting): array
@@ -223,7 +223,7 @@ class JournalSettingService
      */
     private function validateSetting(array $config): array
     {
-        $result = $this->schemaValidator->validate($config, 'journal_setting');
+        $result = $this->schemaValidator->validate($config, 'journal_frontend_setting');
 
         if ($result['valid']) {
             return [];

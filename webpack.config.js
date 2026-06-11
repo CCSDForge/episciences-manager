@@ -28,7 +28,10 @@ Encore
   .addEntry('journalJs', './assets/scripts/pages/journal.js')
   .addEntry('journalPagesJs', './assets/scripts/pages/journalPages.js')
   .addEntry('resourcesJs', './assets/scripts/pages/resources.js')
-  .addEntry('journalSettingsJs', './assets/scripts/pages/journalSettings.js')
+  .addEntry(
+    'journalFrontendSettingsJs',
+    './assets/scripts/pages/journalFrontendSettings.js'
+  )
   .addEntry('newsJs', './assets/scripts/pages/news.js')
 
   .addStyleEntry('main', './assets/styles/app.scss')

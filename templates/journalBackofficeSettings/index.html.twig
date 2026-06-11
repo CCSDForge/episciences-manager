@@ -1,0 +1,158 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'journalBackofficeSettings.title'|trans }} - {{ review.name }}{% endblock %}
+
+{% block body %}
+    <div class="container py-4">
+
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <div class="text-start" style="flex:1;">
+                <span class="text-muted fs-5">{{ review.name }}</span>
+            </div>
+            <div class="text-center" style="flex:1;">
+                <h1 class="h3 mb-0"><i class="fas fa-cogs me-2"></i>{{ 'journalBackofficeSettings.title'|trans }}</h1>
+            </div>
+            <div class="text-end" style="flex:1;">
+                <a href="{{ path('app_journal_dashboard', {'code': code}) }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-1"></i>
+                    {{ 'journalPages.back'|trans }}
+                </a>
+            </div>
+        </div>
+
+        {# Flash messages #}
+        {% include 'components/flash_messages.html.twig' %}
+
+        {% if editMode %}
+        <form method="POST"
+              action="{{ path('app_journal_backoffice_settings_update', {'code': code}) }}"
+              data-controller="backoffice-settings"
+              data-action="submit->backoffice-settings#onSubmit">
+        {% endif %}
+
+        <div class="d-flex flex-column gap-3 py-3">
+
+            {# ===== Journal Description ===== #}
+            <div class="card">
+                <div class="card-header" style="font-size: 18px;">
+                    <i class="fas fa-file-alt me-2"></i>
+                    {{ 'journalBackofficeSettings.journalDescription.title'|trans }}
+                    <small class="text-muted">({{ 'journalBackofficeSettings.journalDescription.description'|trans }})</small>
+                </div>
+                <div class="card-body px-5">
+                    <div class="mb-3">
+                        <label for="journalDescription" class="form-label">
+                            {{ 'journalBackofficeSettings.journalDescription.label'|trans }}
+                        </label>
+                        {% if editMode %}
+                            <textarea class="form-control"
+                                      id="journalDescription"
+                                      name="journalDescription"
+                                      rows="6"
+                                      placeholder="{{ 'journalBackofficeSettings.journalDescription.placeholder'|trans }}">{{ settings.journalDescription ?? '' }}</textarea>
+                        {% else %}
+                            <div class="form-control bg-light" style="min-height: 150px; white-space: pre-wrap;">{{ settings.journalDescription ?? '-' }}</div>
+                        {% endif %}
+                        <div class="form-text">
+                            {{ 'journalBackofficeSettings.journalDescription.hint'|trans }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# ===== Journal Keywords ===== #}
+            <div class="card">
+                <div class="card-header" style="font-size: 18px;">
+                    <i class="fas fa-tags me-2"></i>
+                    {{ 'journalBackofficeSettings.journalKeywords.title'|trans }}
+                    <small class="text-muted">({{ 'journalBackofficeSettings.journalKeywords.description'|trans }})</small>
+                </div>
+                <div class="card-body px-5">
+                    <div class="mb-3">
+                        <label for="journalKeywords" class="form-label">
+                            {{ 'journalBackofficeSettings.journalKeywords.label'|trans }}
+                        </label>
+                        {% if editMode %}
+                            <input type="text"
+                                   class="form-control"
+                                   id="journalKeywords"
+                                   name="journalKeywords"
+                                   value="{{ settings.journalKeywords ?? '' }}"
+                                   placeholder="{{ 'journalBackofficeSettings.journalKeywords.placeholder'|trans }}">
+                        {% else %}
+                            <div class="form-control bg-light">{{ settings.journalKeywords ?? '-' }}</div>
+                        {% endif %}
+                        <div class="form-text">
+                            {{ 'journalBackofficeSettings.journalKeywords.hint'|trans }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# ===== Journal Creation Year ===== #}
+            <div class="card">
+                <div class="card-header" style="font-size: 18px;">
+                    <i class="fas fa-calendar-alt me-2"></i>
+                    {{ 'journalBackofficeSettings.journalCreationYear.title'|trans }}
+                    <small class="text-muted">({{ 'journalBackofficeSettings.journalCreationYear.description'|trans }})</small>
+                </div>
+                <div class="card-body px-5">
+                    <div class="mb-3">
+                        <label for="journalCreationYear" class="form-label">
+                            {{ 'journalBackofficeSettings.journalCreationYear.label'|trans }}
+                        </label>
+                        {% if editMode %}
+                            <input type="number"
+                                   class="form-control"
+                                   id="journalCreationYear"
+                                   name="journalCreationYear"
+                                   value="{{ settings.journalCreationYear ?? '' }}"
+                                   placeholder="{{ 'journalBackofficeSettings.journalCreationYear.placeholder'|trans }}"
+                                   min="1900"
+                                   max="2100">
+                        {% else %}
+                            <div class="form-control bg-light">{{ settings.journalCreationYear ?? '-' }}</div>
+                        {% endif %}
+                        <div class="form-text">
+                            {{ 'journalBackofficeSettings.journalCreationYear.hint'|trans }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        {# ===== Buttons ===== #}
+        {% if editMode %}
+            {# Edit mode: Cancel + Save buttons #}
+            <input type="hidden" name="_token" value="{{ csrf_token('journal-backoffice-settings') }}">
+
+            <div class="d-flex justify-content-center gap-3 mt-4">
+                <a href="{{ path('app_journal_backoffice_settings', {'code': code}) }}" class="btn btn-outline-secondary btn-lg">
+                    <i class="fas fa-times me-2"></i>
+                    {{ 'journalBackofficeSettings.cancel'|trans }}
+                </a>
+                <button type="submit"
+                        class="btn btn-primary btn-lg"
+                        data-backoffice-settings-target="saveButton">
+                    <i class="fas fa-save me-2"></i>
+                    {{ 'journalBackofficeSettings.save'|trans }}
+                </button>
+            </div>
+            </form>
+        {% elseif canEditSettings %}
+            {# Read-only mode with edit permission: Edit button #}
+            <div class="d-flex justify-content-center mt-4">
+                <a href="{{ path('app_journal_backoffice_settings_edit', {'code': code}) }}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-edit me-2"></i>
+                    {{ 'journalBackofficeSettings.edit'|trans }}
+                </a>
+            </div>
+        {% else %}
+            {# Read-only mode without edit permission #}
+            <div class="alert alert-info mt-4 text-center">
+                {{ 'journalBackofficeSettings.readonlyInfo'|trans }}
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

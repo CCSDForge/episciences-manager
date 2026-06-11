@@ -30,7 +30,7 @@ Usage:
         {% for message in app.flashes(type) %}
             <div class="alert {{ config.class }} alert-dismissible fade show" role="alert" data-auto-close="{{ autoCloseTime }}">
                 <i class="fas {{ config.icon }} me-2"></i>
-                {{ message }}
+                {{ message|trans }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         {% endfor %}
