@@ -33,7 +33,7 @@ class JournalBackofficeSettingController extends AbstractController
 
         // If no settings exist yet and user can edit, redirect to edit mode for initial setup
         $hasData = $this->hasAnySettingValue($settings);
-        if (!$hasData && $this->isGranted('REVIEW_EDIT_SETTINGS', $review)) {
+        if (!$hasData && $this->isGranted('REVIEW_EDIT_BACKOFFICE_SETTINGS', $review)) {
             return $this->redirectToRoute('app_journal_backoffice_settings_edit', ['code' => $code]);
         }
 
@@ -41,7 +41,7 @@ class JournalBackofficeSettingController extends AbstractController
             'review' => $review,
             'settings' => $settings,
             'code' => $code,
-            'canEditSettings' => $this->isGranted('REVIEW_EDIT_SETTINGS', $review),
+            'canEditSettings' => $this->isGranted('REVIEW_EDIT_BACKOFFICE_SETTINGS', $review),
             'editMode' => false,
         ]);
     }
@@ -76,7 +76,7 @@ class JournalBackofficeSettingController extends AbstractController
             throw $this->createNotFoundException('Journal not found');
         }
 
-        $this->denyAccessUnlessGranted('REVIEW_EDIT_SETTINGS', $review);
+        $this->denyAccessUnlessGranted('REVIEW_EDIT_BACKOFFICE_SETTINGS', $review);
 
         $settings = $settingRepository->getSettingArray($review['rvid']);
 
@@ -105,7 +105,7 @@ class JournalBackofficeSettingController extends AbstractController
             throw $this->createNotFoundException('Journal not found');
         }
 
-        $this->denyAccessUnlessGranted('REVIEW_EDIT_SETTINGS', $review);
+        $this->denyAccessUnlessGranted('REVIEW_EDIT_BACKOFFICE_SETTINGS', $review);
 
         $token = $request->request->get('_token');
 
