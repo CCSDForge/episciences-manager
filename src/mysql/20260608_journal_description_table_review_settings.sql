@@ -27,3 +27,6 @@ FROM REVIEW
 WHERE RVID NOT IN (
     SELECT RVID FROM REVIEW_SETTING WHERE SETTING = 'journalCreationYear'
 );
+
+
+--If these changes have already been made on the Episciences project, you can skip this step
