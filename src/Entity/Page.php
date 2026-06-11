@@ -32,8 +32,13 @@ class Page
     #[ORM\Column(name: 'content', type: 'json', nullable: false)]
     private array $content = [];
 
+    // Old column (JSON) - kept for backward compatibility with other projects
+    #[ORM\Column(name: 'visibility', type: 'json', nullable: false)]
+    private array $visibilityJson = [];
+
+    // New column (SET) - optimized storage
     /** @var array<int, string> */
-    #[ORM\Column(name: 'visibility', type: 'page_visibility', nullable: false)]
+    #[ORM\Column(name: 'visibility_set', type: 'page_visibility', nullable: false)]
     private array $visibility = [];
 
     #[ORM\Column(name: 'date_creation', type: Types::DATETIME_MUTABLE,nullable: true)]
@@ -134,7 +139,7 @@ class Page
     public function setVisibility(array $visibility): static
     {
         $this->visibility = $visibility;
-
+        $this->visibilityJson = $visibility;  // Sync both columns
         return $this;
     }
 
