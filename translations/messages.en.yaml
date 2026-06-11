@@ -201,7 +201,7 @@ journalBackofficeSettings:
   created: "Settings created successfully"
   updated: "Settings updated successfully"
   error: "Error saving settings"
-  readonlyInfo: "You can view these settings, but only epiadmin can modify them."
+  readonlyInfo: "You can view these settings, but only epiadmin or administrator can modify them."
 
   journalDescription:
     title: "Journal Description"
