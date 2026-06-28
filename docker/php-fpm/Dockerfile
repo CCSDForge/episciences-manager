@@ -47,6 +47,9 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Configure Git safe directory to avoid ownership warnings
 RUN git config --system --add safe.directory /var/www/htdocs
 
+# Create Composer cache directory for www-data
+RUN mkdir -p /var/www/.composer/cache && chown -R www-data:www-data /var/www/.composer
+
 # Add Xdebug configuration
 #COPY ./docker/php-fpm/xdebug.ini /usr/local/etc/php/conf.d/
 
