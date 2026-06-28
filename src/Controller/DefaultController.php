@@ -32,10 +32,9 @@ class DefaultController extends AbstractController
         $target = urlencode($secureBaseUrl . '/' . $locale . '/force');
 
         // Construct the CAS login URL with the service parameter
-        $url = 'https://cas-preprod.ccsd.cnrs.fr/cas/login?service=' . $target;
+        $url = $this->getCasBaseUrl() . '/login?service=' . $target;
 
-        $secureCasUrl = $this->loadHttpsOrHttp($url);
-        $logger->info('Redirecting to CAS login URL', ['url' => $secureCasUrl]);
+        $logger->info('Redirecting to CAS login URL', ['url' => $url]);
         // Redirect the user to the CAS login page
         return $this->redirect($url);
     }
@@ -61,7 +60,7 @@ class DefaultController extends AbstractController
         $homeUrl = $this->generateUrl('app_home', ['logout' => 'success'], UrlGeneratorInterface::ABSOLUTE_URL);
 
         // Construire l'URL de déconnexion CAS avec le paramètre service
-        $casLogoutUrl = 'https://cas-preprod.ccsd.cnrs.fr/cas/logout?service=' . urlencode($homeUrl);
+        $casLogoutUrl = $this->getCasBaseUrl() . '/logout?service=' . urlencode($homeUrl);
 
         $logger->info('Redirecting to CAS logout', [
             'cas_url' => $casLogoutUrl,
@@ -99,6 +98,16 @@ class DefaultController extends AbstractController
         //return $this->redirectToRoute('user_profile');
         return $this->redirectToRoute('app_journal');
 
+    }
+
+    private function getCasBaseUrl(): string
+    {
+        $host = $this->getParameter('cas_host');
+        $port = $this->getParameter('cas_port');
+        $path = rtrim($this->getParameter('cas_path'), '/');
+        $portSuffix = ($port === 443) ? '' : ":$port";
+
+        return "https://{$host}{$portSuffix}{$path}";
     }
 
     private function loadHttpsOrHttp(string $url): string
