@@ -66,8 +66,8 @@ help: ## Display available commands list
 	@grep -E '^(restart-httpd|restart-php|enter-container.*):.*?## .*$$' $(MAKEFILE_LIST) \
 	| awk 'BEGIN {FS=":.*?## "}; {printf "  $(BOLD)%-22s$(NC) %s\n", $$1, $$2}'
 	@echo ""
-	@echo -e "$(CYAN)SSL / Preproduction Commands:$(NC)"
-	@grep -E '^(ssl-certs|ssl-clean|preprod.*):.*?## .*$$' $(MAKEFILE_LIST) \
+	@echo -e "$(CYAN)Preproduction Commands:$(NC)"
+	@grep -E '^(preprod.*):.*?## .*$$' $(MAKEFILE_LIST) \
 	| awk 'BEGIN {FS=":.*?## "}; {printf "  $(BOLD)%-22s$(NC) %s\n", $$1, $$2}'
 	@echo ""
 	@echo -e "$(RED)Deployment Commands:$(NC)"
@@ -81,7 +81,7 @@ help: ## Display available commands list
 	@echo -e "$(YELLOW)Quick Start:$(NC)"
 	@echo -e "  1. Run $(BOLD)make up$(NC) to start all containers"
 	@echo -e "  2. Add to /etc/hosts: $(BOLD)127.0.0.1 localhost manager-ng-dev.episciences.org$(NC)"
-	@echo -e "  3. Access: $(GREEN)http://manager-ng-dev.episciences.org:8082/$(NC)"
+	@echo -e "  3. Access: $(GREEN)https://manager-ng-dev.episciences.org/$(NC) (Traefik self-signed cert)"
 	@echo ""
 
 # ==========================
@@ -95,8 +95,8 @@ up: ## Start all containers (in background)
 	@echo "====================================================================="
 	@echo "Make sure you have this line in /etc/hosts:"
 	@echo "127.0.0.1 localhost manager-ng-dev.episciences.org"
-	@echo "Episciences Manager : http://manager-ng-dev.episciences.org:8082/"
-	@echo "PhpMyAdmin          : http://localhost:8001/"
+	@echo "Episciences Manager : https://manager-ng-dev.episciences.org/ (via Traefik, self-signed cert)"
+	@echo "PhpMyAdmin          : https://pma.episciences.org/ (via Traefik, start infra first)"
 	@echo "====================================================================="
 	@echo "SQL: place your dumps in ~/tmp/"
 	@echo "SQL: import '~/tmp/episciences.sql' with 'make load-db-manager'"
@@ -253,54 +253,9 @@ enter-container-httpd: ## Open shell in HTTPD container (debug)
 	$(DOCKER) exec -it $(CNTR_NAME_HTTPD) sh -lc "cd /var/www/htdocs && exec bash"
 
 # ==========================
-#         SSL / PREPROD
+#         PREPROD
 # ==========================
-.PHONY: ssl-certs ssl-clean preprod preprod-no-ssl preprod-ci preprod-ci-no-ssl
-ssl-certs: ## Generate self-signed SSL certificates
-	@echo -e "$(BOLD)Generating SSL certificates for development...$(NC)"
-	$(call require_cmd,openssl)
-	@mkdir -p docker/apache/ssl
-	@printf "[req]\n" > docker/apache/ssl/openssl.conf
-	@printf "default_bits = 2048\n" >> docker/apache/ssl/openssl.conf
-	@printf "prompt = no\n" >> docker/apache/ssl/openssl.conf
-	@printf "distinguished_name = req_distinguished_name\n" >> docker/apache/ssl/openssl.conf
-	@printf "req_extensions = v3_req\n" >> docker/apache/ssl/openssl.conf
-	@printf "\n" >> docker/apache/ssl/openssl.conf
-	@printf "[req_distinguished_name]\n" >> docker/apache/ssl/openssl.conf
-	@printf "C = FR\n" >> docker/apache/ssl/openssl.conf
-	@printf "ST = France\n" >> docker/apache/ssl/openssl.conf
-	@printf "L = Lyon\n" >> docker/apache/ssl/openssl.conf
-	@printf "O = Episciences\n" >> docker/apache/ssl/openssl.conf
-	@printf "OU = Development\n" >> docker/apache/ssl/openssl.conf
-	@printf "CN = epimanager-preprod.episciences.org\n" >> docker/apache/ssl/openssl.conf
-	@printf "emailAddress = dev@episciences.org\n" >> docker/apache/ssl/openssl.conf
-	@printf "\n" >> docker/apache/ssl/openssl.conf
-	@printf "[v3_req]\n" >> docker/apache/ssl/openssl.conf
-	@printf "keyUsage = keyEncipherment, dataEncipherment, digitalSignature\n" >> docker/apache/ssl/openssl.conf
-	@printf "extendedKeyUsage = serverAuth\n" >> docker/apache/ssl/openssl.conf
-	@printf "subjectAltName = @alt_names\n" >> docker/apache/ssl/openssl.conf
-	@printf "\n" >> docker/apache/ssl/openssl.conf
-	@printf "[alt_names]\n" >> docker/apache/ssl/openssl.conf
-	@printf "DNS.1 = epimanager-preprod.episciences.org\n" >> docker/apache/ssl/openssl.conf
-	@printf "DNS.2 = localhost\n" >> docker/apache/ssl/openssl.conf
-	@printf "IP.1 = 127.0.0.1\n" >> docker/apache/ssl/openssl.conf
-	@if [ ! -f "docker/apache/ssl/epimanager-preprod.episciences.org.crt" ]; then \
-		openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-			-keyout docker/apache/ssl/epimanager-preprod.episciences.org.key \
-			-out docker/apache/ssl/epimanager-preprod.episciences.org.crt \
-			-config docker/apache/ssl/openssl.conf \
-			-extensions v3_req; \
-		echo -e "$(GREEN)✓ SSL certificates generated$(NC)"; \
-	else \
-		echo -e "$(YELLOW)⚠ SSL certificates already exist$(NC)"; \
-		echo "  Run 'make ssl-clean ssl-certs' to regenerate"; \
-	fi
-
-ssl-clean: ## Remove SSL certificates
-	@echo -e "$(BOLD)Removing SSL certificates...$(NC)"
-	@rm -rf docker/apache/ssl/
-	@echo -e "$(GREEN)✓ SSL certificates removed$(NC)"
-
+.PHONY: preprod preprod-no-ssl preprod-ci preprod-ci-no-ssl
 preprod-setup: ## Complete preprod setup (build assets + compile env + start containers + clear cache)
 	@echo -e "🚀 Setting up complete preprod environment..."
 	@echo -e ""; echo "📋 1/4 - Building production assets..."; $(MAKE) yarn-encore-production
@@ -309,16 +264,15 @@ preprod-setup: ## Complete preprod setup (build assets + compile env + start con
 	@echo -e ""; echo "📋 4/4 - Clearing preprod cache..."; $(MAKE) cache-clear-preprod || true
 	@echo -e ""; echo "✅ Preprod environment ready!"
 
-preprod: ssl-certs ## Start preprod containers with SSL (Docker command on host)
-	@echo -e "$(BOLD)Starting Docker containers for preprod with SSL...$(NC)"
+preprod: ## Start preprod containers (Docker command on host, TLS via Traefik)
+	@echo -e "$(BOLD)Starting Docker containers for preprod (TLS via Traefik)...$(NC)"
 	$(call require_file,docker-compose.yaml)
 	$(DOCKER_COMPOSE) --env-file .env.local up -d
 	@echo -e "$(GREEN)✓ Containers started$(NC)"
 	@echo -e "$(BOLD)🌐 Application URLs:$(NC)"
-	@echo -e "  $(BLUE)HTTP:$(NC)  http://epimanager-preprod.episciences.org"
-	@echo -e "  $(BLUE)HTTPS:$(NC) https://epimanager-preprod.episciences.org"
-	@echo -e "$(YELLOW)⚠️  Required configuration:$(NC)"
-	@echo -e "  Add to $(BOLD)/etc/hosts$(NC): $(BOLD)127.0.0.1    epimanager-preprod.episciences.org$(NC)"
+	@echo -e "  $(BLUE)HTTPS:$(NC) https://manager-ng-dev.episciences.org/ (via Traefik)"
+	@echo -e "$(YELLOW)⚠️  Required: episciences-infrastructure must be running (Traefik)$(NC)"
+	@echo -e "  Add to $(BOLD)/etc/hosts$(NC): $(BOLD)127.0.0.1    manager-ng-dev.episciences.org$(NC)"
 
 preprod-no-ssl: ## Start preprod containers (HTTP only)
 	@echo -e "$(BOLD)Starting Docker containers for preprod (HTTP only)...$(NC)"
@@ -330,17 +284,16 @@ preprod-no-ssl: ## Start preprod containers (HTTP only)
 	@echo -e ""; echo "$(YELLOW)⚠️  Required configuration:$(NC)"
 	@echo -e "  Add to $(BOLD)/etc/hosts$(NC): $(BOLD)127.0.0.1    epimanager-preprod.episciences.org$(NC)"
 
-preprod-ci: ssl-certs ## Start preprod with CI database (compose in host mode)
-	@echo -e "$(BOLD)Starting Docker containers for preprod (CI mode with standalone database)...$(NC)"
-	$(call require_file,docker-compose.yml)
+preprod-ci: ## Start preprod with CI database (compose in host mode, TLS via Traefik)
+	@echo -e "$(BOLD)Starting Docker containers for preprod (CI mode, TLS via Traefik)...$(NC)"
+	$(call require_file,docker-compose.yaml)
 	$(call require_file,docker-compose.ci.yml)
-	$(DOCKER_COMPOSE) -f docker-compose.yml -f docker-compose.ci.yml up -d
-	@echo -e "$(GREEN)✓ CI containers started with standalone database$(NC)"
+	$(DOCKER_COMPOSE) -f docker-compose.yaml -f docker-compose.ci.yml up -d
+	@echo -e "$(GREEN)✓ CI containers started$(NC)"
 	@echo -e ""; echo "$(BOLD)🌐 Application URLs:$(NC)"
-	@echo -e "  $(BLUE)HTTP:$(NC)  http://epimanager-preprod.episciences.org"
-	@echo -e "  $(BLUE)HTTPS:$(NC) https://epimanager-preprod.episciences.org"
-	@echo -e ""; echo "$(YELLOW)⚠️  Required configuration:$(NC)"
-	@echo -e "  Add to $(BOLD)/etc/hosts$(NC): $(BOLD)127.0.0.1    epimanager-preprod.episciences.org$(NC)"
+	@echo -e "  $(BLUE)HTTPS:$(NC) https://manager-ng-dev.episciences.org/ (via Traefik)"
+	@echo -e ""; echo "$(YELLOW)⚠️  Required: episciences-infrastructure must be running (Traefik)$(NC)"
+	@echo -e "  Add to $(BOLD)/etc/hosts$(NC): $(BOLD)127.0.0.1    manager-ng-dev.episciences.org$(NC)"
 
 preprod-ci-no-ssl: ## Start preprod with CI database (HTTP only)
 	@echo -e "$(BOLD)Starting Docker containers for preprod (CI mode, HTTP only)...$(NC)"
@@ -454,5 +407,5 @@ deploy-tag: ## Deploy a tag (make deploy-tag TAG=v1.0.0)
 	composer-install composer-update yarn-build yarn-encore-production can-i-use-update \
 	test test-e2e test-php lint lint-fix format format-check lint-php lint-php-file phpstan rector check-all fix-all \
 	restart-httpd restart-php enter-container-php enter-container-httpd \
-	ssl-certs ssl-clean preprod preprod-no-ssl preprod-ci preprod-ci-no-ssl \
+	preprod preprod-no-ssl preprod-ci preprod-ci-no-ssl \
 	composer-install-prod cache-clear cache-clear-preprod cache-warmup deploy-prod deploy deploy-branch deploy-tag

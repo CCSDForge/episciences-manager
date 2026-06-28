@@ -9,9 +9,7 @@ RUN sed -i '/LoadModule rewrite_module/s/^#//g' /usr/local/apache2/conf/httpd.co
     sed -i '/LoadModule headers_module/s/^#//g' /usr/local/apache2/conf/httpd.conf && \
     sed -i '/LoadModule proxy_module/s/^#//g' /usr/local/apache2/conf/httpd.conf && \
     sed -i '/LoadModule proxy_fcgi_module/s/^#//g' /usr/local/apache2/conf/httpd.conf && \
-    sed -i '/LoadModule setenvif_module/s/^#//g' /usr/local/apache2/conf/httpd.conf && \
-    sed -i '/LoadModule ssl_module/s/^#//g' /usr/local/apache2/conf/httpd.conf && \
-    echo "Listen 443" >> /usr/local/apache2/conf/httpd.conf
+    sed -i '/LoadModule setenvif_module/s/^#//g' /usr/local/apache2/conf/httpd.conf
 
 # Include the manager VirtualHost configuration
 RUN echo "Include conf/extra/episciences-manager.conf" >> /usr/local/apache2/conf/httpd.conf && \
@@ -24,5 +22,5 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["httpd-foreground"]
 
-EXPOSE 80 443
+EXPOSE 80
 #RUN mkdir -p /var/www && chown -R www-data: /var/www/data

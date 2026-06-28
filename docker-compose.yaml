@@ -8,18 +8,23 @@ services:
     restart: always
     volumes:
       - ./docker/apache/vhost.conf:/usr/local/apache2/conf/extra/episciences-manager.conf
-      - ./docker/apache/ssl:/usr/local/apache2/conf/ssl
       - .:/var/www/htdocs
       - ./var/cache:/var/www/htdocs/var/cache
       - ./var/log:/var/www/htdocs/var/log
     ports:
-      - "80:80"
-      - "443:443"
+      - "8082:80"
     depends_on:
       - php-fpm-manager
     networks:
       - epi-manager-network
       - epi-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.epi-manager-httpd.loadbalancer.server.port=80"
+      - "traefik.http.routers.epi-manager.rule=Host(`manager-ng-dev.episciences.org`)"
+      - "traefik.http.routers.epi-manager.entrypoints=websecure"
+      - "traefik.http.routers.epi-manager.tls=true"
+      - "traefik.http.routers.epi-manager.service=epi-manager-httpd"
     command: >
       /bin/sh -c "chown -R www-data:www-data /var/www/htdocs/var && httpd-foreground"
 
@@ -65,4 +70,3 @@ networks:
   epi-network:
     name: epi-network
     external: true
-
