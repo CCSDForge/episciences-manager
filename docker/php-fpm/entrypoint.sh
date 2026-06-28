@@ -4,6 +4,9 @@ set -e
 uid=$(stat -c %u /var/www/htdocs)
 gid=$(stat -c %g /var/www/htdocs)
 
+mkdir -p /var/www/htdocs/data
+chown www-data:www-data /var/www/htdocs/data
+
 if [ "$(id -u)" -eq 0 ] && [ "$(id -g)" -eq 0 ]; then
   if [ $# -eq 0 ]; then
     php-fpm --allow-to-run-as-root
