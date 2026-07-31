@@ -13,6 +13,7 @@ doctrine:
         types:
             news_visibility: App\Doctrine\DBAL\Type\NewsVisibilityType
             page_visibility: App\Doctrine\DBAL\Type\PageVisibilityType
+            indexing_database_status: App\Doctrine\DBAL\Type\IndexingDatabaseStatusType
     orm:
         auto_generate_proxy_classes: true
         enable_lazy_ghost_objects: true

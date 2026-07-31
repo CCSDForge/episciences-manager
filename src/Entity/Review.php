@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ReviewRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -31,6 +33,15 @@ class Review
 
     #[ORM\Column]
     private ?bool $is_new_front_switched = null;
+
+    /** @var Collection<int, IndexingDatabase> */
+    #[ORM\ManyToMany(targetEntity: IndexingDatabase::class, mappedBy: 'reviews')]
+    private Collection $indexingDatabases;
+
+    public function __construct()
+    {
+        $this->indexingDatabases = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -118,6 +129,31 @@ class Review
     {
         $this->is_new_front_switched = $is_new_front_switched;
 
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, IndexingDatabase>
+     */
+    public function getIndexingDatabases(): Collection
+    {
+        return $this->indexingDatabases;
+    }
+
+    public function addIndexingDatabase(IndexingDatabase $indexingDatabase): static
+    {
+        if (!$this->indexingDatabases->contains($indexingDatabase)) {
+            $this->indexingDatabases->add($indexingDatabase);
+            $indexingDatabase->addReview($this);
+        }
+        return $this;
+    }
+
+    public function removeIndexingDatabase(IndexingDatabase $indexingDatabase): static
+    {
+        if ($this->indexingDatabases->removeElement($indexingDatabase)) {
+            $indexingDatabase->removeReview($this);
+        }
         return $this;
     }
 }
