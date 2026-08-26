@@ -14,19 +14,19 @@ class IndexingDatabase
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer', options: ['unsigned' => true])]
+    #[ORM\Column(name: 'ID', type: 'integer', options: ['unsigned' => true])]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(name: 'NAME', length: 255)]
     private ?string $name = null;
 
-    #[ORM\Column(length: 500, nullable: true)]
+    #[ORM\Column(name: 'URL', length: 500, nullable: true)]
     private ?string $url = null;
 
-    #[ORM\Column(length: 500, nullable: true)]
+    #[ORM\Column(name: 'LOGO', length: 500, nullable: true)]
     private ?string $logo = null;
 
-    #[ORM\Column(type: 'indexing_database_status')]
+    #[ORM\Column(name: 'STATUS', type: 'indexing_database_status')]
     private ?IndexingDatabaseStatus $status = null;
 
     #[ORM\Column(name: 'CREATED_AT', type: Types::DATETIME_MUTABLE)]
@@ -36,14 +36,14 @@ class IndexingDatabase
     private ?\DateTimeInterface $updatedAt = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(name: 'CREATED_BY', referencedColumnName: 'UID', nullable: true)]
+    #[ORM\JoinColumn(name: 'CREATED_BY', referencedColumnName: 'UID', nullable: true, onDelete: 'SET NULL')]
     private ?User $createdBy = null;
 
     /** @var Collection<int, Review> */
     #[ORM\ManyToMany(targetEntity: Review::class, inversedBy: 'indexingDatabases')]
     #[ORM\JoinTable(name: 'REVIEW_INDEXING_DATABASE')]
-    #[ORM\JoinColumn(name: 'INDEXING_DATABASE_ID', referencedColumnName: 'id')]
-    #[ORM\InverseJoinColumn(name: 'RVID', referencedColumnName: 'rvid')]
+    #[ORM\JoinColumn(name: 'INDEXING_DATABASE_ID', referencedColumnName: 'ID', columnDefinition: 'INT UNSIGNED NOT NULL')]
+    #[ORM\InverseJoinColumn(name: 'RVID', referencedColumnName: 'RVID', columnDefinition: 'INT UNSIGNED NOT NULL')]
     private Collection $reviews;
 
     public function __construct()

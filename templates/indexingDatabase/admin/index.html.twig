@@ -1,0 +1,129 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container">
+        {% if app.user and app.user.userIdentifier != '__NO_USER__' %}
+            {% include 'partials/navbar.html.twig' %}
+        {% endif %}
+
+        <div class="d-flex justify-content-between align-items-center my-4">
+            <h1 class="mb-0">{{ 'indexingDatabase.admin.title'|trans }}</h1>
+            <a href="{{ path('app_admin_indexing_database_create') }}" class="btn btn-primary">
+                <i class="fas fa-plus me-1"></i> {{ 'indexingDatabase.admin.create'|trans }}
+            </a>
+        </div>
+
+        {% include 'components/flash_messages.html.twig' %}
+
+        <!-- Filters -->
+        <div class="mb-3">
+            <a href="{{ path('app_admin_indexing_database_index') }}"
+               class="btn btn-sm {{ currentFilter is null ? 'btn-primary' : 'btn-outline-secondary' }}">
+                {{ 'indexingDatabase.admin.filterAll'|trans }}({{ allCount }})
+            </a>
+            <a href="{{ path('app_admin_indexing_database_index', {status: 'pending'}) }}"
+               class="btn btn-sm {{ currentFilter == 'pending' ? 'btn-warning' : 'btn-outline-warning' }}">
+                {{ 'indexingDatabase.admin.filterPending'|trans }} ({{ pendingCount }})
+            </a>
+            <a href="{{ path('app_admin_indexing_database_index', {status: 'validated'}) }}"
+               class="btn btn-sm {{ currentFilter == 'validated' ? 'btn-success' : 'btn-outline-success' }}">
+                {{ 'indexingDatabase.admin.filterValidated'|trans }}({{ validatedCount }})
+            </a>
+            <a href="{{ path('app_admin_indexing_database_index', {status: 'rejected'}) }}"
+               class="btn btn-sm {{ currentFilter == 'rejected' ? 'btn-danger' : 'btn-outline-danger' }}">
+                {{ 'indexingDatabase.admin.filterRejected'|trans }}({{ rejectedCount }})
+            </a>
+        </div>
+
+        <!-- List -->
+        <table class="table">
+            <thead>
+            <tr>
+                <th>{{ 'indexingDatabase.admin.tableName'|trans }}</th>
+                <th>{{ 'indexingDatabase.admin.tableLogo'|trans }}</th>
+                <th>{{ 'indexingDatabase.admin.tableUrl'|trans }}</th>
+                <th>{{ 'indexingDatabase.admin.tableReviews'|trans }}</th>
+                <th>{{ 'indexingDatabase.admin.tableStatus'|trans }}</th>
+                <th>{{ 'indexingDatabase.admin.tableActions'|trans }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for db in indexingDatabases %}
+                <tr>
+                    <td>{{ db.name }}</td>
+                    <td>
+                        {% if db.logo %}
+                            <img src="{{ path('app_indexing_database_logo', {filename: db.logo}) }}"
+                                 alt="{{ db.name }}"
+                                 style="max-height: 30px;">
+                        {% else %}
+                            <span class="text-muted">-</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ db.url }}</td>
+                    <td>
+                        {% if db.reviews|length > 0 %}
+                            <span class="badge bg-info">{{ db.reviews|length }}</span>
+                            <small class="text-muted ms-1">
+                                {{ db.reviews|map(r => r.code)|join(', ') }}
+                            </small>
+                        {% else %}
+                            <span class="text-muted">-</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if db.status.value == 'pending' %}
+                            <span class="badge bg-warning">{{ 'indexingDatabase.status.pending'|trans }}</span>
+                        {% elseif db.status.value == 'validated' %}
+                            <span class="badge bg-success">{{ 'indexingDatabase.status.validated'|trans }}</span>
+                        {% else %}
+                            <span class="badge bg-danger">{{ 'indexingDatabase.status.rejected'|trans }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="d-flex gap-2">
+                            {# Edit button - always visible #}
+                            <a href="{{ path('app_admin_indexing_database_edit', {id: db.id}) }}"
+                               class="btn btn-outline-primary" title="{{ 'indexingDatabase.admin.edit'|trans }}">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            {% if db.status.value == 'pending' %}
+                                {# Validate button - only for pending entries #}
+                                <form method="post" action="{{ path('app_admin_indexing_database_validate', {id: db.id}) }}" class="d-inline">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('indexing-database-validate-' ~ db.id) }}">
+                                    <input type="hidden" name="action" value="validate">
+                                    <button type="submit" class="btn btn-outline-success" title="{{ 'indexingDatabase.admin.validate'|trans }}">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                </form>
+                                {# Reject button - only for pending entries #}
+                                <form method="post" action="{{ path('app_admin_indexing_database_validate', {id: db.id}) }}" class="d-inline">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('indexing-database-validate-' ~ db.id) }}">
+                                    <input type="hidden" name="action" value="reject">
+                                    <button type="submit" class="btn btn-outline-warning" title="{{ 'indexingDatabase.admin.reject'|trans }}">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </form>
+                            {% endif %}
+                            {# Delete button - always visible #}
+                            <form method="post"
+                                  action="{{ path('app_admin_indexing_database_delete', {id: db.id}) }}"
+                                  class="d-inline"
+                                  onsubmit="return confirm('{{ 'indexingDatabase.admin.confirmDelete'|trans|e('js') }}');">
+                                <input type="hidden" name="_token" value="{{ csrf_token('indexing-database-delete-' ~ db.id) }}">
+                                <button type="submit" class="btn btn-outline-danger" title="{{ 'indexingDatabase.admin.delete'|trans }}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="5" class="text-center text-muted">{{ 'indexingDatabase.admin.noDatabase'|trans }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

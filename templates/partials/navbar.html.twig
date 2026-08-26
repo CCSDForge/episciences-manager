@@ -20,9 +20,11 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ path('app_journal') }}" id="nav-journals">{{ 'nav.journal' | trans }}</a>
                 </li>
-                {#  <li class="nav-item">
-                    <a class="nav-link" href="{{ path('app_journal_settings_select') }}" id="nav-journalFrontendSettings">{{ 'nav.journalFrontendSettings' | trans }}</a>
-                </li #}
+                {% if is_granted('INDEXING_DATABASE_ADMIN_LIST') %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('app_admin_indexing_database_index') }}" id="nav-admin-indexing">{{ 'nav.adminIndexingDatabases' | trans }} </a>
+                </li>
+                {% endif %}
                 {# <li class="nav-item">
                     <a class="nav-link" href="" id="nav-website">{{ 'nav.website' | trans }}</a>
                 </li> #}

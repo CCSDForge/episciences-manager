@@ -43,6 +43,19 @@ class IndexingDatabaseRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @return list<IndexingDatabase>
+     */
+    public function findRejected(): array
+    {
+        return $this->createQueryBuilder('idb')
+            ->where('idb.status = :status')
+            ->setParameter('status', IndexingDatabaseStatus::REJECTED)
+            ->orderBy('idb.name', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
     public function queryAll(): QueryBuilder
     {
         return $this->createQueryBuilder('idb')

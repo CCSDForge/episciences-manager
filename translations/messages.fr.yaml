@@ -18,6 +18,7 @@ nav:
   journalFrontendSettings: "Paramètres front-end du journal"
   website: "Site Web"
   statistics: "Statistiques"
+  adminIndexingDatabases: "Admin - Bases d'indexation"
 
 home:
   welcomeTitle: "Bienvenue sur la plateforme Episciences"
@@ -42,12 +43,71 @@ journal:
   clearSearch: "Vider la recherche"
   seeDetails: "Voir les détails (epiadmin uniquement)"
 
+indexingDatabase:
+  admin:
+    title: "Bases d'indexation"
+    create: "Ajouter"
+    createTitle: "Ajouter une base d'indexation"
+    editTitle: "Modifier la base d'indexation"
+    filterAll: "Toutes"
+    filterPending: "En attente"
+    filterValidated: "Validées"
+    filterRejected: "Refusées"
+    tableName: "Nom"
+    tableLogo: "Logo"
+    tableUrl: "URL"
+    tableReviews: "Revues"
+    tableStatus: "Statut"
+    tableActions: "Actions"
+    noDatabase: "Aucune base d'indexation"
+    validate: "Valider"
+    reject: "Refuser"
+    edit: "Modifier"
+    delete: "Supprimer"
+    confirmDelete: "Êtes-vous sûr de vouloir supprimer cette base d'indexation ?"
+  form:
+    name: "Nom"
+    url: "URL"
+    logo: "Logo"
+    logoHelp: "PNG, JPG, GIF, SVG ou WebP. Max 2 Mo."
+    browse: "Parcourir"
+    noFileSelected: "Aucun fichier sélectionné"
+    removeLogo: "Supprimer le logo"
+    cancel: "Annuler"
+    save: "Enregistrer"
+    requiredFields: "Champs obligatoires"
+  status:
+    pending: "En attente"
+    validated: "Validée"
+    rejected: "Refusée"
+  journal:
+    title: "Bases d'indexation"
+    availableDatabases: "Bases d'indexation disponibles"
+    indexed: "Indexé"
+    proposeTitle: "Proposer une nouvelle base"
+    proposeInfo: "Si une base d'indexation n'apparaît pas dans la liste, vous pouvez la proposer. Elle sera soumise à validation par un administrateur."
+    propose: "Proposer"
+    pendingProposals: "Propositions en attente"
+    rejectedProposals: "Propositions refusées"
+    logoHint: "PNG, JPG, GIF, SVG ou WebP. Max 2 Mo."
+  flash:
+    associated: "Base d'indexation associée avec succès"
+    dissociated: "Base d'indexation dissociée avec succès"
+    proposed: "Proposition envoyée avec succès"
+    created: "Base d'indexation créée avec succès"
+    updated: "Base d'indexation mise à jour avec succès"
+    validated: "Base d'indexation validée avec succès"
+    rejected: "Base d'indexation refusée"
+    deleted: "Base d'indexation supprimée avec succès"
+
+
 journalDashboard:
   editPages: "Éditer les pages"
   backToJournalList: "Retour à la liste des revues"
   welcomeBackoffice: "Bienvenue dans le backoffice de gestion du journal"
   news: "Actualités"
   resources: "Ressources"
+  indexingDatabases: "Bases d'indexation"
 
 journalPages:
   home: "Accueil"

@@ -18,6 +18,7 @@ nav:
   journalFrontendSettings: "Journal Frontend Settings" #on ne l'utilise plus
   website: "Website"
   statistics: "Statistics"
+  adminIndexingDatabases: "Admin - Indexing Databases"
 
 home:
   welcomeTitle: "Welcome to the Episciences platform"
@@ -28,7 +29,7 @@ reviews:
   listTitle: "List of journals"
 
 flash:
-  logoutSuccess: "You have been successfully logged out"
+  logoutSuccess: "You have been successfully logged out."
 
 journal:
   title: "Total journals"
@@ -42,12 +43,70 @@ journal:
   clearSearch: "Clear search"
   seeDetails: "See Details (epiadmin only)"
 
+indexingDatabase:
+  admin:
+    title: "Indexing Databases"
+    create: "Add"
+    createTitle: "Add Indexing Database"
+    editTitle: "Edit Indexing Database"
+    filterAll: "All"
+    filterPending: "Pending"
+    filterValidated: "Validated"
+    filterRejected: "Rejected"
+    tableName: "Name"
+    tableLogo: "Logo"
+    tableUrl: "URL"
+    tableReviews: "Journals"
+    tableStatus: "Status"
+    tableActions: "Actions"
+    noDatabase: "No indexing database"
+    validate: "Validate"
+    reject: "Reject"
+    edit: "Edit"
+    delete: "Delete"
+    confirmDelete: "Are you sure you want to delete this indexing database?"
+  form:
+    name: "Name"
+    url: "URL"
+    logo: "Logo"
+    logoHelp: "PNG, JPG, GIF, SVG or WebP. Max 2MB."
+    browse: "Browse"
+    noFileSelected: "No file selected"
+    removeLogo: "Remove logo"
+    cancel: "Cancel"
+    save: "Save"
+    requiredFields: "Required fields"
+  status:
+    pending: "Pending"
+    validated: "Validated"
+    rejected: "Rejected"
+  journal:
+    title: "Indexing Databases"
+    availableDatabases: "Available Indexing Databases"
+    indexed: "Indexed"
+    proposeTitle: "Propose a New Database"
+    proposeInfo: "If an indexing database is not listed, you can propose it. It will be submitted for administrator approval."
+    propose: "Propose"
+    pendingProposals: "Pending Proposals"
+    rejectedProposals: "Rejected Proposals"
+  flash:
+    associated: "Indexing database successfully associated"
+    dissociated: "Indexing database successfully dissociated"
+    proposed: "Proposal successfully submitted"
+    created: "Indexing database successfully created"
+    updated: "Indexing database successfully updated"
+    validated: "Indexing database successfully validated"
+    rejected: "Indexing database rejected"
+    deleted: "Indexing database successfully deleted"
+
+
 journalDashboard:
   editPages: "Edit Pages"
   backToJournalList: "Back to Journal List"
   welcomeBackoffice: "Welcome to the journal management backoffice"
   news: "News"
   resources: "Resources"
+  indexingDatabases: "Indexing Databases"
 
 journalPages:
   home: "Home"
