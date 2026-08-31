@@ -101,7 +101,7 @@ class IndexingDatabaseService
     }
 
     /**
-     * Upload a logo and return the relative path.
+     * Upload a logo and return the filename (not the full path).
      *
      * @throws \InvalidArgumentException If the file is invalid
      */
@@ -132,15 +132,15 @@ class IndexingDatabaseService
 
         $file->move($uploadDir, $newFilename);
 
-        return self::UPLOAD_DIR . '/' . $newFilename;
+        return $newFilename;
     }
 
     /**
      * Delete a logo file from the filesystem.
      */
-    public function deleteLogo(string $logoPath): void
+    public function deleteLogo(string $logoFilename): void
     {
-        $fullPath = $this->projectDir . '/' . $logoPath;
+        $fullPath = $this->projectDir . '/' . self::UPLOAD_DIR . '/' . $logoFilename;
         if (file_exists($fullPath)) {
             unlink($fullPath);
         }
@@ -160,5 +160,13 @@ class IndexingDatabaseService
     public function getMaxLogoSize(): int
     {
         return self::MAX_LOGO_SIZE;
+    }
+
+    /**
+     * Return the full path to the upload directory.
+     */
+    public function getUploadDirectory(): string
+    {
+        return $this->projectDir . '/' . self::UPLOAD_DIR;
     }
 }

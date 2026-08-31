@@ -8,7 +8,7 @@
             {% include 'partials/navbar.html.twig' %}
         {% endif %}
 
-        <div class="my-4">
+        <div class="text-center my-4">
             {% if isEdit %}
                 <h1><i class="fas fa-edit me-2"></i>{{ 'indexingDatabase.admin.editTitle'|trans }}</h1>
             {% else %}
@@ -17,19 +17,22 @@
         </div>
 
         {% include 'components/flash_messages.html.twig' %}
-
-        <div class="card">
-            <div class="card-body">
-                {% include 'indexingDatabase/_form.html.twig' with {
-                    indexingDatabase: isEdit ? indexingDatabase : null,
-                    formAction: isEdit
-                        ? path('app_admin_indexing_database_edit', {id: indexingDatabase.id})
-                        : path('app_admin_indexing_database_create'),
-                    csrfTokenId: isEdit
-                        ? 'indexing-database-edit-' ~ indexingDatabase.id
-                        : 'indexing-database-create',
-                    cancelUrl: path('app_admin_indexing_database_index')
-                } %}
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card">
+                    <div class="card-body">
+                        {% include 'indexingDatabase/_form.html.twig' with {
+                            indexingDatabase: isEdit ? indexingDatabase : null,
+                            formAction: isEdit
+                            ? path('app_admin_indexing_database_edit', {id: indexingDatabase.id})
+                            : path('app_admin_indexing_database_create'),
+                            csrfTokenId: isEdit
+                            ? 'indexing-database-edit-' ~ indexingDatabase.id
+                            : 'indexing-database-create',
+                            cancelUrl: path('app_admin_indexing_database_index')
+                        } %}
+                    </div>
+                </div>
             </div>
         </div>
     </div>

@@ -13,19 +13,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/admin/indexing-databases')]
 class IndexingDatabaseAdminController extends AbstractController
 {
-    private const ALLOWED_LOGO_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif', 'svg', 'webp'];
-    private const MAX_LOGO_SIZE = 2 * 1024 * 1024; // 2MB
-    private const UPLOAD_DIR = 'data/indexing-databases';
-
     public function __construct(
         private readonly EntityManagerInterface     $entityManager,
         private readonly IndexingDatabaseRepository $repository,
-        private readonly SluggerInterface           $slugger,
         private readonly IndexingDatabaseService    $indexingDatabaseService,
     )
     {
@@ -143,16 +137,7 @@ class IndexingDatabaseAdminController extends AbstractController
             return $this->redirectToRoute('app_admin_indexing_database_index');
         }
 
-        // Delete logo file if exists
-        if ($database->getLogo()) {
-            $logoPath = $this->getParameter('kernel.project_dir') . '/' . self::UPLOAD_DIR . '/' . $database->getLogo();
-            if (file_exists($logoPath)) {
-                unlink($logoPath);
-            }
-        }
-
-        $this->entityManager->remove($database);
-        $this->entityManager->flush();
+        $this->indexingDatabaseService->delete($database);
 
         $this->addFlash('success', 'indexingDatabase.flash.deleted');
 
@@ -180,93 +165,35 @@ class IndexingDatabaseAdminController extends AbstractController
                 : $this->redirectToRoute('app_admin_indexing_database_edit', ['id' => $database->getId()]);
         }
 
-        $database->setName($name);
-        $database->setUrl($url ?: null);
-
-        // Handle logo upload
-        $logoFile = $request->files->get('logo');
-        if ($logoFile) {
-            $logoPath = $this->handleLogoUpload($logoFile, $database);
-            if ($logoPath === false) {
-                return $isNew
-                    ? $this->redirectToRoute('app_admin_indexing_database_create')
-                    : $this->redirectToRoute('app_admin_indexing_database_edit', ['id' => $database->getId()]);
+        try {
+            if ($isNew) {
+                /** @var User $user */
+                $user = $this->getUser();
+                $this->indexingDatabaseService->create(
+                    name: $name,
+                    url: $url ?: null,
+                    logo: $request->files->get('logo'),
+                    createdBy: $user,
+                    status: IndexingDatabaseStatus::VALIDATED
+                );
+                $this->addFlash('success', 'indexingDatabase.flash.created');
+            } else {
+                $this->indexingDatabaseService->update(
+                    database: $database,
+                    name: $name,
+                    url: $url ?: null,
+                    newLogo: $request->files->get('logo'),
+                    removeLogo: $request->request->get('remove_logo') === '1'
+                );
+                $this->addFlash('success', 'indexingDatabase.flash.updated');
             }
-            if ($logoPath !== null) {
-                $database->setLogo($logoPath);
-            }
+        } catch (\InvalidArgumentException $e) {
+            $this->addFlash('error', $e->getMessage());
+            return $isNew
+                ? $this->redirectToRoute('app_admin_indexing_database_create')
+                : $this->redirectToRoute('app_admin_indexing_database_edit', ['id' => $database->getId()]);
         }
-
-        // Handle logo removal
-        if ($request->request->get('remove_logo') === '1' && $database->getLogo()) {
-            $oldLogoPath = $this->getParameter('kernel.project_dir') . '/' . self::UPLOAD_DIR . '/' . $database->getLogo();
-            if (file_exists($oldLogoPath)) {
-                unlink($oldLogoPath);
-            }
-            $database->setLogo(null);
-        }
-
-        if ($isNew) {
-            /** @var User $user */
-            $user = $this->getUser();
-            $database->setCreatedBy($user);
-            $database->setStatus(IndexingDatabaseStatus::VALIDATED);
-            $this->entityManager->persist($database);
-            $this->addFlash('success', 'indexingDatabase.flash.created');
-        } else {
-            $database->setUpdatedAt(new \DateTime());
-            $this->addFlash('success', 'indexingDatabase.flash.updated');
-        }
-
-        $this->entityManager->flush();
 
         return $this->redirectToRoute('app_admin_indexing_database_index');
-    }
-
-    /**
-     * @return string|false|null Path on success, false on error, null if no file
-     */
-    private function handleLogoUpload(mixed $uploadedFile, IndexingDatabase $database): string|false|null
-    {
-        if (!$uploadedFile instanceof \Symfony\Component\HttpFoundation\File\UploadedFile) {
-            return null;
-        }
-
-        if (!$uploadedFile->isValid()) {
-            $this->addFlash('error', 'Logo upload failed');
-            return false;
-        }
-
-        $extension = strtolower($uploadedFile->getClientOriginalExtension());
-        if (!in_array($extension, self::ALLOWED_LOGO_EXTENSIONS, true)) {
-            $this->addFlash('error', 'Invalid logo format. Allowed: ' . implode(', ', self::ALLOWED_LOGO_EXTENSIONS));
-            return false;
-        }
-
-        if ($uploadedFile->getSize() > self::MAX_LOGO_SIZE) {
-            $this->addFlash('error', 'Logo file too large. Maximum size: 2MB');
-            return false;
-        }
-
-        // Delete old logo if exists
-        if ($database->getLogo()) {
-            $oldLogoPath = $this->getParameter('kernel.project_dir') . '/' . self::UPLOAD_DIR . '/' . $database->getLogo();
-            if (file_exists($oldLogoPath)) {
-                unlink($oldLogoPath);
-            }
-        }
-
-        $slug = $this->slugger->slug($database->getName() ?: 'database')->lower();
-        $newFilename = $slug . '-' . uniqid() . '.' . $extension;
-
-        $uploadDir = $this->getParameter('kernel.project_dir') . '/' . self::UPLOAD_DIR;
-        if (!is_dir($uploadDir)) {
-            mkdir($uploadDir, 0755, true);
-        }
-
-        $uploadedFile->move($uploadDir, $newFilename);
-
-        // Return only the filename (not the full path)
-        return $newFilename;
     }
 }

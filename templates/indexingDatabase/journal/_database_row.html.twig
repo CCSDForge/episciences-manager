@@ -1,0 +1,49 @@
+{#
+   Partial for displaying an indexing database row.
+
+   Variables:
+   - database: IndexingDatabase entity
+   - lastColumn: 'toggle' | 'status' - determines the last column content
+   - code: journal code (required if lastColumn is 'toggle')
+   - associatedIds: array of associated database IDs (required if lastColumn is 'toggle')
+#}
+<tr>
+    <td>{{ database.name }}</td>
+    <td>
+        {% if database.logo %}
+            <img src="{{ path('app_indexing_database_logo', {filename: database.logo}) }}"
+                 alt="{{ database.name }}" style="height: 24px;">
+        {% endif %}
+    </td>
+    <td>
+        {% if database.url %}
+            <a href="{{ database.url }}" target="_blank" rel="noopener">{{ database.url }}</a>
+        {% else %}
+            <span class="text-muted">-</span>
+        {% endif %}
+    </td>
+    <td class="text-center">
+        {% if lastColumn == 'toggle' %}
+            <div class="form-check form-switch d-flex justify-content-center">
+                <input class="form-check-input"
+                       type="checkbox"
+                       role="switch"
+                       data-journal-indexing-target="toggle"
+                       data-action="change->journal-indexing#toggle"
+                       data-id="{{ database.id }}"
+                       data-name="{{ database.name }}"
+                       data-url="{{ path('app_journal_indexing_toggle', {'code': code, 'id': database.id}) }}"
+                       data-token="{{ csrf_token('indexing-toggle-' ~ database.id) }}"
+                        {{ database.id in associatedIds ? 'checked' : '' }}>
+            </div>
+        {% elseif lastColumn == 'status' %}
+            {% if database.status.value == 'pending' %}
+                <span class="badge bg-warning">{{ 'indexingDatabase.status.pending'|trans }}</span>
+            {% elseif database.status.value == 'rejected' %}
+                <span class="badge bg-danger">{{ 'indexingDatabase.status.rejected'|trans }}</span>
+            {% elseif database.status.value == 'validated' %}
+                <span class="badge bg-success">{{ 'indexingDatabase.status.validated'|trans }}</span>
+            {% endif %}
+        {% endif %}
+    </td>
+</tr>

@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 class Review
 {
     #[ORM\Id]
-    #[ORM\Column]
+    #[ORM\Column(name: 'RVID', type: 'integer')]
     private ?int $rvid = null;
 
     #[ORM\Column(length: 50)]

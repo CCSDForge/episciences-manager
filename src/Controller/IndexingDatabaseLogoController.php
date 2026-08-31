@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Service\IndexingDatabaseService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -10,12 +11,16 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class IndexingDatabaseLogoController extends AbstractController
 {
-    private const UPLOAD_DIR = 'data/indexing-databases';
+    public function __construct(
+        private readonly IndexingDatabaseService $indexingDatabaseService,
+    )
+    {
+    }
 
     #[Route('/indexing-databases/logo/{filename}', name: 'app_indexing_database_logo', requirements: ['filename' => '.+'])]
     public function serve(string $filename): Response
     {
-        $uploadDir = $this->getParameter('kernel.project_dir') . '/' . self::UPLOAD_DIR;
+        $uploadDir = $this->indexingDatabaseService->getUploadDirectory();
         $filePath = $uploadDir . '/' . $filename;
 
         // Security: Prevent path traversal attacks

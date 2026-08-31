@@ -58,12 +58,17 @@ test.describe('Indexing Database Admin - CAS Login Page', () => {
     await page.waitForLoadState('networkidle');
 
     // CAS login page should have username and password fields
-    const usernameField = page.locator('input[name="username"], input[id="username"]');
-    const passwordField = page.locator('input[name="password"], input[id="password"], input[type="password"]');
+    const usernameField = page.locator(
+      'input[name="username"], input[id="username"]'
+    );
+    const passwordField = page.locator(
+      'input[name="password"], input[id="password"], input[type="password"]'
+    );
 
     // At least one login form element should be visible
-    const hasLoginForm = await usernameField.isVisible().catch(() => false) ||
-                         await passwordField.isVisible().catch(() => false);
+    const hasLoginForm =
+      (await usernameField.isVisible().catch(() => false)) ||
+      (await passwordField.isVisible().catch(() => false));
 
     expect(hasLoginForm).toBeTruthy();
   });
@@ -73,7 +78,9 @@ test.describe('Indexing Database Admin - CAS Login Page', () => {
     await page.waitForLoadState('networkidle');
 
     // Look for submit button
-    const submitButton = page.locator('button[type="submit"], input[type="submit"]');
+    const submitButton = page.locator(
+      'button[type="submit"], input[type="submit"]'
+    );
     await expect(submitButton.first()).toBeVisible();
   });
 });

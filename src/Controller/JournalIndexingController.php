@@ -3,33 +3,27 @@ namespace App\Controller;
 
 use App\Entity\IndexingDatabase;
 use App\Entity\User;
-use App\Enum\IndexingDatabaseStatus;
 use App\Repository\IndexingDatabaseRepository;
 use App\Repository\ReviewRepository;
 use App\Security\Voter\IndexingDatabaseVoter;
+use App\Service\IndexingDatabaseService;
 use App\Service\ReviewManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/journal/{code}/indexing')]
 class JournalIndexingController extends AbstractController
 {
-    private const ALLOWED_LOGO_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif', 'svg', 'webp'];
-    private const MAX_LOGO_SIZE = 2 * 1024 * 1024; // 2MB
-    private const UPLOAD_DIR = 'data/indexing-databases';
-
     public function __construct(
-        private readonly EntityManagerInterface     $entityManager,
-        private readonly IndexingDatabaseRepository $repository,
-        private readonly ReviewRepository           $reviewRepository,
-        private readonly ReviewManager              $reviewManager,
-        private readonly SluggerInterface           $slugger,
+        private readonly EntityManagerInterface       $entityManager,
+        private readonly IndexingDatabaseRepository   $repository,
+        private readonly ReviewRepository             $reviewRepository,
+        private readonly ReviewManager                $reviewManager,
+        private readonly IndexingDatabaseService      $indexingDatabaseService,
     )
     {
     }
@@ -93,7 +87,9 @@ class JournalIndexingController extends AbstractController
             return new JsonResponse(['success' => false, 'error' => 'Review not found'], Response::HTTP_NOT_FOUND);
         }
 
-        $this->denyAccessUnlessGranted(IndexingDatabaseVoter::ASSOCIATE, $reviewData);
+        if (!$this->isGranted(IndexingDatabaseVoter::ASSOCIATE, $reviewData)) {
+            return new JsonResponse(['success' => false, 'error' => 'Access denied'], Response::HTTP_FORBIDDEN);
+        }
 
         $review = $this->reviewRepository->find($reviewData['rvid']);
         if (!$review) {
@@ -141,7 +137,12 @@ class JournalIndexingController extends AbstractController
             throw $this->createNotFoundException('Review not found');
         }
 
-        $this->denyAccessUnlessGranted(IndexingDatabaseVoter::PROPOSE, $reviewData);
+        if (!$this->isGranted(IndexingDatabaseVoter::PROPOSE, $reviewData)) {
+            if ($request->isXmlHttpRequest()) {
+                return new JsonResponse(['success' => false, 'error' => 'Access denied'], Response::HTTP_FORBIDDEN);
+            }
+            throw $this->createAccessDeniedException('Access denied');
+        }
 
         // Validate CSRF token
         $token = $request->request->get('_token') ?? $request->headers->get('X-CSRF-Token');
@@ -164,55 +165,23 @@ class JournalIndexingController extends AbstractController
             return $this->redirectToRoute('app_journal_indexing', ['code' => $code]);
         }
 
-        // Handle logo upload
-        $logoPath = null;
-        $logoFile = $request->files->get('logo');
-        if ($logoFile instanceof UploadedFile) {
-            $extension = strtolower($logoFile->getClientOriginalExtension());
-
-            if (!in_array($extension, self::ALLOWED_LOGO_EXTENSIONS, true)) {
-                $error = 'Invalid file type. Allowed: ' . implode(', ', self::ALLOWED_LOGO_EXTENSIONS);
-                if ($request->isXmlHttpRequest()) {
-                    return new JsonResponse(['success' => false, 'error' => $error], Response::HTTP_BAD_REQUEST);
-                }
-                $this->addFlash('error', $error);
-                return $this->redirectToRoute('app_journal_indexing', ['code' => $code]);
-            }
-
-            if ($logoFile->getSize() > self::MAX_LOGO_SIZE) {
-                $error = 'File too large. Maximum size: 2MB';
-                if ($request->isXmlHttpRequest()) {
-                    return new JsonResponse(['success' => false, 'error' => $error], Response::HTTP_BAD_REQUEST);
-                }
-                $this->addFlash('error', $error);
-                return $this->redirectToRoute('app_journal_indexing', ['code' => $code]);
-            }
-
-            $safeFilename = $this->slugger->slug(pathinfo($logoFile->getClientOriginalName(), PATHINFO_FILENAME));
-            $newFilename = $safeFilename . '-' . uniqid() . '.' . $extension;
-
-            $uploadDir = $this->getParameter('kernel.project_dir') . '/' . self::UPLOAD_DIR;
-            if (!is_dir($uploadDir)) {
-                mkdir($uploadDir, 0755, true);
-            }
-
-            $logoFile->move($uploadDir, $newFilename);
-            // Store only the filename (not the full path)
-            $logoPath = $newFilename;
-        }
-
         /** @var User $user */
         $user = $this->getUser();
 
-        $database = new IndexingDatabase();
-        $database->setName($name);
-        $database->setUrl($url ?: null);
-        $database->setLogo($logoPath);
-        $database->setStatus(IndexingDatabaseStatus::PENDING);
-        $database->setCreatedBy($user);
-
-        $this->entityManager->persist($database);
-        $this->entityManager->flush();
+        try {
+            $database = $this->indexingDatabaseService->create(
+                name: $name,
+                url: $url ?: null,
+                logo: $request->files->get('logo'),
+                createdBy: $user
+            );
+        } catch (\InvalidArgumentException $e) {
+            if ($request->isXmlHttpRequest()) {
+                return new JsonResponse(['success' => false, 'error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            }
+            $this->addFlash('error', $e->getMessage());
+            return $this->redirectToRoute('app_journal_indexing', ['code' => $code]);
+        }
 
         // AJAX response
         if ($request->isXmlHttpRequest()) {

@@ -13,10 +13,13 @@
                     <i class="fas fa-arrow-left me-2"></i>{{ 'journalDashboard.backToJournalList'|trans }}
                 </a>
             </div>
+            <div class="col-6 pt-4 text-end">
                 {% if is_granted('INDEXING_DATABASE_ADMIN_LIST') %}
-                <a href="{{ path('app_admin_indexing_database_index') }}" ...>
-                    {% endif %}
-                </a>
+                    <a href="{{ path('app_admin_indexing_database_index') }}" class="btn btn-outline-secondary btn-sm">
+                        <i class="fas fa-cog me-2"></i>{{ 'indexingDatabase.admin.title'|trans }}
+                    </a>
+                {% endif %}
+            </div>
         </div>
 
         <div class="d-flex justify-content-between align-items-center pt-4 mb-4">
@@ -29,9 +32,6 @@
             {% endif %}
         </div>
         {% include 'components/flash_messages.html.twig' %}
-
-        {# Alert container for AJAX messages (Stimulus target) #}
-        <div data-journal-indexing-target="alert"></div>
 
         {# Section: Available indexing databases #}
         <div class="card mb-4">
@@ -52,38 +52,12 @@
                             </thead>
                             <tbody>
                             {% for db in indexingDatabases %}
-                                <tr>
-                                    <td>
-                                        {{ db.name }}
-                                    </td>
-                                    <td>
-                                        {% if db.logo %}
-                                            <img src="{{ path('app_indexing_database_logo', {filename: db.logo}) }}"
-                                                 alt="{{ db.name }}" style="height: 24px; margin-right: 8px;">
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {% if db.url %}
-                                            <a href="{{ db.url }}" target="_blank" rel="noopener">{{ db.url }}</a>
-                                        {% else %}
-                                            <span class="text-muted">-</span>
-                                        {% endif %}
-                                    </td>
-                                    <td class="text-center">
-                                        <div class="form-check form-switch d-flex justify-content-center">
-                                            <input class="form-check-input"
-                                                   type="checkbox"
-                                                   role="switch"
-                                                   data-journal-indexing-target="toggle"
-                                                   data-action="change->journal-indexing#toggle"
-                                                   data-id="{{ db.id }}"
-                                                   data-name="{{ db.name }}"
-                                                   data-url="{{ path('app_journal_indexing_toggle', {'code': code, 'id': db.id}) }}"
-                                                   data-token="{{ csrf_token('indexing-toggle-' ~ db.id) }}"
-                                                    {{ db.id in associatedIds ? 'checked' : '' }}>
-                                        </div>
-                                    </td>
-                                </tr>
+                                {% include 'indexingDatabase/journal/_database_row.html.twig' with {
+                                    database: db,
+                                    lastColumn: 'toggle',
+                                    code: code,
+                                    associatedIds: associatedIds
+                                } %}
                             {% endfor %}
                             </tbody>
                         </table>
@@ -116,26 +90,10 @@
                             </thead>
                             <tbody>
                             {% for proposal in pendingProposals %}
-                                <tr>
-                                    <td>{{ proposal.name }}</td>
-                                    <td>
-                                        {% if proposal.logo %}
-                                            <img src="{{ path('app_indexing_database_logo', {filename: proposal.logo}) }}"
-                                                 alt="{{ proposal.name }}"
-                                                 style="height: 24px;">
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {% if proposal.url %}
-                                            <a href="{{ proposal.url }}" target="_blank" rel="noopener">{{ proposal.url }}</a>
-                                        {% else %}
-                                            <span class="text-muted">-</span>
-                                        {% endif %}
-                                    </td>
-                                    <td class="text-center">
-                                        <span class="badge bg-warning">{{ 'indexingDatabase.status.pending'|trans }}</span>
-                                    </td>
-                                </tr>
+                                {% include 'indexingDatabase/journal/_database_row.html.twig' with {
+                                    database: proposal,
+                                    lastColumn: 'status'
+                                } %}
                             {% endfor %}
                             </tbody>
                         </table>
@@ -163,26 +121,10 @@
                             </thead>
                             <tbody>
                             {% for proposal in rejectedProposals %}
-                                <tr>
-                                    <td>{{ proposal.name }}</td>
-                                    <td>
-                                        {% if proposal.logo %}
-                                            <img src="{{ path('app_indexing_database_logo', {filename: proposal.logo}) }}"
-                                                 alt="{{ proposal.name }}"
-                                                 style="height: 24px;">
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {% if proposal.url %}
-                                            <a href="{{ proposal.url }}" target="_blank" rel="noopener">{{ proposal.url }}</a>
-                                        {% else %}
-                                            <span class="text-muted">-</span>
-                                        {% endif %}
-                                    </td>
-                                    <td class="text-center">
-                                        <span class="badge bg-danger">{{ 'indexingDatabase.status.rejected'|trans }}</span>
-                                    </td>
-                                </tr>
+                                {% include 'indexingDatabase/journal/_database_row.html.twig' with {
+                                    database: proposal,
+                                    lastColumn: 'status'
+                                } %}
                             {% endfor %}
                             </tbody>
                         </table>

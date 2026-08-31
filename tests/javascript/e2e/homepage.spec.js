@@ -9,7 +9,9 @@ test.describe('Homepage E2E Tests', () => {
     await expect(page).toHaveTitle(/Episciences|Accueil/i);
 
     // Verify logo presence
-    const logo = page.locator('img[alt*="Episciences"], img[alt*="episciences"], .logo img');
+    const logo = page.locator(
+      'img[alt*="Episciences"], img[alt*="episciences"], .logo img'
+    );
     await expect(logo.first()).toBeVisible();
   });
 
@@ -26,17 +28,27 @@ test.describe('Homepage E2E Tests', () => {
     await page.goto('/en/');
 
     // Look for language selector
-    const languageToggle = page.locator('#language-dropdown-toggle, [data-bs-toggle="dropdown"], .dropdown-toggle').first();
+    const languageToggle = page
+      .locator(
+        '#language-dropdown-toggle, [data-bs-toggle="dropdown"], .dropdown-toggle'
+      )
+      .first();
 
     if (await languageToggle.isVisible()) {
       await languageToggle.click();
 
       // Verify dropdown menu appears
-      const dropdownMenu = page.locator('.dropdown-menu, #language-dropdown-menu');
+      const dropdownMenu = page.locator(
+        '.dropdown-menu, #language-dropdown-menu'
+      );
       await expect(dropdownMenu.first()).toBeVisible();
 
       // Verify French option exists
-      const frenchOption = page.locator('[data-locale="fr"], a[href*="/fr/"], .dropdown-item:has-text("FR"), .dropdown-item:has-text("Français")').first();
+      const frenchOption = page
+        .locator(
+          '[data-locale="fr"], a[href*="/fr/"], .dropdown-item:has-text("FR"), .dropdown-item:has-text("Français")'
+        )
+        .first();
       await expect(frenchOption).toBeVisible();
     } else {
       // No language selector found - skip
