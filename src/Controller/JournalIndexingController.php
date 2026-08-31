@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Controller;
 
 use App\Entity\IndexingDatabase;
@@ -14,16 +15,17 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use App\Enum\IndexingDatabaseStatus;
 
 #[Route('/journal/{code}/indexing')]
 class JournalIndexingController extends AbstractController
 {
     public function __construct(
-        private readonly EntityManagerInterface       $entityManager,
-        private readonly IndexingDatabaseRepository   $repository,
-        private readonly ReviewRepository             $reviewRepository,
-        private readonly ReviewManager                $reviewManager,
-        private readonly IndexingDatabaseService      $indexingDatabaseService,
+        private readonly EntityManagerInterface     $entityManager,
+        private readonly IndexingDatabaseRepository $repository,
+        private readonly ReviewRepository           $reviewRepository,
+        private readonly ReviewManager              $reviewManager,
+        private readonly IndexingDatabaseService    $indexingDatabaseService,
     )
     {
     }
@@ -56,7 +58,7 @@ class JournalIndexingController extends AbstractController
         // Test SQL direct
         //$conn = $this->entityManager->getConnection();
         //$sql = 'SELECT * FROM REVIEW_INDEXING_DATABASE WHERE rvid = :rvid';
-       // $sqlResult = $conn->executeQuery($sql, ['rvid' => $reviewData['rvid']])->fetchAllAssociative();
+        // $sqlResult = $conn->executeQuery($sql, ['rvid' => $reviewData['rvid']])->fetchAllAssociative();
         //dump('SQL direct result: ', $sqlResult);
 
         // Check if user can propose new databases
@@ -167,13 +169,18 @@ class JournalIndexingController extends AbstractController
 
         /** @var User $user */
         $user = $this->getUser();
+        $isEpiadmin = $this->isGranted(IndexingDatabaseVoter::ADMIN_CREATE, null);
+        $status = $isEpiadmin
+            ? IndexingDatabaseStatus::VALIDATED
+            : IndexingDatabaseStatus::PENDING;
 
         try {
             $database = $this->indexingDatabaseService->create(
                 name: $name,
                 url: $url ?: null,
                 logo: $request->files->get('logo'),
-                createdBy: $user
+                createdBy: $user,
+                status: $status
             );
         } catch (\InvalidArgumentException $e) {
             if ($request->isXmlHttpRequest()) {
@@ -197,7 +204,10 @@ class JournalIndexingController extends AbstractController
         }
 
         // Classic response (form submission)
-        $this->addFlash('success', 'indexingDatabase.flash.proposed');
+        $flashMessage = $isEpiadmin
+            ? 'indexingDatabase.flash.created'
+            : 'indexingDatabase.flash.proposed';
+        $this->addFlash('success', $flashMessage);
         return $this->redirectToRoute('app_journal_indexing', ['code' => $code]);
     }
 }
