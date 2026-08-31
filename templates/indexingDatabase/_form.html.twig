@@ -32,7 +32,9 @@ Parameters:
     </div>
 
     <!-- URL -->
-    <div class="mb-3">
+    <div class="mb-3"
+         data-controller="indexing-database-url"
+         data-indexing-database-url-check-url-path-value="{{path('app_admin_indexing_database_check_url') }}">
         <label for="url" class="form-label">
             {{ 'indexingDatabase.form.url'|trans }}
         </label>
@@ -41,7 +43,10 @@ Parameters:
                id="url"
                name="url"
                placeholder="https://"
-               value="{{ isEdit ? indexingDatabase.url|default('')|e('html_attr') : '' }}">
+               value="{{ isEdit ? indexingDatabase.url|default('')|e('html_attr') : '' }}"
+               data-action="blur->indexing-database-url#validateUrl"
+               data-error-message="{{'indexingDatabase.error.duplicate_url'|trans }}">
+        <div class="alert alert-danger d-none mt-2" data-indexing-database-url-target="error"></div>
     </div>
 
     <!-- Logo -->
@@ -64,7 +69,7 @@ Parameters:
             </div>
         {% endif %}
         <div class="d-flex align-items-center gap-2"
-             data-controller="file-input"
+             data-controller="indexing-database-file-input"
              data-file-input-placeholder-value="{{ 'indexingDatabase.form.noFileSelected'|trans }}">
             <label for="logo" class="btn btn-outline-secondary mb-0">
                 <i class="fas fa-upload me-1"></i>{{ 'indexingDatabase.form.browse'|trans }}
@@ -78,7 +83,7 @@ Parameters:
                    name="logo"
                    accept=".png,.jpg,.jpeg,.gif,.svg,.webp"
                    data-file-input-target="input"
-                   data-action="change->file-input#updateFilename">
+                   data-action="change->indexing-database-file-input#updateFilename">
         </div>
         <div class="form-text text-muted">{{ 'indexingDatabase.form.logoHelp'|trans }}</div>
     </div>

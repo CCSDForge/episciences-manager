@@ -10,6 +10,7 @@ use App\Security\Voter\IndexingDatabaseVoter;
 use App\Service\IndexingDatabaseService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -53,6 +54,20 @@ class IndexingDatabaseAdminController extends AbstractController
             'rejectedCount' => $rejectedCount,
             'currentFilter' => $statusFilter,
         ]);
+    }
+    #[Route('/check-url', name:'app_admin_indexing_database_check_url', methods: ['GET'])]
+    public function checkUrl(Request $request): JsonResponse
+    {
+        $url = $request->query->get('url');
+
+        if (empty($url)) {
+            return new JsonResponse(['exists' => false]);
+        }
+
+        $exists = $this->repository->findOneBy(['url' => $url]) !==
+            null;
+
+        return new JsonResponse(['exists' => $exists]);
     }
 
     #[Route('/create', name: 'app_admin_indexing_database_create', methods: ['GET', 'POST'])]

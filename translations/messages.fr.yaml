@@ -99,7 +99,8 @@ indexingDatabase:
     validated: "Base d'indexation validée avec succès"
     rejected: "Base d'indexation refusée"
     deleted: "Base d'indexation supprimée avec succès"
-
+  error:
+    duplicate_url: "Une base de données avec cette URL existe déjà"
 
 journalDashboard:
   editPages: "Éditer les pages"

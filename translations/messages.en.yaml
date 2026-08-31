@@ -98,7 +98,8 @@ indexingDatabase:
     validated: "Indexing database successfully validated"
     rejected: "Indexing database rejected"
     deleted: "Indexing database successfully deleted"
-
+  error:
+    duplicate_url: "A database with this URL already exists"
 
 journalDashboard:
   editPages: "Edit Pages"

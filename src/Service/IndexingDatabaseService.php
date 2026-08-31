@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Entity\IndexingDatabase;
 use App\Entity\User;
 use App\Enum\IndexingDatabaseStatus;
+use App\Repository\IndexingDatabaseRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -21,6 +22,7 @@ class IndexingDatabaseService
         private readonly SluggerInterface       $slugger,
         #[Autowire('%kernel.project_dir%')]
         private readonly string                 $projectDir,
+        private readonly IndexingDatabaseRepository $repository,
     )
     {
     }
@@ -38,6 +40,10 @@ class IndexingDatabaseService
         IndexingDatabaseStatus $status = IndexingDatabaseStatus::PENDING
     ): IndexingDatabase
     {
+        if ($url !== null && $this->repository->findOneBy(['url' => $url])) {
+            throw new \InvalidArgumentException('indexingDatabase.error.duplicate_url');
+        }
+
         $database = new IndexingDatabase();
         $database->setName($name);
         $database->setUrl($url);

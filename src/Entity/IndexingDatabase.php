@@ -10,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: IndexingDatabaseRepository::class)]
 #[ORM\Table(name: 'INDEXING_DATABASE')]
+#[ORM\UniqueConstraint(name: 'url', columns: ['URL'])]
 class IndexingDatabase
 {
     #[ORM\Id]
