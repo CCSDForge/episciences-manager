@@ -19,7 +19,7 @@ export default class extends Controller {
         this.showError(event.target.dataset.errorMessage || 'URL already exists');
       }
     } catch (error) {
-      // Silently fail
+      console.error('URL validation failed:', error);
     }
   }
 
