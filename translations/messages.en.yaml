@@ -56,7 +56,7 @@ indexingDatabase:
     tableName: "Name"
     tableLogo: "Logo"
     tableUrl: "URL"
-    tableReviews: "Journals"
+    tableJournalCount: "Journals"
     tableStatus: "Status"
     tableActions: "Actions"
     noDatabase: "No indexing database"
@@ -100,6 +100,21 @@ indexingDatabase:
     deleted: "Indexing database successfully deleted"
   error:
     duplicate_url: "A database with this URL already exists"
+  popover:
+    clickForDetails: "Click to see full details"
+  show:
+    backToList: "Back to list"
+    noLogo: "No logo"
+    name: "Name"
+    url: "URL"
+    status: "Status"
+    createdBy: "Created by"
+    createdAt: "Created at"
+    updatedAt: "Updated at"
+    journals: "Journals using this database"
+    journalCode: "Code"
+    journalName: "Name"
+    noJournals: "No journals are using this database yet."
 
 journalDashboard:
   editPages: "Edit Pages"

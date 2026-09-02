@@ -42,7 +42,7 @@
                 <th>{{ 'indexingDatabase.admin.tableName'|trans }}</th>
                 <th>{{ 'indexingDatabase.admin.tableLogo'|trans }}</th>
                 <th>{{ 'indexingDatabase.admin.tableUrl'|trans }}</th>
-                <th>{{ 'indexingDatabase.admin.tableReviews'|trans }}</th>
+                <th>{{ 'indexingDatabase.admin.tableJournalCount'|trans }}</th>
                 <th>{{ 'indexingDatabase.admin.tableStatus'|trans }}</th>
                 <th>{{ 'indexingDatabase.admin.tableActions'|trans }}</th>
             </tr>
@@ -50,7 +50,21 @@
             <tbody>
             {% for db in indexingDatabases %}
                 <tr>
-                    <td>{{ db.name }}</td>
+                    <td>
+                        <a href="{{ path('app_admin_indexing_database_show', {id: db.id}) }}"
+                           data-controller="indexing-database-popover-card"
+                           data-indexing-database-popover-card-logo-value="{{ db.logo ?
+                           path('app_indexing_database_logo', {filename: db.logo}) : '' }}"
+                           data-indexing-database-popover-card-status-value="{{ db.status.value }}"
+                           data-indexing-database-popover-card-status-label-value="{{ ('indexingDatabase.status.' ~
+                           db.status.value)|trans }}"
+                           data-indexing-database-popover-card-url-value="{{ db.url|default('') }}"
+                           data-indexing-database-popover-card-journal-count-value="{{ db.reviews|length }}"
+                           data-indexing-database-popover-card-click-text-value="{{
+                           'indexingDatabase.popover.clickForDetails'|trans }}">
+                            {{ db.name }}
+                        </a>
+                    </td>
                     <td>
                         {% if db.logo %}
                             <img src="{{ path('app_indexing_database_logo', {filename: db.logo}) }}"
@@ -62,14 +76,9 @@
                     </td>
                     <td>{{ db.url }}</td>
                     <td>
-                        {% if db.reviews|length > 0 %}
-                            <span class="badge bg-info">{{ db.reviews|length }}</span>
-                            <small class="text-muted ms-1">
-                                {{ db.reviews|map(r => r.code)|join(', ') }}
-                            </small>
-                        {% else %}
-                            <span class="text-muted">-</span>
-                        {% endif %}
+                        <span class="badge {{ db.reviews|length > 0 ? 'bg-info' : 'bg-secondary' }}">
+                            {{ db.reviews|length }}
+                        </span>
                     </td>
                     <td>
                         {% if db.status.value == 'pending' %}

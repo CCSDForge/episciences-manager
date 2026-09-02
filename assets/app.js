@@ -37,6 +37,11 @@ console.log('Welcome to Webpack Encore with Bootstrap!🎉');
  *    - news/journalNews.html.twig (create, update, delete news)
  */
 document.addEventListener('DOMContentLoaded', () => {
+  // Initialize Bootstrap tooltips
+  const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+  tooltipTriggerList.forEach(el => new bootstrap.Tooltip(el));
+
+  // Auto-close alerts with data-auto-close attribute
   const alertsWithAutoClose = document.querySelectorAll('[data-auto-close]');
 
   alertsWithAutoClose.forEach(alert => {

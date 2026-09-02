@@ -30,3 +30,15 @@ $card-border-radius: $border-radius-lg;
 
 // Custom components
 @import 'components/alerts';
+
+// Popover card styles
+.popover-card {
+  .popover-logo {
+    max-height: 30px !important;
+    max-width: 100px !important;
+    width: auto !important;
+    height: auto !important;
+    object-fit: contain;
+    display: block;
+  }
+}

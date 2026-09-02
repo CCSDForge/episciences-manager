@@ -55,6 +55,16 @@ class IndexingDatabaseAdminController extends AbstractController
             'currentFilter' => $statusFilter,
         ]);
     }
+
+    #[Route('/{id}/show', name: 'app_admin_indexing_database_show', methods: ['GET'])]
+    public function show(IndexingDatabase $database): Response
+    {
+        $this->denyAccessUnlessGranted(IndexingDatabaseVoter::ADMIN_LIST);
+
+        return $this->render('indexingDatabase/admin/show.html.twig', [
+            'database' => $database,
+        ]);
+    }
     #[Route('/check-url', name:'app_admin_indexing_database_check_url', methods: ['GET'])]
     public function checkUrl(Request $request): JsonResponse
     {

@@ -56,7 +56,7 @@ indexingDatabase:
     tableName: "Nom"
     tableLogo: "Logo"
     tableUrl: "URL"
-    tableReviews: "Revues"
+    tableJournalCount: "Revues"
     tableStatus: "Statut"
     tableActions: "Actions"
     noDatabase: "Aucune base d'indexation"
@@ -101,6 +101,21 @@ indexingDatabase:
     deleted: "Base d'indexation supprimée avec succès"
   error:
     duplicate_url: "Une base de données avec cette URL existe déjà"
+  popover:
+    clickForDetails: "Cliquez pour voir tous les détails"
+  show:
+    backToList: "Retour à la liste"
+    noLogo: "Aucun logo"
+    name: "Nom"
+    url: "URL"
+    status: "Statut"
+    createdBy: "Créé par"
+    createdAt: "Date de création"
+    updatedAt: "Date de modification"
+    journals: "Revues utilisant cette base"
+    journalCode: "Code"
+    journalName: "Nom"
+    noJournals: "Aucune revue n'utilise cette base pour le moment."
 
 journalDashboard:
   editPages: "Éditer les pages"

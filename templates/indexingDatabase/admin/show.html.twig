@@ -1,0 +1,153 @@
+{% extends 'base.html.twig' %}
+
+  {% block body %}
+      <div class="container">
+          {% if app.user and app.user.userIdentifier != '__NO_USER__' %}
+              {% include 'partials/navbar.html.twig' %}
+          {% endif %}
+
+          <div class="d-flex justify-content-between align-items-center my-4">
+              <h1 class="mb-0">{{ database.name }}</h1>
+              <div class="d-flex gap-2">
+                  <a href="{{ path('app_admin_indexing_database_edit', {id:
+                      database.id}) }}"
+                     class="btn btn-outline-primary">
+                      <i class="fas fa-edit me-1"></i>{{
+                      'indexingDatabase.admin.edit'|trans }}
+                  </a>
+                  <a href="{{ path('app_admin_indexing_database_index') }}"
+                     class="btn btn-outline-secondary">
+                      <i class="fas fa-arrow-left me-1"></i>{{
+                      'indexingDatabase.show.backToList'|trans }}
+                  </a>
+              </div>
+          </div>
+
+          {% include 'components/flash_messages.html.twig' %}
+
+          <div class="card">
+              <div class="card-body">
+                  <div class="row">
+                      <!-- Logo -->
+                      <div class="col-md-3 text-center mb-3">
+                          {% if database.logo %}
+                              <img src="{{ path('app_indexing_database_logo',
+                                  {filename: database.logo}) }}"
+                                   alt="{{ database.name }}"
+                                   class="img-fluid border rounded p-2"
+                                   style="max-height: 150px;">
+                          {% else %}
+                              <div class="border rounded p-4 text-muted">
+                                  <i class="fas fa-image fa-3x"></i>
+                                  <p class="mt-2 mb-0">{{
+                                      'indexingDatabase.show.noLogo'|trans }}</p>
+                              </div>
+                          {% endif %}
+                      </div>
+
+                      <!-- Informations -->
+                      <div class="col-md-9">
+                          <table class="table table-borderless">
+                              <tr>
+                                  <th style="width: 200px;">{{
+                                      'indexingDatabase.show.name'|trans }}</th>
+                                  <td>{{ database.name }}</td>
+                              </tr>
+                              <tr>
+                                  <th>{{ 'indexingDatabase.show.url'|trans }}</th>
+                                  <td>
+                                      {% if database.url %}
+                                          <a href="{{ database.url }}"
+                                             target="_blank" rel="noopener">
+                                              {{ database.url }}
+                                              <i class="fas fa-external-link-alt
+  ms-1"></i>
+                                          </a>
+                                      {% else %}
+                                          <span class="text-muted">-</span>
+                                      {% endif %}
+                                  </td>
+                              </tr>
+                              <tr>
+                                  <th>{{ 'indexingDatabase.show.status'|trans }}</th>
+                                  <td>
+                                      {% if database.status.value == 'pending' %}
+                                          <span class="badge bg-warning">{{
+                                              'indexingDatabase.status.pending'|trans }}</span>
+                                      {% elseif database.status.value == 'validated'
+                                      %}
+                                          <span class="badge bg-success">{{
+                                              'indexingDatabase.status.validated'|trans }}</span>
+                                      {% else %}
+                                          <span class="badge bg-danger">{{
+                                              'indexingDatabase.status.rejected'|trans }}</span>
+                                      {% endif %}
+                                  </td>
+                              </tr>
+                              <tr>
+                                  <th>{{ 'indexingDatabase.show.createdBy'|trans
+                                      }}</th>
+                                  <td>
+                                      {% if database.createdBy %}
+                                          {{ database.createdBy.screenName ??
+                                          database.createdBy.userIdentifier }}
+                                      {% else %}
+                                          <span class="text-muted">-</span>
+                                      {% endif %}
+                                  </td>
+                              </tr>
+                              <tr>
+                                  <th>{{ 'indexingDatabase.show.createdAt'|trans
+                                      }}</th>
+                                  <td>{{ database.createdAt|date('Y-m-d H:i') }}</td>
+                              </tr>
+                              <tr>
+                                  <th>{{ 'indexingDatabase.show.updatedAt'|trans
+                                      }}</th>
+                                  <td>{{ database.updatedAt|date('Y-m-d H:i') }}</td>
+                              </tr>
+                          </table>
+                      </div>
+                  </div>
+              </div>
+          </div>
+
+          <!-- Journals using this database -->
+          <div class="card mt-4">
+              <div class="card-header">
+                  <h5 class="mb-0">
+                      {{ 'indexingDatabase.show.journals'|trans }}
+                      <span class="badge bg-info ms-2">{{ database.reviews|length
+                          }}</span>
+                  </h5>
+              </div>
+              <div class="card-body">
+                  {% if database.reviews|length > 0 %}
+                      <table class="table table-striped">
+                          <thead>
+                          <tr>
+                              <th>{{ 'indexingDatabase.show.journalCode'|trans
+                                  }}</th>
+                              <th>{{ 'indexingDatabase.show.journalName'|trans
+                                  }}</th>
+                          </tr>
+                          </thead>
+                          <tbody>
+                          {% for review in database.reviews|sort((a, b) => a.code
+                              <=> b.code) %}
+                              <tr>
+                                  <td><code>{{ review.code }}</code></td>
+                                  <td>{{ review.name ?? '-' }}</td>
+                              </tr>
+                          {% endfor %}
+                          </tbody>
+                      </table>
+                  {% else %}
+                      <p class="text-muted mb-0">{{
+                          'indexingDatabase.show.noJournals'|trans }}</p>
+                  {% endif %}
+              </div>
+          </div>
+      </div>
+  {% endblock %}
+
