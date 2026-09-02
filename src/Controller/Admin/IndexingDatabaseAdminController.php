@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Knp\Component\Pager\PaginatorInterface;
 
 #[Route('/admin/indexing-databases')]
 class IndexingDatabaseAdminController extends AbstractController
@@ -27,7 +28,7 @@ class IndexingDatabaseAdminController extends AbstractController
     }
 
     #[Route('', name: 'app_admin_indexing_database_index', methods: ['GET'])]
-    public function index(Request $request): Response
+    public function index(Request $request,  PaginatorInterface $paginator): Response
     {
         $this->denyAccessUnlessGranted(IndexingDatabaseVoter::ADMIN_LIST);
 
@@ -40,14 +41,20 @@ class IndexingDatabaseAdminController extends AbstractController
                 ->setParameter('status', IndexingDatabaseStatus::from($statusFilter));
         }
 
-        $databases = $qb->getQuery()->getResult();
+        // PAGINATION
+        $pagination = $paginator->paginate(
+            $qb,                                        // QueryBuilder
+            $request->query->getInt('page', 1),         // page courante
+            8                                          // items par page
+        );
+
         $allCount = $this->repository->count([]);
         $validatedCount = $this->repository->count(['status' => IndexingDatabaseStatus::VALIDATED]);
         $pendingCount = $this->repository->count(['status' => IndexingDatabaseStatus::PENDING]);
         $rejectedCount = $this->repository->count(['status' => IndexingDatabaseStatus::REJECTED]);
 
         return $this->render('indexingDatabase/admin/index.html.twig', [
-            'indexingDatabases' => $databases,
+            'pagination' => $pagination,
             'allCount' => $allCount,
             'validatedCount' => $validatedCount,
             'pendingCount' => $pendingCount,

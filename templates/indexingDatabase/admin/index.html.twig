@@ -48,7 +48,7 @@
             </tr>
             </thead>
             <tbody>
-            {% for db in indexingDatabases %}
+            {% for db in pagination %}
                 <tr>
                     <td>
                         <a href="{{ path('app_admin_indexing_database_show', {id: db.id}) }}"
@@ -129,10 +129,15 @@
                 </tr>
             {% else %}
                 <tr>
-                    <td colspan="5" class="text-center text-muted">{{ 'indexingDatabase.admin.noDatabase'|trans }}</td>
+                    <td colspan="6" class="text-center text-muted">{{ 'indexingDatabase.admin.noDatabase'|trans }}</td>
                 </tr>
             {% endfor %}
             </tbody>
         </table>
+        {% if pagination.totalItemCount > 0 %}
+            <div class="d-flex justify-content-center mt-4">
+                {{ knp_pagination_render(pagination) }}
+            </div>
+        {% endif %}
     </div>
 {% endblock %}

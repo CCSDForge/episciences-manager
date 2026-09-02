@@ -62,6 +62,14 @@ class IndexingDatabaseRepository extends ServiceEntityRepository
             ->orderBy('idb.name', 'ASC');
     }
 
+    public function queryAllValidated(): QueryBuilder
+    {
+        return $this->createQueryBuilder('idb')
+            ->where('idb.status = :status')
+            ->setParameter('status', IndexingDatabaseStatus::VALIDATED)
+            ->orderBy('idb.name', 'ASC');
+    }
+
     /**
      * @return list<IndexingDatabase>
      */

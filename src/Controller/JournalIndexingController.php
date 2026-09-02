@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Enum\IndexingDatabaseStatus;
+use Knp\Component\Pager\PaginatorInterface;
 
 #[Route('/journal/{code}/indexing')]
 class JournalIndexingController extends AbstractController
@@ -31,7 +32,7 @@ class JournalIndexingController extends AbstractController
     }
 
     #[Route('', name: 'app_journal_indexing', methods: ['GET'])]
-    public function index(string $code): Response
+    public function index(string $code, Request $request, PaginatorInterface $paginator): Response
     {
         $reviewData = $this->reviewManager->getReviewByCode($code);
         //var_dump($reviewData);
@@ -42,7 +43,12 @@ class JournalIndexingController extends AbstractController
         $this->denyAccessUnlessGranted(IndexingDatabaseVoter::ASSOCIATE, $reviewData);
 
         // Get all validated databases
-        $databases = $this->repository->findAllValidated();
+        //$databases = $this->repository->findAllValidated();
+        $pagination = $paginator->paginate(
+            $this->repository->queryAllValidated(),
+            $request->query->getInt('page', 1),
+            6
+        );
 
         // Get IDs of databases already associated with this review
         $associatedDatabases = $this->repository->findByReview($reviewData['rvid']);
@@ -73,7 +79,7 @@ class JournalIndexingController extends AbstractController
         return $this->render('indexingDatabase/journal/index.html.twig', [
             'code' => $code,
             'review' => $reviewData,
-            'indexingDatabases' => $databases,
+            'pagination' => $pagination,
             'associatedIds' => $associatedIds,
             'canPropose' => $canPropose,
             'pendingProposals' => $pendingProposals,
