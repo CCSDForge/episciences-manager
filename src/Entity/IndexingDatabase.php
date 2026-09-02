@@ -9,42 +9,42 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: IndexingDatabaseRepository::class)]
-#[ORM\Table(name: 'INDEXING_DATABASE')]
-#[ORM\UniqueConstraint(name: 'url', columns: ['URL'])]
+#[ORM\Table(name: 'indexing_database')]
+#[ORM\UniqueConstraint(name: 'url', columns: ['url'])]
 class IndexingDatabase
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(name: 'ID', type: 'integer', options: ['unsigned' => true])]
+    #[ORM\Column(name: 'id', type: 'integer', options: ['unsigned' => true])]
     private ?int $id = null;
 
-    #[ORM\Column(name: 'NAME', length: 255)]
+    #[ORM\Column(name: 'name', length: 255)]
     private ?string $name = null;
 
-    #[ORM\Column(name: 'URL', length: 500, nullable: true)]
+    #[ORM\Column(name: 'url', length: 500, nullable: true)]
     private ?string $url = null;
 
-    #[ORM\Column(name: 'LOGO', length: 500, nullable: true)]
+    #[ORM\Column(name: 'logo', length: 500, nullable: true)]
     private ?string $logo = null;
 
-    #[ORM\Column(name: 'STATUS', type: 'indexing_database_status')]
+    #[ORM\Column(name: 'status', type: 'indexing_database_status')]
     private ?IndexingDatabaseStatus $status = null;
 
-    #[ORM\Column(name: 'CREATED_AT', type: Types::DATETIME_MUTABLE)]
+    #[ORM\Column(name: 'created_at', type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $createdAt = null;
 
-    #[ORM\Column(name: 'UPDATED_AT', type: Types::DATETIME_MUTABLE)]
+    #[ORM\Column(name: 'updated_at', type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $updatedAt = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(name: 'CREATED_BY', referencedColumnName: 'UID', nullable: true, onDelete: 'SET NULL')]
+    #[ORM\JoinColumn(name: 'created_by', referencedColumnName: 'UID', nullable: true, onDelete: 'SET NULL')]
     private ?User $createdBy = null;
 
     /** @var Collection<int, Review> */
     #[ORM\ManyToMany(targetEntity: Review::class, inversedBy: 'indexingDatabases')]
-    #[ORM\JoinTable(name: 'REVIEW_INDEXING_DATABASE')]
-    #[ORM\JoinColumn(name: 'INDEXING_DATABASE_ID', referencedColumnName: 'ID', columnDefinition: 'INT UNSIGNED NOT NULL')]
-    #[ORM\InverseJoinColumn(name: 'RVID', referencedColumnName: 'RVID', columnDefinition: 'INT UNSIGNED NOT NULL')]
+    #[ORM\JoinTable(name: 'review_indexing_database')]
+    #[ORM\JoinColumn(name: 'indexing_database_id', referencedColumnName: 'id', columnDefinition: 'INT UNSIGNED NOT NULL')]
+    #[ORM\InverseJoinColumn(name: 'rvid', referencedColumnName: 'RVID', columnDefinition: 'INT UNSIGNED NOT NULL')]
     private Collection $reviews;
 
     public function __construct()
