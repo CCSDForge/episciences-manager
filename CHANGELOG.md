@@ -1,4 +1,4 @@
-## Update — 2026-09-03 12:12:58 UTC (branch: preprod)
+## Update — 2026-09-03 12:45:04 UTC (branch: develop)
 
 ### ✨ Features
 - feat(indexing): add pagination to indexing database lists (`07ddf29`) by @ZHAO
@@ -99,6 +99,7 @@
 - feat(resources): add file upload and file listing (`46a594b`) by @ZHAO
 
 ### 🐛 Bug Fixes
+- fix(i18n): use existing translation key for admin button (`a2f7db9`) by @ZHAO
 - fix(indexing): sort pending databases by creation date instead of name (`b2986be`) by @ZHAO
 - fix(indexing): fix toggle controller name and back button translation (`591c9b9`) by @ZHAO
 - fix(indexing): correct Stimulus attributes and log validation errors (`c89e463`) by @ZHAO
@@ -259,7 +260,6 @@
 - chore: add favicon and update webpack config (`2f8b1ce`) by @ZHAO
 
 ### ⚙️ CI/CD
-- ci: add workflow_dispatch to manually trigger CI (`0b00819`) by @ZHAO
 - ci: Force CI rebuild after successful local validation (`87fe13e`) by @ZHAO
 - ci: Trigger CI rerun after code quality checks (`ea39bee`) by @ZHAO
 - ci: Force CI rebuild after successful local validation (`163a028`) by @ZHAO
