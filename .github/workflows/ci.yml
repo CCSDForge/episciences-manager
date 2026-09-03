@@ -6,6 +6,7 @@ on:
   pull_request:
     branches: [ main, develop, preprod ]
   workflow_dispatch: #
+
 jobs:
   # Tests and quality checks
   ci:
@@ -256,3 +257,4 @@ jobs:
           else
             echo "❌ Some checks failed. Review the logs above."
           fi
+
