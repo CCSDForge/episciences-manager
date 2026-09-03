@@ -34,11 +34,17 @@ class IndexingDatabaseAdminController extends AbstractController
 
         $statusFilter = $request->query->get('status');
 
-        $qb = $this->repository->queryAll();
+        if ($statusFilter === IndexingDatabaseStatus::PENDING->value) {
+            $qb = $this->repository->queryPending();
+        } else {
+            $qb = $this->repository->queryAll();
 
-        if ($statusFilter && in_array($statusFilter, IndexingDatabaseStatus::values(), true)) {
-            $qb->andWhere('idb.status = :status')
-                ->setParameter('status', IndexingDatabaseStatus::from($statusFilter));
+            if ($statusFilter && in_array($statusFilter,
+                    IndexingDatabaseStatus::values(), true)) {
+                $qb->andWhere('idb.status = :status')
+                    ->setParameter('status',
+                        IndexingDatabaseStatus::from($statusFilter));
+            }
         }
 
         // PAGINATION

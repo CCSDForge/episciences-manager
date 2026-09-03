@@ -30,15 +30,20 @@ class IndexingDatabaseRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function queryPending(): QueryBuilder
+    {
+        return $this->createQueryBuilder('idb')
+            ->where('idb.status = :status')
+            ->setParameter('status', IndexingDatabaseStatus::PENDING)
+            ->orderBy('idb.createdAt', 'ASC');  // FIFO : oldest items first
+    }
+
     /**
      * @return list<IndexingDatabase>
      */
     public function findPending(): array
     {
-        return $this->createQueryBuilder('idb')
-            ->where('idb.status = :status')
-            ->setParameter('status', IndexingDatabaseStatus::PENDING)
-            ->orderBy('idb.createdAt', 'DESC')
+        return $this->queryPending()
             ->getQuery()
             ->getResult();
     }

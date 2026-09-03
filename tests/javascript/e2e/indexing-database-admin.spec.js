@@ -18,9 +18,6 @@ const ADMIN_BASE_URL = '/en/admin/indexing-databases';
 
 test.describe('Indexing Database Admin - Security', () => {
   test('should redirect to CAS login for admin list page', async ({ page }) => {
-    // Navigate to admin page
-    const response = await page.goto(ADMIN_BASE_URL);
-
     // Should redirect to CAS
     await page.waitForLoadState('networkidle');
     const currentUrl = page.url();
@@ -31,8 +28,6 @@ test.describe('Indexing Database Admin - Security', () => {
   });
 
   test('should redirect to CAS login for create page', async ({ page }) => {
-    const response = await page.goto(`${ADMIN_BASE_URL}/create`);
-
     await page.waitForLoadState('networkidle');
     const currentUrl = page.url();
 

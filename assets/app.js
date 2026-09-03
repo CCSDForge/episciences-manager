@@ -38,7 +38,9 @@ console.log('Welcome to Webpack Encore with Bootstrap!🎉');
  */
 document.addEventListener('DOMContentLoaded', () => {
   // Initialize Bootstrap tooltips
-  const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+  const tooltipTriggerList = document.querySelectorAll(
+    '[data-bs-toggle="tooltip"]'
+  );
   tooltipTriggerList.forEach(el => new bootstrap.Tooltip(el));
 
   // Auto-close alerts with data-auto-close attribute

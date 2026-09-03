@@ -11,12 +11,15 @@ export default class extends Controller {
     if (!url) return;
 
     try {
-      const response = await fetch(this.checkUrlPathValue + '?url=' +
-        encodeURIComponent(url));
+      const response = await fetch(
+        this.checkUrlPathValue + '?url=' + encodeURIComponent(url)
+      );
       const data = await response.json();
 
       if (data.exists) {
-        this.showError(event.target.dataset.errorMessage || 'URL already exists');
+        this.showError(
+          event.target.dataset.errorMessage || 'URL already exists'
+        );
       }
     } catch (error) {
       console.error('URL validation failed:', error);
