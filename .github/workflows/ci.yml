@@ -5,12 +5,13 @@ on:
     branches: [ main, develop, preprod ]
   pull_request:
     branches: [ main, develop, preprod ]
+  workflow_dispatch: #
 jobs:
   # Tests and quality checks
   ci:
     name: Tests & Quality Checks
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v5
