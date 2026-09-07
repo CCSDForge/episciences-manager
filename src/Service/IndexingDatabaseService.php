@@ -27,6 +27,15 @@ class IndexingDatabaseService
     {
     }
 
+    public static function normalizeUrl(?string $url): ?string
+    {
+        if ($url === null || $url === '') {
+            return null;
+        }
+
+        return rtrim($url, '/');
+    }
+
     /**
      * Create a new indexing database.
      *
@@ -40,6 +49,7 @@ class IndexingDatabaseService
         IndexingDatabaseStatus $status = IndexingDatabaseStatus::PENDING
     ): IndexingDatabase
     {
+        $url = self::normalizeUrl($url);
         if ($url !== null && $this->repository->findOneBy(['url' => $url])) {
             throw new \InvalidArgumentException('indexingDatabase.error.duplicate_url');
         }
@@ -75,6 +85,7 @@ class IndexingDatabaseService
     ): void
     {
         $database->setName($name);
+        $url = self::normalizeUrl($url);
         $database->setUrl($url);
         $database->setUpdatedAt(new \DateTime());
 

@@ -81,14 +81,13 @@ class IndexingDatabaseAdminController extends AbstractController
     #[Route('/check-url', name:'app_admin_indexing_database_check_url', methods: ['GET'])]
     public function checkUrl(Request $request): JsonResponse
     {
-        $url = $request->query->get('url');
+        $url = IndexingDatabaseService::normalizeUrl($request->query->get('url'));
 
-        if (empty($url)) {
+        if ($url === null) {
             return new JsonResponse(['exists' => false]);
         }
 
-        $exists = $this->repository->findOneBy(['url' => $url]) !==
-            null;
+        $exists = $this->repository->findOneBy(['url' => $url]) !== null;
 
         return new JsonResponse(['exists' => $exists]);
     }
