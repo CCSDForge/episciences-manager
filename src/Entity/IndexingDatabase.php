@@ -3,6 +3,7 @@ namespace App\Entity;
 
 use App\Enum\IndexingDatabaseStatus;
 use App\Repository\IndexingDatabaseRepository;
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -27,14 +28,14 @@ class IndexingDatabase
     #[ORM\Column(name: 'logo', length: 500, nullable: true)]
     private ?string $logo = null;
 
-    #[ORM\Column(name: 'status', type: 'indexing_database_status')]
-    private ?IndexingDatabaseStatus $status = null;
+    #[ORM\Column(type: 'string',enumType: IndexingDatabaseStatus::class)]
+    private IndexingDatabaseStatus $status = IndexingDatabaseStatus::PENDING;
 
     #[ORM\Column(name: 'created_at', type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $createdAt = null;
+    private ?DateTimeInterface $createdAt;
 
     #[ORM\Column(name: 'updated_at', type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $updatedAt = null;
+    private ?DateTimeInterface $updatedAt;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: 'created_by', referencedColumnName: 'UID', nullable: true, onDelete: 'SET NULL')]
@@ -50,7 +51,6 @@ class IndexingDatabase
     public function __construct()
     {
         $this->reviews = new ArrayCollection();
-        $this->status = IndexingDatabaseStatus::PENDING;
         $this->createdAt = new \DateTime();
         $this->updatedAt = new \DateTime();
     }
