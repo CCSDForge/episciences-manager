@@ -33,7 +33,8 @@ class IndexingDatabaseService
             return null;
         }
 
-        return rtrim($url, '/');
+        $normalized = rtrim(trim($url), '/');
+        return $normalized === '' ? null : $normalized;
     }
 
     /**
