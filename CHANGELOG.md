@@ -288,7 +288,7 @@
 - feat(indexing): validate URL uniqueness on database creation (`576de44`) by @ZHAO
 - feat(indexing): auto-validate indexing database when proposed by epiadmin (`266aa9f`) by @ZHAO
 - feat(indexing): add journal indexing management and admin moderation (`13b24da`) by @ZHAO
-- feat(indexing): add IndexingDatabase entity and Review relatio (`4acadf7`) by @ZHAO
+- feat(indexing): add IndexingDatabase entity and Review relation (`4acadf7`) by @ZHAO
 - feat(footer): remove OpenAIRE/EU funding credit block and translations (`60ca091`) by @Raphaël Tournoy
 - feat(migration): create JOURNAL_SETTING table (`8b538b1`) by @Raphaël Tournoy
 - feat(docker): route HTTPS through Traefik, remove self-signed SSL (`c6317bd`) by @Raphaël Tournoy
@@ -567,7 +567,7 @@
 - feat(indexing): validate URL uniqueness on database creation (`576de44`) by @ZHAO
 - feat(indexing): auto-validate indexing database when proposed by epiadmin (`266aa9f`) by @ZHAO
 - feat(indexing): add journal indexing management and admin moderation (`13b24da`) by @ZHAO
-- feat(indexing): add IndexingDatabase entity and Review relatio (`4acadf7`) by @ZHAO
+- feat(indexing): add IndexingDatabase entity and Review relation (`4acadf7`) by @ZHAO
 - feat(footer): remove OpenAIRE/EU funding credit block and translations (`60ca091`) by @Raphaël Tournoy
 - feat(migration): create JOURNAL_SETTING table (`8b538b1`) by @Raphaël Tournoy
 - feat(docker): route HTTPS through Traefik, remove self-signed SSL (`c6317bd`) by @Raphaël Tournoy
@@ -845,7 +845,7 @@
 - feat(indexing): validate URL uniqueness on database creation (`576de44`) by @ZHAO
 - feat(indexing): auto-validate indexing database when proposed by epiadmin (`266aa9f`) by @ZHAO
 - feat(indexing): add journal indexing management and admin moderation (`13b24da`) by @ZHAO
-- feat(indexing): add IndexingDatabase entity and Review relatio (`4acadf7`) by @ZHAO
+- feat(indexing): add IndexingDatabase entity and Review relation (`4acadf7`) by @ZHAO
 - feat(footer): remove OpenAIRE/EU funding credit block and translations (`60ca091`) by @Raphaël Tournoy
 - feat(migration): create JOURNAL_SETTING table (`8b538b1`) by @Raphaël Tournoy
 - feat(docker): route HTTPS through Traefik, remove self-signed SSL (`c6317bd`) by @Raphaël Tournoy
@@ -1122,7 +1122,7 @@
 - feat(indexing): validate URL uniqueness on database creation (`576de44`) by @ZHAO
 - feat(indexing): auto-validate indexing database when proposed by epiadmin (`266aa9f`) by @ZHAO
 - feat(indexing): add journal indexing management and admin moderation (`13b24da`) by @ZHAO
-- feat(indexing): add IndexingDatabase entity and Review relatio (`4acadf7`) by @ZHAO
+- feat(indexing): add IndexingDatabase entity and Review relation (`4acadf7`) by @ZHAO
 - feat(footer): remove OpenAIRE/EU funding credit block and translations (`60ca091`) by @Raphaël Tournoy
 - feat(migration): create JOURNAL_SETTING table (`8b538b1`) by @Raphaël Tournoy
 - feat(docker): route HTTPS through Traefik, remove self-signed SSL (`c6317bd`) by @Raphaël Tournoy
@@ -1395,7 +1395,7 @@
 - feat(indexing): validate URL uniqueness on database creation (`576de44`) by @ZHAO
 - feat(indexing): auto-validate indexing database when proposed by epiadmin (`266aa9f`) by @ZHAO
 - feat(indexing): add journal indexing management and admin moderation (`13b24da`) by @ZHAO
-- feat(indexing): add IndexingDatabase entity and Review relatio (`4acadf7`) by @ZHAO
+- feat(indexing): add IndexingDatabase entity and Review relation (`4acadf7`) by @ZHAO
 - feat(footer): remove OpenAIRE/EU funding credit block and translations (`60ca091`) by @Raphaël Tournoy
 - feat(migration): create JOURNAL_SETTING table (`8b538b1`) by @Raphaël Tournoy
 - feat(docker): route HTTPS through Traefik, remove self-signed SSL (`c6317bd`) by @Raphaël Tournoy
@@ -1669,7 +1669,7 @@
 - feat(indexing): validate URL uniqueness on database creation (`576de44`) by @ZHAO
 - feat(indexing): auto-validate indexing database when proposed by epiadmin (`266aa9f`) by @ZHAO
 - feat(indexing): add journal indexing management and admin moderation (`13b24da`) by @ZHAO
-- feat(indexing): add IndexingDatabase entity and Review relatio (`4acadf7`) by @ZHAO
+- feat(indexing): add IndexingDatabase entity and Review relation (`4acadf7`) by @ZHAO
 - feat(footer): remove OpenAIRE/EU funding credit block and translations (`60ca091`) by @Raphaël Tournoy
 - feat(migration): create JOURNAL_SETTING table (`8b538b1`) by @Raphaël Tournoy
 - feat(docker): route HTTPS through Traefik, remove self-signed SSL (`c6317bd`) by @Raphaël Tournoy
