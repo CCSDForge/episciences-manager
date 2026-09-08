@@ -30,12 +30,15 @@ class IndexingDatabaseRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * Query pending proposals ordered by creation date (oldest first - FIFO for admin processing).
+     */
     public function queryPending(): QueryBuilder
     {
         return $this->createQueryBuilder('idb')
             ->where('idb.status = :status')
             ->setParameter('status', IndexingDatabaseStatus::PENDING)
-            ->orderBy('idb.createdAt', 'ASC');  // FIFO : oldest items first
+            ->orderBy('idb.createdAt', 'ASC');
     }
 
     /**
@@ -44,6 +47,21 @@ class IndexingDatabaseRepository extends ServiceEntityRepository
     public function findPending(): array
     {
         return $this->queryPending()
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Find pending proposals with newest first (for journal managers to see their latest proposals).
+     *
+     * @return list<IndexingDatabase>
+     */
+    public function findPendingNewestFirst(): array
+    {
+        return $this->createQueryBuilder('idb')
+            ->where('idb.status = :status')
+            ->setParameter('status', IndexingDatabaseStatus::PENDING)
+            ->orderBy('idb.createdAt', 'DESC')
             ->getQuery()
             ->getResult();
     }
