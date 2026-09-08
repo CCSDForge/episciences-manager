@@ -49,6 +49,21 @@ class IndexingDatabaseRepository extends ServiceEntityRepository
     }
 
     /**
+     * Find pending proposals with newest first (for journal managers to see their latest proposals).
+     *
+     * @return list<IndexingDatabase>
+     */
+    public function findPendingNewestFirst(): array
+    {
+        return $this->createQueryBuilder('idb')
+            ->where('idb.status = :status')
+            ->setParameter('status', IndexingDatabaseStatus::PENDING)
+            ->orderBy('idb.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
      * @return list<IndexingDatabase>
      */
     public function findRejected(): array

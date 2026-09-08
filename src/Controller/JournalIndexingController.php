@@ -71,7 +71,8 @@ class JournalIndexingController extends AbstractController
         $canPropose = $this->isGranted(IndexingDatabaseVoter::PROPOSE, $reviewData);
 
         // Get all pending proposals (visible to all roles with ASSOCIATE permission)
-        $pendingProposals = $this->repository->findPending();
+        // Newest first so journal managers see their latest proposals at the top
+        $pendingProposals = $this->repository->findPendingNewestFirst();
 
         // Get all rejected proposals
         $rejectedProposals = $this->repository->findRejected();
