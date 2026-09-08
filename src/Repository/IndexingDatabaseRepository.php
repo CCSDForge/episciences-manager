@@ -30,12 +30,15 @@ class IndexingDatabaseRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * Query pending proposals ordered by creation date (oldest first - FIFO for admin processing).
+     */
     public function queryPending(): QueryBuilder
     {
         return $this->createQueryBuilder('idb')
             ->where('idb.status = :status')
             ->setParameter('status', IndexingDatabaseStatus::PENDING)
-            ->orderBy('idb.createdAt', 'ASC');  // FIFO : oldest items first
+            ->orderBy('idb.createdAt', 'ASC');
     }
 
     /**
