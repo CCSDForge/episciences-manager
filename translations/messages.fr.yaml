@@ -14,7 +14,7 @@ nav:
   folder: "Dossier"
   dashboard: "Tableau de bord"
   users: "Utilisateurs"
-  journal: "Journal"
+  journal: "Revue"
   journalFrontendSettings: "Paramètres front-end du journal"
   website: "Site Web"
   statistics: "Statistiques"
@@ -103,6 +103,7 @@ indexingDatabase:
     duplicate_url: "Une base de données avec cette URL existe déjà"
   popover:
     clickForDetails: "Cliquez pour voir tous les détails"
+    journalsLabel: "Revues"
   show:
     backToList: "Retour à la liste"
     noLogo: "Aucun logo"
