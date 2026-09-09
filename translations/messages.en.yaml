@@ -14,7 +14,7 @@ nav:
   folder: "Folder"
   dashboard: "Dashboard"
   users: "Users"
-  journal: "Journal"
+  journal: "Journals"
   journalFrontendSettings: "Journal Frontend Settings" #on ne l'utilise plus
   website: "Website"
   statistics: "Statistics"
@@ -111,7 +111,7 @@ indexingDatabase:
     createdBy: "Created by"
     createdAt: "Created at"
     updatedAt: "Updated at"
-    journals: "Journals using this database"
+    journals: "Journals indexed this database"
     journalCode: "Code"
     journalName: "Name"
     noJournals: "No journals are using this database yet."
