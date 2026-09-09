@@ -102,6 +102,7 @@ indexingDatabase:
     duplicate_url: "A database with this URL already exists"
   popover:
     clickForDetails: "Click to see full details"
+    journalsLabel: "Journals"
   show:
     backToList: "Back to list"
     noLogo: "No logo"

@@ -11,6 +11,7 @@ export default class extends Controller {
     status: String,
     statusLabel: String,
     url: String,
+    journalLabel: String,
     journalCount: Number,
     clickText: String,
   };
@@ -42,7 +43,7 @@ export default class extends Controller {
       html += `<div class="text-truncate" style="max-width: 230px;"><strong>URL:</strong> ${this.urlValue}</div>`;
     }
 
-    html += `<div><strong>Journals:</strong> ${this.journalCountValue}</div>`;
+    html += `<div><strong>${this.journalLabelValue}:</strong> ${this.journalCountValue}</div>`;
     html += `<div class="text-muted mt-2"><small>${this.clickTextValue}</small></div>`;
     html += '</div>';
 
