@@ -45,13 +45,15 @@ WHERE visibility IS NOT NULL;
 -- Handles all cases:
 --   ["chief_editor,administrator"] → 'chief_editor,administrator'
 UPDATE pages
-SET visibility_set = (
-    SELECT GROUP_CONCAT(JSON_UNQUOTE(jt.val) SEPARATOR ',')
-    FROM JSON_TABLE(
-        visibility,
-        '$[*]' COLUMNS (val JSON PATH '$')
-    ) AS jt
-)
+SET visibility_set = COALESCE(
+        (SELECT GROUP_CONCAT(JSON_UNQUOTE(jt.val) SEPARATOR ',')
+         FROM JSON_TABLE(
+                      visibility,
+                      '$[*]' COLUMNS (val JSON PATH '$')
+              ) AS jt
+        ),
+        'public'
+                     )
 WHERE JSON_VALID(visibility);
 
 -- ============================================================================
@@ -78,6 +80,3 @@ SELECT COUNT(*) FROM pages WHERE visibility_set IS NULL;
 ALTER TABLE news DROP COLUMN visibility;
 ALTER TABLE pages DROP COLUMN visibility;
 
--- Rename new columns to original names
-ALTER TABLE news CHANGE visibility_enum visibility ENUM('public', 'private') NOT NULL DEFAULT 'public';
-ALTER TABLE pages CHANGE visibility_set visibility SET('public','member','editor','chief_editor','administrator','secretary','webmaster','guest_editor') NOT NULL DEFAULT 'public';
