@@ -104,7 +104,7 @@ SELECT COUNT(*) FROM pages WHERE visibility_set IS NULL;
 --
 -- Why this order matters:
 -- -----------------------
--- The Doctrine entities currently write to BOTH columns (dual-write)
+-- The Doctrine entities currently write to both columns (dual-write)
 -- via setVisibility() which syncs $visibility and $visibilityJson.
 --
 -- After Phase 5, the old 'visibility' column no longer exists.
